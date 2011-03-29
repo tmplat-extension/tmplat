@@ -1,0 +1,28 @@
+{
+   "background_page": "background.html",
+   "browser_action": {
+      "default_icon": "images/icon_19.png",
+      "default_popup": "popup.html",
+      "default_title": "__MSG_name__"
+   },
+   "content_scripts": [ {
+      "js": [ "shortcuts.js" ],
+      "matches": [ "http://*/*", "https://*/*", "ftp://*/*" ],
+      "run_at": "document_end"
+   } ],
+   "default_locale": "en",
+   "description": "__MSG_description__",
+   "icons": {
+      "128": "images/icon_128.png",
+      "16": "images/icon_16.png",
+      "19": "images/icon_19.png",
+      "32": "images/icon_32.png",
+      "48": "images/icon_48.png"
+   },
+   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDDt8RA/x74tjnQB61MKu/k+9xNHErfXIxROil9RVtL0IK+7a/o/W2WrGwxhqlJH4G4Lcee+yv6DirfOv0XIvL0f2cluHglhP9XmTvdfQ4lx0uAfLOECljO4esa/2QpyGivH9Xhw3om+pCglQYoNvbVU543tqCvlQd7Gt7nkZH6CQIDAQAB",
+   "name": "__MSG_name__",
+   "options_page": "options.html",
+   "permissions": [ "notifications", "tabs", "https://www.googleapis.com/urlshortener/*" ],
+   "update_url": "http://clients2.google.com/service/update2/crx",
+   "version": "0.0.2.0"
+}

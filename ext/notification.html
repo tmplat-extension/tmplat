@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <style type="text/css">
+            #tip {
+                font-family: Arial, Verdana;
+                font-size: 13px;
+                margin: 10px;
+            }
+            #tip a {
+                color: #2A5DB0;
+                float: right;
+                text-decoration: underline;
+            }
+            .copy_fail {
+                color: #CC0000;
+            }
+            .copy_success {
+                color: #006600;
+            }
+        </style>
+        <script type="text/javascript" src="jquery.min.js"></script>
+        <script type="text/javascript" src="storage.js"></script>
+        <script type="text/javascript">
+            function init() {
+                var bg = chrome.extension.getBackgroundPage();
+                var result = (bg.clipboard.status) ? 'copy_success' : 'copy_fail';
+                var sub = String(chrome.i18n.getMessage(bg.clipboard.mode + '_notification'));
+                $('#tip').addClass(result).html(chrome.i18n.getMessage(result, sub));
+                bg.clipboard.reset();
+                if (getLocalStorage('settingNotificationTimer') > 0) {
+                    window.setTimeout(function() {
+                        window.close();
+                    }, getLocalStorage('settingNotificationTimer'));
+                }
+            }
+        </script>
+    </head>
+    <body onload="init();">
+        <div id="tip"></div>
+    </body>
+</html>
