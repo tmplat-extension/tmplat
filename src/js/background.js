@@ -30,14 +30,14 @@ var clipboard = {
 
     status: false,
 
-    addSlashes: function(str) {
+    addSlashes: function (str) {
         return str
             .replace('\\', '\\\\')
             .replace('"', '\\"')
             .replace('\'', '\\\'');
     },
 
-    copy: function(str) {
+    copy: function (str) {
         var sandbox = $('#sandbox');
         sandbox.val(str);
         sandbox.select();
@@ -46,17 +46,21 @@ var clipboard = {
         clipboard.showNotification();
     },
 
-    copyAnchor: function(tab) {
-        // TODO: Consider using jQuery to build anchor element (e.g. jQuery.html())
+    copyAnchor: function (tab) {
+        /*
+         * TODO: Consider using jQuery to build anchor element
+         * (e.g. jQuery.html()).
+         */
         var title = (tab.title) ? tab.title : tab.url;
         var titleAttr = '';
-        if (tab.title && getLocalStorage('settingTitleAttr')) {
+        if (tab.title && utils.get('settingTitleAttr')) {
             titleAttr = ' title="' + clipboard.addSlashes(title) + '"';
         }
-        clipboard.copy('<a href="' + tab.url + '"' + titleAttr + '>' + clipboard.replaceEntities(title) + '</a>');
+        clipboard.copy('<a href="' + tab.url + '"' + titleAttr + '>' +
+                clipboard.replaceEntities(title) + '</a>');
     },
 
-    copyBBCode: function(tab) {
+    copyBBCode: function (tab) {
         if (tab.title) {
             clipboard.copy('[url=' + tab.url + ']' + tab.title + '[/url]');
         } else {
@@ -68,11 +72,12 @@ var clipboard = {
         clipboard.copy(clipboard.encode(tab.url));
     },
 
-    copyShortUrl: function(tab) {
+    copyShortUrl: function (tab) {
         var data = {longUrl: tab.url};
         var req = new XMLHttpRequest();
-        req.open('POST', 'https://www.googleapis.com/urlshortener/v1/url?key=' + clipboard.GOO_GL_API_KEY, true);
-        req.onreadystatechange = function() {
+        req.open('POST', 'https://www.googleapis.com/urlshortener/v1/url?key=' +
+                clipboard.GOO_GL_API_KEY, true);
+        req.onreadystatechange = function () {
             if (req.readyState === 4) {
                 var resp = JSON.parse(req.responseText);
                 if (resp.id) {
@@ -89,71 +94,72 @@ var clipboard = {
         req.send(JSON.stringify(data));
     },
 
-    copyUrl: function(tab) {
+    copyUrl: function (tab) {
         clipboard.copy(tab.url);
     },
 
-    decode: function(url) {
+    decode: function (url) {
         return decodeURIComponent(url);
     },
 
-    encode: function(url) {
+    encode: function (url) {
         return encodeURIComponent(url);
     },
 
-    executeScriptsInExistingTabs: function(tabs) {
+    executeScriptsInExistingTabs: function (tabs) {
         for (var i = 0; i < tabs.length; i++) {
             chrome.tabs.executeScript(tab[i].id, {file: '../js/shortcuts.js'});
         }
     },
 
-    executeScriptsInExistingWindows: function() {
-        chrome.windows.getAll(null, function(windows) {
+    executeScriptsInExistingWindows: function () {
+        chrome.windows.getAll(null, function (windows) {
             for (var i = 0; i < windows.length; i++) {
-                chrome.tabs.getAllInWindow(windows[i].id, clipboard.executeScriptsInExistingTabs);
+                chrome.tabs.getAllInWindow(windows[i].id,
+                        clipboard.executeScriptsInExistingTabs);
             }
         });
     },
 
-    getFeature: function(order) {
+    getFeature: function (order) {
         switch (order) {
-            case getLocalStorage('copyAnchorOrder'):
+            case utils.get('copyAnchorOrder'):
                 return {
                     'id': 'copyAnchor',
                     'name': clipboard.ANCHOR_MODE,
-                    'enabled': getLocalStorage('copyAnchorEnabled'),
+                    'enabled': utils.get('copyAnchorEnabled'),
                     'shortcut': 'Ctrl+Alt+A',
                     'macShortcut': '\u2325\u2318A'
                 };
-            case getLocalStorage('copyBBCodeOrder'):
+            case utils.get('copyBBCodeOrder'):
                 return {
                     'id': 'copyBBCode',
                     'name': clipboard.BBCODE_MODE,
-                    'enabled': getLocalStorage('copyBBCodeEnabled'),
+                    'enabled': utils.get('copyBBCodeEnabled'),
                     'shortcut': 'Ctrl+Alt+B',
                     'macShortcut': '\u2325\u2318B'
                 };
-            case getLocalStorage('copyEncodedOrder'):
+            case utils.get('copyEncodedOrder'):
                 return {
                     'id': 'copyEncodedUrl',
                     'name': clipboard.ENCODED_MODE,
-                    'enabled': getLocalStorage('copyEncodedEnabled'),
+                    'enabled': utils.get('copyEncodedEnabled'),
                     'shortcut': 'Ctrl+Alt+E',
                     'macShortcut': '\u2325\u2318E'
                 };
-            case getLocalStorage('copyShortOrder'):
+            case utils.get('copyShortOrder'):
                 return {
                     'id': 'copyShortUrl',
                     'name': clipboard.SHORT_MODE,
-                    'enabled': getLocalStorage('copyShortEnabled'),
+                    'enabled': utils.get('copyShortEnabled'),
                     'shortcut': 'Ctrl+Alt+S',
                     'macShortcut': '\u2325\u2318S'
                 };
-            case getLocalStorage('copyUrlOrder'):
+            case utils.get('copyUrlOrder'):
                 return {
                     'id': 'copyUrl',
                     'name': clipboard.URL_MODE,
-                    'enabled': getLocalStorage('copyUrlEnabled'),
+                    'enabled': utils.get('copyUrlEnabled'),
                     'shortcut': 'Ctrl+Alt+U',
                     'macShortcut': '\u2325\u2318U'
                 };
@@ -162,34 +168,34 @@ var clipboard = {
         }
     },
 
-    init: function() {
-        initLocalStorage('settingNotification', true);
-        initLocalStorage('settingNotificationTimer', 3000);
-        initLocalStorage('settingShortcut', true);
-        initLocalStorage('settingTitleAttr', false);
-        initLocalStorage('settingIeTabExtract', true);
-        initLocalStorage('settingIeTabTitle', true);
+    init: function () {
+        utils.init('settingNotification', true);
+        utils.init('settingNotificationTimer', 3000);
+        utils.init('settingShortcut', true);
+        utils.init('settingTitleAttr', false);
+        utils.init('settingIeTabExtract', true);
+        utils.init('settingIeTabTitle', true);
         clipboard.initFeatures();
         clipboard.executeScriptsInExistingWindows();
         chrome.extension.onRequest.addListener(clipboard.onRequest);
         chrome.extension.onRequestExternal.addListener(clipboard.onRequest);
     },
 
-    initFeatures: function() {
-        initLocalStorage('copyAnchorEnabled', true);
-        initLocalStorage('copyAnchorOrder', 2);
-        initLocalStorage('copyBBCodeEnabled', true);
-        initLocalStorage('copyBBCodeOrder', 3);
-        initLocalStorage('copyEncodedEnabled', true);
-        initLocalStorage('copyEncodedOrder', 4);
-        initLocalStorage('copyShortEnabled', true);
-        initLocalStorage('copyShortOrder', 1);
-        initLocalStorage('copyUrlEnabled', true);
-        initLocalStorage('copyUrlOrder', 0);
+    initFeatures: function () {
+        utils.init('copyAnchorEnabled', true);
+        utils.init('copyAnchorOrder', 2);
+        utils.init('copyBBCodeEnabled', true);
+        utils.init('copyBBCodeOrder', 3);
+        utils.init('copyEncodedEnabled', true);
+        utils.init('copyEncodedOrder', 4);
+        utils.init('copyShortEnabled', true);
+        utils.init('copyShortOrder', 1);
+        utils.init('copyUrlEnabled', true);
+        utils.init('copyUrlOrder', 0);
         clipboard.updateFeatures();
     },
 
-    isBlacklisted: function(sender) {
+    isBlacklisted: function (sender) {
         var reject = false;
         for (var i = 0; i < clipboard.BLACKLISTED_EXTENSION_IDS.length; i++) {
             if (clipboard.BLACKLISTED_EXTENSION_IDS[i] === sender.id) {
@@ -200,16 +206,16 @@ var clipboard = {
         return reject;
     },
 
-    isThisPlatform: function(operationSystem) {
+    isThisPlatform: function (operationSystem) {
         return navigator.userAgent.toLowerCase().indexOf(operationSystem) !== -1;
     },
 
-    onRequest: function(request, sender, sendResponse) {
+    onRequest: function (request, sender, sendResponse) {
         if (clipboard.isBlacklisted(sender)) {
             return;
         }
-        if (getLocalStorage('settingShortcut')) {
-            chrome.tabs.getSelected(null, function(tab) {
+        if (utils.get('settingShortcut')) {
+            chrome.tabs.getSelected(null, function (tab) {
                 var handler = (ietab.isActive(tab)) ? ietab : clipboard;
                 switch (request.mode) {
                     case clipboard.URL_MODE:
@@ -237,7 +243,7 @@ var clipboard = {
         }
     },
 
-    replaceEntities: function(str) {
+    replaceEntities: function (str) {
         return str
             .replace('"', '&quot;')
             .replace('&', '&amp;')
@@ -245,13 +251,13 @@ var clipboard = {
             .replace('>', '&gt;');
     },
 
-    reset: function() {
+    reset: function () {
         clipboard.mode = '';
         clipboard.status = false;
     },
 
-    service: function(mode) {
-        chrome.tabs.getSelected(null, function(tab) {
+    service: function (mode) {
+        chrome.tabs.getSelected(null, function (tab) {
             var handler = (ietab.isActive(tab)) ? ietab : clipboard;
             var popup = chrome.extension.getViews({type: 'popup'})[0];
             switch (mode) {
@@ -285,15 +291,17 @@ var clipboard = {
         });
     },
 
-    showNotification: function() {
-        if (getLocalStorage('settingNotification')) {
-            webkitNotifications.createHTMLNotification('../pages/notification.html').show();
+    showNotification: function () {
+        if (utils.get('settingNotification')) {
+            webkitNotifications
+                    .createHTMLNotification('../pages/notification.html')
+                    .show();
         } else {
             clipboard.reset();
         }
     },
 
-    updateFeatures: function() {
+    updateFeatures: function () {
         clipboard.features = [];
         for (var i = 0; i < clipboard.NUMBER_OF_MODE; i++) {
             clipboard.features[i] = clipboard.getFeature(i);
@@ -334,32 +342,36 @@ var ietab = {
      */
     TITLE_PREFIX: 'IE: ',
 
-    copyAnchor: function(tab) {
-        // TODO: Consider using jQuery to build anchor element (e.g. jQuery.html())
+    copyAnchor: function (tab) {
+        /*
+         * TODO: Consider using jQuery to build anchor element
+         * (e.g. jQuery.html()).
+         */
         var title = (tab.title) ? tab.title : tab.url;
         var titleAttr = '';
         var url = tab.url;
-        if (getLocalStorage('settingIeTabExtract')) {
+        if (utils.get('settingIeTabExtract')) {
             url = clipboard.decode(ietab.extractUrl(url));
         }
         if (tab.title) {
-            if (getLocalStorage('settingIeTabTitle')) {
+            if (utils.get('settingIeTabTitle')) {
                 title = ietab.extractTitle(title);
             }
-            if (getLocalStorage('settingTitleAttr')) {
+            if (utils.get('settingTitleAttr')) {
                 titleAttr = ' title="' + clipboard.addSlashes(title) + '"';
             }
         }
-        clipboard.copy('<a href="' + url + '"' + titleAttr + '>' + clipboard.replaceEntities(title) + '</a>');
+        clipboard.copy('<a href="' + url + '"' + titleAttr + '>' +
+                clipboard.replaceEntities(title) + '</a>');
     },
 
-    copyBBCode: function(tab) {
+    copyBBCode: function (tab) {
         var title = tab.title;
         var url = tab.url;
-        if (getLocalStorage('settingIeTabExtract')) {
+        if (utils.get('settingIeTabExtract')) {
             url = clipboard.decode(ietab.extractUrl(url));
         }
-        if (title && getLocalStorage('settingIeTabTitle')) {
+        if (title && utils.get('settingIeTabTitle')) {
             title = ietab.extractTitle(title);
         }
         if (title) {
@@ -369,22 +381,23 @@ var ietab = {
         }
     },
 
-    copyEncoded: function(tab) {
-        if (getLocalStorage('settingIeTabExtract')) {
+    copyEncoded: function (tab) {
+        if (utils.get('settingIeTabExtract')) {
             clipboard.copy(ietab.extractUrl(tab.url));
         } else {
             clipboard.copy(clipboard.encode(tab.url));
         }
     },
 
-    copyShortUrl: function(tab) {
+    copyShortUrl: function (tab) {
         var data = {longUrl: tab.url};
-        if (getLocalStorage('settingIeTabExtract')) {
+        if (utils.get('settingIeTabExtract')) {
             data.longUrl = clipboard.decode(ietab.extractUrl(tab.url));
         }
         var req = new XMLHttpRequest();
-        req.open('POST', 'https://www.googleapis.com/urlshortener/v1/url?key=' + clipboard.GOO_GL_API_KEY, true);
-        req.onreadystatechange = function() {
+        req.open('POST', 'https://www.googleapis.com/urlshortener/v1/url?key=' +
+                clipboard.GOO_GL_API_KEY, true);
+        req.onreadystatechange = function () {
             if (req.readyState === 4) {
                 var resp = JSON.parse(req.responseText);
                 if (resp.id) {
@@ -401,15 +414,15 @@ var ietab = {
         req.send(JSON.stringify(data));
     },
 
-    copyUrl: function(tab) {
-        if (getLocalStorage('settingIeTabExtract')) {
+    copyUrl: function (tab) {
+        if (utils.get('settingIeTabExtract')) {
             clipboard.copy(clipboard.decode(ietab.extractUrl(tab.url)));
         } else {
             clipboard.copy(tab.url);
         }
     },
 
-    extractTitle: function(title) {
+    extractTitle: function (title) {
         var idx = title.indexOf(ietab.TITLE_PREFIX);
         if (idx !== -1) {
             return title.substring(idx + ietab.TITLE_PREFIX.length);
@@ -417,7 +430,7 @@ var ietab = {
         return title;
     },
 
-    extractUrl: function(url) {
+    extractUrl: function (url) {
         var idx = url.indexOf(ietab.CONTAINER_SEGMENT);
         if (idx !== -1) {
             return url.substring(idx + ietab.CONTAINER_SEGMENT.length);
@@ -425,8 +438,9 @@ var ietab = {
         return url;
     },
 
-    isActive: function(tab) {
-        return tab.url.indexOf('chrome') === 0 && tab.url.indexOf(ietab.EXTENSION_ID) !== -1;
+    isActive: function (tab) {
+        return tab.url.indexOf('chrome') === 0 &&
+                tab.url.indexOf(ietab.EXTENSION_ID) !== -1;
     }
 
 };
