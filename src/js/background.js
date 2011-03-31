@@ -68,7 +68,7 @@ var clipboard = {
         }
     },
 
-    copyEncoded: function(tab) {
+    copyEncoded: function (tab) {
         clipboard.copy(clipboard.encode(tab.url));
     },
 
