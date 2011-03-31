@@ -1,55 +1,18 @@
 <!DOCTYPE HTML>
 <html>
     <head>
-        <style type="text/css">
-            #tip {
-                font-family: Arial, Verdana;
-                font-size: 13px;
-                margin: 10px;
-            }
-            #tip a {
-                color: #2A5DB0;
-                float: right;
-                text-decoration: underline;
-            }
-            .copy_fail {
-                color: #CC0000;
-            }
-            .copy_success {
-                color: #006600;
-            }
-        </style>
-        <script type="text/javascript" src="jquery.min.js"></script>
-        <script type="text/javascript" src="storage.js"></script>
+        <link type="text/css" rel="stylesheet" href="css/notification.css" />
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/storage.js"></script>
+        <script type="text/javascript" src="js/notification.js"></script>
         <script type="text/javascript">
-            /**
-             * <p>Initializes the notification page.</p>
-             * <p>This involves inserting and configuring the UI elements as well as the insertion of localized Strings based on the result of the copy request.</p>
-             * @requires jQuery
-             * @see clipboard.showNotification
-             * @since 0.0.1.0
-             */
-            function init() {
-                var bg = chrome.extension.getBackgroundPage();
-                var result = (bg.clipboard.status) ? 'copy_success' : 'copy_fail';
-                var sub = String(chrome.i18n.getMessage(bg.clipboard.mode + '_notification'));
-                // Styles the tip and inserts relevant localized String depending on the result of the copy request
-                $('#tip').addClass(result).html(chrome.i18n.getMessage(result, sub));
-                /*
-                 * Important: Resets the clipboard to avoid affecting copy requests
-                 * If user disabled the notifications option this is still called in clipboard.showNotification for safety
-                 */
-                bg.clipboard.reset();
-                // Sets a timer to close the notification after if user enabled option; otherwise stays open until closed manually by user
-                if (getLocalStorage('settingNotificationTimer') > 0) {
-                    window.setTimeout(function() {
-                        window.close();
-                    }, getLocalStorage('settingNotificationTimer'));
-                }
-            }
+            $(function () {
+                // Initializes the notification when ready
+                notification.init();
+            });
         </script>
     </head>
-    <body onload="init();">
+    <body>
         <div id="tip"></div>
     </body>
 </html>
