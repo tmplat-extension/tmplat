@@ -6,21 +6,21 @@
 var popup = {
 
     /**
-     * <p>Creates a <code>&lt;li/&gt;</code> representing a feature (or "mode")
-     * to be inserted in to the <code>&lt;ul/&gt;</code> in the popup.</p>
+     * <p>Creates a <code>&lt;li/&gt;</code> representing a feature to be
+     * inserted in to the <code>&lt;ul/&gt;</code> in the popup.</p>
      * @param {String} id The identifier to be assigned to the element.
-     * @param {String} mode The mode represented by the element.
+     * @param {String} name The name of the feature represented by the element.
      * @param {String} shortcut The keyboard shortcut displayed in this element.
      * @returns {jQuery} The newly created <code>&lt;li/&gt;</code> wrapped in
      * jQuery.
      * @requires jQuery
      * @private
      */
-    createFeature: function (id, mode, shortcut) {
+    createFeature: function (id, name, shortcut) {
         var item = $('<li/>', {
             'id': id + 'Item'
         }).click(function () {
-            popup.service(mode);
+            popup.service(name);
         });
         var menu = $('<div/>', {
             'class': 'menu',
@@ -51,11 +51,11 @@ var popup = {
         // Inserts list items created for all enabled features
         for (var i = 0; i < bg.clipboard.features.length; i++) {
             var feature = bg.clipboard.features[i];
-            if (feature.enabled) {
+            if (feature.isEnabled()) {
                 // Derives the correct keyboard shortcut to display
-                var shortcut = feature.shortcut;
+                var shortcut = feature.getShortcut();
                 if (bg.clipboard.isThisPlatform('mac')) {
-                    shortcut = feature.macShortcut;
+                    shortcut = feature.getMacShortcut();
                 }
                 $('#item ul').append(popup.createFeature(feature.id,
                         feature.name, shortcut));
