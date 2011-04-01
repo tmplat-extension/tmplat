@@ -114,3 +114,5 @@ var popup = {
     }
 
 };
+
+popup.init();
