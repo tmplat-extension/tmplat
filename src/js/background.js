@@ -1,28 +1,13 @@
-// TODO: Reduce duplication wherever possible
+// TODO: Complete documentation and code review
 
 /**
  * <p>Main controller for the extension and manages all copy requests.</p>
  * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
- * @since 0.0.2.0
+ * @since 0.0.1.0
  */
-// TODO: Complete documentation and code review
 var clipboard = {
 
-    ANCHOR_MODE: 'copy_anchor',
-
-    BBCODE_MODE: 'copy_bbcode',
-
-    BLACKLISTED_EXTENSION_IDS: [],
-
-    ENCODED_MODE: 'copy_encoded',
-
-    GOO_GL_API_KEY: 'AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY',
-
-    NUMBER_OF_MODES: 5,
-
-    SHORT_MODE: 'copy_short',
-
-    URL_MODE: 'copy_url',
+    blacklistedExtensions: [],
 
     features: [],
 
@@ -30,80 +15,42 @@ var clipboard = {
 
     status: false,
 
-    addSlashes: function (str) {
-        return str
-            .replace('\\', '\\\\')
-            .replace('"', '\\"')
-            .replace('\'', '\\\'');
-    },
-
     copy: function (str) {
-        var sandbox = $('#sandbox');
-        sandbox.val(str);
-        sandbox.select();
+        var sandbox = $('#sandbox').val(str).select();
         clipboard.status = document.execCommand('copy', false, null);
         sandbox.val('');
         clipboard.showNotification();
     },
 
     copyAnchor: function (tab) {
-        /*
-         * TODO: Consider using jQuery to build anchor element
-         * (e.g. jQuery.html()).
-         */
-        var title = (tab.title) ? tab.title : tab.url;
-        var titleAttr = '';
+        var data = {href: tab.url};
+        data.text = tab.title || data.href;
         if (tab.title && utils.get('settingTitleAttr')) {
-            titleAttr = ' title="' + clipboard.addSlashes(title) + '"';
+            data.title = helper.addSlashes(data.text);
         }
-        clipboard.copy('<a href="' + tab.url + '"' + titleAttr + '>' +
-                clipboard.replaceEntities(title) + '</a>');
+        // TODO: Implement option to set targets as '_blank'
+        data.text = helper.replaceEntities(data.text);
+        clipboard.copy(helper.createAnchor(data));
     },
 
     copyBBCode: function (tab) {
-        if (tab.title) {
-            clipboard.copy('[url=' + tab.url + ']' + tab.title + '[/url]');
-        } else {
-            clipboard.copy('[url]' + tab.url + '[/url]');
-        }
+        var data = {
+            title: tab.title,
+            url: tab.url
+        };
+        clipboard.copy(helper.createBBCode(data));
     },
 
     copyEncoded: function (tab) {
-        clipboard.copy(clipboard.encode(tab.url));
+        clipboard.copy(helper.encode(tab.url));
     },
 
     copyShortUrl: function (tab) {
-        var data = {longUrl: tab.url};
-        var req = new XMLHttpRequest();
-        req.open('POST', 'https://www.googleapis.com/urlshortener/v1/url?key=' +
-                clipboard.GOO_GL_API_KEY, true);
-        req.onreadystatechange = function () {
-            if (req.readyState === 4) {
-                var resp = JSON.parse(req.responseText);
-                if (resp.id) {
-                    clipboard.copy(resp.id);
-                } else {
-                    clipboard.status = false;
-                    clipboard.showNotification();
-                }
-                var popup = chrome.extension.getViews({type: 'popup'})[0];
-                popup.close();
-            }
-        };
-        req.setRequestHeader('Content-Type', 'application/json');
-        req.send(JSON.stringify(data));
+        helper.callUrlShortener(tab.url);
     },
 
     copyUrl: function (tab) {
         clipboard.copy(tab.url);
-    },
-
-    decode: function (url) {
-        return decodeURIComponent(url);
-    },
-
-    encode: function (url) {
-        return encodeURIComponent(url);
     },
 
     executeScriptsInExistingTabs: function (tabs) {
@@ -124,48 +71,26 @@ var clipboard = {
     getFeature: function (order) {
         switch (order) {
             case utils.get('copyAnchorOrder'):
-                return {
-                    'id': 'copyAnchor',
-                    'name': clipboard.ANCHOR_MODE,
-                    'enabled': utils.get('copyAnchorEnabled'),
-                    'shortcut': 'Ctrl+Alt+A',
-                    'macShortcut': '\u2325\u2318A'
-                };
+                return feature.anchor;
             case utils.get('copyBBCodeOrder'):
-                return {
-                    'id': 'copyBBCode',
-                    'name': clipboard.BBCODE_MODE,
-                    'enabled': utils.get('copyBBCodeEnabled'),
-                    'shortcut': 'Ctrl+Alt+B',
-                    'macShortcut': '\u2325\u2318B'
-                };
+                return feature.bbcode;
             case utils.get('copyEncodedOrder'):
-                return {
-                    'id': 'copyEncodedUrl',
-                    'name': clipboard.ENCODED_MODE,
-                    'enabled': utils.get('copyEncodedEnabled'),
-                    'shortcut': 'Ctrl+Alt+E',
-                    'macShortcut': '\u2325\u2318E'
-                };
+                return feature.encoded;
             case utils.get('copyShortOrder'):
-                return {
-                    'id': 'copyShortUrl',
-                    'name': clipboard.SHORT_MODE,
-                    'enabled': utils.get('copyShortEnabled'),
-                    'shortcut': 'Ctrl+Alt+S',
-                    'macShortcut': '\u2325\u2318S'
-                };
+                return feature.short;
             case utils.get('copyUrlOrder'):
-                return {
-                    'id': 'copyUrl',
-                    'name': clipboard.URL_MODE,
-                    'enabled': utils.get('copyUrlEnabled'),
-                    'shortcut': 'Ctrl+Alt+U',
-                    'macShortcut': '\u2325\u2318U'
-                };
+                return feature.url;
             default:
                 return {};
         }
+    },
+
+    getUrlShortener: function () {
+        /*
+         * TODO: Implement lookup functionality to return shortener selected by
+         * the user in the options.
+         */
+        return shortener.google;
     },
 
     init: function () {
@@ -197,8 +122,8 @@ var clipboard = {
 
     isBlacklisted: function (sender) {
         var reject = false;
-        for (var i = 0; i < clipboard.BLACKLISTED_EXTENSION_IDS.length; i++) {
-            if (clipboard.BLACKLISTED_EXTENSION_IDS[i] === sender.id) {
+        for (var i = 0; i < clipboard.blacklistedExtensions.length; i++) {
+            if (clipboard.blacklistedExtensions[i] === sender.id) {
                 reject = true;
                 break;
             }
@@ -214,28 +139,30 @@ var clipboard = {
         if (clipboard.isBlacklisted(sender)) {
             return;
         }
+        // TODO: Add OR expression to allow external requests
         if (utils.get('settingShortcut')) {
             chrome.tabs.getSelected(null, function (tab) {
                 var handler = (ietab.isActive(tab)) ? ietab : clipboard;
-                switch (request.mode) {
-                    case clipboard.URL_MODE:
-                        clipboard.mode = clipboard.URL_MODE;
+                // TODO: Update feature to send 'feature' instead of 'mode'
+                switch (request.feature) {
+                    case feature.url.name:
+                        clipboard.mode = feature.url.name;
                         handler.copyUrl(tab);
                         break;
-                    case clipboard.SHORT_MODE:
-                        clipboard.mode = clipboard.SHORT_MODE;
+                    case feature.short.name:
+                        clipboard.mode = feature.short.name;
                         handler.copyShortUrl(tab);
                         break;
-                    case clipboard.ANCHOR_MODE:
-                        clipboard.mode = clipboard.ANCHOR_MODE;
+                    case feature.anchor.name:
+                        clipboard.mode = feature.anchor.name;
                         handler.copyAnchor(tab);
                         break;
-                    case clipboard.BBCODE_MODE:
-                        clipboard.mode = clipboard.BBCODE_MODE;
+                    case feature.bbcode.name:
+                        clipboard.mode = feature.bbcode.name;
                         handler.copyBBCode(tab);
                         break;
-                    case clipboard.ENCODED_MODE:
-                        clipboard.mode = clipboard.ENCODED_MODE;
+                    case feature.encoded.name:
+                        clipboard.mode = feature.encoded.name;
                         handler.copyEncoded(tab);
                         break;
                 }
@@ -243,47 +170,39 @@ var clipboard = {
         }
     },
 
-    replaceEntities: function (str) {
-        return str
-            .replace('"', '&quot;')
-            .replace('&', '&amp;')
-            .replace('<', '&lt;')
-            .replace('>', '&gt;');
-    },
-
     reset: function () {
         clipboard.mode = '';
         clipboard.status = false;
     },
 
-    service: function (mode) {
+    service: function (feature) {
         chrome.tabs.getSelected(null, function (tab) {
             var handler = (ietab.isActive(tab)) ? ietab : clipboard;
             var popup = chrome.extension.getViews({type: 'popup'})[0];
-            switch (mode) {
-                case clipboard.URL_MODE:
-                    clipboard.mode = clipboard.URL_MODE;
+            switch (feature) {
+                case feature.url.name:
+                    clipboard.mode = feature.url.name;
                     handler.copyUrl(tab);
                     popup.close();
                     break;
-                case clipboard.SHORT_MODE:
+                case feature.short.name:
                     $('#loadDiv', popup.document).show();
                     $('#item', popup.document).hide();
-                    clipboard.mode = clipboard.SHORT_MODE;
+                    clipboard.mode = feature.short.name;
                     handler.copyShortUrl(tab);
                     break;
-                case clipboard.ANCHOR_MODE:
-                    clipboard.mode = clipboard.ANCHOR_MODE;
+                case feature.anchor.name:
+                    clipboard.mode = feature.anchor.name;
                     handler.copyAnchor(tab);
                     popup.close();
                     break;
-                case clipboard.BBCODE_MODE:
-                    clipboard.mode = clipboard.BBCODE_MODE;
+                case feature.bbcode.name:
+                    clipboard.mode = feature.bbcode.name;
                     handler.copyBBCode(tab);
                     popup.close();
                     break;
-                case clipboard.ENCODED_MODE:
-                    clipboard.mode = clipboard.ENCODED_MODE;
+                case feature.encoded.name:
+                    clipboard.mode = feature.encoded.name;
                     handler.copyEncoded(tab);
                     popup.close();
                     break;
@@ -302,10 +221,155 @@ var clipboard = {
     },
 
     updateFeatures: function () {
+        var count = helper.countProperties(feature);
         clipboard.features = [];
-        for (var i = 0; i < clipboard.NUMBER_OF_MODE; i++) {
+        for (var i = 0; i < count; i++) {
             clipboard.features[i] = clipboard.getFeature(i);
         }
+    }
+
+};
+
+var feature = {
+
+    anchor: {
+        getMacShortcut: function () {
+            return '\u2325\u2318A';
+        },
+        getShortcut: function () {
+            return 'Ctrl+Alt+A';
+        },
+        id: 'copyAnchor',
+        isEnabled: function () {
+            return utils.get('copyAnchorEnabled');
+        },
+        name: 'copy_anchor'
+    },
+
+    bbcode: {
+        getMacShortcut: function () {
+            return '\u2325\u2318B';
+        },
+        getShortcut: function () {
+            return 'Ctrl+Alt+B';
+        },
+        id: 'copyBBCode',
+        isEnabled: function () {
+            return utils.get('copyBBCodeEnabled');
+        },
+        name: 'copy_bbcode'
+    },
+
+    encoded: {
+        getMacShortcut: function () {
+            return '\u2325\u2318E';
+        },
+        getShortcut: function () {
+            return 'Ctrl+Alt+E';
+        },
+        id: 'copyEncodedUrl',
+        isEnabled: function () {
+            return utils.get('copyEncodedEnabled');
+        },
+        name: 'copy_encoded'
+    },
+
+    short: {
+        getMacShortcut: function () {
+            return '\u2325\u2318S';
+        },
+        getShortcut: function () {
+            return 'Ctrl+Alt+S';
+        },
+        id: 'copyShortUrl',
+        isEnabled: function () {
+            return utils.get('copyShortEnabled');
+        },
+        name: 'copy_short'
+    },
+
+    url: {
+        getMacShortcut: function () {
+            return '\u2325\u2318U';
+        },
+        getShortcut: function () {
+            return 'Ctrl+Alt+U';
+        },
+        id: 'copyUrl',
+        isEnabled: function () {
+            return utils.get('copyUrlEnabled');
+        },
+        name: 'copy_url'
+    }
+
+};
+
+var helper = {
+
+    addSlashes: function (str) {
+        return str
+            .replace('\\', '\\\\')
+            .replace('"', '\\"')
+            .replace('\'', '\\\'');
+    },
+
+    callUrlShortener: function (url) {
+        var req = new XMLHttpRequest();
+        var shortener = clipboard.getUrlShortener();
+        req.open(shortener.method, shortener.url, true);
+        req.onreadystatechange = function () {
+            if (req.readyState === 4) {
+                var output = shortener.output(req.responseText);
+                if (output) {
+                    clipboard.copy(output);
+                } else {
+                    clipboard.status = false;
+                    clipboard.showNotification();
+                }
+                var popup = chrome.extension.getViews({type: 'popup'})[0];
+                popup.close();
+            }
+        };
+        req.setRequestHeader('Content-Type', shortener.contentType);
+        req.send(shortener.input(url));
+    },
+
+    countProperties: function (obj) {
+        var count = 0;
+        for (var p in obj) {
+            if (obj.hasOwnProperty(p)) {
+                count++;
+            }
+        }
+        return count;
+    },
+
+    createAnchor: function (data) {
+        return $('<div/>').append($('<a/>', data)).html();
+    },
+
+    createBBCode: function (data) {
+        if (data.title) {
+            return '[url=' + data.url + ']' + data.title + '[/url]';
+        } else {
+            return '[url]' + data.url + '[/url]';
+        }
+    },
+
+    decode: function (url) {
+        return decodeURIComponent(url);
+    },
+
+    encode: function (url) {
+        return encodeURIComponent(url);
+    },
+
+    replaceEntities: function (str) {
+        return str
+            .replace('"', '&quot;')
+            .replace('&', '&amp;')
+            .replace('<', '&lt;')
+            .replace('>', '&gt;');
     }
 
 };
@@ -316,131 +380,126 @@ var clipboard = {
  * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
  * @since 0.0.2.0
  */
-// TODO: Complete documentation and code review
 var ietab = {
 
     /**
      * <p>The segment of the URI which precedes the embedded URL.</p>
      * @private
-     * @static
      * @type String
      */
-    CONTAINER_SEGMENT: 'iecontainer.html#url=',
+    containerSegment: 'iecontainer.html#url=',
 
     /**
      * <p>The identifier of the IE Tab extension.</p>
-     * @static
      * @type String
      */
-    EXTENSION_ID: 'hehijbfgiekmjfkfjpbkbammjbdenadd',
+    extensionId: 'hehijbfgiekmjfkfjpbkbammjbdenadd',
 
     /**
      * <p>The String prepended to the title by IE Tab.</p>
      * @private
-     * @static
      * @type String
      */
-    TITLE_PREFIX: 'IE: ',
+    titlePrefix: 'IE: ',
 
     copyAnchor: function (tab) {
-        /*
-         * TODO: Consider using jQuery to build anchor element
-         * (e.g. jQuery.html()).
-         */
-        var title = (tab.title) ? tab.title : tab.url;
-        var titleAttr = '';
-        var url = tab.url;
+        var data = {href: tab.url};
         if (utils.get('settingIeTabExtract')) {
-            url = clipboard.decode(ietab.extractUrl(url));
+            data.href = helper.decode(ietab.extractUrl(data.href));
         }
+        data.text = tab.title || data.href;
         if (tab.title) {
             if (utils.get('settingIeTabTitle')) {
-                title = ietab.extractTitle(title);
+                data.text = ietab.extractTitle(data.text);
             }
             if (utils.get('settingTitleAttr')) {
-                titleAttr = ' title="' + clipboard.addSlashes(title) + '"';
+                data.title = helper.addSlashes(data.text);
             }
         }
-        clipboard.copy('<a href="' + url + '"' + titleAttr + '>' +
-                clipboard.replaceEntities(title) + '</a>');
+        // TODO: Implement option to set targets as '_blank'
+        data.text = helper.replaceEntities(data.text);
+        clipboard.copy(helper.createAnchor(data));
     },
 
     copyBBCode: function (tab) {
-        var title = tab.title;
-        var url = tab.url;
+        var data = {
+            title: tab.title,
+            url: tab.url
+        };
         if (utils.get('settingIeTabExtract')) {
-            url = clipboard.decode(ietab.extractUrl(url));
+            data.url = helper.decode(ietab.extractUrl(data.url));
         }
-        if (title && utils.get('settingIeTabTitle')) {
-            title = ietab.extractTitle(title);
+        if (data.title && utils.get('settingIeTabTitle')) {
+            data.title = ietab.extractTitle(data.title);
         }
-        if (title) {
-            clipboard.copy('[url=' + url + ']' + title + '[/url]');
-        } else {
-            clipboard.copy('[url]' + url + '[/url]');
-        }
+        clipboard.copy(helper.createBBCode(data));
     },
 
     copyEncoded: function (tab) {
+        var url = tab.url;
         if (utils.get('settingIeTabExtract')) {
-            clipboard.copy(ietab.extractUrl(tab.url));
+            url = ietab.extractUrl(url);
         } else {
-            clipboard.copy(clipboard.encode(tab.url));
+            /*
+             * TODO: Test this works as expected considering it will already
+             * contains an encoded URI segment.
+             */
+            url = helper.encode(url);
         }
+        clipboard.copy(url);
     },
 
     copyShortUrl: function (tab) {
-        var data = {longUrl: tab.url};
+        var url = tab.url;
         if (utils.get('settingIeTabExtract')) {
-            data.longUrl = clipboard.decode(ietab.extractUrl(tab.url));
+            url = helper.decode(ietab.extractUrl(url));
         }
-        var req = new XMLHttpRequest();
-        req.open('POST', 'https://www.googleapis.com/urlshortener/v1/url?key=' +
-                clipboard.GOO_GL_API_KEY, true);
-        req.onreadystatechange = function () {
-            if (req.readyState === 4) {
-                var resp = JSON.parse(req.responseText);
-                if (resp.id) {
-                    clipboard.copy(resp.id);
-                } else {
-                    clipboard.status = false;
-                    clipboard.showNotification();
-                }
-                var popup = chrome.extension.getViews({type: 'popup'})[0];
-                popup.close();
-            }
-        };
-        req.setRequestHeader('Content-Type', 'application/json');
-        req.send(JSON.stringify(data));
+        helper.callUrlShortener(url);
     },
 
     copyUrl: function (tab) {
+        var url = tab.url;
         if (utils.get('settingIeTabExtract')) {
-            clipboard.copy(clipboard.decode(ietab.extractUrl(tab.url)));
-        } else {
-            clipboard.copy(tab.url);
+            url = helper.decode(ietab.extractUrl(url));
         }
+        clipboard.copy(url);
     },
 
-    extractTitle: function (title) {
-        var idx = title.indexOf(ietab.TITLE_PREFIX);
+    extractTitle: function (str) {
+        var idx = str.indexOf(ietab.titlePrefix);
         if (idx !== -1) {
-            return title.substring(idx + ietab.TITLE_PREFIX.length);
+            return str.substring(idx + ietab.titlePrefix.length);
         }
-        return title;
+        return str;
     },
 
-    extractUrl: function (url) {
-        var idx = url.indexOf(ietab.CONTAINER_SEGMENT);
+    extractUrl: function (str) {
+        var idx = str.indexOf(ietab.containerSegment);
         if (idx !== -1) {
-            return url.substring(idx + ietab.CONTAINER_SEGMENT.length);
+            return str.substring(idx + ietab.containerSegment.length);
         }
-        return url;
+        return str;
     },
 
     isActive: function (tab) {
         return tab.url.indexOf('chrome') === 0 &&
-                tab.url.indexOf(ietab.EXTENSION_ID) !== -1;
+                tab.url.indexOf(ietab.extensionId) !== -1;
+    }
+
+};
+
+var shortener = {
+
+    google: {
+        contentType: 'application/json',
+        input: function (url) {
+            return JSON.stringify({'longUrl': url});
+        },
+        method: 'POST',
+        output: function (resp) {
+            return JSON.parse(resp).id;
+        },
+        url: 'https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY'
     }
 
 };
