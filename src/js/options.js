@@ -293,3 +293,5 @@ var options = {
     }
 
 };
+
+options.init();
