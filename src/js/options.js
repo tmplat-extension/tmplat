@@ -15,8 +15,7 @@ var options = {
      */
     init: function () {
         // Inserts localized Strings
-        document.title = chrome.i18n.getMessage('opt_title');
-        utils.i18nReplace('#optionTitle', 'opt_title');
+        utils.i18nReplace('title, #optionTitle', 'opt_title');
         utils.i18nReplace('#featureSetting', 'opt_feature_header');
         utils.i18nReplace('#settingFeatureEnabledText',
                 'opt_feature_enabled_text');
@@ -46,7 +45,7 @@ var options = {
         var bg = chrome.extension.getBackgroundPage();
         // Displays IE Tab options if extension is detected
         // TODO: Verify data sent/received with IE Tab author and ammend below
-        chrome.extension.sendRequest(bg.ietab.EXTENSION_ID, {
+        chrome.extension.sendRequest(bg.ietab.extensionId, {
             'key': 'version',
             'type': 'GETLS'
         }, function (response) {
@@ -100,7 +99,7 @@ var options = {
                 'text': chrome.i18n.getMessage(feature.name),
                 'value': feature.name
             }).appendTo('#settingFeatures');
-            opt.data('enabled', String(feature.enabled));
+            opt.data('enabled', String(feature.isEnabled()));
         }
         /*
          * Whenever the selected option changes we want all the controls to
@@ -132,7 +131,7 @@ var options = {
                     $('#settingFeatureEnabled').removeAttr('checked');
                 }
                 // Disables checkbox control if option is for 'copy_url' feature
-                if (bg.clipboard.URL_MODE === opt.val()) {
+                if (bg.feature.url.name === opt.val()) {
                     $('#settingFeatureEnabled').attr('disabled', 'disabled');
                 } else {
                     $('#settingFeatureEnabled').removeAttr('disabled');
@@ -249,23 +248,27 @@ var options = {
         $('#settingFeatures option').each(function (index) {
             var opt = $(this);
             switch (opt.val()) {
-                case bg.clipboard.ANCHOR_MODE:
-                    utils.set('copyAnchorEnabled', opt.data('enabled') === 'true');
+                case bg.feature.anchor.name:
+                    utils.set('copyAnchorEnabled',
+                            opt.data('enabled') === 'true');
                     utils.set('copyAnchorOrder', index);
                     break;
-                case bg.clipboard.BBCODE_MODE:
-                    utils.set('copyBBCodeEnabled', opt.data('enabled') === 'true');
+                case bg.feature.bbcode.name:
+                    utils.set('copyBBCodeEnabled',
+                            opt.data('enabled') === 'true');
                     utils.set('copyBBCodeOrder', index);
                     break;
-                case bg.clipboard.ENCODED_MODE:
-                    utils.set('copyEncodedEnabled', opt.data('enabled') === 'true');
+                case bg.feature.encoded.name:
+                    utils.set('copyEncodedEnabled',
+                            opt.data('enabled') === 'true');
                     utils.set('copyEncodedOrder', index);
                     break;
-                case bg.clipboard.SHORT_MODE:
-                    utils.set('copyShortEnabled', opt.data('enabled') === 'true');
+                case bg.feature.short.name:
+                    utils.set('copyShortEnabled',
+                            opt.data('enabled') === 'true');
                     utils.set('copyShortOrder', index);
                     break;
-                case bg.clipboard.URL_MODE:
+                case bg.feature.url.name:
                     utils.set('copyUrlEnabled', opt.data('enabled') === 'true');
                     utils.set('copyUrlOrder', index);
                     break;
