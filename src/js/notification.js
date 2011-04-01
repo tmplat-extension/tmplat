@@ -41,3 +41,5 @@ var notification = {
     }
 
 };
+
+notification.init();
