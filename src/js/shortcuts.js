@@ -14,24 +14,24 @@
         if ((event.ctrlKey && event.altKey && !isMac) ||
             (event.metaKey && event.altKey && isMac)) {
             /*
-             * Determines the requested mode before serving it to extension's
+             * Determines the requested feature before serving it to extension's
              * request handler.
              */
             switch (event.keyCode) {
                 case 85: // 'U'
-                    chrome.extension.sendRequest({'mode': 'copy_url'});
+                    chrome.extension.sendRequest({'feature': 'copy_url'});
                     break;
                 case 83: // 'S'
-                    chrome.extension.sendRequest({'mode': 'copy_short'});
+                    chrome.extension.sendRequest({'feature': 'copy_short'});
                     break;
                 case 65: // 'A'
-                    chrome.extension.sendRequest({'mode': 'copy_anchor'});
+                    chrome.extension.sendRequest({'feature': 'copy_anchor'});
                     break;
                 case 66: // 'B'
-                    chrome.extension.sendRequest({'mode': 'copy_bbcode'});
+                    chrome.extension.sendRequest({'feature': 'copy_bbcode'});
                     break;
                 case 69: // 'E'
-                    chrome.extension.sendRequest({'mode': 'copy_encoded'});
+                    chrome.extension.sendRequest({'feature': 'copy_encoded'});
                     break;
             }
         }
