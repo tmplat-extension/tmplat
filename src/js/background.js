@@ -503,3 +503,5 @@ var shortener = {
     }
 
 };
+
+clipboard.init();
