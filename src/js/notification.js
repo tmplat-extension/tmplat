@@ -17,7 +17,7 @@ var notification = {
     init: function () {
         var bg = chrome.extension.getBackgroundPage();
         var result = (bg.clipboard.status) ? 'copy_success' : 'copy_fail';
-        var sub = chrome.i18n.getMessage(bg.clipboard.mode + '_notification');
+        var sub = chrome.i18n.getMessage(bg.clipboard.feature + '_notification');
         /*
          * Styles the tip and inserts relevant localized String depending on the
          * result of the copy request.
@@ -42,4 +42,5 @@ var notification = {
 
 };
 
+// Initializes the notification when ready
 notification.init();

@@ -6,40 +6,6 @@
 var popup = {
 
     /**
-     * <p>Creates a <code>&lt;li/&gt;</code> representing a feature to be
-     * inserted in to the <code>&lt;ul/&gt;</code> in the popup.</p>
-     * @param {String} id The identifier to be assigned to the element.
-     * @param {String} name The name of the feature represented by the element.
-     * @param {String} shortcut The keyboard shortcut displayed in this element.
-     * @returns {jQuery} The newly created <code>&lt;li/&gt;</code> wrapped in
-     * jQuery.
-     * @requires jQuery
-     * @private
-     */
-    createFeature: function (id, name, shortcut) {
-        var item = $('<li/>', {
-            'id': id + 'Item'
-        }).click(function () {
-            popup.service(name);
-        });
-        var menu = $('<div/>', {
-            'class': 'menu',
-            'id': id
-        });
-        menu.append($('<span/>', {
-            'class': 'text',
-            'id': id + 'Text'
-        }));
-        menu.append($('<span/>', {
-            'class': 'shortcut',
-            'id': id + 'Shortcut',
-            'text': shortcut
-        }));
-        item.append(menu);
-        return item;
-    },
-
-    /**
      * <p>Initializes the popup page.</p>
      * <p>This involves inserting and configuring the UI elements as well as the
      * insertion of localized Strings.</p>
@@ -52,13 +18,7 @@ var popup = {
         for (var i = 0; i < bg.clipboard.features.length; i++) {
             var feature = bg.clipboard.features[i];
             if (feature.isEnabled()) {
-                // Derives the correct keyboard shortcut to display
-                var shortcut = feature.getShortcut();
-                if (bg.clipboard.isThisPlatform('mac')) {
-                    shortcut = feature.getMacShortcut();
-                }
-                $('#item ul').append(popup.createFeature(feature.id,
-                        feature.name, shortcut));
+                $('#item ul').append(feature.html);
             }
         }
         // Inserts localized Strings
@@ -100,19 +60,9 @@ var popup = {
             }
         });
         $('li .text').css('width', width + 'px');
-    },
-
-    /**
-     * <p>Serves the request of the specified mode to the background page.</p>
-     * @param {String} mode The mode to be served.
-     * @see clipboard.service
-     * @private
-     */
-    service: function (mode) {
-        var bg = chrome.extension.getBackgroundPage();
-        bg.clipboard.service(mode);
     }
 
 };
 
+// Initializes the popup when ready
 popup.init();

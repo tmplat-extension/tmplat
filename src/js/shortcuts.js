@@ -13,26 +13,30 @@
         var isMac = navigator.userAgent.toLowerCase().indexOf('mac') !== -1;
         if ((event.ctrlKey && event.altKey && !isMac) ||
             (event.metaKey && event.altKey && isMac)) {
+            var data = {'shortcut': true};
             /*
              * Determines the requested feature before serving it to extension's
              * request handler.
              */
             switch (event.keyCode) {
                 case 85: // 'U'
-                    chrome.extension.sendRequest({'feature': 'copy_url'});
+                    data.feature = 'copy_url';
                     break;
                 case 83: // 'S'
-                    chrome.extension.sendRequest({'feature': 'copy_short'});
+                    data.feature = 'copy_short';
                     break;
                 case 65: // 'A'
-                    chrome.extension.sendRequest({'feature': 'copy_anchor'});
+                    data.feature = 'copy_anchor';
                     break;
                 case 66: // 'B'
-                    chrome.extension.sendRequest({'feature': 'copy_bbcode'});
+                    data.feature = 'copy_bbcode';
                     break;
                 case 69: // 'E'
-                    chrome.extension.sendRequest({'feature': 'copy_encoded'});
+                    data.feature = 'copy_encoded';
                     break;
+            }
+            if (data.feature) {
+                 chrome.extension.sendRequest(data);
             }
         }
     }, false);

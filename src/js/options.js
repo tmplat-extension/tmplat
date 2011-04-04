@@ -19,7 +19,17 @@ var options = {
         utils.i18nReplace('#featureSetting', 'opt_feature_header');
         utils.i18nReplace('#settingFeatureEnabledText',
                 'opt_feature_enabled_text');
+        utils.i18nReplace('#urlShortenerSetting', 'opt_url_shortener_header');
+        utils.i18nReplace('#urlShortenerNameHeader',
+                'opt_url_shortener_name_header');
+        utils.i18nReplace('#urlShortenerEnabledHeader',
+                'opt_url_shortener_enabled_header');
+        utils.i18nReplace('#urlShortenerConfigHeader',
+                'opt_url_shortener_config_header');
+        utils.i18nReplace('#bitlyXLoginText', 'opt_url_shortener_username_text');
+        utils.i18nReplace('#bitlyXApiKeyText', 'opt_url_shortener_api_key_text');
         utils.i18nReplace('#anchorSetting', 'opt_anchor_header');
+        utils.i18nReplace('#settingTargetAttrText', 'opt_anchor_target_text');
         utils.i18nReplace('#settingTitleAttrText', 'opt_anchor_title_text');
         utils.i18nReplace('#notificationSetting', 'opt_notification_header');
         utils.i18nReplace('#settingNotificationText', 'opt_notification_text');
@@ -60,10 +70,16 @@ var options = {
     load: function () {
         options.loadFeatures();
         options.loadNotifications();
+        options.loadUrlShorteners();
         if (utils.get('settingShortcut')) {
             $('#settingShortcut').attr('checked', 'checked');
         } else {
             $('#settingShortcut').removeAttr('checked');
+        }
+        if (utils.get('settingTargetAttr')) {
+            $('#settingTargetAttr').attr('checked', 'checked');
+        } else {
+            $('#settingTargetAttr').removeAttr('checked');
         }
         if (utils.get('settingTitleAttr')) {
             $('#settingTitleAttr').attr('checked', 'checked');
@@ -205,17 +221,36 @@ var options = {
     },
 
     /**
+     * <p>Updates the URL shorteners section of the options page with the
+     * current settings.</p>
+     * @requires jQuery
+     * @private
+     */
+    loadUrlShorteners: function () {
+        $('input[name="settingEnabledUrlShortener"]').each(function () {
+            var radio = $(this);
+            if (utils.get(radio.attr('id'))) {
+                radio.attr('checked', 'checked');
+            }
+        });
+        $('#bitlyXApiKey').val(utils.get('bitlyXApiKey'));
+        $('#bitlyXLogin').val(utils.get('bitlyXLogin'));
+    },
+
+    /**
      * <p>Updates the settings with the values from the options page.</p>
      * @requires jQuery
      */
     save: function () {
         utils.set('settingShortcut', $('#settingShortcut').is(':checked'));
+        utils.set('settingTargetAttr', $('#settingTargetAttr').is(':checked'));
         utils.set('settingTitleAttr', $('#settingTitleAttr').is(':checked'));
         utils.set('settingIeTabExtract',
                 !$('#settingIeTabExtract').is(':checked'));
         utils.set('settingIeTabTitle', $('#settingIeTabTitle').is(':checked'));
         options.saveFeatures();
         options.saveNotifications();
+        options.saveUrlShorteners();
     },
 
     /**
@@ -290,8 +325,24 @@ var options = {
         var timeInSecs = $('#settingNotificationTimer').val();
         timeInSecs = (timeInSecs) ? parseInt(timeInSecs, 10) * 1000 : 0;
         utils.set('settingNotificationTimer', timeInSecs);
+    },
+
+    /**
+     * <p>Updates the settings with the values from the URL shorteners section
+     * of the options page.</p>
+     * @requires jQuery
+     * @private
+     */
+    saveUrlShorteners: function () {
+        $('input[name="settingEnabledUrlShortener"]').each(function () {
+            var radio = $(this);
+            utils.set(radio.attr('id'), radio.is(':checked'));
+        });
+        utils.set('bitlyXApiKey', $('#bitlyXApiKey').val());
+        utils.set('bitlyXLogin', $('#bitlyXLogin').val());
     }
 
 };
 
+// Initializes the options when ready
 options.init();

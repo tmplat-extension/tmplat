@@ -50,6 +50,9 @@
    "opt_anchor_header": {
       "message": "Anchor Settings:"
    },
+   "opt_anchor_target_text": {
+      "message": "Include \u003Ccode\u003Etarget\u003C/code\u003E attribute to open link in new window"
+   },
    "opt_anchor_title_text": {
       "message": "Include \u003Ccode\u003Etitle\u003C/code\u003E attribute"
    },
@@ -85,6 +88,24 @@
    },
    "opt_notification_timer_text2": {
       "message": "seconds (Disable auto-hide: \u003Cem\u003E0\u003C/em\u003E)"
+   },
+   "opt_url_shortener_api_key_text": {
+      "message": "API Key:"
+   },
+   "opt_url_shortener_config_header": {
+      "message": "Configuration"
+   },
+   "opt_url_shortener_enabled_header": {
+      "message": "Enabled"
+   },
+   "opt_url_shortener_header": {
+      "message": "URL Shortener Settings:"
+   },
+   "opt_url_shortener_name_header": {
+      "message": "Name"
+   },
+   "opt_url_shortener_username_text": {
+      "message": "Username:"
    },
    "opt_save_button": {
       "message": "Save &amp; Close"
