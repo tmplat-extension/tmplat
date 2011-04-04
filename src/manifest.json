@@ -32,7 +32,8 @@
     "permissions": [
         "notifications",
         "tabs",
-        "https://www.googleapis.com/urlshortener/*"
+        "https://www.googleapis.com/urlshortener/*",
+        "http://api.bitly.com/v3/*"
     ],
     "version": "0.0.2.1"
 }
