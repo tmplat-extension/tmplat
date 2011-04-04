@@ -600,6 +600,9 @@ var helper = {
      * @requires jQuery
      */
     createAnchor: function (data) {
+        if (!data.target && utils.get('settingTargetAttr')) {
+            data.target = '_blank';
+        }
         return $('<div/>').append($('<a/>', data)).html();
     },
 
