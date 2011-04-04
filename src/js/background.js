@@ -631,9 +631,8 @@ var helper = {
      */
     createFeatureHtml: function (feature) {
         var item = $('<li/>', {
-            'id': feature.id + 'Item'
-        }).click(function () {
-            chrome.extension.sendRequest({'feature': feature.name});
+            'id': feature.id + 'Item',
+            'name': feature.name
         });
         var menu = $('<div/>', {
             'class': 'menu',

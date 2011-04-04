@@ -21,6 +21,10 @@ var popup = {
                 $('#item ul').append(feature.html);
             }
         }
+        // Binds request to click event
+        $('#item li').click(function () {
+            chrome.extension.sendRequest({'feature': $(this).attr('name')});
+        });
         // Inserts localized Strings
         utils.i18nReplace('#copyAnchorText', 'copy_anchor');
         utils.i18nReplace('#copyBBCodeText', 'copy_bbcode');
