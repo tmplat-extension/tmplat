@@ -343,6 +343,3 @@ var options = {
     }
 
 };
-
-// Initializes the options when ready
-options.init();

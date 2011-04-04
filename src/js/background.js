@@ -116,7 +116,9 @@ var clipboard = {
      */
     executeScriptsInExistingTabs: function (tabs) {
         for (var i = 0; i < tabs.length; i++) {
-            chrome.tabs.executeScript(tab[i].id, {file: '../js/shortcuts.js'});
+            chrome.tabs.executeScript(tabs[i].id, {
+                'file': chrome.extension.getURL("js/shortcuts.js")
+            });
         }
     },
 
@@ -166,8 +168,11 @@ var clipboard = {
     getUrlShortener: function () {
         // Attempts to lookup enabled URL Shortener service
         for (var p in shortener) {
-            if (shortener.hasOwnProperty(p) && p.isEnabled()) {
-                return p;
+            if (shortener.hasOwnProperty(p)) {
+                var op = shortener[p];
+                if (op.isEnabled()) {
+                    return op;
+                }
             }
         }
         // Returns google service by default
@@ -215,7 +220,8 @@ var clipboard = {
         // Generates the HTML for each feature to optimize popup loading times
         for (var p in feature) {
             if (feature.hasOwnProperty(p)) {
-                p.html = helper.createFeatureHtml(p);
+                var op = feature[p];
+                op.html = helper.createFeatureHtml(op);
             }
         }
         clipboard.updateFeatures();
@@ -228,8 +234,8 @@ var clipboard = {
      */
     initUrlShorteners: function () {
         utils.init('bitlyEnabled', false);
-        utils.init('bitlyXApiKey', undefined);
-        utils.init('bitlyXLogin', undefined);
+        utils.init('bitlyXApiKey', '');
+        utils.init('bitlyXLogin', '');
         utils.init('googleEnabled', true);
     },
 
@@ -383,8 +389,9 @@ var clipboard = {
     showNotification: function () {
         if (utils.get('settingNotification')) {
             webkitNotifications
-                    .createHTMLNotification('../pages/notification.html')
-                    .show();
+                    .createHTMLNotification(
+                        chrome.extension.getURL("pages/notification.html")
+                    ).show();
         } else {
             clipboard.reset();
         }
@@ -913,6 +920,3 @@ var shortener = {
     }
 
 };
-
-// Initializes the clipboard when ready
-clipboard.init();

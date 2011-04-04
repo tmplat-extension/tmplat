@@ -41,6 +41,3 @@ var notification = {
     }
 
 };
-
-// Initializes the notification when ready
-notification.init();

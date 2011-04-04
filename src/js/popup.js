@@ -63,6 +63,3 @@ var popup = {
     }
 
 };
-
-// Initializes the popup when ready
-popup.init();
