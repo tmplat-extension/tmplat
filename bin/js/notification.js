@@ -1,0 +1,2 @@
+/* (c) 2011 Alasdair Mercer */
+var notification={init:function(){var bg=chrome.extension.getBackgroundPage();var result=(bg.clipboard.status)?'copy_success':'copy_fail';var sub=chrome.i18n.getMessage(bg.clipboard.feature+'_notification');$('#tip').addClass(result).html(chrome.i18n.getMessage(result,sub));bg.clipboard.reset();if(utils.get('settingNotificationTimer')>0){window.setTimeout(function(){window.close();},utils.get('settingNotificationTimer'));}}};

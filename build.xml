@@ -1,1 +1,67 @@
-empty file.
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="URL-Copy" basedir="." default="build-all">
+    <description>
+        Builds the distributable files and documentation for the URL-Copy
+        extension
+    </description>
+    <!-- Properties -->
+    <property environment="env" />
+    <property file="build/build.properties" />
+    <!-- Task Definitions -->
+    <taskdef name="jsdoctoolkit"
+            classname="uk.co.darrenhurley.ant.tasks.JsDocToolkit"
+            classpath="${cp.jsdoctoolkit}" />
+    <taskdef name="jsmin" classname="net.matthaynes.jsmin.JSMin_Task"
+            classpath="${cp.jsmin}" />
+    <!-- Targets -->
+    <target name="build" description="Compiles source">
+        <tstamp>
+            <format property="date.year" pattern="yyyy" locale="en,UK" />
+        </tstamp>
+        <delete includeemptydirs="true">
+            <fileset dir="${dir.bin}" includes="**/*" />
+        </delete>
+        <copy todir="${dir.bin}/js">
+            <fileset dir="${dir.src}/js">
+                <include name="**/*.min.js" />
+            </fileset>
+        </copy>
+        <copy todir="${dir.bin}">
+            <fileset dir="${dir.src}">
+                <exclude name="**/.git*" />
+                <exclude name="**/*.js" />
+                <include name="**/*" />
+            </fileset>
+        </copy>
+        <jsmin copyright="(c) ${date.year} ${msg.copyright}"
+                destdir="${dir.bin}/js">
+            <fileset dir="${dir.src}/js">
+                <exclude name="**/*.min.js" />
+                <include name="**/*.js" />
+            </fileset>
+        </jsmin>
+    </target>
+    <target name="build-all" depends="dist, generate-docs"
+            description="Generates documentation and distributable files" />
+    <target name="dist" depends="build"
+            description="Generates distributable files from compiled">
+        <delete includeemptydirs="true">
+            <fileset dir="${dir.dist}" includes="**/*.zip" />
+        </delete>
+        <zip basedir="${dir.bin}" destfile="${dir.dist}/${file.dist}.zip" />
+    </target>
+    <target name="generate-docs"
+            description="Generates documentation from source">
+        <delete includeemptydirs="true">
+            <fileset dir="${dir.docs}" includes="**/*" />
+        </delete>
+        <jsdoctoolkit includeprivate="true" includeundocumented="true"
+                jsdochome="${dir.jsdoctoolkit}" outputdir="${dir.docs}"
+                template="jsdoc">
+            <fileset dir="${dir.src}/js">
+                <exclude name="**/*.min.js" />
+                <include name="**/*.js" />
+            </fileset>
+        </jsdoctoolkit>
+    </target>
+</project>

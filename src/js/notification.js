@@ -2,6 +2,7 @@
  * <p>Responsible for the notification page.</p>
  * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
  * @since 0.0.2.1
+ * @namespace
  */
 var notification = {
 
@@ -10,7 +11,6 @@ var notification = {
      * <p>This involves inserting and configuring the UI elements as well as the
      * insertion of localized Strings based on the result of the copy request.
      * </p>
-     * @constructs
      * @requires jQuery
      * @see clipboard.showNotification
      */

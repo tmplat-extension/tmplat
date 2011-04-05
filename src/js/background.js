@@ -2,6 +2,7 @@
  * <p>Main controller for the extension and manages all copy requests.</p>
  * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
  * @since 0.0.1.0
+ * @namespace
  */
 var clipboard = {
 
@@ -183,7 +184,6 @@ var clipboard = {
      * <p>Initializes the background page.</p>
      * <p>This involves initializing the settings, injecting keyboard shortcut
      * listeners and adding the request listeners.</p>
-     * @constructs
      */
     init: function () {
         utils.init('settingNotification', true);
@@ -418,25 +418,33 @@ var clipboard = {
  * <p>Each feature provides the information required to use it.</p>
  * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
  * @since 0.0.2.1
+ * @namespace
  */
 var feature = {
 
     /**
      * <p>Represents the feature that generates the formatted HTML for an anchor
      * tag that can be inserted in to any HTML to link to the URL.</p>
+     * @namespace
      */
     anchor: {
+        /** @returns {String} */
         getMacShortcut: function () {
             return '\u2325\u2318A';
         },
+        /** @returns {String} */
         getShortcut: function () {
             return 'Ctrl+Alt+A';
         },
+        /** @type String */
         html: '',
+        /** @type String */
         id: 'copyAnchor',
+        /** @returns {Boolean} */
         isEnabled: function () {
             return utils.get('copyAnchorEnabled');
         },
+        /** @type String */
         name: 'copy_anchor'
     },
 
@@ -444,38 +452,52 @@ var feature = {
      * <p>Represents the feature that generates the formatted BBCode for a
      * <code>url</code> tag that can be added to most forum posts to link to the
      * URL.</p>
+     * @namespace
      */
     bbcode: {
+        /** @returns {String} */
         getMacShortcut: function () {
             return '\u2325\u2318B';
         },
+        /** @returns {String} */
         getShortcut: function () {
             return 'Ctrl+Alt+B';
         },
+        /** @type String */
         html: '',
+        /** @type String */
         id: 'copyBBCode',
+        /** @returns {Boolean} */
         isEnabled: function () {
             return utils.get('copyBBCodeEnabled');
         },
+        /** @type String */
         name: 'copy_bbcode'
     },
 
     /**
      * <p>Represents the feature that encodes the URL so it can be used in
      * special situations.</p>
+     * @namespace
      */
     encoded: {
+        /** @returns {String} */
         getMacShortcut: function () {
             return '\u2325\u2318E';
         },
+        /** @returns {String} */
         getShortcut: function () {
             return 'Ctrl+Alt+E';
         },
+        /** @type String */
         html: '',
+        /** @type String */
         id: 'copyEncodedUrl',
+        /** @returns {Boolean} */
         isEnabled: function () {
             return utils.get('copyEncodedEnabled');
         },
+        /** @type String */
         name: 'copy_encoded'
     },
 
@@ -483,38 +505,52 @@ var feature = {
      * <p>Represents the feature that retrieves a shortened version of the URL
      * which can be used anywhere, but more commonly micro-blogging or social
      * networking sites.</p>
+     * @namespace
      */
     short: {
+        /** @returns {String} */
         getMacShortcut: function () {
             return '\u2325\u2318S';
         },
+        /** @returns {String} */
         getShortcut: function () {
             return 'Ctrl+Alt+S';
         },
+        /** @type String */
         html: '',
+        /** @type String */
         id: 'copyShortUrl',
+        /** @returns {Boolean} */
         isEnabled: function () {
             return utils.get('copyShortEnabled');
         },
+        /** @type String */
         name: 'copy_short'
     },
 
     /**
      * <p>Represents the feature that simply uses the original URL which can be
      * used anywhere.</p>
+     * @namespace
      */
     url: {
+        /** @returns {String} */
         getMacShortcut: function () {
             return '\u2325\u2318U';
         },
+        /** @returns {String} */
         getShortcut: function () {
             return 'Ctrl+Alt+U';
         },
+        /** @type String */
         html: '',
+        /** @type String */
         id: 'copyUrl',
+        /** @returns {Boolean} */
         isEnabled: function () {
             return utils.get('copyUrlEnabled');
         },
+        /** @type String */
         name: 'copy_url'
     }
 
@@ -524,6 +560,7 @@ var feature = {
  * <p>Provides helper functions used by the background page.</p>
  * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
  * @since 0.0.2.1
+ * @namespace
  */
 var helper = {
 
@@ -703,6 +740,7 @@ var helper = {
  * tabs where the IE Tab is currently active.</p>
  * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
  * @since 0.0.2.0
+ * @namespace
  */
 var ietab = {
 
@@ -872,6 +910,7 @@ var ietab = {
  * the logic to prepare the data to be sent and parse the data received.</p>
  * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
  * @since 0.0.2.1
+ * @namespace
  */
 /*
  * TODO: Implement OAuth support and options section.
@@ -879,9 +918,17 @@ var ietab = {
  */
 var shortener = {
 
-    /** Represents the bit.ly service. */
+    /**
+     * <p>Represents the bit.ly service.</p>
+     * @namespace
+     */
     bitly: {
+        /** @type String */
         contentType: 'application/json',
+        /**
+         * @param {String} url
+         * @returns {String}
+         */
         input: function (url) {
             var data = {
                 'format': 'json',
@@ -893,31 +940,55 @@ var shortener = {
             }
             return JSON.stringify(data);
         },
+        /** @returns {Boolean} */
         isEnabled: function () {
             return utils.get('bitlyEnabled');
         },
+        /** @type String */
         method: 'GET',
+        /** @type String */
         name: 'bit.ly',
+        /**
+         * @param {String} resp
+         * @returns {String}
+         */
         output: function (resp) {
             return JSON.parse(resp).data.url;
         },
+        /** @type String */
         url: 'http://api.bitly.com/v3/shorten?login=urlcopy&apiKey=R_05858399e8a60369e1d1562817b77b39'
     },
 
-    /** Represents the Google URL Shortener service. */
+    /**
+     * <p>Represents the Google URL Shortener service.</p>
+     * @namespace
+     */
     google: {
+        /** @type String */
         contentType: 'application/json',
+        /**
+         * @param {String} url
+         * @returns {String}
+         */
         input: function (url) {
             return JSON.stringify({'longUrl': url});
         },
+        /** @returns {Boolean} */
         isEnabled: function () {
             return utils.get('googleEnabled');
         },
+        /** @type String */
         method: 'POST',
+        /** @type String */
         name: 'goo.gl',
+        /**
+         * @param {String} resp
+         * @returns {String}
+         */
         output: function (resp) {
             return JSON.parse(resp).id;
         },
+        /** @type String */
         url: 'https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY'
     }
 

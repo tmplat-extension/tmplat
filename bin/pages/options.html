@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title></title>
+        <link type="text/css" rel="stylesheet" href="../css/options.css" />
+        <script type="text/javascript" src="../js/jquery.min.js"></script>
+        <script type="text/javascript" src="../js/utils.js"></script>
+        <script type="text/javascript" src="../js/options.js"></script>
+        <script type="text/javascript">
+            $(function () { options.init(); });
+        </script>
+    </head>
+    <body>
+        <div class="contentBox">
+            <div id="header">
+                <h1 id="optionTitle"></h1>
+            </div>
+            <div id="featureSettingDiv">
+                <h4 id="featureSetting"></h4>
+                <div class="section-content">
+                    <div>
+                        <table style="border: none; border-collapse; collapse; width: 100%">
+                            <tr>
+                                <td rowspan="2" style="width: 50%">
+                                    <select id="settingFeatures" size="5" style="width: 100%"></select>
+                                </td>
+                                <td>
+                                    <button id="moveUpButton"><img src="../images/move_up_disabled.gif" /></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button id="moveDownButton"><img src="../images/move_down_disabled.gif" /></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <label>
+                                        <input type="checkbox" id="settingFeatureEnabled" disabled="disabled" />
+                                        <span id="settingFeatureEnabledText"></span>
+                                    </label>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="urlShortenerSettingDiv">
+                <h4 id="urlShortenerSetting"></h4>
+                <div class="section-content">
+                    <div>
+                        <table style="border: none; border-collapse; collapse; width: 100%">
+                            <tr>
+                                <th id="urlShortenerNameHeader"></th>
+                                <th id="urlShortenerEnabledHeader"></th>
+                                <th id="urlShortenerConfigHeader"></th>
+                            </tr>
+                            <tr style="vertical-align: top">
+                                <td><a href="http://bit.ly" target="_blank">bit.ly</a></td>
+                                <td><input type="radio" name="settingEnabledUrlShortener" id="bitlyEnabled" /></td>
+                                <td>
+                                    <div>
+                                        <label>
+                                            <span id="bitlyXLoginText"></span><br />
+                                            <input type="text" id="bitlyXLogin" />
+                                        </label>
+                                    </div>
+                                    <div>
+                                        <label>
+                                            <span id="bitlyXApiKeyText"></span><br />
+                                            <input type="text" id="bitlyXApiKey" />
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr style="vertical-align: top">
+                                <td><a href="http://goo.gl" target="_blank">goo.gl</a></td>
+                                <td><input type="radio" name="settingEnabledUrlShortener" id="googleEnabled" /></td>
+                                <td>&nbsp;</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div id="anchorSettingDiv">
+                <h4 id="anchorSetting"></h4>
+                <div class="section-content">
+                    <div>
+                        <label>
+                            <input type="checkbox" id="settingTitleAttr" />
+                            <span id="settingTitleAttrText"></span>
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" id="settingTargetAttr" />
+                            <span id="settingTargetAttrText"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div id="notificationSettingDiv">
+                <h4 id="notificationSetting"></h4>
+                <div class="section-content">
+                    <div>
+                        <label>
+                            <input type="checkbox" id="settingNotification" />
+                            <span id="settingNotificationText"></span>
+                        </label>
+                    </div>
+                    <div style="margin: 5px 0 0 4px">
+                        <label>
+                            <span id="settingNotificationTimerText1"></span>
+                            <select id="settingNotificationTimer"></select>
+                            <span id="settingNotificationTimerText2"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div id="shortcutSettingDiv">
+                <h4 id="shorcutSetting"></h4>
+                <div class="section-content">
+                    <div>
+                        <label>
+                            <input type="checkbox" id="settingShortcut" />
+                            <span id="settingShortcutText"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div id="ieTabSettingDiv">
+                <h4 id="ieTabSetting"></h4>
+                <div class="section-content">
+                    <div>
+                        <label>
+                            <input type="checkbox" id="settingIeTabExtract" />
+                            <span id="settingIeTabExtractText"></span>
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input type="checkbox" id="settingIeTabTitle" />
+                            <span id="settingIeTabTitleText"></span>
+                        </label>
+                    </div>
+                    <div style="margin: 15px 0 0 4px">
+                        <span id="ieTabFooter"></span>
+                        <a href="https://chrome.google.com/webstore/detail/hehijbfgiekmjfkfjpbkbammjbdenadd" id="ieTabExtension" target="_blank"></a>
+                        |
+                        <a href="http://www.ietab.net/" id="ieTabWebsite" target="_blank"></a>
+                    </div>
+                </div>
+            </div>
+            <div class="closeBtn">
+                <button id="saveAndClose"></button>
+            </div>
+        </div>
+        <div id="footer"></div>
+    </body>
+</html>

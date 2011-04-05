@@ -2,6 +2,7 @@
  * <p>Responsible for the options page.</p>
  * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
  * @since 0.0.2.1
+ * @namespace
  */
 var options = {
 
@@ -10,7 +11,6 @@ var options = {
      * <p>This involves inserting and configuring the UI elements as well as the
      * insertion of localized Strings and most importantly loading the current
      * settings.</p>
-     * @constructs
      * @requires jQuery
      */
     init: function () {

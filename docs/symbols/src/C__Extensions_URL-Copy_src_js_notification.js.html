@@ -1,0 +1,50 @@
+<html><head><meta http-equiv="content-type" content="text/html; charset=UTF-8"> <style>
+	.KEYW {color: #933;}
+	.COMM {color: #bbb; font-style: italic;}
+	.NUMB {color: #393;}
+	.STRN {color: #393;}
+	.REGX {color: #339;}
+	.line {border-right: 1px dotted #666; color: #666; font-style: normal;}
+	</style></head><body><pre><span class='line'>  1</span> <span class="COMM">/**
+<span class='line'>  2</span>  * &lt;p>Responsible for the notification page.&lt;/p>
+<span class='line'>  3</span>  * @author &lt;a href="http://github.com/neocotic">Alasdair Mercer&lt;/a>
+<span class='line'>  4</span>  * @since 0.0.2.1
+<span class='line'>  5</span>  * @namespace
+<span class='line'>  6</span>  */</span><span class="WHIT">
+<span class='line'>  7</span> </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">notification</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'>  8</span> 
+<span class='line'>  9</span> </span><span class="WHIT">    </span><span class="COMM">/**
+<span class='line'> 10</span>      * &lt;p>Initializes the notification page.&lt;/p>
+<span class='line'> 11</span>      * &lt;p>This involves inserting and configuring the UI elements as well as the
+<span class='line'> 12</span>      * insertion of localized Strings based on the result of the copy request.
+<span class='line'> 13</span>      * &lt;/p>
+<span class='line'> 14</span>      * @requires jQuery
+<span class='line'> 15</span>      * @see clipboard.showNotification
+<span class='line'> 16</span>      */</span><span class="WHIT">
+<span class='line'> 17</span> </span><span class="WHIT">    </span><span class="NAME">init</span><span class="PUNC">:</span><span class="WHIT"> </span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 18</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">bg</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">chrome.extension.getBackgroundPage</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 19</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">result</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">bg.clipboard.status</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">?</span><span class="WHIT"> </span><span class="STRN">'copy_success'</span><span class="WHIT"> </span><span class="PUNC">:</span><span class="WHIT"> </span><span class="STRN">'copy_fail'</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 20</span> </span><span class="WHIT">        </span><span class="KEYW">var</span><span class="WHIT"> </span><span class="NAME">sub</span><span class="WHIT"> </span><span class="PUNC">=</span><span class="WHIT"> </span><span class="NAME">chrome.i18n.getMessage</span><span class="PUNC">(</span><span class="NAME">bg.clipboard.feature</span><span class="WHIT"> </span><span class="PUNC">+</span><span class="WHIT"> </span><span class="STRN">'_notification'</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 21</span> </span><span class="WHIT">        </span><span class="COMM">/*
+<span class='line'> 22</span>          * Styles the tip and inserts relevant localized String depending on the
+<span class='line'> 23</span>          * result of the copy request.
+<span class='line'> 24</span>          */</span><span class="WHIT">
+<span class='line'> 25</span> </span><span class="WHIT">        </span><span class="NAME">$</span><span class="PUNC">(</span><span class="STRN">'#tip'</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">addClass</span><span class="PUNC">(</span><span class="NAME">result</span><span class="PUNC">)</span><span class="PUNC">.</span><span class="NAME">html</span><span class="PUNC">(</span><span class="NAME">chrome.i18n.getMessage</span><span class="PUNC">(</span><span class="NAME">result</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">sub</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 26</span> </span><span class="WHIT">        </span><span class="COMM">/*
+<span class='line'> 27</span>          * Important: Resets the clipboard to avoid affecting copy requests.
+<span class='line'> 28</span>          * If user disabled the notifications option this is still called in
+<span class='line'> 29</span>          * clipboard.showNotification for safety.
+<span class='line'> 30</span>          */</span><span class="WHIT">
+<span class='line'> 31</span> </span><span class="WHIT">        </span><span class="NAME">bg.clipboard.reset</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 32</span> </span><span class="WHIT">        </span><span class="COMM">/*
+<span class='line'> 33</span>          * Sets a timer to close the notification after if user enabled option;
+<span class='line'> 34</span>          * otherwise stays open until closed manually by user.
+<span class='line'> 35</span>          */</span><span class="WHIT">
+<span class='line'> 36</span> </span><span class="WHIT">        </span><span class="KEYW">if</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="NAME">utils.get</span><span class="PUNC">(</span><span class="STRN">'settingNotificationTimer'</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">></span><span class="WHIT"> </span><span class="NUMB">0</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 37</span> </span><span class="WHIT">            </span><span class="NAME">window.setTimeout</span><span class="PUNC">(</span><span class="KEYW">function</span><span class="WHIT"> </span><span class="PUNC">(</span><span class="PUNC">)</span><span class="WHIT"> </span><span class="PUNC">{</span><span class="WHIT">
+<span class='line'> 38</span> </span><span class="WHIT">                </span><span class="NAME">window.close</span><span class="PUNC">(</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 39</span> </span><span class="WHIT">            </span><span class="PUNC">}</span><span class="PUNC">,</span><span class="WHIT"> </span><span class="NAME">utils.get</span><span class="PUNC">(</span><span class="STRN">'settingNotificationTimer'</span><span class="PUNC">)</span><span class="PUNC">)</span><span class="PUNC">;</span><span class="WHIT">
+<span class='line'> 40</span> </span><span class="WHIT">        </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 41</span> </span><span class="WHIT">    </span><span class="PUNC">}</span><span class="WHIT">
+<span class='line'> 42</span> 
+<span class='line'> 43</span> </span><span class="PUNC">}</span><span class="PUNC">;</span></pre></body></html>

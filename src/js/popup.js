@@ -2,6 +2,7 @@
  * <p>Responsible for the popup page.</p>
  * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
  * @since 0.0.2.1
+ * @namespace
  */
 var popup = {
 
@@ -9,7 +10,6 @@ var popup = {
      * <p>Initializes the popup page.</p>
      * <p>This involves inserting and configuring the UI elements as well as the
      * insertion of localized Strings.</p>
-     * @constructs
      * @requires jQuery
      */
     init: function () {
