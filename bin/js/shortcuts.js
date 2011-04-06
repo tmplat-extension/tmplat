@@ -1,4 +1,0 @@
-/* (c) 2011 Alasdair Mercer */
-(function(){if(document.body.hasAttribute('url_copy_injected')){return;}
-document.body.setAttribute('url_copy_injected',true);document.body.addEventListener('keydown',function(event){var isMac=navigator.userAgent.toLowerCase().indexOf('mac')!==-1;if((event.ctrlKey&&event.altKey&&!isMac)||(event.metaKey&&event.altKey&&isMac)){var data={'shortcut':true};switch(event.keyCode){case 85:data.feature='copy_url';break;case 83:data.feature='copy_short';break;case 65:data.feature='copy_anchor';break;case 66:data.feature='copy_bbcode';break;case 69:data.feature='copy_encoded';break;}
-if(data.feature){chrome.extension.sendRequest(data);}}},false);}());
