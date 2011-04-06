@@ -1,7 +1,7 @@
 dist_file = URL-Copy.zip
 
 js_engine ?= `which node nodejs`
-jsdoc_toolkit = C:/jsdoc-toolkit
+jsdoc_toolkit = /usr/local/jsdoc-toolkit
 compiler = $(js_engine) build/uglify.js --unsafe
 post_compiler = $(js_engine) build/post-compile.js
 validator = $(js_engine) build/jslint-check.js
