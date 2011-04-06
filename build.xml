@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project name="URL-Copy" basedir="." default="build-all">
+<project name="URL-Copy" basedir="." default="all">
     <description>
         Builds the distributable files and documentation for the URL-Copy
         extension
@@ -14,7 +14,10 @@
     <taskdef name="jsmin" classname="net.matthaynes.jsmin.JSMin_Task"
             classpath="${cp.jsmin}" />
     <!-- Targets -->
-    <target name="build" description="Compiles source">
+    <target name="all" depends="core, dist"
+            description="Generates documentation and distributable files" />
+    <target name="core" description="Compiles source">
+        <mkdir dir="${dir.bin}" />
         <tstamp>
             <format property="date.year" pattern="yyyy" locale="en,UK" />
         </tstamp>
@@ -41,20 +44,23 @@
             </fileset>
         </jsmin>
     </target>
-    <target name="build-all" depends="dist, generate-docs"
-            description="Generates documentation and distributable files" />
-    <target name="dist" depends="build"
+    <target name="clean" depends="clean-dist"
+            description="Cleans the generated directories">
+        <delete dir="$(dir.bin}" quiet="true" />
+    </target>
+    <target name="clean-dist" depends="clean-doc">
+        <delete dir="$(dir.dist}" quiet="true" />
+    </target>
+    <target name="clean-doc">
+        <delete dir="$(dir.docs}" quiet="true" />
+    </target>
+    <target name="dist" depends="doc"
             description="Generates distributable files from compiled">
-        <delete includeemptydirs="true">
-            <fileset dir="${dir.dist}" includes="**/*.zip" />
-        </delete>
+        <mkdir dir="${dir.dist}" />
         <zip basedir="${dir.bin}" destfile="${dir.dist}/${file.dist}.zip" />
     </target>
-    <target name="generate-docs"
-            description="Generates documentation from source">
-        <delete includeemptydirs="true">
-            <fileset dir="${dir.docs}" includes="**/*" />
-        </delete>
+    <target name="doc" description="Generates documentation from source">
+        <mkdir dir="${dir.docs}" />
         <jsdoctoolkit includeprivate="true" includeundocumented="true"
                 jsdochome="${dir.jsdoctoolkit}" outputdir="${dir.docs}"
                 template="jsdoc">
