@@ -1,8 +1,8 @@
-dist_file = URL-Copy.zip
+dist_file = URL-Copy
 
-js_engine ?= `which node nodejs`
+js_engine ?= `which node`
 jsdoc_toolkit = /usr/local/jsdoc-toolkit
-compiler = $(js_engine) build/uglify.js --unsafe
+compiler = $(js_engine) build/uglify.js --no-copyright --no-dead-code --no-seqs
 post_compiler = $(js_engine) build/post-compile.js
 validator = $(js_engine) build/jslint-check.js
 
@@ -24,18 +24,16 @@ base_locale_dirs = bin/_locales/en\
 
 all: core dist
 
-core: urlcopy $(bin_base_files)
+core: urlcopy $(base_bin_files)
 	@@echo "URL-Copy build complete"
 
 urlcopy: $(base_dirs) $(base_locale_dirs)
 	@@echo "Building URL-Copy"
 	@@mkdir -p bin
 	@@cp -r src/* bin
-	# TODO: Below doesn't work
-	@@rm -rf bin/*.git*
+	@@find bin/ -name '.git*' -print0 | xargs -0 rm
 
-$(bin_base_files): urlcopy
-	# TODO: Files aren't being minimized
+$(base_bin_files): urlcopy
 	@@if test ! -z $(js_engine); then \
 		echo "Minifying: " $@; \
 		$(compiler) $@ > $@.tmp; \
@@ -62,7 +60,7 @@ doc:
 dist: doc
 	@@echo "Generating distributable"
 	@@mkdir -p dist
-	@@zip -r dist/$(dist_file) bin
+	@@cd bin && zip -r ../dist/$(dist_file) *
 	@@echo "URL-Copy distributable complete"
 
 distclean: docclean
