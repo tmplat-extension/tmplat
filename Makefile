@@ -22,7 +22,7 @@ base_dirs = bin\
 base_locale_dirs = bin/_locales/en\
 	bin/_locales/fr
 
-all: core dist
+all: core
 
 core: urlcopy $(base_bin_files)
 	@@echo "URL-Copy build complete"
