@@ -42,7 +42,6 @@ var popup = {
         // Shows all keyboard shortcuts if user enabled option
         if (utils.get('settingShortcut')) {
             $('.shortcut').show();
-            // TODO: Change to improve L&F on Mac
             $('body').css('min-width', '190px');
         }
         // Ensures consistent widths keeping the popup tidy

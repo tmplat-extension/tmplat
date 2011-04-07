@@ -2,7 +2,7 @@ dist_file = URL-Copy
 
 js_engine ?= `which node`
 jsdoc_toolkit = /usr/local/jsdoc-toolkit
-compiler = $(js_engine) build/uglify.js --no-copyright --no-dead-code --no-seqs
+compiler = $(js_engine) build/uglify.js --ascii --no-copyright --no-dead-code --no-seqs
 post_compiler = $(js_engine) build/post-compile.js
 validator = $(js_engine) build/jslint-check.js
 

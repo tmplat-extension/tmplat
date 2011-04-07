@@ -44,7 +44,7 @@ h4 {
     padding-left: 55px;
 }
 #moveDownButton, #moveUpButton {
-    padding: 3px 3px 0;
+    padding: 3px 3px 1px;
 }
 input {
     cursor: pointer;
@@ -53,7 +53,7 @@ input {
     display: none;
 }
 #ieTabSetting {
-    background: #FFF url('../images/explorer.png') no-repeat scroll right;
+    background: #FFF url('../images/explorer-32.png') no-repeat scroll right;
     background-size: 24px 24px;
 }
 #ieTabFooter {

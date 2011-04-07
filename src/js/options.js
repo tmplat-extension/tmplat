@@ -59,7 +59,9 @@ var options = {
             'key': 'version',
             'type': 'GETLS'
         }, function (response) {
-            $('#ieTabSettingDiv').show();
+            if (response) {
+                $('#ieTabSettingDiv').show();
+            }
         });
     },
 

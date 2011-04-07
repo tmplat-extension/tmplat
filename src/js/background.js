@@ -589,7 +589,7 @@ var helper = {
     callUrlShortener: function (url) {
         var req = new XMLHttpRequest();
         var service = clipboard.getUrlShortener();
-        req.open(service.method, service.url, true);
+        req.open(service.method, service.getUrl(url), true);
         req.onreadystatechange = function () {
             if (req.readyState === 4) {
                 var output = service.output(req.responseText);
@@ -924,28 +924,34 @@ var shortener = {
      */
     bitly: {
         /** @type String */
-        contentType: 'application/json',
+        baseUrl: 'http://api.bitly.com/v3/shorten?login=urlcopy&apiKey=R_05858399e8a60369e1d1562817b77b39&format=json',
+        /** @type String */
+        contentType: 'text/plain',
+        /**
+         * param {String} url
+         * @returns {String}
+         */
+        getUrl: function (url) {
+            var data = {'longUrl': url};
+            if (utils.get('bitlyXApiKey') && utils.get('bitlyXLogin')) {
+                data.x_apiKey = utils.get('bitlyXApiKey');
+                data.x_login = utils.get('bitlyXLogin');
+            }
+            return shortener.bitly.baseUrl + '&' + utils.serialize(data);
+        },
         /**
          * @param {String} url
          * @returns {String}
          */
         input: function (url) {
-            var data = {
-                'format': 'json',
-                'longUrl': helper.encode(url)
-            };
-            if (utils.get('bitlyXApiKey') && utils.get('bitlyXLogin')) {
-                data.x_apiKey = utils.get('bitlyXApiKey');
-                data.x_login = utils.get('bitlyXLogin');
-            }
-            return JSON.stringify(data);
+            return null;
         },
         /** @returns {Boolean} */
         isEnabled: function () {
             return utils.get('bitlyEnabled');
         },
         /** @type String */
-        method: 'GET',
+        method: 'POST',
         /** @type String */
         name: 'bit.ly',
         /**
@@ -954,9 +960,7 @@ var shortener = {
          */
         output: function (resp) {
             return JSON.parse(resp).data.url;
-        },
-        /** @type String */
-        url: 'http://api.bitly.com/v3/shorten?login=urlcopy&apiKey=R_05858399e8a60369e1d1562817b77b39'
+        }
     },
 
     /**
@@ -965,7 +969,16 @@ var shortener = {
      */
     google: {
         /** @type String */
+        baseUrl: 'https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY',
+        /** @type String */
         contentType: 'application/json',
+        /**
+         * param {String} url
+         * @returns {String}
+         */
+        getUrl: function (url) {
+            return shortener.google.baseUrl;
+        },
         /**
          * @param {String} url
          * @returns {String}
@@ -987,9 +1000,7 @@ var shortener = {
          */
         output: function (resp) {
             return JSON.parse(resp).id;
-        },
-        /** @type String */
-        url: 'https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY'
+        }
     }
 
 };
