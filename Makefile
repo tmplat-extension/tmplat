@@ -31,7 +31,7 @@ urlcopy: $(base_dirs) $(base_locale_dirs)
 	@@echo "Building URL-Copy"
 	@@mkdir -p bin
 	@@cp -r src/* bin
-	@@find bin/ -name '.git*' -print0 | xargs -0 rm
+	@@find bin/ -name '.git*' -print0 | xargs -0 -IFILES rm FILES
 
 $(base_bin_files): urlcopy
 	@@if test ! -z $(js_engine); then \
