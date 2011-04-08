@@ -70,13 +70,14 @@ var utils = {
      * @see encodeURIComponent
      */
     serialize: function (data) {
-        var ser = '';
+        var ser = [];
         for (var p in data) {
             if (data.hasOwnProperty(p)) {
-                ser += '&' + p + '=' + encodeURIComponent(data[p]);
+                ser.push(encodeURIComponent(p) + '=' +
+                        encodeURIComponent(data[p]));
             }
         }
-        return ser.substring(1);
+        return ser.join('&');
     },
 
     /**

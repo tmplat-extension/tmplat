@@ -56,6 +56,18 @@
    "opt_anchor_title_text": {
       "message": "Include \u003Ccode\u003Etitle\u003C/code\u003E attribute"
    },
+   "opt_collapse": {
+      "message": "Collapse"
+   },
+   "opt_collapse_all": {
+      "message": "Collapse All"
+   },
+   "opt_expand": {
+      "message": "Expand"
+   },
+   "opt_expand_all": {
+      "message": "Expand All"
+   },
    "opt_feature_enabled_text": {
       "message": "Enabled"
    },

@@ -15,16 +15,16 @@
             <div id="header">
                 <h1 id="optionTitle"></h1>
             </div>
-            <div id="featureSettingDiv">
-                <h4 id="featureSetting"></h4>
-                <div class="section-content">
+            <div id="featureSettingDiv" class="section">
+                <h4 id="featureSetting" class="toggle-expand"></h4>
+                <div class="content">
                     <div>
                         <table style="border: none; border-collapse; collapse; width: 100%">
                             <tr>
                                 <td rowspan="2" style="width: 50%">
                                     <select id="settingFeatures" size="5" style="width: 100%"></select>
                                 </td>
-                                <td>
+                                <td style="padding-top: 10px">
                                     <button id="moveUpButton"><img src="../images/move_up_disabled.gif" /></button>
                                 </td>
                             </tr>
@@ -45,46 +45,50 @@
                     </div>
                 </div>
             </div>
-            <div id="urlShortenerSettingDiv">
-                <h4 id="urlShortenerSetting"></h4>
-                <div class="section-content">
+            <div id="urlShortenerSettingDiv" class="section">
+                <h4 id="urlShortenerSetting" class="toggle-expand"></h4>
+                <div class="content">
                     <div>
-                        <table style="border: none; border-collapse; collapse; width: 100%">
-                            <tr>
-                                <th id="urlShortenerNameHeader"></th>
-                                <th id="urlShortenerEnabledHeader"></th>
-                                <th id="urlShortenerConfigHeader"></th>
-                            </tr>
-                            <tr style="vertical-align: top">
-                                <td><a href="http://bit.ly" target="_blank">bit.ly</a></td>
-                                <td><input type="radio" name="settingEnabledUrlShortener" id="bitlyEnabled" /></td>
-                                <td>
-                                    <div>
-                                        <label>
-                                            <span id="bitlyXLoginText"></span><br />
-                                            <input type="text" id="bitlyXLogin" />
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <label>
-                                            <span id="bitlyXApiKeyText"></span><br />
-                                            <input type="text" id="bitlyXApiKey" />
-                                        </label>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr style="vertical-align: top">
-                                <td><a href="http://goo.gl" target="_blank">goo.gl</a></td>
-                                <td><input type="radio" name="settingEnabledUrlShortener" id="googleEnabled" /></td>
-                                <td>&nbsp;</td>
-                            </tr>
+                        <table class="styled" style="border: none; border-collapse; collapse; width: 100%">
+                            <thead>
+                                <tr>
+                                    <th id="urlShortenerEnabledHeader" style="text-align: center; width: 12%"></th>
+                                    <th id="urlShortenerNameHeader" style="width: 33%"></th>
+                                    <th id="urlShortenerConfigHeader" style="width: 55%"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="vertical-align: top">
+                                    <td style="text-align: center"><input type="radio" name="settingEnabledUrlShortener" id="bitlyEnabled" /></td>
+                                    <td><a href="http://bit.ly" target="_blank">bit.ly</a></td>
+                                    <td>
+                                        <div>
+                                            <label>
+                                                <span id="bitlyXLoginText"></span><br />
+                                                <input type="text" id="bitlyXLogin" />
+                                            </label>
+                                        </div>
+                                        <div>
+                                            <label>
+                                                <span id="bitlyXApiKeyText"></span><br />
+                                                <input type="text" id="bitlyXApiKey" />
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr style="vertical-align: top">
+                                    <td style="text-align: center"><input type="radio" name="settingEnabledUrlShortener" id="googleEnabled" /></td>
+                                    <td><a href="http://goo.gl" target="_blank">goo.gl</a></td>
+                                    <td>&nbsp;</td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-            <div id="anchorSettingDiv">
-                <h4 id="anchorSetting"></h4>
-                <div class="section-content">
+            <div id="anchorSettingDiv" class="section">
+                <h4 id="anchorSetting" class="toggle-expand"></h4>
+                <div class="content">
                     <div>
                         <label>
                             <input type="checkbox" id="settingTitleAttr" />
@@ -99,9 +103,9 @@
                     </div>
                 </div>
             </div>
-            <div id="notificationSettingDiv">
-                <h4 id="notificationSetting"></h4>
-                <div class="section-content">
+            <div id="notificationSettingDiv" class="section">
+                <h4 id="notificationSetting" class="toggle-expand"></h4>
+                <div class="content">
                     <div>
                         <label>
                             <input type="checkbox" id="settingNotification" />
@@ -117,9 +121,9 @@
                     </div>
                 </div>
             </div>
-            <div id="shortcutSettingDiv">
-                <h4 id="shorcutSetting"></h4>
-                <div class="section-content">
+            <div id="shortcutSettingDiv" class="section">
+                <h4 id="shorcutSetting" class="toggle-expand"></h4>
+                <div class="content">
                     <div>
                         <label>
                             <input type="checkbox" id="settingShortcut" />
@@ -128,9 +132,9 @@
                     </div>
                 </div>
             </div>
-            <div id="ieTabSettingDiv">
-                <h4 id="ieTabSetting"></h4>
-                <div class="section-content">
+            <div id="ieTabSettingDiv" class="section">
+                <h4 id="ieTabSetting" class="toggle-expand"></h4>
+                <div class="content">
                     <div>
                         <label>
                             <input type="checkbox" id="settingIeTabExtract" />
@@ -152,7 +156,16 @@
                 </div>
             </div>
             <div class="closeBtn">
-                <button id="saveAndClose"></button>
+                <table style="border: none; border-collapse; collapse; width: 100%">
+                    <tr>
+                        <td style="width: 50%">
+                            <button id="saveAndClose"></button>
+                        </td>
+                        <td style="text-align: right">
+                            <span><a href="#" id="collapseAll"></a> &#124; <a href="#" id="expandAll"></a></span>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
         <div id="footer"></div>

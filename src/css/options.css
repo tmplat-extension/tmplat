@@ -4,13 +4,27 @@ body {
     font-size: 13px;
     margin: 10px;
 }
+a, a:active, a:link, a:visited {
+    color: #3D5D6A;
+    font-weight: bold;
+    text-decoration: none;
+}
+a:hover {
+    color: #C3C3C3;
+}
+table.styled thead th {
+    border-bottom: 1px solid #EEE;
+}
+table.styled thead th:hover {
+    border-bottom-color: #AAA;
+}
+table.styled tbody tr:hover {
+    background-color: #F3F3F3;
+}
 .contentBox {
     background-color: #FFF;
     border: 3px solid #BEC9CE;
-    border-bottom-left-radius: 20px 20px;
-    border-bottom-right-radius: 20px 20px;
-    border-top-left-radius: 20px 20px;
-    border-top-right-radius: 20px 20px;
+    border-radius: 20px;
     height: auto;
     margin: 50px auto 20px auto;
     padding: 30px;
@@ -39,9 +53,20 @@ h4 {
     line-height: 28px;
     padding-left: 0.5em;
 }
-.section-content {
+.section .content {
+    display: none;
     line-height: 25px;
     padding-left: 55px;
+}
+.section h4 {
+    background-size: 24px 24px;
+    cursor: pointer;
+}
+.section h4.toggle-collapse {
+    background: #FFF url('../images/toggle-collapse.png') no-repeat scroll right;
+}
+.section h4.toggle-expand {
+    background: #FFF url('../images/toggle-expand.png') no-repeat scroll right;
 }
 #moveDownButton, #moveUpButton {
     padding: 3px 3px 1px;
@@ -51,10 +76,6 @@ input {
 }
 #ieTabSettingDiv {
     display: none;
-}
-#ieTabSetting {
-    background: #FFF url('../images/explorer-32.png') no-repeat scroll right;
-    background-size: 24px 24px;
 }
 #ieTabFooter {
     font-weight: bold;

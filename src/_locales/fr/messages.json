@@ -56,6 +56,18 @@
    "opt_anchor_title_text": {
       "message": "Inclure l'attribut \u003Ccode\u003Etitle\u003C/code\u003E"
    },
+   "opt_collapse": {
+      "message": "R\u00E9duire"
+   },
+   "opt_collapse_all": {
+      "message": "R\u00E9duire Tous"
+   },
+   "opt_expand": {
+      "message": "D\u00E9velopper"
+   },
+   "opt_expand_all": {
+      "message": "D\u00E9velopper Tout"
+   },
    "opt_feature_enabled_text": {
       "message": "Activ\u00E9"
    },

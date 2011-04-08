@@ -7,6 +7,30 @@
 var options = {
 
     /**
+     * <p>Collapses the contents of all sections.</p>
+     * @param {Event} [event] The event triggered.
+     * @event
+     * @requies jQuery
+     * @private
+     */
+    collapseAll: function (event) {
+        $('.section h4').addClass('toggle-expand')
+                .removeClass('toggle-collapse').next('.content').slideUp();
+    },
+
+    /**
+     * <p>Expands the contents of all sections.</p>
+     * @param {Event} [event] The event triggered.
+     * @event
+     * @requies jQuery
+     * @private
+     */
+    expandAll: function (event) {
+        $('.section h4').addClass('toggle-collapse')
+                .removeClass('toggle-expand').next('.content').slideDown();
+    },
+
+    /**
      * <p>Initializes the options page.</p>
      * <p>This involves inserting and configuring the UI elements as well as the
      * insertion of localized Strings and most importantly loading the current
@@ -46,10 +70,17 @@ var options = {
         utils.i18nReplace('#ieTabExtension', 'extension');
         utils.i18nReplace('#ieTabWebsite', 'website');
         utils.i18nReplace('#saveAndClose', 'opt_save_button');
+        utils.i18nReplace('#expandAll', 'opt_expand_all');
+        utils.i18nReplace('#collapseAll', 'opt_collapse_all');
         utils.i18nReplace('#footer', 'opt_footer',
                 String(new Date().getFullYear()));
+        // Binds options:collapseAll and options:expandAll events to the links
+        $('#collapseAll').click(options.collapseAll);
+        $('#expandAll').click(options.expandAll);
         // Binds options:saveAndClose event to button
         $('#saveAndClose').click(options.saveAndClose);
+        // Binds options:toggleSection to section headers
+        $('.section h4').click(options.toggleSection);
         // Loads current option values
         options.load();
         var bg = chrome.extension.getBackgroundPage();
@@ -342,6 +373,19 @@ var options = {
         });
         utils.set('bitlyXApiKey', $('#bitlyXApiKey').val());
         utils.set('bitlyXLogin', $('#bitlyXLogin').val());
+    },
+
+    /**
+     * <p>Toggles the visibility of the content of the section that triggered
+     * the event.</p>
+     * @param {Event} [event] The event triggered.
+     * @event
+     * @requies jQuery
+     * @private
+     */
+    toggleSection: function (event) {
+        $(event.target).toggleClass('toggle-collapse toggle-expand')
+                .next('.content').slideToggle();
     }
 
 };

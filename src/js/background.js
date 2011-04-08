@@ -63,7 +63,6 @@ var clipboard = {
         if (tab.title && utils.get('settingTitleAttr')) {
             data.title = helper.addSlashes(data.text);
         }
-        // TODO: Implement option to set targets as '_blank'
         data.text = helper.replaceEntities(data.text);
         clipboard.copy(helper.createAnchor(data));
     },
@@ -587,9 +586,10 @@ var helper = {
      * @see shortener
      */
     callUrlShortener: function (url) {
-        var req = new XMLHttpRequest();
         var service = clipboard.getUrlShortener();
-        req.open(service.method, service.getUrl(url), true);
+        var params = service.getParameters(url) || {};
+        var endpointUrl = service.url;
+        var req = new XMLHttpRequest();
         req.onreadystatechange = function () {
             if (req.readyState === 4) {
                 var output = service.output(req.responseText);
@@ -604,7 +604,38 @@ var helper = {
             }
         };
         req.setRequestHeader('Content-Type', service.contentType);
+        /*
+         * TODO: Implement OAuth logic
+         * if (service.oauth) {
+         *     req.setRequestHeader('Authorization',
+         *         service.oauth().getAuthorizationHeader(service.url,
+         *             service.method, params));
+         * }
+         */
+        req.open(service.method, service.url + '?' + utils.serialize(params),
+                true);
         req.send(service.input(url));
+    },
+
+    /**
+     * <p>Helper method which determines when the callback function provided is
+     * called depending on whether or not the active URL Shortener supports
+     * OAuth.</p>
+     * @param {String} url The URL to be shortened and added to the clipboard.
+     * @param {Function} callback The function that is called either
+     * immediately or once autherized if OAuth is supported.
+     * @see helper.callUrlShortener
+     * @private
+     */
+    callUrlShortenerHelper: function (url, callback) {
+        var service = clipboard.getUrlShortener();
+        if (service.oauth) {
+            service.oauth().authorize(function () {
+                callback(url, service);
+            });
+        } else {
+            callback(url, service);
+        }
     },
 
     /**
@@ -784,7 +815,6 @@ var ietab = {
                 data.title = helper.addSlashes(data.text);
             }
         }
-        // TODO: Implement option to set targets as '_blank'
         data.text = helper.replaceEntities(data.text);
         clipboard.copy(helper.createAnchor(data));
     },
@@ -819,11 +849,9 @@ var ietab = {
         if (utils.get('settingIeTabExtract')) {
             url = ietab.extractUrl(url);
         } else {
-            /*
-             * TODO: Test this works as expected considering it will already
-             * contains an encoded URI segment.
-             */
-            url = helper.encode(url);
+            var embeddedUrl = ietab.extractUrl(url);
+            var index = url.indexOf(embeddedUrl);
+            url = helper.encode(url.substring(0, index)) + embeddedUrl;
         }
         clipboard.copy(url);
     },
@@ -913,7 +941,7 @@ var ietab = {
  * @namespace
  */
 /*
- * TODO: Implement OAuth support and options section.
+ * TODO: Fix OAuth support.
  * Support will probably need to be added to helper.callUrlShortener as well.
  */
 var shortener = {
@@ -924,20 +952,23 @@ var shortener = {
      */
     bitly: {
         /** @type String */
-        baseUrl: 'http://api.bitly.com/v3/shorten?login=urlcopy&apiKey=R_05858399e8a60369e1d1562817b77b39&format=json',
-        /** @type String */
-        contentType: 'text/plain',
+        contentType: 'application/x-www-form-urlencoded',
         /**
-         * param {String} url
-         * @returns {String}
+         * @param {String} url
+         * @returns {Object}
          */
-        getUrl: function (url) {
-            var data = {'longUrl': url};
+        getParameters: function (url) {
+            var params = {
+                'login': 'urlcopy',
+                'apiKey': 'R_05858399e8a60369e1d1562817b77b39',
+                'longUrl': url,
+                'format': 'json'
+            };
             if (utils.get('bitlyXApiKey') && utils.get('bitlyXLogin')) {
-                data.x_apiKey = utils.get('bitlyXApiKey');
-                data.x_login = utils.get('bitlyXLogin');
+                params.x_apiKey = utils.get('bitlyXApiKey');
+                params.x_login = utils.get('bitlyXLogin');
             }
-            return shortener.bitly.baseUrl + '&' + utils.serialize(data);
+            return params;
         },
         /**
          * @param {String} url
@@ -951,7 +982,7 @@ var shortener = {
             return utils.get('bitlyEnabled');
         },
         /** @type String */
-        method: 'POST',
+        method: 'GET',
         /** @type String */
         name: 'bit.ly',
         /**
@@ -960,7 +991,9 @@ var shortener = {
          */
         output: function (resp) {
             return JSON.parse(resp).data.url;
-        }
+        },
+        /** @type String */
+        url: 'http://api.bitly.com/v3/shorten'
     },
 
     /**
@@ -969,15 +1002,16 @@ var shortener = {
      */
     google: {
         /** @type String */
-        baseUrl: 'https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY',
-        /** @type String */
         contentType: 'application/json',
         /**
-         * param {String} url
-         * @returns {String}
+         * @param {String} url
+         * @returns {Object}
          */
-        getUrl: function (url) {
-            return shortener.google.baseUrl;
+        getParameters: function (url) {
+            var params = {
+                'key': 'AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY'
+            };
+            return params;
         },
         /**
          * @param {String} url
@@ -994,13 +1028,27 @@ var shortener = {
         method: 'POST',
         /** @type String */
         name: 'goo.gl',
+        /** @type Object */
+        oauth: function () {
+            return ChromeExOAuth.initBackgroundPage({
+                'request_url': 'https://www.google.com/accounts/OAuthGetRequestToken',
+                'authorize_url': 'https://www.google.com/accounts/OAuthAuthorizeToken',
+                'access_url': 'https://www.google.com/accounts/OAuthGetAccessToken',
+                'consumer_key': 'anonymous',
+                'consumer_secret': 'anonymous',
+                'scope': 'https://www.googleapis.com/auth/urlshortener',
+                'app_name': 'URL-Copy'
+            });
+        },
         /**
          * @param {String} resp
          * @returns {String}
          */
         output: function (resp) {
             return JSON.parse(resp).id;
-        }
+        },
+        /** @type String */
+        url: 'https://www.googleapis.com/urlshortener/v1/url'
     }
 
 };
