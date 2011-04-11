@@ -70,7 +70,7 @@ doc:
 	@@java -jar $(jsdoc_toolkit)/jsrun.jar $(jsdoc_toolkit)/app/run.js -q -p -d=docs \
 		-t=$(jsdoc_toolkit)/templates/jsdoc $(base_files)
 
-dist: doc
+dist:
 	@@echo "Generating distributable"
 	@@mkdir -p dist
 	@@cd bin && zip -r ../dist/$(dist_file) *
