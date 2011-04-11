@@ -8,7 +8,7 @@ validator = $(js_engine) build/jslint-check.js
 
 base_files = src/js/background.js\
     src/js/notification.js\
-	src/js/options.js\
+    src/js/options.js\
 	src/js/popup.js\
 	src/js/shortcuts.js\
 	src/js/utils.js
@@ -22,9 +22,12 @@ base_dirs = bin\
 base_locale_dirs = bin/_locales/en\
 	bin/_locales/fr
 
+extra_bin_files = bin/js/chrome_ex_oauth.js\
+	bin/js/chrome_ex_oauthsimple.js
+
 all: core
 
-core: urlcopy $(base_bin_files)
+core: urlcopy $(base_bin_files) $(extra_bin_files)
 	@@echo "URL-Copy build complete"
 
 urlcopy: $(base_dirs) $(base_locale_dirs)
@@ -35,14 +38,24 @@ urlcopy: $(base_dirs) $(base_locale_dirs)
 
 $(base_bin_files): urlcopy
 	@@if test ! -z $(js_engine); then \
+		echo "Minifying:" $@; \
+		$(compiler) $@ > $@.tmp; \
+		$(post_compiler) $@.tmp > $@; \
+		rm -f $@.tmp; \
+		echo "Validating:" $@; \
+		$(validator) $@; \
+	else \
+		echo "You must have NodeJS installed in order to minify and validate" $(notdir $@); \
+	fi
+
+$(extra_bin_files): urlcopy
+	@@if test ! -z $(js_engine); then \
 		echo "Minifying: " $@; \
 		$(compiler) $@ > $@.tmp; \
 		$(post_compiler) $@.tmp > $@; \
 		rm -f $@.tmp; \
-		echo "Validating: " $@; \
-		$(validator) $@; \
 	else \
-		echo "You must have NodeJS installed in order to minify and validate " $(notdir $@); \
+		echo "You must have NodeJS installed in order to minify" $(notdir $@); \
 	fi
 
 $(base_dirs):

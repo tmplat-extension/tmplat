@@ -5,11 +5,7 @@
         return;
     }
     document.body.setAttribute('url_copy_injected', true);
-    /*
-     * TODO: Confirm 'keydown' is best choice (e.g. 'keyup').
-     * Verify keyCodes are still correct if 'keyup' is used instead.
-     */
-    document.body.addEventListener('keydown', function (event) {
+    document.body.addEventListener('keyup', function (event) {
         var isMac = navigator.userAgent.toLowerCase().indexOf('mac') !== -1;
         if ((event.ctrlKey && event.altKey && !isMac) ||
             (event.metaKey && event.altKey && isMac)) {

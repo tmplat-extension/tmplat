@@ -47,6 +47,12 @@
    "name": {
       "message": "URL Copy"
    },
+   "oauth_redirect_body": {
+      "message": "Redirecting..."
+   },
+   "oauth_redirect_title": {
+      "message": "OAuth Redirect Page"
+   },
    "opt_anchor_header": {
       "message": "Anchor Settings:"
    },
@@ -115,6 +121,9 @@
    },
    "opt_url_shortener_name_header": {
       "message": "Name"
+   },
+   "opt_url_shortener_oauth_enable_text": {
+      "message": "Enable"
    },
    "opt_url_shortener_username_text": {
       "message": "Username:"

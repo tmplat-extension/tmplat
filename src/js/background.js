@@ -236,6 +236,7 @@ var clipboard = {
         utils.init('bitlyXApiKey', '');
         utils.init('bitlyXLogin', '');
         utils.init('googleEnabled', true);
+        utils.init('googleOAuthEnabled', true);
     },
 
     /**
@@ -340,28 +341,38 @@ var clipboard = {
                 case feature.url.name:
                     clipboard.feature = feature.url.name;
                     handler.copyUrl(tab);
-                    popup.close();
+                    if (popup) {
+                        popup.close();
+                    }
                     break;
                 case feature.short.name:
-                    $('#loadDiv', popup.document).show();
-                    $('#item', popup.document).hide();
+                    if (popup) {
+                        $('#loadDiv', popup.document).show();
+                        $('#item', popup.document).hide();
+                    }
                     clipboard.feature = feature.short.name;
                     handler.copyShortUrl(tab);
                     break;
                 case feature.anchor.name:
                     clipboard.feature = feature.anchor.name;
                     handler.copyAnchor(tab);
-                    popup.close();
+                    if (popup) {
+                        popup.close();
+                    }
                     break;
                 case feature.bbcode.name:
                     clipboard.feature = feature.bbcode.name;
                     handler.copyBBCode(tab);
-                    popup.close();
+                    if (popup) {
+                        popup.close();
+                    }
                     break;
                 case feature.encoded.name:
                     clipboard.feature = feature.encoded.name;
                     handler.copyEncoded(tab);
-                    popup.close();
+                    if (popup) {
+                        popup.close();
+                    }
                     break;
             }
         });
@@ -586,35 +597,34 @@ var helper = {
      * @see shortener
      */
     callUrlShortener: function (url) {
-        var service = clipboard.getUrlShortener();
-        var params = service.getParameters(url) || {};
-        var endpointUrl = service.url;
-        var req = new XMLHttpRequest();
-        req.onreadystatechange = function () {
-            if (req.readyState === 4) {
-                var output = service.output(req.responseText);
-                if (output) {
-                    clipboard.copy(output);
-                } else {
-                    clipboard.status = false;
-                    clipboard.showNotification();
-                }
-                var popup = chrome.extension.getViews({type: 'popup'})[0];
-                popup.close();
+        helper.callUrlShortenerHelper(url, function (url, service) {
+            var params = service.getParameters(url) || {};
+            var req = new XMLHttpRequest();
+            req.open(service.method, service.url + '?' +
+                    utils.serialize(params), true);
+            req.setRequestHeader('Content-Type', service.contentType);
+            if (service.oauth && service.isOAuthEnabled()) {
+                req.setRequestHeader('Authorization',
+                        service.oauth.getAuthorizationHeader(service.url,
+                        service.method, params));
             }
-        };
-        req.setRequestHeader('Content-Type', service.contentType);
-        /*
-         * TODO: Implement OAuth logic
-         * if (service.oauth) {
-         *     req.setRequestHeader('Authorization',
-         *         service.oauth().getAuthorizationHeader(service.url,
-         *             service.method, params));
-         * }
-         */
-        req.open(service.method, service.url + '?' + utils.serialize(params),
-                true);
-        req.send(service.input(url));
+            req.onreadystatechange = function () {
+                if (req.readyState === 4) {
+                    var output = service.output(req.responseText);
+                    if (output) {
+                        clipboard.copy(output);
+                    } else {
+                        clipboard.status = false;
+                        clipboard.showNotification();
+                    }
+                    var popup = chrome.extension.getViews({type: 'popup'})[0];
+                    if (popup) {
+                        popup.close();
+                    }
+                }
+            };
+            req.send(service.input(url));
+        });
     },
 
     /**
@@ -629,8 +639,8 @@ var helper = {
      */
     callUrlShortenerHelper: function (url, callback) {
         var service = clipboard.getUrlShortener();
-        if (service.oauth) {
-            service.oauth().authorize(function () {
+        if (service.oauth && service.isOAuthEnabled()) {
+            service.oauth.authorize(function () {
                 callback(url, service);
             });
         } else {
@@ -940,10 +950,6 @@ var ietab = {
  * @since 0.0.2.1
  * @namespace
  */
-/*
- * TODO: Fix OAuth support.
- * Support will probably need to be added to helper.callUrlShortener as well.
- */
 var shortener = {
 
     /**
@@ -1024,22 +1030,24 @@ var shortener = {
         isEnabled: function () {
             return utils.get('googleEnabled');
         },
+        /** @returns {Boolean} */
+        isOAuthEnabled: function () {
+            return utils.get('googleOAuthEnabled');
+        },
         /** @type String */
         method: 'POST',
         /** @type String */
         name: 'goo.gl',
         /** @type Object */
-        oauth: function () {
-            return ChromeExOAuth.initBackgroundPage({
-                'request_url': 'https://www.google.com/accounts/OAuthGetRequestToken',
-                'authorize_url': 'https://www.google.com/accounts/OAuthAuthorizeToken',
-                'access_url': 'https://www.google.com/accounts/OAuthGetAccessToken',
-                'consumer_key': 'anonymous',
-                'consumer_secret': 'anonymous',
-                'scope': 'https://www.googleapis.com/auth/urlshortener',
-                'app_name': 'URL-Copy'
-            });
-        },
+        oauth: ChromeExOAuth.initBackgroundPage({
+            'request_url': 'https://www.google.com/accounts/OAuthGetRequestToken',
+            'authorize_url': 'https://www.google.com/accounts/OAuthAuthorizeToken',
+            'access_url': 'https://www.google.com/accounts/OAuthGetAccessToken',
+            'consumer_key': 'anonymous',
+            'consumer_secret': 'anonymous',
+            'scope': 'https://www.googleapis.com/auth/urlshortener',
+            'app_name': 'URL-Copy'
+        }),
         /**
          * @param {String} resp
          * @returns {String}

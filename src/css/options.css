@@ -10,7 +10,7 @@ a, a:active, a:link, a:visited {
     text-decoration: none;
 }
 a:hover {
-    color: #C3C3C3;
+    text-decoration: underline;
 }
 table.styled thead th {
     border-bottom: 1px solid #EEE;

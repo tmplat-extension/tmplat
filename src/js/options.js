@@ -52,6 +52,8 @@ var options = {
                 'opt_url_shortener_config_header');
         utils.i18nReplace('#bitlyXLoginText', 'opt_url_shortener_username_text');
         utils.i18nReplace('#bitlyXApiKeyText', 'opt_url_shortener_api_key_text');
+        utils.i18nReplace('#googleOAuthEnabledText',
+                'opt_url_shortener_oauth_enable_text');
         utils.i18nReplace('#anchorSetting', 'opt_anchor_header');
         utils.i18nReplace('#settingTargetAttrText', 'opt_anchor_target_text');
         utils.i18nReplace('#settingTitleAttrText', 'opt_anchor_title_text');
@@ -268,6 +270,11 @@ var options = {
         });
         $('#bitlyXApiKey').val(utils.get('bitlyXApiKey'));
         $('#bitlyXLogin').val(utils.get('bitlyXLogin'));
+        if (utils.get('googleOAuthEnabled')) {
+            $('#googleOAuthEnabled').attr('checked', 'checked');
+        } else {
+            $('#googleOAuthEnabled').removeAttr('checked');
+        }
     },
 
     /**
@@ -373,6 +380,7 @@ var options = {
         });
         utils.set('bitlyXApiKey', $('#bitlyXApiKey').val());
         utils.set('bitlyXLogin', $('#bitlyXLogin').val());
+        utils.set('googleOAuthEnabled', $('#googleOAuthEnabled').is(':checked'));
     },
 
     /**
