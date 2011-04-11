@@ -5,6 +5,7 @@
 * Add support for bit.ly URL shortener service
 * Add new window (target) option for anchor feature
 * Change software-specific features (e.g. BBCode) to be disabled by default
+* Change key listeners to listen for `keyup` events as opposed to `keydown`
 * Add collapsible sections to options page to simplify content
 * Complete rewrite of code and file system restructuring for optimization and ease of future improvements/changes
 * Include [jQuery](http://jquery.com/) (v1.5.2 - minified) to minimize code duplication and increase efficiency
