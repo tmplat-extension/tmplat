@@ -40,8 +40,48 @@
                                         <span id="settingFeatureEnabledText"></span>
                                     </label>
                                 </td>
+                                <td>
+                                    <label>
+                                        <span id="settingFeatureShortcutText">Ctrl + Alt +</span>
+                                        <input type="text" id="settingFeatureShortcut" disabled="disabled" maxlength="1" size="1" style="text-transform: uppercase" />
+                                    </label>
+                                </td>
                             </tr>
                         </table>
+                    </div>
+                </div>
+            </div>
+            <div id="customFeatureSettingDiv" class="section">
+                <h4 id="customFeatureSetting" class="toggle-expand">Custom Features Settings:</h4>
+                <div class="content">
+                    <div>
+                        <table style="border: none; border-collapse; collapse; width: 100%">
+                            <tr>
+                                <td rowspan="2" style="vertical-align: top; width: 1%">
+                                    <input id="custom1_delete" type="image" src="../images/delete.png" width="16" height="16" style="margin-top: 5px;" />
+                                </td>
+                                <td style="width: 75%">
+                                    <input id="custom1_name" type="text" maxlength="32" size="32" placeholder="Custom Name" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <textarea id="custom1_template" rows="5" cols="50" placeholder="Template"></textarea>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="vertical-align: top; width: 1%">
+                                    <input id="newCustom_add" type="image" src="../images/add.png" width="16" height="16" style="margin-top: 5px;" />
+                                </td>
+                                <td>
+                                    <input id="newCustom_name" type="text" maxlength="32" size="32" placeholder="Custom Name" />
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div style="margin-top: 25px">
+                        <!-- TODO: Overlay/Dialog/Slide? -->
+                        <a href="#" id="customFeaturesTemplateHelp">Need help creating templates?</a>
                     </div>
                 </div>
             </div>
