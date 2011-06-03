@@ -154,9 +154,8 @@ var clipboard = {
                 return feature.short;
             case utils.get('copyUrlOrder'):
                 return feature.url;
-            default:
-                return {};
         }
+        return {};
     },
 
     /**
@@ -165,12 +164,9 @@ var clipboard = {
      */
     getUrlShortener: function () {
         // Attempts to lookup enabled URL Shortener service
-        for (var p in shortener) {
-            if (shortener.hasOwnProperty(p)) {
-                var op = shortener[p];
-                if (op.isEnabled()) {
-                    return op;
-                }
+        for (var key in shortener) {
+            if (shortener[key].isEnabled()) {
+                return shortener[key];
             }
         }
         // Returns google service by default
@@ -215,11 +211,8 @@ var clipboard = {
         utils.init('copyUrlEnabled', true);
         utils.init('copyUrlOrder', 0);
         // Generates the HTML for each feature to optimize popup loading times
-        for (var p in feature) {
-            if (feature.hasOwnProperty(p)) {
-                var op = feature[p];
-                op.html = helper.createFeatureHtml(op);
-            }
+        for (var key in feature) {
+            feature[key].html = helper.createFeatureHtml(feature[key]);
         }
         clipboard.updateFeatures();
     },
@@ -246,14 +239,12 @@ var clipboard = {
      * @private
      */
     isBlacklisted: function (sender) {
-        var reject = false;
         for (var i = 0; i < clipboard.blacklistedExtensions.length; i++) {
             if (clipboard.blacklistedExtensions[i] === sender.id) {
-                reject = true;
-                break;
+                return true;
             }
         }
-        return reject;
+        return false;
     },
 
     /**
@@ -333,8 +324,8 @@ var clipboard = {
      */
     onRequestHelper: function (request, sender, sendResponse) {
         chrome.tabs.getSelected(null, function (tab) {
-            var handler = (ietab.isActive(tab)) ? ietab : clipboard;
-            var popup = chrome.extension.getViews({type: 'popup'})[0];
+            var handler = (ietab.isActive(tab)) ? ietab : clipboard,
+                popup = chrome.extension.getViews({type: 'popup'})[0];
             switch (request.feature) {
                 case feature.url.name:
                     clipboard.feature = feature.url.name;
