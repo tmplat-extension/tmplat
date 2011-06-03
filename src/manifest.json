@@ -8,15 +8,16 @@
     "content_scripts": [
         {
             "js": [
-                "js/shortcuts.js" 
+                "js/shortcuts.js"
             ],
             "matches": [
+                "file:///*/*",
+                "ftp://*/*",
                 "http://*/*",
-                "https://*/*",
-                "ftp://*/*" 
+                "https://*/*"
             ],
             "run_at": "document_end"
-        } 
+        }
     ],
     "default_locale": "en",
     "description": "__MSG_description__",

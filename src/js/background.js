@@ -116,9 +116,7 @@ var clipboard = {
      */
     executeScriptsInExistingTabs: function (tabs) {
         for (var i = 0; i < tabs.length; i++) {
-            chrome.tabs.executeScript(tabs[i].id, {
-                'file': chrome.extension.getURL("js/shortcuts.js")
-            });
+            chrome.tabs.executeScript(tabs[i].id, {file: 'js/shortcuts.js'});
         }
     },
 
@@ -400,7 +398,7 @@ var clipboard = {
         if (utils.get('settingNotification')) {
             webkitNotifications
                     .createHTMLNotification(
-                        chrome.extension.getURL("pages/notification.html")
+                        chrome.extension.getURL('pages/notification.html')
                     ).show();
         } else {
             clipboard.reset();

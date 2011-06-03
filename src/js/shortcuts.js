@@ -6,10 +6,10 @@
     }
     document.body.setAttribute('url_copy_injected', true);
     document.body.addEventListener('keyup', function (event) {
-        var isMac = navigator.userAgent.toLowerCase().indexOf('mac') !== -1;
+        var data = {shortcut: true},
+            isMac = navigator.userAgent.toLowerCase().indexOf('mac') !== -1;
         if ((event.ctrlKey && event.altKey && !isMac) ||
             (event.metaKey && event.altKey && isMac)) {
-            var data = {'shortcut': true};
             /*
              * Determines the requested feature before serving it to extension's
              * request handler.
