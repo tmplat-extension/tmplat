@@ -30,6 +30,20 @@ var clipboard = {
     features: [],
 
     /**
+     * <p>String representation of the keyboard modifiers listened to by this
+     * extension on Windows/Linux platforms.</p>
+     * @type String
+     */
+    shortcutModifiers: 'Ctrl+Alt+',
+
+    /**
+     * <p>String representation of the keyboard modifiers listened to by this
+     * extension on Mac platforms.</p>
+     * @type String
+     */
+    shortcutMacModifiers: '&#8984;-Shift-',
+
+    /**
      * <p>Indicates whether or not the current copy request was a success.</p>
      * <p>This value is reset to <code>false</code> after every copy request.</p>
      * @type Boolean
@@ -273,17 +287,27 @@ var clipboard = {
      * <p>This function only serves the request if the originating extension is
      * not blacklisted.</p>
      * @param {Object} request The request sent by the calling script.
-     * @param {String} request.feature The copy request feature to be served.
-     * @param {MessageSender} [sender] An object containing information about the
-     * script context that sent a message or request.
+     * @param {Object} request.data The data for the copy request feature to be
+     * served.
+     * @param {KeyEvent} [request.data.e] The DOM <code>KeyEvent</code>
+     * responsible for generating the copy request. Only used if type is
+     * "shortcut".
+     * @param {String} [request.data.feature] The name of the feature on which
+     * to execute the copy request.
+     * @param {String} [request.data.key] The character of the final key
+     * responsible for firing the <code>KeyEvent</code>. Only used if type is
+     * "shortcut".
+     * @param {String} request.type The type of request being made.
+     * @param {MessageSender} [sender] An object containing information about
+     * the script context that sent a message or request.
      * @param {function} [sendResponse] Function to call when you have a
-     * response. The argument should be any JSON-ifiable object, or undefined if
-     * there is no response.
+     * response. The argument should be any JSON-ifiable object, or undefined
+     * if there is no response.
      * @private
      */
     onExternalRequest: function (request, sender, sendResponse) {
         if (!clipboard.isBlacklisted(sender)) {
-            clipboard.onRequestHelper(request, sender, sendResponse);
+            clipboard.onRequest(request, sender, sendResponse);
         }
     },
 
@@ -293,9 +317,17 @@ var clipboard = {
      * serves that request if the keyboard shortcuts have been enabled by the
      * user (or by default).</p>
      * @param {Object} request The request sent by the calling script.
-     * @param {String} request.feature The copy request feature to be served.
-     * @param {Boolean} [request.shortcut] Whether or not the request originated
-     * from a keyboard shortcut.
+     * @param {Object} request.data The data for the copy request feature to be
+     * served.
+     * @param {KeyEvent} [request.data.e] The DOM <code>KeyEvent</code>
+     * responsible for generating the copy request. Only used if type is
+     * "shortcut".
+     * @param {String} [request.data.feature] The name of the feature on which
+     * to execute the copy request.
+     * @param {String} [request.data.key] The character of the final key
+     * responsible for firing the <code>KeyEvent</code>. Only used if type is
+     * "shortcut".
+     * @param {String} request.type The type of request being made.
      * @param {MessageSender} [sender] An object containing information about the
      * script context that sent a message or request.
      * @param {function} [sendResponse] Function to call when you have a
@@ -304,7 +336,7 @@ var clipboard = {
      * @private
      */
     onRequest: function (request, sender, sendResponse) {
-        if (!request.shortcut || utils.get('settingShortcut')) {
+        if (request.type !== 'shortcut' || utils.get('settingShortcut')) {
             clipboard.onRequestHelper(request, sender, sendResponse);
         }
     },
@@ -313,7 +345,17 @@ var clipboard = {
      * <p>Helper function for the internal/external request listeners.</p>
      * <p>This function will serve the copy request.</p>
      * @param {Object} request The request sent by the calling script.
-     * @param {String} request.feature The copy request feature to be served.
+     * @param {Object} request.data The data for the copy request feature to be
+     * served.
+     * @param {KeyEvent} [request.data.e] The DOM <code>KeyEvent</code>
+     * responsible for generating the copy request. Only used if type is
+     * "shortcut".
+     * @param {String} [request.data.feature] The name of the feature on which
+     * to execute the copy request.
+     * @param {String} [request.data.key] The character of the final key
+     * responsible for firing the <code>KeyEvent</code>. Only used if type is
+     * "shortcut".
+     * @param {String} request.type The type of request being made.
      * @param {MessageSender} [sender] An object containing information about the
      * script context that sent a message or request.
      * @param {function} [sendResponse] Function to call when you have a
@@ -444,7 +486,11 @@ var feature = {
             return utils.get('copyAnchorEnabled');
         },
         /** @type String */
-        name: 'copy_anchor'
+        name: 'copy_anchor',
+        /** @returns {String} */
+        shortcut: function () {
+            return 'A';
+        }
     },
 
     /**
@@ -471,7 +517,11 @@ var feature = {
             return utils.get('copyBBCodeEnabled');
         },
         /** @type String */
-        name: 'copy_bbcode'
+        name: 'copy_bbcode',
+        /** @returns {String} */
+        shortcut: function () {
+            return 'B';
+        }
     },
 
     /**
@@ -497,7 +547,11 @@ var feature = {
             return utils.get('copyEncodedEnabled');
         },
         /** @type String */
-        name: 'copy_encoded'
+        name: 'copy_encoded',
+        /** @returns {String} */
+        shortcut: function () {
+            return 'E';
+        }
     },
 
     /**
@@ -524,7 +578,11 @@ var feature = {
             return utils.get('copyShortEnabled');
         },
         /** @type String */
-        name: 'copy_short'
+        name: 'copy_short',
+        /** @returns {String} */
+        shortcut: function () {
+            return 'S';
+        }
     },
 
     /**
@@ -550,7 +608,11 @@ var feature = {
             return utils.get('copyUrlEnabled');
         },
         /** @type String */
-        name: 'copy_url'
+        name: 'copy_url',
+        /** @returns {String} */
+        shortcut: function () {
+            return 'U';
+        }
     }
 
 };
@@ -757,8 +819,8 @@ var helper = {
      */
     replaceEntities: function (str) {
         return str
-            .replace('"', '&quot;')
             .replace('&', '&amp;')
+            .replace('"', '&quot;')
             .replace('<', '&lt;')
             .replace('>', '&gt;');
     }

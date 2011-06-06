@@ -32,16 +32,17 @@ var options = {
 
     /**
      * <p>Initializes the options page.</p>
-     * <p>This involves inserting and configuring the UI elements as well as the
-     * insertion of localized Strings and most importantly loading the current
-     * settings.</p>
+     * <p>This involves inserting and configuring the UI elements as well as
+     * the insertion of localized Strings and most importantly loading the
+     * current settings.</p>
      * @requires jQuery
      */
     init: function () {
         // Inserts localized Strings
         utils.i18nReplace('title, #optionTitle', 'opt_title');
         utils.i18nReplace('#featureSetting', 'opt_feature_header');
-        utils.i18nReplace('#settingFeatureEnabledText',
+        // TODO: Remove ID selector
+        utils.i18nReplace('#settingFeatureEnabledText, .featureEnabledText',
                 'opt_feature_enabled_text');
         utils.i18nReplace('#urlShortenerSetting', 'opt_url_shortener_header');
         utils.i18nReplace('#urlShortenerNameHeader',
@@ -50,8 +51,10 @@ var options = {
                 'opt_url_shortener_enabled_header');
         utils.i18nReplace('#urlShortenerConfigHeader',
                 'opt_url_shortener_config_header');
-        utils.i18nReplace('#bitlyXLoginText', 'opt_url_shortener_username_text');
-        utils.i18nReplace('#bitlyXApiKeyText', 'opt_url_shortener_api_key_text');
+        utils.i18nReplace('#bitlyXLoginText',
+                'opt_url_shortener_username_text');
+        utils.i18nReplace('#bitlyXApiKeyText',
+                'opt_url_shortener_api_key_text');
         utils.i18nReplace('#googleOAuthEnabledText',
                 'opt_url_shortener_oauth_enable_text');
         utils.i18nReplace('#anchorSetting', 'opt_anchor_header');
@@ -66,7 +69,8 @@ var options = {
         utils.i18nReplace('#shorcutSetting', 'opt_shortcut_header');
         utils.i18nReplace('#settingShortcutText', 'opt_shortcut_text');
         utils.i18nReplace('#ieTabSetting', 'opt_ie_tab_header');
-        utils.i18nReplace('#settingIeTabExtractText', 'opt_ie_tab_extract_text');
+        utils.i18nReplace('#settingIeTabExtractText',
+                'opt_ie_tab_extract_text');
         utils.i18nReplace('#settingIeTabTitleText', 'opt_ie_tab_title_text');
         utils.i18nReplace('#ieTabFooter', 'opt_ie_tab_footer');
         utils.i18nReplace('#ieTabExtension', 'extension');
@@ -85,7 +89,14 @@ var options = {
         $('.section h4').click(options.toggleSection);
         // Loads current option values
         options.load();
-        var bg = chrome.extension.getBackgroundPage();
+        var bg = chrome.extension.getBackgroundPage(), keyMods = '';
+        if (bg.clipboard.isThisPlatform('mac')) {
+            keyMods = bg.clipboard.shortcutMacModifiers;
+        } else {
+            keyMods = bg.clipboard.shortcutModifiers;
+        }
+        // TODO: Remove ID selector
+        $('#settingFeatureShortcutText, .featureShortcutText').html(keyMods);
         // Displays IE Tab options if extension is detected
         // TODO: Verify data sent/received with IE Tab author and ammend below
         chrome.extension.sendRequest(bg.ietab.extensionId, {
@@ -181,7 +192,10 @@ var options = {
                 } else {
                     $('#settingFeatureEnabled').removeAttr('checked');
                 }
-                // Disables checkbox control if option is for 'copy_url' feature
+                /*
+                 * Disables checkbox control if option is for 'copy_url'
+                 * feature.
+                 */
                 if (bg.feature.url.name === opt.val()) {
                     $('#settingFeatureEnabled').attr('disabled', 'disabled');
                 } else {
@@ -202,7 +216,10 @@ var options = {
             $('#moveUpButton[disabled] img').attr('src',
                     '../images/move_up_disabled.gif');
         }).change();
-        // Moves the selected option down one when the 'down' control is clicked
+        /*
+         * Moves the selected option down one when the 'down' control is
+         * clicked.
+         */
         $('#moveDownButton').click(function (event) {
             var opt = $('#settingFeatures option:selected');
             opt.insertAfter(opt.next());
@@ -317,8 +334,8 @@ var options = {
     saveFeatures: function () {
         var bg = chrome.extension.getBackgroundPage();
         /*
-         * Updates each individual feature settings based on their corresponding
-         * options.
+         * Updates each individual feature settings based on their
+         * corresponding options.
          */
         $('#settingFeatures option').each(function (index) {
             var opt = $(this);
@@ -344,7 +361,8 @@ var options = {
                     utils.set('copyShortOrder', index);
                     break;
                 case bg.feature.url.name:
-                    utils.set('copyUrlEnabled', opt.data('enabled') === 'true');
+                    utils.set('copyUrlEnabled',
+                            opt.data('enabled') === 'true');
                     utils.set('copyUrlOrder', index);
                     break;
             }
@@ -380,7 +398,8 @@ var options = {
         });
         utils.set('bitlyXApiKey', $('#bitlyXApiKey').val());
         utils.set('bitlyXLogin', $('#bitlyXLogin').val());
-        utils.set('googleOAuthEnabled', $('#googleOAuthEnabled').is(':checked'));
+        utils.set('googleOAuthEnabled',
+                $('#googleOAuthEnabled').is(':checked'));
     },
 
     /**

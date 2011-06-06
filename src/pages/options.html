@@ -21,7 +21,7 @@
                     <div>
                         <table style="border: none; border-collapse; collapse; width: 100%">
                             <tr>
-                                <td rowspan="2" style="width: 50%">
+                                <td colspan="2" rowspan="2" style="width: 50%">
                                     <select id="settingFeatures" size="5" style="width: 100%"></select>
                                 </td>
                                 <td style="padding-top: 10px">
@@ -34,20 +34,48 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td colspan="3">
+                                    <button id="addButton">Add</button>
+                                    <label>
+                                        <input id="settingFeatureName" type="text" maxlength="32" size="32" disabled="disabled" placeholder="Name" />
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
                                 <td>
                                     <label>
                                         <input type="checkbox" id="settingFeatureEnabled" disabled="disabled" />
                                         <span id="settingFeatureEnabledText"></span>
                                     </label>
                                 </td>
-                                <td>
+                                <td style="text-align: right">
                                     <label>
-                                        <span id="settingFeatureShortcutText">Ctrl + Alt +</span>
-                                        <input type="text" id="settingFeatureShortcut" disabled="disabled" maxlength="1" size="1" style="text-transform: uppercase" />
+                                        <span id="settingFeatureShortcutText"></span><input type="text" id="settingFeatureShortcut" disabled="disabled" maxlength="1" size="1" style="text-transform: uppercase" />
+                                    </label>
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <label>
+                                        <textarea id="settingFeatureTemplate" rows="5" cols="50" disabled="disabled" placeholder="Template"></textarea>
                                     </label>
                                 </td>
                             </tr>
+                            <tr>
+                                <td>
+                                    <button id="updateButton">Update</button>
+                                </td>
+                                <td style="text-align: right">
+                                    <button id="deleteButton">Delete</button>
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
                         </table>
+                    </div>
+                    <div style="margin-top: 25px">
+                        <!-- TODO: Overlay/Dialog/Slide? -->
+                        <a href="javascript:void(0)" id="customFeaturesTemplateHelp">Need help creating templates?</a>
                     </div>
                 </div>
             </div>
@@ -55,33 +83,138 @@
                 <h4 id="customFeatureSetting" class="toggle-expand">Custom Features Settings:</h4>
                 <div class="content">
                     <div>
-                        <table style="border: none; border-collapse; collapse; width: 100%">
-                            <tr>
-                                <td rowspan="2" style="vertical-align: top; width: 1%">
-                                    <input id="custom1_delete" type="image" src="../images/delete.png" width="16" height="16" style="margin-top: 5px;" />
+                        <table class="features" style="border: none; border-collapse; collapse; width: 100%">
+                            <tr class="feature template first collapsed">
+                                <td>
+                                    <input class="deleteButton" type="image" src="../images/delete.png" />
+                                    <input class="moveUpButton" type="image" src="../images/move_up_disabled.gif" />
+                                    <input class="moveDownButton" type="image" src="../images/move_down.gif" />
                                 </td>
-                                <td style="width: 75%">
-                                    <input id="custom1_name" type="text" maxlength="32" size="32" placeholder="Custom Name" />
+                                <td style="text-align: left">
+                                    <input class="featureName" type="text" maxlength="32" size="32" placeholder="Name" disabled="disabled" />
+                                </td>
+                                <td style="width: 40%">
+                                    <div class="collapsed">
+                                        <a class="expandFeature" href="javascript:void(0)">show details</a>
+                                    </div>
+                                    <div class="expanded">
+                                        <a class="collapseFeature" href="javascript:void(0)">hide details</a>
+                                    </div>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr class="feature template second collapsed">
+                                <td>&nbsp;</td>
+                                <td style="text-align: left">
+                                    <label>
+                                        <span class="featureShortcutText"></span><input type="text" class="featureShortcut" maxlength="1" size="1" />
+                                    </label>
+                                </td>
                                 <td>
-                                    <textarea id="custom1_template" rows="5" cols="50" placeholder="Template"></textarea>
+                                    <label>
+                                        <input type="checkbox" class="featureEnabled" disabled="disabled" />
+                                        <span class="featureEnabledText"></span>
+                                    </label>
                                 </td>
                             </tr>
-                            <tr>
-                                <td style="vertical-align: top; width: 1%">
-                                    <input id="newCustom_add" type="image" src="../images/add.png" width="16" height="16" style="margin-top: 5px;" />
+                            <tr class="feature template third collapsed">
+                                <td>&nbsp;</td>
+                                <td colspan="2" style="text-align: left">
+                                    <textarea class="featureTemplate" rows="5" cols="50" placeholder="Template" disabled="disabled"></textarea>
+                                </td>
+                            </tr>
+                            <!--<tr id="copy_url">
+                                <td>
+                                    <input class="deleteButton" type="image" src="../images/delete.png" style="display: none" />
+                                    <input class="moveUpButton" type="image" src="../images/move_up_disabled.gif" />
+                                    <input class="moveDownButton" type="image" src="../images/move_down.gif" />
                                 </td>
                                 <td>
-                                    <input id="newCustom_name" type="text" maxlength="32" size="32" placeholder="Custom Name" />
+                                    <div>
+                                        <input class="featureName" type="text" maxlength="32" size="32" placeholder="Name" disabled="disabled" value="URL" />
+                                        <a class="expandFeature" href="javascript:void(0)" style="display: none">show</a>
+                                        <label class="extra-content">
+                                            <input type="checkbox" class="featureEnabled" checked="checked" disabled="disabled" />
+                                            <span class="featureEnabledText"></span>
+                                        </label>
+                                    </div>
+                                    <div class="extra-content">
+                                        <textarea class="featureTemplate" rows="5" cols="50" placeholder="Template" disabled="disabled">{{{source}}}</textarea>
+                                        <br />
+                                        <label>
+                                            <span class="featureShortcutText"></span><input type="text" class="featureShortcut" maxlength="1" size="1" value="U" />
+                                        </label>
+                                        <a class="collapseFeature" href="javascript:void(0)">hide</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr id="copy_bbcode">
+                                <td>
+                                    <input class="deleteButton" type="image" src="../images/delete.png" />
+                                    <input class="moveUpButton" type="image" src="../images/move_up.gif" />
+                                    <input class="moveDownButton" type="image" src="../images/move_down.gif" />
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="featureName" type="text" maxlength="32" size="32" placeholder="Name" disabled="disabled" value="BBCode" />
+                                        <a class="expandFeature" href="javascript:void(0)" style="display: none">show</a>
+                                        <label class="extra-content">
+                                            <input type="checkbox" class="featureEnabled" />
+                                            <span class="featureEnabledText"></span>
+                                        </label>
+                                    </div>
+                                    <div class="extra-content">
+                                        <textarea class="featureTemplate" rows="5" cols="50" placeholder="Template" spellcheck="false" disabled="disabled">{{#title}}
+[url={{{source}}}]{{{title}}}[/url]
+{{/title}}
+{{^title}}
+[url]{{{source}}}[/url]
+{{/title}}</textarea>
+                                        <br />
+                                        <label>
+                                            <span class="featureShortcutText"></span><input type="text" class="featureShortcut" maxlength="1" size="1" value="B" />
+                                        </label>
+                                        <a class="collapseFeature" href="javascript:void(0)">hide</a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr id="custom_1" class="custom-feature">
+                                <td>
+                                    <input class="deleteButton" type="image" src="../images/delete.png" />
+                                    <input class="moveUpButton" type="image" src="../images/move_up.gif" />
+                                    <input class="moveDownButton" type="image" src="../images/move_down_disabled.gif" />
+                                </td>
+                                <td>
+                                    <div>
+                                        <input class="featureName" type="text" maxlength="32" size="32" placeholder="Name" value="Title + URL" />
+                                        <a class="expandFeature" href="javascript:void(0)" style="display: none">show</a>
+                                        <label class="extra-content">
+                                            <input type="checkbox" class="featureEnabled" />
+                                            <span class="featureEnabledText"></span>
+                                        </label>
+                                    </div>
+                                    <div class="extra-content">
+                                        <textarea class="featureTemplate" rows="5" cols="50" placeholder="Template">{{{title}}} : {{{source}}}</textarea>
+                                        <br />
+                                        <label>
+                                            <span class="featureShortcutText"></span><input type="text" class="featureShortcut" maxlength="1" size="1" value="T" />
+                                        </label>
+                                        <a class="collapseFeature" href="javascript:void(0)">hide</a>
+                                    </div>
+                                </td>
+                            </tr>-->
+                            <tr>
+                                <td>
+                                    <input id="addButton" type="image" src="../images/add.png" />
+                                </td>
+                                <td colspan="2">
+                                    <input id="newFeatureName" type="text" maxlength="32" size="32" placeholder="Name" />
                                 </td>
                             </tr>
                         </table>
                     </div>
                     <div style="margin-top: 25px">
                         <!-- TODO: Overlay/Dialog/Slide? -->
-                        <a href="#" id="customFeaturesTemplateHelp">Need help creating templates?</a>
+                        <a href="javascript:void(0)" id="customFeaturesTemplateHelp">Need help creating templates?</a>
                     </div>
                 </div>
             </div>
@@ -210,7 +343,7 @@
                             <button id="saveAndClose"></button>
                         </td>
                         <td style="text-align: right">
-                            <span><a href="#" id="collapseAll"></a> &#124; <a href="#" id="expandAll"></a></span>
+                            <span><a href="javascript:void(0)" id="collapseAll"></a> &#124; <a href="javascript:void(0)" id="expandAll"></a></span>
                         </td>
                     </tr>
                 </table>

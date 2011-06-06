@@ -23,7 +23,12 @@ var popup = {
         }
         // Binds request to click event
         $('#item li').click(function () {
-            chrome.extension.sendRequest({'feature': $(this).attr('name')});
+            chrome.extension.sendRequest({
+                data: {
+                    feature: $(this).attr('name')
+                },
+                type: 'popup'
+            });
         });
         // Inserts localized Strings
         utils.i18nReplace('#copyAnchorText', 'copy_anchor');

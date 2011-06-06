@@ -5,34 +5,18 @@
         return;
     }
     document.body.setAttribute('url_copy_injected', true);
-    document.body.addEventListener('keyup', function (event) {
-        var data = {shortcut: true},
-            isMac = navigator.userAgent.toLowerCase().indexOf('mac') !== -1;
-        if ((event.ctrlKey && event.altKey && !isMac) ||
-            (event.metaKey && event.altKey && isMac)) {
-            /*
-             * Determines the requested feature before serving it to extension's
-             * request handler.
-             */
-            switch (event.keyCode) {
-                case 85: // 'U'
-                    data.feature = 'copy_url';
-                    break;
-                case 83: // 'S'
-                    data.feature = 'copy_short';
-                    break;
-                case 65: // 'A'
-                    data.feature = 'copy_anchor';
-                    break;
-                case 66: // 'B'
-                    data.feature = 'copy_bbcode';
-                    break;
-                case 69: // 'E'
-                    data.feature = 'copy_encoded';
-                    break;
-            }
+    document.body.addEventListener('keyup', function (e) {
+        var isMac = navigator.userAgent.toLowerCase().indexOf('mac') !== -1;
+        if ((e.ctrlKey && e.altKey && !isMac) ||
+            (e.metaKey && e.shiftKey && isMac)) {
             if (data.feature) {
-                 chrome.extension.sendRequest(data);
+                chrome.extension.sendRequest({
+                    data: {
+                        event: e,
+                        key: String.fromCharCode(e.keyCode).toUpperCase()
+                    },
+                    type: 'shortcut'
+                });
             }
         }
     }, false);
