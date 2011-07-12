@@ -30,6 +30,14 @@ var clipboard = {
     features: [],
 
     /**
+     * <p>The HTML to populate the popup with.</p>
+     * <p>This should be updated whenever changes are made to the features.</p>
+     * @see clipboard.updateFeatures
+     * @type String
+     */
+    popupHTML: '',
+
+    /**
      * <p>String representation of the keyboard modifiers listened to by this
      * extension on Windows/Linux platforms.</p>
      * @type String
@@ -224,10 +232,6 @@ var clipboard = {
         utils.init('copyShortOrder', 1);
         utils.init('copyUrlEnabled', true);
         utils.init('copyUrlOrder', 0);
-        // Generates the HTML for each feature to optimize popup loading times
-        for (var key in feature) {
-            feature[key].html = helper.createFeatureHtml(feature[key]);
-        }
         clipboard.updateFeatures();
     },
 
@@ -450,6 +454,7 @@ var clipboard = {
         for (var i = 0; i < count; i++) {
             clipboard.features[i] = clipboard.getFeature(i);
         }
+        helper.buildPopup();
     }
 
 };
@@ -481,6 +486,10 @@ var feature = {
         html: '',
         /** @type String */
         id: 'copyAnchor',
+        /** @returns {String} */
+        image: function () {
+            return 'copy_anchor.png';
+        },
         /** @returns {Boolean} */
         isEnabled: function () {
             return utils.get('copyAnchorEnabled');
@@ -490,6 +499,10 @@ var feature = {
         /** @returns {String} */
         shortcut: function () {
             return 'A';
+        },
+        /** @returns {String} */
+        title: function () {
+            return chrome.i18n.getMessage('copy_anchor');
         }
     },
 
@@ -501,17 +514,9 @@ var feature = {
      */
     bbcode: {
         /** @returns {String} */
-        getMacShortcut: function () {
-            return '\u2325\u2318B';
+        image: function () {
+            return 'copy_bbcode.png';
         },
-        /** @returns {String} */
-        getShortcut: function () {
-            return 'Ctrl+Alt+B';
-        },
-        /** @type String */
-        html: '',
-        /** @type String */
-        id: 'copyBBCode',
         /** @returns {Boolean} */
         isEnabled: function () {
             return utils.get('copyBBCodeEnabled');
@@ -521,6 +526,10 @@ var feature = {
         /** @returns {String} */
         shortcut: function () {
             return 'B';
+        },
+        /** @returns {String} */
+        title: function () {
+            return chrome.i18n.getMessage('copy_bbcode');
         }
     },
 
@@ -531,17 +540,9 @@ var feature = {
      */
     encoded: {
         /** @returns {String} */
-        getMacShortcut: function () {
-            return '\u2325\u2318E';
+        image: function () {
+            return 'copy_encoded.png';
         },
-        /** @returns {String} */
-        getShortcut: function () {
-            return 'Ctrl+Alt+E';
-        },
-        /** @type String */
-        html: '',
-        /** @type String */
-        id: 'copyEncodedUrl',
         /** @returns {Boolean} */
         isEnabled: function () {
             return utils.get('copyEncodedEnabled');
@@ -551,6 +552,10 @@ var feature = {
         /** @returns {String} */
         shortcut: function () {
             return 'E';
+        },
+        /** @returns {String} */
+        title: function () {
+            return chrome.i18n.getMessage('copy_encoded');
         }
     },
 
@@ -562,17 +567,9 @@ var feature = {
      */
     short: {
         /** @returns {String} */
-        getMacShortcut: function () {
-            return '\u2325\u2318S';
+        image: function () {
+            return 'copy_short.png';
         },
-        /** @returns {String} */
-        getShortcut: function () {
-            return 'Ctrl+Alt+S';
-        },
-        /** @type String */
-        html: '',
-        /** @type String */
-        id: 'copyShortUrl',
         /** @returns {Boolean} */
         isEnabled: function () {
             return utils.get('copyShortEnabled');
@@ -582,6 +579,10 @@ var feature = {
         /** @returns {String} */
         shortcut: function () {
             return 'S';
+        },
+        /** @returns {String} */
+        title: function () {
+            return chrome.i18n.getMessage('copy_short');
         }
     },
 
@@ -592,17 +593,9 @@ var feature = {
      */
     url: {
         /** @returns {String} */
-        getMacShortcut: function () {
-            return '\u2325\u2318U';
+        image: function () {
+            return 'copy_url.png';
         },
-        /** @returns {String} */
-        getShortcut: function () {
-            return 'Ctrl+Alt+U';
-        },
-        /** @type String */
-        html: '',
-        /** @type String */
-        id: 'copyUrl',
         /** @returns {Boolean} */
         isEnabled: function () {
             return utils.get('copyUrlEnabled');
@@ -612,6 +605,10 @@ var feature = {
         /** @returns {String} */
         shortcut: function () {
             return 'U';
+        },
+        /** @returns {String} */
+        title: function () {
+            return chrome.i18n.getMessage('copy_url');
         }
     }
 
@@ -638,6 +635,91 @@ var helper = {
     },
 
     /**
+     * <p>Creates a <code>&lt;li/&gt;</code> representing the feature provided.
+     * This is to be inserted in to the <code>&lt;ul/&gt;</code> in the popup
+     * page but is created here to optimize display times for the popup.</p>
+     * @param {feature} feature The information of the feature to be used.
+     * @returns {jQuery} The generated <code>&lt;li/&gt;</code> jQuery object.
+     * @requires jQuery
+     * @private
+     */
+    buildFeature: function (feature) {
+        var item = $('<li/>', {
+            id: feature.id + 'Item',
+            name: feature.name,
+            onclick: 'popup.sendRequest(this);'
+        });
+        var image = '../images/' + (feature.image() || 'copy_url.png');
+        var menu = $('<div/>', {
+            'class': 'menu',
+            id: feature.id,
+            style: 'background-image: url(\'' + image + '\');'
+        });
+        menu.append($('<span/>', {
+            'class': 'text',
+            id: feature.id + 'Text'
+        }));
+        if (utils.get('settingShortcut')) {
+            var modifiers = clipboard.shortcutModifiers;
+            if (clipboard.isThisPlatform('mac')) {
+                modifiers = clipboard.shortcutMacModifiers;
+            }
+            menu.append($('<span/>', {
+                'class': 'shortcut',
+                id: feature.id + 'Shortcut',
+                text: modifiers + feature.shortcut()
+            }));
+        }
+        return item.append(menu);
+    },
+
+    /**
+     * <p>Builds the HTML to populate the popup with to optimize popup loading
+     * times.</p>
+     * @requires jQuery
+     */
+    buildPopup: function () {
+        var loadDiv = $('<div id="loadDiv"/>');
+        loadDiv.append($('<img src="../images/loading.gif"/>'), $('<div/>', {
+            text: chrome.i18n.getMessage('shortening')
+        }));
+        var item = $('<div id="item"/>');
+        var itemList = $('<ul/>');
+        itemList.append($('<li id="ieTabItem"/>').append(
+            $('<div/>', {
+                'class': 'menu',
+                style: 'background-image: url(\'../images/explorer.png\')'
+            }).append(
+                $('<span/>', {
+                    'class': 'text',
+                    text: chrome.i18n.getMessage('ie_tab')
+                })
+            )
+        ));
+        // Generates the HTML for each feature
+        for (var key in feature) {
+            if (feature[key].isEnabled()) {
+                itemList.append(helper.buildFeature(feature[key]));
+            }
+        }
+        item.append(itemList);
+        /*
+         * Calculates the widest text <code>&lt;div/&gt;</code> in the popup and
+         * assigns that width to all others.
+         */
+        var textItems = itemList.find('li .text'),
+            width = 0;
+        textItems.each(function () {
+            var scrollWidth = this.scrollWidth;
+            if (scrollWidth > width) {
+                width = scrollWidth;
+            }
+        });
+        textItems.css('width', width + 'px');
+        clipboard.popupHTML = $('<div/>').append(loadDiv, item).html();
+    },
+
+    /**
      * <p>Calls the active URL Shortener service with the URL provided in order
      * to obtain a corresponding short URL.</p>
      * <p>This function also handles the result of the call by either copying
@@ -651,8 +733,7 @@ var helper = {
         helper.callUrlShortenerHelper(url, function (url, service) {
             var params = service.getParameters(url) || {};
             var req = new XMLHttpRequest();
-            req.open(service.method, service.url + '?' +
-                    utils.serialize(params), true);
+            req.open(service.method, service.url + '?' + $.param(params), true);
             req.setRequestHeader('Content-Type', service.contentType);
             if (service.oauth && service.isOAuthEnabled()) {
                 req.setRequestHeader('Authorization',
@@ -750,41 +831,6 @@ var helper = {
         } else {
             return '[url]' + data.url + '[/url]';
         }
-    },
-
-    /**
-     * <p>Creates a <code>&lt;li/&gt;</code> representing the feature provided.
-     * This is to be inserted in to the <code>&lt;ul/&gt;</code> in the popup
-     * page but is created here to optimize display times for the popup.</p>
-     * @param {feature} feature The information of the feature to be used.
-     * @returns {String} The formatted HTML for the specified feature.
-     * @requires jQuery
-     * @private
-     */
-    createFeatureHtml: function (feature) {
-        var item = $('<li/>', {
-            'id': feature.id + 'Item',
-            'name': feature.name
-        });
-        var menu = $('<div/>', {
-            'class': 'menu',
-            'id': feature.id
-        });
-        menu.append($('<span/>', {
-            'class': 'text',
-            'id': feature.id + 'Text'
-        }));
-        var shortcut = feature.getShortcut();
-        if (clipboard.isThisPlatform('mac')) {
-            shortcut = feature.getMacShortcut();
-        }
-        menu.append($('<span/>', {
-            'class': 'shortcut',
-            'id': feature.id + 'Shortcut',
-            'text': shortcut
-        }));
-        item.append(menu);
-        return $('<div/>').append(item).html();
     },
 
     /**

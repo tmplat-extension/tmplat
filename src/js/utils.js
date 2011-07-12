@@ -16,7 +16,7 @@ var utils = {
      * if none exists.
      * @see JSON.parse
      */
-    get: function (key) {
+    'get': function (key) {
         var value = localStorage[key];
         if (typeof(value) !== 'undefined') {
             return JSON.parse(value);
@@ -62,25 +62,6 @@ var utils = {
     },
 
     /**
-     * <p>Encodes the set of key/value pairs provided as a string for
-     * submission.</p>
-     * @param {Object} data The object whose key/value pairs are to be
-     * serialized.
-     * @returns {String} The serialized data in standard URL-encoded notation.
-     * @see encodeURIComponent
-     */
-    serialize: function (data) {
-        var ser = [];
-        for (var p in data) {
-            if (data.hasOwnProperty(p)) {
-                ser.push(encodeURIComponent(p) + '=' +
-                        encodeURIComponent(data[p]));
-            }
-        }
-        return ser.join('&');
-    },
-
-    /**
      * <p>Sets the value of the specified key in localStorage.</p>
      * <p>If the specified value is undefined it is assigned directly to the
      * key; otherwise it is transformed to a JSON String.</p>
@@ -90,7 +71,7 @@ var utils = {
      * undefined if there was none.
      * @see JSON.stringify
      */
-    set: function (key, value) {
+    'set': function (key, value) {
         var oldValue = utils.get(key);
         if (typeof(value) !== 'undefined') {
             localStorage[key] = JSON.stringify(value);

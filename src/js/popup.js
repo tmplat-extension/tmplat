@@ -8,66 +8,39 @@ var popup = {
 
     /**
      * <p>Initializes the popup page.</p>
-     * <p>This involves inserting and configuring the UI elements as well as the
-     * insertion of localized Strings.</p>
-     * @requires jQuery
+     * <p>This involves inserting the HTML prepared by the background page and
+     * configuring the display of some elements based on certain conditions
+     * being met.</p>
      */
     init: function () {
         var bg = chrome.extension.getBackgroundPage();
-        // Inserts list items created for all enabled features
-        for (var i = 0; i < bg.clipboard.features.length; i++) {
-            var feature = bg.clipboard.features[i];
-            if (feature.isEnabled()) {
-                $('#item ul').append(feature.html);
-            }
-        }
-        // Binds request to click event
-        $('#item li').click(function () {
-            chrome.extension.sendRequest({
-                data: {
-                    feature: $(this).attr('name')
-                },
-                type: 'popup'
-            });
-        });
-        // Inserts localized Strings
-        utils.i18nReplace('#copyAnchorText', 'copy_anchor');
-        utils.i18nReplace('#copyBBCodeText', 'copy_bbcode');
-        utils.i18nReplace('#copyEncodedUrlText', 'copy_encoded');
-        utils.i18nReplace('#copyShortUrlText', 'copy_short');
-        utils.i18nReplace('#copyUrlText', 'copy_url');
-        utils.i18nReplace('#ieTabText', 'ie_tab');
-        utils.i18nReplace('#shortening', 'shortening');
+        // Inserts prepared HTML in to body element
+        document.body.innerHTML = bg.clipboard.popupHTML;
         // Shows IE Tab indicator if extension is detected for the selected tab
         chrome.tabs.getSelected(null, function (tab) {
             if (bg.ietab.isActive(tab)) {
-                $('#ieTabItem').show();
+                document.getElementById('ieTabItem').style = 'display: block';
             }
         });
-        // Shows all keyboard shortcuts if user enabled option
+        // Fix dimensions if shortcuts are enabled
         if (utils.get('settingShortcut')) {
-            $('.shortcut').show();
-            $('body').css('min-width', '190px');
+            document.body.style = 'min-width: 190px';
         }
-        // Ensures consistent widths keeping the popup tidy
-        popup.resizeText();
     },
 
     /**
-     * <p>Calculates the widest text <code>&lt;div/&gt;</code> in the popup and
-     * assigns that width to all others.</p>
-     * @requires jQuery
-     * @private
+     * <p>Sends the request to the background page for the clicked feature
+     * item.</p>
+     * @event
+     * @param {Element} item The calling feature item clicked.
      */
-    resizeText: function () {
-        var width = 0;
-        $('li .text').each(function () {
-            var scrollWidth = this.scrollWidth;
-            if (scrollWidth > width) {
-                width = scrollWidth;
-            }
+    sendRequest: function (item) {
+        chrome.extension.sendRequest({
+            data: {
+                feature: item.getAttribute('name')
+            },
+            type: 'popup'
         });
-        $('li .text').css('width', width + 'px');
     }
 
 };
