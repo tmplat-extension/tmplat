@@ -112,7 +112,7 @@ var Mustache = function() {
               "\n*([\\s\\S]+?)" + this.otag + "\\/\\s*\\2\\s*" + this.ctag +
               "\\s*", "mg");
 
-      // for each {{#foo}}{{/foo}} section do...
+      // for each {#foo}{/foo} section do...
       return template.replace(regex, function(match, type, name, content) {
         var value = that.find(name, context);
         if(type == "^") { // inverted section
@@ -146,7 +146,7 @@ var Mustache = function() {
     },
 
     /*
-      Replace {{foo}} and friends with values from our view
+      Replace {foo} and friends with values from our view
     */
     render_tags: function(template, context, partials, in_recursion) {
       // tit for tat
