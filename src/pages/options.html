@@ -2,12 +2,43 @@
 <html>
     <head>
         <title></title>
-        <link type="text/css" rel="stylesheet" href="../css/options.css" />
+        <style type="text/css">
+            body {background-color: #EBEFF9; font-family: Arial, sans-serif; font-size: 13px; margin: 10px;}
+            a, a:active, a:link, a:visited {color: #3D5D6A; font-weight: bold; text-decoration: none;}
+            a:hover {text-decoration: underline;}
+            .features tr td:first-child {padding-top: 6px; text-align: right; vertical-align: top;}
+            .feature td {text-align: left;}
+            .feature.first .expanded, .feature.collapsed.first .collapsed {display: block;}
+            .feature.first .collapsed, .feature.collapsed.first .expanded {display: none;}
+            .feature.collapsed.second, .feature.collapsed.third {display: none;}
+            .feature.template {/*TODO: display: none;*/}
+            .featureShortcut {text-transform: uppercase;}
+            .features tr:last-child td:first-child {padding-top: 8px !important;}
+            .styled thead th {border-bottom: 1px solid #EEE;}
+            .styled thead th:hover {border-bottom-color: #AAA;}
+            .styled tbody tr:hover {background-color: #F3F3F3;}
+            .contentBox {background-color: white; border: 3px solid #BEC9CE; border-radius: 20px; height: auto; margin: 50px auto 20px auto; padding: 30px; text-align: left; width: 600px;}
+            #header {padding-bottom: 1em; padding-top: 1em;}
+            #header h1 {background: url('../images/icon_48.png') no-repeat; background-position: 1px 62px; background-size: 48px; color: #3D5D6A; display: inline; font-size: 30px; padding-bottom: 40px; padding-left: 90px; padding-top: 70px;}
+            h4 {border-bottom: 2px dotted #C3C3C3; color: #333; font-size: 15px; line-height: 28px;padding-left: 0.5em;}
+            .section .content {display: none; line-height: 25px; padding-left: 55px;}
+            .section h4 {background-size: 24px 24px; cursor: pointer;}
+            .section h4.toggle-collapse {background: white url('../images/toggle-collapse.png') no-repeat scroll right;}
+            .section h4.toggle-expand {background: white url('../images/toggle-expand.png') no-repeat scroll right;}
+            #moveDownButton, #moveUpButton {padding: 3px 3px 1px;}
+            input {cursor: pointer;}
+            #ieTabSettingDiv {display: none;}
+            #ieTabFooter {font-weight: bold;}
+            .closeBtn {margin: 25px 0 0 0;}
+            #footer {font-size: 13px; text-align: center;}
+        </style>
         <script type="text/javascript" src="../js/jquery.min.js"></script>
         <script type="text/javascript" src="../js/utils.js"></script>
         <script type="text/javascript" src="../js/options.js"></script>
         <script type="text/javascript">
-            $(function () { options.init(); });
+            $(function () {
+                options.init();
+            });
         </script>
     </head>
     <body>
