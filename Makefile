@@ -7,7 +7,7 @@ post_compiler = $(js_engine) build/post-compile.js
 validator = $(js_engine) build/jslint-check.js
 
 base_files = src/js/background.js\
-	src/js/notification.js\
+    src/js/notification.js\
 	src/js/options.js\
 	src/js/popup.js\
 	src/js/shortcuts.js\
@@ -24,7 +24,8 @@ base_locale_dirs = bin/_locales/en\
 	bin/_locales/fr
 
 extra_bin_files = bin/js/chrome_ex_oauth.js\
-	bin/js/chrome_ex_oauthsimple.js
+	bin/js/chrome_ex_oauthsimple.js\
+	bin/js/mustache.js
 
 all: core
 
