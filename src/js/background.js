@@ -14,6 +14,53 @@ var clipboard = {
      */
     blacklistedExtensions: [],
 
+    defaultFeatures: [{
+        image: 'copy_anchor.png',
+        index: 2,
+        enabled: true,
+        name: 'anchor',
+        readOnly: true,
+        shortcut: 'A',
+        template: '<a href="{{source}}"{#doAnchorTitle} title="{{title}}"{/doAnchorTitle}>{{title}}</a>',
+        title: chrome.i18n.getMessage('copy_anchor')
+    }, {
+        image: 'copy_bbcode.png',
+        index: 4,
+        enabled: false,
+        name: 'bbcode',
+        readOnly: true,
+        shortcut: 'B',
+        template: '[url={source}]{title}[/url]',
+        title: chrome.i18n.getMessage('copy_bbcode')
+    }, {
+        image: 'copy_encoded.png',
+        index: 3,
+        enabled: true,
+        name: 'encoded',
+        readOnly: true,
+        shortcut: 'E',
+        template: '{encoded}',
+        title: chrome.i18n.getMessage('copy_encoded')
+    }, {
+        image: 'copy_short.png',
+        index: 1,
+        enabled: true,
+        name: 'short',
+        readOnly: true,
+        shortcut: 'S',
+        template: '{short}',
+        title: chrome.i18n.getMessage('copy_short')
+    }, {
+        image: 'copy_url.png',
+        index: 0,
+        enabled: true,
+        name: 'url',
+        readOnly: true,
+        shortcut: 'U',
+        template: '{source}',
+        title: chrome.i18n.getMessage('copy_url')
+    }],
+
     /**
      * <p>The name of the feature being used by the current copy request.</p>
      * <p>This value is reset to an empty string after every copy request.</p>
@@ -204,13 +251,12 @@ var clipboard = {
      * listeners and adding the request listeners.</p>
      */
     init: function () {
-        utils.init('settingNotification', true);
-        utils.init('settingNotificationTimer', 3000);
-        utils.init('settingShortcut', true);
-        utils.init('settingTargetAttr', false);
-        utils.init('settingTitleAttr', false);
-        utils.init('settingIeTabExtract', true);
-        utils.init('settingIeTabTitle', true);
+        clipboard.init_update(); // TODO: Remove call in v0.1.0.1
+        utils.init('notifications', true);
+        utils.init('notificationDuration', 3000);
+        utils.init('shortcuts', true);
+        utils.init('doAnchorTarget', false);
+        utils.init('doAnchorTitle', false);
         clipboard.initFeatures();
         clipboard.initUrlShorteners();
         clipboard.executeScriptsInExistingWindows();
@@ -220,22 +266,105 @@ var clipboard = {
     },
 
     /**
+     * <p>Handles the conversion/removal of older version of settings that may
+     * have been stored previously by {@link clipboard.init}.</p>
+     * @since 0.1.0.0
+     */
+    init_update: function () {
+        // TODO: Remove function in v0.1.0.1
+        if (utils.exists('settingNotification')) {
+            utils.set('notifications', utils.get('settingNotification'));
+            utils.remove('settingNotification');
+        }
+        if (utils.exists('settingNotificationTimer')) {
+            utils.set('notificationDuration',
+                utils.get('settingNotificationTimer'));
+            utils.remove('settingNotificationTimer');
+        }
+        if (utils.exists('settingShortcut')) {
+            utils.set('shortcuts', utils.get('settingShortcut'));
+            utils.remove('settingShortcut');
+        }
+        if (utils.exists('settingTargetAttr')) {
+            utils.set('doAnchorTarget', utils.get('settingTargetAttr'));
+            utils.remove('settingTargetAttr');
+        }
+        if (utils.exists('settingTitleAttr')) {
+            utils.set('doAnchorTitle', utils.get('settingTitleAttr'));
+            utils.remove('settingTitleAttr');
+        }
+        utils.remove('settingIeTabExtract');
+        utils.remove('settingIeTabTitle');
+    },
+
+    /**
      * <p>Initializes the supported copy request features (including their
      * corresponding settings).</p>
      * @private
      */
     initFeatures: function () {
-        utils.init('copyAnchorEnabled', true);
-        utils.init('copyAnchorOrder', 2);
-        utils.init('copyBBCodeEnabled', false);
-        utils.init('copyBBCodeOrder', 4);
-        utils.init('copyEncodedEnabled', true);
-        utils.init('copyEncodedOrder', 3);
-        utils.init('copyShortEnabled', true);
-        utils.init('copyShortOrder', 1);
-        utils.init('copyUrlEnabled', true);
-        utils.init('copyUrlOrder', 0);
+        clipboard.initFeatures_update(); // TODO: Remove call in v0.1.0.1
+        // TODO: Change features to be dynamic and updatable (seperate settings)
+        utils.init('feat_anchor_enabled', true);
+        utils.init('feat_anchor_index', 2);
+        utils.init('feat_bbcode_enabled', false);
+        utils.init('feat_bbcode_index', 4);
+        utils.init('feat_encoded_enabled', true);
+        utils.init('feat_encoded_index', 3);
+        utils.init('feat_short_enabled', true);
+        utils.init('feat_short_index', 1);
+        utils.init('feat_url_enabled', true);
+        utils.init('feat_url_index', 0);
         clipboard.updateFeatures();
+    },
+
+    /**
+     * <p>Handles the conversion/removal of older version of settings that may
+     * have been stored previously by {@link clipboard.initFeatures}.</p>
+     * @since 0.1.0.0
+     */
+    initFeatures_update: function () {
+        // TODO: Remove function in v0.1.0.1
+        if (utils.exists('copyAnchorEnabled')) {
+            utils.set('feat_anchor_enabled', utils.get('copyAnchorEnabled'));
+            utils.remove('copyAnchorEnabled');
+        }
+        if (utils.exists('copyAnchorOrder')) {
+            utils.set('feat_anchor_index', utils.get('copyAnchorOrder'));
+            utils.remove('copyAnchorOrder');
+        }
+        if (utils.exists('copyBBCodeEnabled')) {
+            utils.set('feat_bbcode_enabled', utils.get('copyBBCodeEnabled'));
+            utils.remove('copyBBCodeEnabled');
+        }
+        if (utils.exists('copyBBCodeOrder')) {
+            utils.set('feat_bbcode_index', utils.get('copyBBCodeOrder'));
+            utils.remove('copyBBCodeOrder');
+        }
+        if (utils.exists('copyEncodedEnabled')) {
+            utils.set('feat_encoded_enabled', utils.get('copyEncodedEnabled'));
+            utils.remove('copyEncodedEnabled');
+        }
+        if (utils.exists('copyEncodedOrder')) {
+            utils.set('feat_encoded_index', utils.get('copyEncodedOrder'));
+            utils.remove('copyEncodedOrder');
+        }
+        if (utils.exists('copyShortEnabled')) {
+            utils.set('feat_short_enabled', utils.get('copyShortEnabled'));
+            utils.remove('copyShortEnabled');
+        }
+        if (utils.exists('copyShortOrder')) {
+            utils.set('feat_short_index', utils.get('copyShortOrder'));
+            utils.remove('copyShortOrder');
+        }
+        if (utils.exists('copyUrlEnabled')) {
+            utils.set('feat_url_enabled', utils.get('copyUrlEnabled'));
+            utils.remove('copyUrlEnabled');
+        }
+        if (utils.exists('copyUrlOrder')) {
+            utils.set('feat_url_index', utils.get('copyUrlOrder'));
+            utils.remove('copyUrlOrder');
+        }
     },
 
     /**
@@ -509,7 +638,7 @@ var feature = {
          * @since 0.1.0.0
          */
         template: function () {
-            return '';
+            return '<a href="{{source}}"{#doAnchorTitle} title="{{title}}"{/doAnchorTitle}>{{title}}</a>';
         },
         /**
          * @returns {String}
@@ -559,7 +688,7 @@ var feature = {
          * @since 0.1.0.0
          */
         template: function () {
-            return '';
+            return '[url={source}]{title}[/url]';
         },
         /**
          * @returns {String}
@@ -608,7 +737,7 @@ var feature = {
          * @since 0.1.0.0
          */
         template: function () {
-            return '';
+            return '{encoded}';
         },
         /**
          * @returns {String}
@@ -625,7 +754,7 @@ var feature = {
      * networking sites.</p>
      * @namespace
      */
-    short: {
+    'short': {
         /**
          * @returns {String}
          * @since 0.1.0.0
@@ -658,7 +787,7 @@ var feature = {
          * @since 0.1.0.0
          */
         template: function () {
-            return '';
+            return '{short}';
         },
         /**
          * @returns {String}
@@ -707,7 +836,7 @@ var feature = {
          * @since 0.1.0.0
          */
         template: function () {
-            return '';
+            return '{source}';
         },
         /**
          * @returns {String}
