@@ -7,6 +7,17 @@
 var utils = {
 
     /**
+     * <p>Returns whether or not the specified key exists in localStorage.</p>
+     * @param {String} key The key whose existence is to be checked.
+     * @returns {Boolean} <code>true</code> if the key exists in localStorage;
+     * otherwise <code>false</code>.
+     * @since 0.1.0.0
+     */
+    exists: function (key) {
+        return key in localStorage;
+    },
+
+    /**
      * <p>Retrieves the value associated with the specified key from
      * localStorage.</p>
      * <p>If the value is found it is parsed as JSON before being returned;
@@ -16,30 +27,12 @@ var utils = {
      * if none exists.
      * @see JSON.parse
      */
-    'get': function (key) {
+    get: function (key) {
         var value = localStorage[key];
         if (typeof(value) !== 'undefined') {
             return JSON.parse(value);
         }
         return value;
-    },
-
-    /**
-     * <p>Replaces the inner HTML of the selected element(s) with the localized
-     * String looked up from Chrome.</p>
-     * @param {String} selector A String containing a jQuery selector expression
-     * to select the element(s) to be modified.
-     * @param {String} name The name of the localized message to be retrieved.
-     * @param {String|String[]} [sub] The String(s) to substituted in the
-     * returned message (where applicable).
-     * @returns {jQuery} The modified element(s) wrapped in jQuery.
-     * @requires jQuery
-     */
-    i18nReplace: function (selector, name, sub) {
-        if (typeof(sub) !== 'undefined') {
-            return $(selector).html(chrome.i18n.getMessage(name, sub));
-        }
-        return $(selector).html(chrome.i18n.getMessage(name));
     },
 
     /**
@@ -62,6 +55,19 @@ var utils = {
     },
 
     /**
+     * <p>Removes the specified key from localStorage.</p>
+     * @param {String} key The key to be removed.
+     * @returns {Boolean} <code>true</code> if a key was removed from
+     * localStorage; otherwise <code>false</code>.
+     * @since 0.1.0.0
+     */
+    remove: function (key) {
+        var exists = utils.exists(key);
+        delete localStorage[key];
+        return exists;
+    },
+
+    /**
      * <p>Sets the value of the specified key in localStorage.</p>
      * <p>If the specified value is undefined it is assigned directly to the
      * key; otherwise it is transformed to a JSON String.</p>
@@ -71,7 +77,7 @@ var utils = {
      * undefined if there was none.
      * @see JSON.stringify
      */
-    'set': function (key, value) {
+    set: function (key, value) {
         var oldValue = utils.get(key);
         if (typeof(value) !== 'undefined') {
             localStorage[key] = JSON.stringify(value);

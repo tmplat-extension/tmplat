@@ -31,6 +31,26 @@ var options = {
     },
 
     /**
+     * <p>Replaces the inner HTML of the selected element(s) with the localized
+     * String looked up from Chrome.</p>
+     * @param {String} selector A String containing a jQuery selector expression
+     * to select the element(s) to be modified.
+     * @param {String} name The name of the localized message to be retrieved.
+     * @param {String|String[]} [sub] The String(s) to substituted in the
+     * returned message (where applicable).
+     * @returns {jQuery} The modified element(s) wrapped in jQuery.
+     * @since 0.1.0.0 - Previously located in {@link utils}.
+     * @requires jQuery
+     * @private
+     */
+    i18nReplace: function (selector, name, sub) {
+        if (typeof(sub) !== 'undefined') {
+            return $(selector).html(chrome.i18n.getMessage(name, sub));
+        }
+        return $(selector).html(chrome.i18n.getMessage(name));
+    },
+
+    /**
      * <p>Initializes the options page.</p>
      * <p>This involves inserting and configuring the UI elements as well as
      * the insertion of localized Strings and most importantly loading the
@@ -39,46 +59,46 @@ var options = {
      */
     init: function () {
         // Inserts localized Strings
-        utils.i18nReplace('title, #optionTitle', 'opt_title');
-        utils.i18nReplace('#featureSetting', 'opt_feature_header');
+        options.i18nReplace('title, #optionTitle', 'opt_title');
+        options.i18nReplace('#featureSetting', 'opt_feature_header');
         // TODO: Remove ID selector
-        utils.i18nReplace('#settingFeatureEnabledText, .featureEnabledText',
+        options.i18nReplace('#settingFeatureEnabledText, .featureEnabledText',
                 'opt_feature_enabled_text');
-        utils.i18nReplace('#urlShortenerSetting', 'opt_url_shortener_header');
-        utils.i18nReplace('#urlShortenerNameHeader',
+        options.i18nReplace('#urlShortenerSetting', 'opt_url_shortener_header');
+        options.i18nReplace('#urlShortenerNameHeader',
                 'opt_url_shortener_name_header');
-        utils.i18nReplace('#urlShortenerEnabledHeader',
+        options.i18nReplace('#urlShortenerEnabledHeader',
                 'opt_url_shortener_enabled_header');
-        utils.i18nReplace('#urlShortenerConfigHeader',
+        options.i18nReplace('#urlShortenerConfigHeader',
                 'opt_url_shortener_config_header');
-        utils.i18nReplace('#bitlyXLoginText',
+        options.i18nReplace('#bitlyXLoginText',
                 'opt_url_shortener_username_text');
-        utils.i18nReplace('#bitlyXApiKeyText',
+        options.i18nReplace('#bitlyXApiKeyText',
                 'opt_url_shortener_api_key_text');
-        utils.i18nReplace('#googleOAuthEnabledText',
+        options.i18nReplace('#googleOAuthEnabledText',
                 'opt_url_shortener_oauth_enable_text');
-        utils.i18nReplace('#anchorSetting', 'opt_anchor_header');
-        utils.i18nReplace('#settingTargetAttrText', 'opt_anchor_target_text');
-        utils.i18nReplace('#settingTitleAttrText', 'opt_anchor_title_text');
-        utils.i18nReplace('#notificationSetting', 'opt_notification_header');
-        utils.i18nReplace('#settingNotificationText', 'opt_notification_text');
-        utils.i18nReplace('#settingNotificationTimerText1',
+        options.i18nReplace('#anchorSetting', 'opt_anchor_header');
+        options.i18nReplace('#settingTargetAttrText', 'opt_anchor_target_text');
+        options.i18nReplace('#settingTitleAttrText', 'opt_anchor_title_text');
+        options.i18nReplace('#notificationSetting', 'opt_notification_header');
+        options.i18nReplace('#settingNotificationText', 'opt_notification_text');
+        options.i18nReplace('#settingNotificationTimerText1',
                 'opt_notification_timer_text1');
-        utils.i18nReplace('#settingNotificationTimerText2',
+        options.i18nReplace('#settingNotificationTimerText2',
                 'opt_notification_timer_text2');
-        utils.i18nReplace('#shorcutSetting', 'opt_shortcut_header');
-        utils.i18nReplace('#settingShortcutText', 'opt_shortcut_text');
-        utils.i18nReplace('#ieTabSetting', 'opt_ie_tab_header');
-        utils.i18nReplace('#settingIeTabExtractText',
+        options.i18nReplace('#shorcutSetting', 'opt_shortcut_header');
+        options.i18nReplace('#settingShortcutText', 'opt_shortcut_text');
+        options.i18nReplace('#ieTabSetting', 'opt_ie_tab_header');
+        options.i18nReplace('#settingIeTabExtractText',
                 'opt_ie_tab_extract_text');
-        utils.i18nReplace('#settingIeTabTitleText', 'opt_ie_tab_title_text');
-        utils.i18nReplace('#ieTabFooter', 'opt_ie_tab_footer');
-        utils.i18nReplace('#ieTabExtension', 'extension');
-        utils.i18nReplace('#ieTabWebsite', 'website');
-        utils.i18nReplace('#saveAndClose', 'opt_save_button');
-        utils.i18nReplace('#expandAll', 'opt_expand_all');
-        utils.i18nReplace('#collapseAll', 'opt_collapse_all');
-        utils.i18nReplace('#footer', 'opt_footer',
+        options.i18nReplace('#settingIeTabTitleText', 'opt_ie_tab_title_text');
+        options.i18nReplace('#ieTabFooter', 'opt_ie_tab_footer');
+        options.i18nReplace('#ieTabExtension', 'extension');
+        options.i18nReplace('#ieTabWebsite', 'website');
+        options.i18nReplace('#saveAndClose', 'opt_save_button');
+        options.i18nReplace('#expandAll', 'opt_expand_all');
+        options.i18nReplace('#collapseAll', 'opt_collapse_all');
+        options.i18nReplace('#footer', 'opt_footer',
                 String(new Date().getFullYear()));
         // Binds options:collapseAll and options:expandAll events to the links
         $('#collapseAll').click(options.collapseAll);

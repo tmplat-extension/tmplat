@@ -34,6 +34,7 @@ var clipboard = {
      * <p>This should be updated whenever changes are made to the features.</p>
      * @see clipboard.updateFeatures
      * @type String
+     * @since 0.1.0.0
      */
     popupHTML: '',
 
@@ -41,6 +42,7 @@ var clipboard = {
      * <p>String representation of the keyboard modifiers listened to by this
      * extension on Windows/Linux platforms.</p>
      * @type String
+     * @since 0.1.0.0
      */
     shortcutModifiers: 'Ctrl+Alt+',
 
@@ -48,6 +50,7 @@ var clipboard = {
      * <p>String representation of the keyboard modifiers listened to by this
      * extension on Mac platforms.</p>
      * @type String
+     * @since 0.1.0.0
      */
     shortcutMacModifiers: '&#8984;-Shift-',
 
@@ -474,33 +477,44 @@ var feature = {
      * @namespace
      */
     anchor: {
-        /** @returns {String} */
-        getMacShortcut: function () {
-            return '\u2325\u2318A';
-        },
-        /** @returns {String} */
-        getShortcut: function () {
-            return 'Ctrl+Alt+A';
-        },
-        /** @type String */
-        html: '',
-        /** @type String */
-        id: 'copyAnchor',
-        /** @returns {String} */
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
         image: function () {
             return 'copy_anchor.png';
         },
+        /**
+         * @returns {Integer}
+         * @since 0.1.0.0
+         */
+        index: function () {
+            return utils.get('copy_anchor_index');
+        },
         /** @returns {Boolean} */
         isEnabled: function () {
-            return utils.get('copyAnchorEnabled');
+            return utils.get('copy_anchor_enabled');
         },
         /** @type String */
         name: 'copy_anchor',
-        /** @returns {String} */
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
         shortcut: function () {
-            return 'A';
+            return utils.get('copy_anchor_shortcut');
         },
-        /** @returns {String} */
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
+        template: function () {
+            return '';
+        },
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
         title: function () {
             return chrome.i18n.getMessage('copy_anchor');
         }
@@ -513,21 +527,44 @@ var feature = {
      * @namespace
      */
     bbcode: {
-        /** @returns {String} */
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
         image: function () {
             return 'copy_bbcode.png';
         },
+        /**
+         * @returns {Integer}
+         * @since 0.1.0.0
+         */
+        index: function () {
+            return utils.get('copy_bbcode_index');
+        },
         /** @returns {Boolean} */
         isEnabled: function () {
-            return utils.get('copyBBCodeEnabled');
+            return utils.get('copy_bbcode_enabled');
         },
         /** @type String */
         name: 'copy_bbcode',
-        /** @returns {String} */
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
         shortcut: function () {
-            return 'B';
+            return utils.get('copy_bbcode_shortcut');
         },
-        /** @returns {String} */
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
+        template: function () {
+            return '';
+        },
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
         title: function () {
             return chrome.i18n.getMessage('copy_bbcode');
         }
@@ -539,21 +576,44 @@ var feature = {
      * @namespace
      */
     encoded: {
-        /** @returns {String} */
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
         image: function () {
             return 'copy_encoded.png';
         },
+        /**
+         * @returns {Integer}
+         * @since 0.1.0.0
+         */
+        index: function () {
+            return utils.get('copy_encoded_index');
+        },
         /** @returns {Boolean} */
         isEnabled: function () {
-            return utils.get('copyEncodedEnabled');
+            return utils.get('copy_encoded_enabled');
         },
         /** @type String */
         name: 'copy_encoded',
-        /** @returns {String} */
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
         shortcut: function () {
-            return 'E';
+            return utils.get('copy_encoded_shortcut');
         },
-        /** @returns {String} */
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
+        template: function () {
+            return '';
+        },
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
         title: function () {
             return chrome.i18n.getMessage('copy_encoded');
         }
@@ -566,21 +626,44 @@ var feature = {
      * @namespace
      */
     short: {
-        /** @returns {String} */
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
         image: function () {
             return 'copy_short.png';
         },
+        /**
+         * @returns {Integer}
+         * @since 0.1.0.0
+         */
+        index: function () {
+            return utils.get('copy_short_index');
+        },
         /** @returns {Boolean} */
         isEnabled: function () {
-            return utils.get('copyShortEnabled');
+            return utils.get('copy_short_enabled');
         },
         /** @type String */
         name: 'copy_short',
-        /** @returns {String} */
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
         shortcut: function () {
-            return 'S';
+            return utils.get('copy_short_shortcut');
         },
-        /** @returns {String} */
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
+        template: function () {
+            return '';
+        },
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
         title: function () {
             return chrome.i18n.getMessage('copy_short');
         }
@@ -592,21 +675,44 @@ var feature = {
      * @namespace
      */
     url: {
-        /** @returns {String} */
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
         image: function () {
             return 'copy_url.png';
         },
+        /**
+         * @returns {Integer}
+         * @since 0.1.0.0
+         */
+        index: function () {
+            return utils.get('copy_url_index');
+        },
         /** @returns {Boolean} */
         isEnabled: function () {
-            return utils.get('copyUrlEnabled');
+            return utils.get('copy_url_enabled');
         },
         /** @type String */
         name: 'copy_url',
-        /** @returns {String} */
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
         shortcut: function () {
-            return 'U';
+            return utils.get('copy_url_shortcut');
         },
-        /** @returns {String} */
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
+        template: function () {
+            return '';
+        },
+        /**
+         * @returns {String}
+         * @since 0.1.0.0
+         */
         title: function () {
             return chrome.i18n.getMessage('copy_url');
         }
@@ -640,6 +746,7 @@ var helper = {
      * page but is created here to optimize display times for the popup.</p>
      * @param {feature} feature The information of the feature to be used.
      * @returns {jQuery} The generated <code>&lt;li/&gt;</code> jQuery object.
+     * @since 0.1.0.0
      * @requires jQuery
      * @private
      */
@@ -676,6 +783,7 @@ var helper = {
     /**
      * <p>Builds the HTML to populate the popup with to optimize popup loading
      * times.</p>
+     * @since 0.1.0.0
      * @requires jQuery
      */
     buildPopup: function () {
