@@ -1,10 +1,10 @@
 /**
  * <p>Main controller for the extension and manages all copy requests.</p>
  * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
- * @since 0.0.1.0
+ * @since 0.1.0.0 - Previously named <code>clipboard</code>.
  * @namespace
  */
-var clipboard = {
+var urlcopy = {
 
     /**
      * <p>A list of blacklisted extension IDs who should be prevented from
@@ -14,11 +14,17 @@ var clipboard = {
      */
     blacklistedExtensions: [],
 
+    /**
+     * <p>The default features to be used by this extension.</p>
+     * @since 0.1.0.0
+     * @private
+     * @type Array
+     */
     defaultFeatures: [{
         image: 'copy_anchor.png',
         index: 2,
         enabled: true,
-        name: 'anchor',
+        name: '_anchor',
         readOnly: true,
         shortcut: 'A',
         template: '<a href="{{source}}"{#doAnchorTitle} title="{{title}}"{/doAnchorTitle}>{{title}}</a>',
@@ -27,7 +33,7 @@ var clipboard = {
         image: 'copy_bbcode.png',
         index: 4,
         enabled: false,
-        name: 'bbcode',
+        name: '_bbcode',
         readOnly: true,
         shortcut: 'B',
         template: '[url={source}]{title}[/url]',
@@ -36,7 +42,7 @@ var clipboard = {
         image: 'copy_encoded.png',
         index: 3,
         enabled: true,
-        name: 'encoded',
+        name: '_encoded',
         readOnly: true,
         shortcut: 'E',
         template: '{encoded}',
@@ -45,7 +51,7 @@ var clipboard = {
         image: 'copy_short.png',
         index: 1,
         enabled: true,
-        name: 'short',
+        name: '_short',
         readOnly: true,
         shortcut: 'S',
         template: '{short}',
@@ -54,7 +60,7 @@ var clipboard = {
         image: 'copy_url.png',
         index: 0,
         enabled: true,
-        name: 'url',
+        name: '_url',
         readOnly: true,
         shortcut: 'U',
         template: '{source}',
@@ -62,51 +68,376 @@ var clipboard = {
     }],
 
     /**
-     * <p>The name of the feature being used by the current copy request.</p>
-     * <p>This value is reset to an empty string after every copy request.</p>
-     * @type String
-     */
-    feature: '',
-
-    /**
      * <p>The list of copy request features supported by the extension.</p>
      * <p>This list ordered to match that specified by the user.</p>
-     * @see clipboard.updateFeatures
+     * @see urlcopy.updateFeatures
      * @type Array
      */
     features: [],
 
     /**
+     * <p>Provides potential of displaying a message to the user other than the
+     * defaults that depend on the value of {@link urlcopy.status}.</p>
+     * <p>This value is reset to an empty String after every copy request.</p>
+     * @since 0.1.0.0
+     * @type String
+     */
+    message: '',
+
+    /**
      * <p>The HTML to populate the popup with.</p>
      * <p>This should be updated whenever changes are made to the features.</p>
-     * @see clipboard.updateFeatures
-     * @type String
+     * @see urlcopy.updateFeatures
      * @since 0.1.0.0
+     * @type String
      */
     popupHTML: '',
 
     /**
+     * <p>The regular expression used to validate feature name inputs.</p>
+     * @see urlcopy.isNameValid
+     * @since 0.1.0.0
+     * @private
+     * @type RegExp
+     */
+    rValidName: /^[A-Za-z0-9]+$/,
+
+    /**
      * <p>String representation of the keyboard modifiers listened to by this
      * extension on Windows/Linux platforms.</p>
-     * @type String
      * @since 0.1.0.0
+     * @type String
      */
     shortcutModifiers: 'Ctrl+Alt+',
 
     /**
      * <p>String representation of the keyboard modifiers listened to by this
      * extension on Mac platforms.</p>
-     * @type String
      * @since 0.1.0.0
+     * @type String
      */
     shortcutMacModifiers: '&#8984;-Shift-',
 
     /**
+     * <p>The URL shortener services supported by this extension.</p>
+     * @since 0.1.0.0
+     * @private
+     * @type Array
+     */
+    shorteners: [{
+        contentType: 'application/x-www-form-urlencoded',
+        getParameters: function (url) {
+            var params = {
+                apiKey: 'R_05858399e8a60369e1d1562817b77b39',
+                format: 'json',
+                login: 'urlcopy',
+                longUrl: url
+            };
+            if (utils.get('bitly_xapi_key') && utils.get('bitly_xlogin')) {
+                params.x_apiKey = utils.get('bitly_xapi_key');
+                params.x_login = utils.get('bitly_xlogin');
+            }
+            return params;
+        },
+        input: function (url) {
+            return null;
+        },
+        isEnabled: function () {
+            return utils.get('bitly_enabled');
+        },
+        method: 'GET',
+        name: 'bit.ly',
+        output: function (resp) {
+            return JSON.parse(resp).data.url;
+        },
+        url: function () {
+            return 'http://api.bitly.com/v3/shorten';
+        }
+    }, {
+        contentType: 'application/json',
+        getParameters: function (url) {
+            return {
+                key: 'AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY'
+            };
+        },
+        input: function (url) {
+            return JSON.stringify({longUrl: url});
+        },
+        isEnabled: function () {
+            return utils.get('googl_enabled');
+        },
+        isOAuthEnabled: function () {
+            return utils.get('googl_oath_enabled');
+        },
+        method: 'POST',
+        name: 'goo.gl',
+        oauth: ChromeExOAuth.initBackgroundPage({
+            access_url: 'https://www.google.com/accounts/OAuthGetAccessToken',
+            app_name: 'URL-Copy',
+            authorize_url: 'https://www.google.com/accounts/OAuthAuthorizeToken',
+            consumer_key: 'anonymous',
+            consumer_secret: 'anonymous',
+            request_url: 'https://www.google.com/accounts/OAuthGetRequestToken',
+            scope: 'https://www.googleapis.com/auth/urlshortener'
+        }),
+        output: function (resp) {
+            return JSON.parse(resp).id;
+        },
+        url: function () {
+            return 'https://www.googleapis.com/urlshortener/v1/url';
+        }
+    }, {
+        contentType: 'application/json',
+        getParameters: function (url) {
+            var params = {
+                action: 'shorturl',
+                format: 'json',
+                url: url
+            };
+            if (utils.get('yourls_username') && utils.get('yourls_password')) {
+                params.password = utils.get('yourls_password');
+                params.username = utils.get('yourls_username');
+            } else if (utils.get('yourls_signature')) {
+                params.signature = utils.get('yourls_signature');
+            }
+            return params;
+        },
+        input: function (url) {
+            return null;
+        },
+        isEnabled: function () {
+            return utils.get('yourls_enabled');
+        },
+        method: 'POST',
+        name: 'YOURLS',
+        output: function (resp) {
+            return JSON.parse(resp).shorturl;
+        },
+        url: function () {
+            return utils.get('yourls_url');
+        }
+    }],
+
+    /**
      * <p>Indicates whether or not the current copy request was a success.</p>
-     * <p>This value is reset to <code>false</code> after every copy request.</p>
+     * <p>This value is reset to <code>false</code> after every copy
+     * request.</p>
      * @type Boolean
      */
     status: false,
+
+    /**
+     * <p>Adds the specified feature name to those stored in localStorage.</p>
+     * <p>The feature name is only added if it doesn't already exist.</p>
+     * @param {String} name The feature name to be stored.
+     * @returns {Boolean} <code>true</code> if the name was stored; otherwise
+     * <code>false</code>.
+     * @since 0.1.0.0
+     * @private
+     */
+    addFeatureName: function (name) {
+        var features = utils.get('features');
+        if (features.indexOf(name) === -1) {
+            features.push(name);
+            utils.set('features', features);
+            return true;
+        }
+        return false;
+    },
+
+    /**
+     * <p>Creates a <code>&lt;li/&gt;</code> representing the feature provided.
+     * This is to be inserted in to the <code>&lt;ul/&gt;</code> in the popup
+     * page but is created here to optimize display times for the popup.</p>
+     * @param {feature} feature The information of the feature to be used.
+     * @returns {jQuery} The generated <code>&lt;li/&gt;</code> jQuery object.
+     * @since 0.1.0.0
+     * @requires jQuery
+     * @private
+     */
+    buildFeature: function (feature) {
+        var image = '../images/' + (feature.image || 'copy_url.png'),
+            item = $('<li/>', {
+                id: feature.id + 'Item',
+                name: feature.name,
+                onclick: 'popup.sendRequest(this);'
+            }),
+            menu = $('<div/>', {
+                'class': 'menu',
+                id: feature.id,
+                style: 'background-image: url(\'' + image + '\');'
+            });
+        menu.append($('<span/>', {
+            'class': 'text',
+            id: feature.id + 'Text'
+        }));
+        if (utils.get('shortcuts')) {
+            var modifiers = urlcopy.shortcutModifiers;
+            if (urlcopy.isThisPlatform('mac')) {
+                modifiers = urlcopy.shortcutMacModifiers;
+            }
+            menu.append($('<span/>', {
+                'class': 'shortcut',
+                id: feature.id + 'Shortcut',
+                text: modifiers + feature.shortcut
+            }));
+        }
+        return item.append(menu);
+    },
+
+    /**
+     * <p>Builds the HTML to populate the popup with to optimize popup loading
+     * times.</p>
+     * @since 0.1.0.0
+     * @requires jQuery
+     * @private
+     */
+    buildPopup: function () {
+        var item = $('<div id="item"/>'),
+            itemList = $('<ul/>'),
+            loadDiv = $('<div id="loadDiv"/>');
+        loadDiv.append($('<img src="../images/loading.gif"/>'), $('<div/>', {
+            text: chrome.i18n.getMessage('shortening')
+        }));
+        itemList.append($('<li id="ieTabItem"/>').append(
+            $('<div/>', {
+                'class': 'menu',
+                style: 'background-image: url(\'../images/explorer.png\')'
+            }).append(
+                $('<span/>', {
+                    'class': 'text',
+                    text: chrome.i18n.getMessage('ie_tab')
+                })
+            )
+        ));
+        // Generates the HTML for each feature
+        for (var i = 0; i < urlcopy.features.length; i++) {
+            if (urlcopy.features[i].enabled) {
+                itemList.append(urlcopy.buildFeature(urlcopy.features[i]));
+            }
+        }
+        item.append(itemList);
+        /*
+         * Calculates the widest text <code>&lt;div/&gt;</code> in the popup
+         * and assigns that width to all others.
+         */
+        var textItems = itemList.find('li .text'),
+            width = 0;
+        textItems.each(function () {
+            var scrollWidth = this.scrollWidth;
+            if (scrollWidth > width) {
+                width = scrollWidth;
+            }
+        });
+        textItems.css('width', width + 'px');
+        urlcopy.popupHTML = $('<div/>').append(loadDiv, item).html();
+    },
+
+    /**
+     * <p>Creates an Object containing data based on information extracted from
+     * the specified tab.</p>
+     * <p>This function merges this data with additional information relating to
+     * the URL of the tab.</p>
+     * <p>If a shortened URL is requested when parsing the template later the
+     * callback function specified is called to handle this scenario as we don't
+     * want to call a URL shortener service unless it is required.</p>
+     * @param {Tab} tab The tab whose information is to be extracted.
+     * @param {function} shortCallback The function to be called if/when a
+     * shortened URL is requested when parsing the template.
+     * @returns {Object} The data based on information extracted from the tab
+     * provided and its URL. This can contain Strings, Arrays, Objects, and
+     * functions.
+     * @since 0.1.0.0
+     * @requires jQuery
+     * @requires jQuery URL Parser Plugin
+     * @private
+     */
+    buildTemplateData: function (tab, shortCallback) {
+        var data = {};
+        if (ietab.isActive(tab)) {
+            $.extend(data, $.url(ietab.extractUrl(tab.url)), {
+                title: ietab.extractTitle(tab.title)
+            });
+        } else {
+            $.extend(data, $.url(tab.url), {title: tab.title});
+        }
+        if (!data.title) {
+            data.title = data.source;
+        }
+        $.extend(data, {
+            doAnchorTarget: utils.get('doAnchorTarget'),
+            doAnchorTitle: utils.get('doAnchorTitle'),
+            encoded: encodeURIComponent(data.source),
+            favicon: tab.favIconUrl,
+            fparams: data.fparams(),
+            fsegments: data.fsegments(),
+            notificationDuration: utils.get('notificationDuration'),
+            notifications: utils.get('notifications'),
+            originalSource: tab.url,
+            originalTitle: tab.title || data.source,
+            params: data.params(),
+            segments: data.segments(),
+            'short': function () {
+                return shortCallback();
+            },
+            shortcuts: utils.get('shortcuts')
+        });
+        return data;
+    },
+
+    /**
+     * <p>Calls the active URL shortener service with the URL provided in order
+     * to obtain a corresponding short URL.</p>
+     * <p>This function calls the callback function specified with the result
+     * once it has been received.</p>
+     * @param {String} url The URL to be shortened and added to the clipboard.
+     * @param {function} callback The function to be called once a response has
+     * been received.
+     * @see urlcopy.shorteners
+     * @since 0.1.0.0 - Previously located in <code>helper</code>.
+     */
+    callUrlShortener: function (url, callback) {
+        urlcopy.callUrlShortenerHelper(url, function (url, service) {
+            var params = service.getParameters(url) || {};
+            var req = new XMLHttpRequest();
+            req.open(service.method, service.url() + '?' + $.param(params),
+                true);
+            req.setRequestHeader('Content-Type', service.contentType);
+            if (service.oauth && service.isOAuthEnabled()) {
+                req.setRequestHeader('Authorization',
+                        service.oauth.getAuthorizationHeader(service.url(),
+                        service.method, params));
+            }
+            req.onreadystatechange = function () {
+                if (req.readyState === 4) {
+                    callback(service.output(req.responseText));
+                }
+            };
+            req.send(service.input(url));
+        });
+    },
+
+    /**
+     * <p>Helper method which determines when the callback function provided is
+     * called depending on whether or not the active URL Shortener supports
+     * OAuth.</p>
+     * @param {String} url The URL to be shortened and added to the clipboard.
+     * @param {Function} callback The function that is called either
+     * immediately or once autherized if OAuth is supported.
+     * @see urlcopy.callUrlShortener
+     * @since 0.1.0.0 - Previously located in <code>helper</code>.
+     * @private
+     */
+    callUrlShortenerHelper: function (url, callback) {
+        var service = urlcopy.getUrlShortener();
+        if (service.oauth && service.isOAuthEnabled()) {
+            service.oauth.authorize(function () {
+                callback(url, service);
+            });
+        } else {
+            callback(url, service);
+        }
+    },
 
     /**
      * <p>Adds the specified string to the system clipboard.</p>
@@ -117,67 +448,14 @@ var clipboard = {
      * @requires document.execCommand
      */
     copy: function (str) {
-        var sandbox = $('#sandbox').val(str).select();
-        clipboard.status = document.execCommand('copy', false, null);
+        var popup = chrome.extension.getViews({type: 'popup'})[0],
+            sandbox = $('#sandbox').val(str).select();
+        urlcopy.status = document.execCommand('copy', false, null);
         sandbox.val('');
-        clipboard.showNotification();
-    },
-
-    /**
-     * <p>Copies generated formatted HTML for an anchor tag to the clipboard.</p>
-     * @param {Tab} tab The tab whose information is to be used to generate the
-     * anchor tag.
-     * @requires jQuery
-     */
-    copyAnchor: function (tab) {
-        var data = {href: tab.url};
-        data.text = tab.title || data.href;
-        if (tab.title && utils.get('settingTitleAttr')) {
-            data.title = helper.addSlashes(data.text);
+        urlcopy.showNotification();
+        if (popup) {
+            popup.close();
         }
-        data.text = helper.replaceEntities(data.text);
-        clipboard.copy(helper.createAnchor(data));
-    },
-
-    /**
-     * <p>Copies generated formatted BBCode for a <code>url</code> tag to the
-     * clipboard.</p>
-     * @param {Tab} tab The tab whose information is to be used to generate the
-     * <code>url</code> tag.
-     */
-    copyBBCode: function (tab) {
-        var data = {
-            text: tab.title,
-            url: tab.url
-        };
-        clipboard.copy(helper.createBBCode(data));
-    },
-
-    /**
-     * <p>Copies the encoded URL to the clipboard.</p>
-     * @param {Tab} tab The tab whose information is to be used to generate the
-     * encoded URL.
-     */
-    copyEncoded: function (tab) {
-        clipboard.copy(helper.encode(tab.url));
-    },
-
-    /**
-     * <p>Copies the shortened version of the URL to the clipboard.</p>
-     * @param {Tab} tab The tab whose information is to be used to generate the
-     * short URL.
-     * @see helper.callUrlShortener
-     */
-    copyShortUrl: function (tab) {
-        helper.callUrlShortener(tab.url);
-    },
-
-    /**
-     * <p>Copies the URL to the clipboard.</p>
-     * @param {Tab} tab The tab whose information is to be used.
-     */
-    copyUrl: function (tab) {
-        clipboard.copy(tab.url);
     },
 
     /**
@@ -201,48 +479,25 @@ var clipboard = {
         chrome.windows.getAll(null, function (windows) {
             for (var i = 0; i < windows.length; i++) {
                 chrome.tabs.getAllInWindow(windows[i].id,
-                        clipboard.executeScriptsInExistingTabs);
+                        urlcopy.executeScriptsInExistingTabs);
             }
         });
     },
 
     /**
-     * <p>Returns the information of the feature associated with the order
-     * provided.</p>
-     * @param {Integer} order The order of the feature required.
-     * @returns {feature} The feature of the specified order or an empty
-     * object if no matching feature could be found.
-     * @private
-     */
-    getFeature: function (order) {
-        switch (order) {
-            case utils.get('copyAnchorOrder'):
-                return feature.anchor;
-            case utils.get('copyBBCodeOrder'):
-                return feature.bbcode;
-            case utils.get('copyEncodedOrder'):
-                return feature.encoded;
-            case utils.get('copyShortOrder'):
-                return feature.short;
-            case utils.get('copyUrlOrder'):
-                return feature.url;
-        }
-        return {};
-    },
-
-    /**
-     * <p>Returns the information for the active URL Shortener service.</p>
-     * @returns {shortener} The active URL Shortener.
+     * <p>Returns the information for the active URL shortener service.</p>
+     * @returns {Object} The active URL shortener.
+     * @see urlcopy.shorteners
      */
     getUrlShortener: function () {
-        // Attempts to lookup enabled URL Shortener service
-        for (var key in shortener) {
-            if (shortener[key].isEnabled()) {
-                return shortener[key];
+        // Attempts to lookup enabled URL shortener service
+        for (var i = 0; i < urlcopy.shorteners.length; i++) {
+            if (urlcopy.shorteners[i].isEnabled()) {
+                return urlcopy.shorteners[i];
             }
         }
-        // Returns google service by default
-        return shortener.google;
+        // Returns goo.gl service by default
+        return urlcopy.shorteners[1];
     },
 
     /**
@@ -251,50 +506,77 @@ var clipboard = {
      * listeners and adding the request listeners.</p>
      */
     init: function () {
-        clipboard.init_update(); // TODO: Remove call in v0.1.0.1
+        urlcopy.init_update(); // TODO: Remove call in v0.1.0.1
         utils.init('notifications', true);
         utils.init('notificationDuration', 3000);
         utils.init('shortcuts', true);
         utils.init('doAnchorTarget', false);
         utils.init('doAnchorTitle', false);
-        clipboard.initFeatures();
-        clipboard.initUrlShorteners();
-        clipboard.executeScriptsInExistingWindows();
-        chrome.extension.onRequest.addListener(clipboard.onRequest);
+        urlcopy.initFeatures();
+        urlcopy.initUrlShorteners();
+        urlcopy.executeScriptsInExistingWindows();
+        chrome.extension.onRequest.addListener(urlcopy.onRequest);
         chrome.extension.onRequestExternal.addListener(
-            clipboard.onExternalRequest);
+            urlcopy.onExternalRequest
+        );
     },
 
     /**
      * <p>Handles the conversion/removal of older version of settings that may
-     * have been stored previously by {@link clipboard.init}.</p>
+     * have been stored previously by {@link urlcopy.init}.</p>
      * @since 0.1.0.0
+     * @private
      */
     init_update: function () {
         // TODO: Remove function in v0.1.0.1
-        if (utils.exists('settingNotification')) {
-            utils.set('notifications', utils.get('settingNotification'));
-            utils.remove('settingNotification');
-        }
-        if (utils.exists('settingNotificationTimer')) {
-            utils.set('notificationDuration',
-                utils.get('settingNotificationTimer'));
-            utils.remove('settingNotificationTimer');
-        }
-        if (utils.exists('settingShortcut')) {
-            utils.set('shortcuts', utils.get('settingShortcut'));
-            utils.remove('settingShortcut');
-        }
-        if (utils.exists('settingTargetAttr')) {
-            utils.set('doAnchorTarget', utils.get('settingTargetAttr'));
-            utils.remove('settingTargetAttr');
-        }
-        if (utils.exists('settingTitleAttr')) {
-            utils.set('doAnchorTitle', utils.get('settingTitleAttr'));
-            utils.remove('settingTitleAttr');
-        }
+        utils.rename('settingNotification', 'notifications');
+        utils.rename('settingNotificationTimer', 'notificationDuration');
+        utils.rename('settingShortcut', 'shortcuts');
+        utils.rename('settingTargetAttr', 'doAnchorTarget');
+        utils.rename('settingTitleAttr', 'doAnchorTitle');
         utils.remove('settingIeTabExtract');
         utils.remove('settingIeTabTitle');
+    },
+
+    /**
+     * <p>Initilaizes the values of the specified feature by potentially
+     * storing them in to their respective locations.</p>
+     * <p>This function should only be used initializing default features and
+     * some values will always overwrite the existing one to provide
+     * functionality for changing current defaults.</p>
+     * <p>Names of initialized features are also added to that stored in
+     * localStorage if they do not already exist there.</p>
+     * @param {Object} feature The feature whose values are to be initialized.
+     * @param {String} feature.image The file name of the feature's image
+     * (overwrites).
+     * @param {Integer} feature.index The index representing the feature's
+     * display order.
+     * @param {Boolean} feature.enabled <code>true</code> if the feature is
+     * enabled; otherwise <code>false</code>.
+     * @param {String} feature.name The unique name of the feature.
+     * @param {Boolean} feature.readOnly <code>true</code> if the feature is
+     * read-only and certain values cannot be editted by the user; otherwise
+     * <code>false</code> (overwrites).
+     * @param {String} feature.shortcut The keyboard shortcut assigned to the
+     * feature.
+     * @param {String} feature.template The mustache template for the feature
+     * (overwrites).
+     * @param {String} feature.title The title of the feature (overwrites).
+     * @returns {Object} The feature provided.
+     * @since 0.1.0.0
+     * @private
+     */
+    initFeature: function (feature) {
+        var name = feature.name;
+        utils.set('feat_' + name + '_image', feature.image);
+        utils.init('feat_' + name + '_index', feature.index);
+        utils.init('feat_' + name + '_enabled', feature.enabled);
+        utils.set('feat_' + name + '_readonly', feature.readOnly);
+        utils.init('feat_' + name + '_shortcut', feature.shortcut);
+        utils.set('feat_' + name + '_template', feature.template);
+        utils.set('feat_' + name + '_title', feature.title);
+        urlcopy.addFeatureName(name);
+        return feature;
     },
 
     /**
@@ -303,68 +585,32 @@ var clipboard = {
      * @private
      */
     initFeatures: function () {
-        clipboard.initFeatures_update(); // TODO: Remove call in v0.1.0.1
-        // TODO: Change features to be dynamic and updatable (seperate settings)
-        utils.init('feat_anchor_enabled', true);
-        utils.init('feat_anchor_index', 2);
-        utils.init('feat_bbcode_enabled', false);
-        utils.init('feat_bbcode_index', 4);
-        utils.init('feat_encoded_enabled', true);
-        utils.init('feat_encoded_index', 3);
-        utils.init('feat_short_enabled', true);
-        utils.init('feat_short_index', 1);
-        utils.init('feat_url_enabled', true);
-        utils.init('feat_url_index', 0);
-        clipboard.updateFeatures();
+        urlcopy.initFeatures_update(); // TODO: Remove call in v0.1.0.1
+        utils.init('features', []);
+        for (var i = 0; i < urlcopy.defaultFeatures.length; i++) {
+            urlcopy.initFeature(urlcopy.defaultFeatures[i]);
+        }
+        urlcopy.updateFeatures();
     },
 
     /**
      * <p>Handles the conversion/removal of older version of settings that may
-     * have been stored previously by {@link clipboard.initFeatures}.</p>
+     * have been stored previously by {@link urlcopy.initFeatures}.</p>
      * @since 0.1.0.0
+     * @private
      */
     initFeatures_update: function () {
         // TODO: Remove function in v0.1.0.1
-        if (utils.exists('copyAnchorEnabled')) {
-            utils.set('feat_anchor_enabled', utils.get('copyAnchorEnabled'));
-            utils.remove('copyAnchorEnabled');
-        }
-        if (utils.exists('copyAnchorOrder')) {
-            utils.set('feat_anchor_index', utils.get('copyAnchorOrder'));
-            utils.remove('copyAnchorOrder');
-        }
-        if (utils.exists('copyBBCodeEnabled')) {
-            utils.set('feat_bbcode_enabled', utils.get('copyBBCodeEnabled'));
-            utils.remove('copyBBCodeEnabled');
-        }
-        if (utils.exists('copyBBCodeOrder')) {
-            utils.set('feat_bbcode_index', utils.get('copyBBCodeOrder'));
-            utils.remove('copyBBCodeOrder');
-        }
-        if (utils.exists('copyEncodedEnabled')) {
-            utils.set('feat_encoded_enabled', utils.get('copyEncodedEnabled'));
-            utils.remove('copyEncodedEnabled');
-        }
-        if (utils.exists('copyEncodedOrder')) {
-            utils.set('feat_encoded_index', utils.get('copyEncodedOrder'));
-            utils.remove('copyEncodedOrder');
-        }
-        if (utils.exists('copyShortEnabled')) {
-            utils.set('feat_short_enabled', utils.get('copyShortEnabled'));
-            utils.remove('copyShortEnabled');
-        }
-        if (utils.exists('copyShortOrder')) {
-            utils.set('feat_short_index', utils.get('copyShortOrder'));
-            utils.remove('copyShortOrder');
-        }
-        if (utils.exists('copyUrlEnabled')) {
-            utils.set('feat_url_enabled', utils.get('copyUrlEnabled'));
-            utils.remove('copyUrlEnabled');
-        }
-        if (utils.exists('copyUrlOrder')) {
-            utils.set('feat_url_index', utils.get('copyUrlOrder'));
-            utils.remove('copyUrlOrder');
-        }
+        utils.rename('copyAnchorEnabled', 'feat__anchor_enabled');
+        utils.rename('copyAnchorOrder', 'feat__anchor_index');
+        utils.rename('copyBBCodeEnabled', 'feat__bbcode_enabled');
+        utils.rename('copyBBCodeOrder', 'feat__bbcode_index');
+        utils.rename('copyEncodedEnabled', 'feat__encoded_enabled');
+        utils.rename('copyEncodedOrder', 'feat__encoded_index');
+        utils.rename('copyShortEnabled', 'feat__short_enabled');
+        utils.rename('copyShortOrder', 'feat__short_index');
+        utils.rename('copyUrlEnabled', 'feat__url_enabled');
+        utils.rename('copyUrlOrder', 'feat__url_index');
     },
 
     /**
@@ -373,11 +619,32 @@ var clipboard = {
      * @private
      */
     initUrlShorteners: function () {
-        utils.init('bitlyEnabled', false);
-        utils.init('bitlyXApiKey', '');
-        utils.init('bitlyXLogin', '');
-        utils.init('googleEnabled', true);
-        utils.init('googleOAuthEnabled', true);
+        urlcopy.initUrlShorteners_update(); // TODO: Remove call in v0.1.0.1
+        utils.init('bitly_enabled', false);
+        utils.init('bitly_xapi_key', '');
+        utils.init('bitly_xlogin', '');
+        utils.init('googl_enabled', true);
+        utils.init('googl_oath_enabled', true);
+        utils.init('yourls_enabled', false);
+        utils.init('yourls_password', '');
+        utils.init('yourls_signature', '');
+        utils.init('yourls_url', '');
+        utils.init('yourls_username', '');
+    },
+
+    /**
+     * <p>Handles the conversion/removal of older version of settings that may
+     * have been stored previously by {@link urlcopy.initUrlShorteners}.</p>
+     * @since 0.1.0.0
+     * @private
+     */
+    initUrlShorteners_update: function () {
+        // TODO: Remove function in v0.1.0.1
+        utils.rename('bitlyEnabled', 'bitly_enabled');
+        utils.rename('bitlyXApiKey', 'bitly_xapi_key');
+        utils.rename('bitlyXLogin', 'bitly_xlogin');
+        utils.rename('googleEnabled', 'googl_enabled');
+        utils.rename('googleOAuthEnabled', 'googl_oath_enabled');
     },
 
     /**
@@ -389,12 +656,36 @@ var clipboard = {
      * @private
      */
     isBlacklisted: function (sender) {
-        for (var i = 0; i < clipboard.blacklistedExtensions.length; i++) {
-            if (clipboard.blacklistedExtensions[i] === sender.id) {
+        for (var i = 0; i < urlcopy.blacklistedExtensions.length; i++) {
+            if (urlcopy.blacklistedExtensions[i] === sender.id) {
                 return true;
             }
         }
         return false;
+    },
+
+    /**
+     * <p>Returns whether or not the specified name is available for use as a
+     * feature.</p>
+     * @param {String} name The name to be queried.
+     * @returns {Boolean} <code>true</code> if the name is not already in use;
+     * otherwise <code>false</code>.
+     * @since 0.1.0.0
+     */
+    isNameAvailable: function (name) {
+        return utils.get('features').indexOf(name) === -1;
+    },
+
+    /**
+     * <p>Returns whether or not the specified name is valid for use as a
+     * feature.</p>
+     * @param {String} name The name to be queried.
+     * @returns {Boolean} <code>true</code> if the name is valid; otherwise
+     * <code>false</code>.
+     * @since 0.1.0.0
+     */
+    isNameValid: function (name) {
+        return name.search(urlcopy.rValidName) !== -1;
     },
 
     /**
@@ -410,12 +701,53 @@ var clipboard = {
 
     /**
      * <p>Determines whether or not the user's OS matches that provided.</p>
-     * @param {String} operatingSystem The operating system to be tested.
+     * @param {String} os The operating system to be tested.
      * @returns {Boolean} <code>true</code> if the user's OS matches that
      * specified; otherwise <code>false</code>.
      */
-    isThisPlatform: function (operatingSystem) {
-        return navigator.userAgent.toLowerCase().indexOf(operatingSystem) !== -1;
+    isThisPlatform: function (os) {
+        return navigator.userAgent.toLowerCase().indexOf(os) !== -1;
+    },
+
+    /**
+     * <p>Loads the values of the feature with the specified name from their
+     * respective locations.</p>
+     * @param {String} name The name of the feature whose values are to be
+     * fetched.
+     * @returns {Object} The feature for the name provided.
+     * @since 0.1.0.0
+     * @private
+     */
+    loadFeature: function (name) {
+        return {
+            image: utils.get('feat_' + name + '_image'),
+            index: utils.get('feat_' + name + '_index'),
+            enabled: utils.get('feat_' + name + '_enabled'),
+            name: name,
+            readOnly: utils.get('feat_' + name + '_readonly'),
+            shortcut: utils.get('feat_' + name + '_shortcut'),
+            template: utils.get('feat_' + name + '_template'),
+            title: utils.get('feat_' + name + '_title')
+        };
+    },
+
+    /**
+     * <p>Loads the values of each stored feature from their respective
+     * locations.</p>
+     * <p>The array returned is sorted based on the index of each feature.</p>
+     * @returns {Array} The array of the features loaded.
+     * @since 0.1.0.0
+     */
+    loadFeatures: function () {
+        var features = [],
+            names = utils.get('features');
+        for (var i = 0; i < names.length; i++) {
+            features.push(urlcopy.loadFeature(names[i]));
+        }
+        features.sort(function (a, b) {
+            return a.index - b.index;
+        });
+        return features;
     },
 
     /**
@@ -442,8 +774,8 @@ var clipboard = {
      * @private
      */
     onExternalRequest: function (request, sender, sendResponse) {
-        if (!clipboard.isBlacklisted(sender)) {
-            clipboard.onRequest(request, sender, sendResponse);
+        if (!urlcopy.isBlacklisted(sender)) {
+            urlcopy.onRequest(request, sender, sendResponse);
         }
     },
 
@@ -464,22 +796,23 @@ var clipboard = {
      * responsible for firing the <code>KeyEvent</code>. Only used if type is
      * "shortcut".
      * @param {String} request.type The type of request being made.
-     * @param {MessageSender} [sender] An object containing information about the
-     * script context that sent a message or request.
+     * @param {MessageSender} [sender] An object containing information about
+     * the script context that sent a message or request.
      * @param {function} [sendResponse] Function to call when you have a
-     * response. The argument should be any JSON-ifiable object, or undefined if
-     * there is no response.
+     * response. The argument should be any JSON-ifiable object, or undefined
+     * if there is no response.
      * @private
      */
     onRequest: function (request, sender, sendResponse) {
-        if (request.type !== 'shortcut' || utils.get('settingShortcut')) {
-            clipboard.onRequestHelper(request, sender, sendResponse);
+        if (request.type !== 'shortcut' || utils.get('shortcuts')) {
+            urlcopy.onRequestHelper(request, sender, sendResponse);
         }
     },
 
     /**
      * <p>Helper function for the internal/external request listeners.</p>
-     * <p>This function will serve the copy request.</p>
+     * <p>This function will handle the request based on its type and the data
+     * provided.</p>
      * @param {Object} request The request sent by the calling script.
      * @param {Object} request.data The data for the copy request feature to be
      * served.
@@ -492,626 +825,171 @@ var clipboard = {
      * responsible for firing the <code>KeyEvent</code>. Only used if type is
      * "shortcut".
      * @param {String} request.type The type of request being made.
-     * @param {MessageSender} [sender] An object containing information about the
-     * script context that sent a message or request.
+     * @param {MessageSender} [sender] An object containing information about
+     * the script context that sent a message or request.
      * @param {function} [sendResponse] Function to call when you have a
-     * response. The argument should be any JSON-ifiable object, or undefined if
-     * there is no response.
+     * response. The argument should be any JSON-ifiable object, or undefined
+     * if there is no response.
      * @requires jQuery
+     * @requires Mustache
      * @private
      */
     onRequestHelper: function (request, sender, sendResponse) {
         chrome.tabs.getSelected(null, function (tab) {
-            var handler = (ietab.isActive(tab)) ? ietab : clipboard,
-                popup = chrome.extension.getViews({type: 'popup'})[0];
-            switch (request.feature) {
-                case feature.url.name:
-                    clipboard.feature = feature.url.name;
-                    handler.copyUrl(tab);
-                    if (popup) {
-                        popup.close();
+            var feature,
+                popup = chrome.extension.getViews({type: 'popup'})[0],
+                shortCalled = false,
+                shortPlaceholder = 'short' +
+                    (Math.floor(Math.random() * 99999 + 1000));
+            switch (request.type) {
+            case 'popup':
+                // Should be cheaper than searching urlcopy.features...
+                feature = urlcopy.loadFeature(request.data.name);
+                break;
+            case 'shortcut':
+                for (var i = 0; i < urlcopy.features.length; i++) {
+                    if (urlcopy.features[i].shortcut === request.data.key) {
+                        feature = urlcopy.features[i];
+                        break;
                     }
-                    break;
-                case feature.short.name:
-                    if (popup) {
-                        $('#loadDiv', popup.document).show();
-                        $('#item', popup.document).hide();
-                    }
-                    clipboard.feature = feature.short.name;
-                    handler.copyShortUrl(tab);
-                    break;
-                case feature.anchor.name:
-                    clipboard.feature = feature.anchor.name;
-                    handler.copyAnchor(tab);
-                    if (popup) {
-                        popup.close();
-                    }
-                    break;
-                case feature.bbcode.name:
-                    clipboard.feature = feature.bbcode.name;
-                    handler.copyBBCode(tab);
-                    if (popup) {
-                        popup.close();
-                    }
-                    break;
-                case feature.encoded.name:
-                    clipboard.feature = feature.encoded.name;
-                    handler.copyEncoded(tab);
-                    if (popup) {
-                        popup.close();
-                    }
-                    break;
+                }
+                break;
+            }
+            if (feature) {
+                if (popup) {
+                    $('#loadDiv', popup.document).show();
+                    $('#item', popup.document).hide();
+                }
+                var data = urlcopy.buildTemplateData(tab, function () {
+                        shortCalled = true;
+                        return '{' + shortPlaceholder + '}';
+                    }),
+                    output = Mustache.to_html(feature.template, data);
+                if (shortCalled) {
+                    urlcopy.callUrlShortener(data.source, function (shortUrl) {
+                        if (shortUrl) {
+                            var newData = {};
+                            newData[shortPlaceholder] = shortUrl;
+                            urlcopy.copy(Mustache.to_html(output, newData));
+                        }
+                    });
+                } else {
+                    urlcopy.copy(output);
+                }
             }
         });
     },
 
     /**
-     * <p>Resents the active feature and status of the current copy request.</p>
+     * <p>Removes the specified feature name from those stored in
+     * localStorage.</p>
+     * @param {String} name The feature name to be removed.
+     * @since 0.1.0.0
+     * @private
+     */
+    removeFeatureName: function (name) {
+        var features = utils.get('features'),
+            idx = features.indexOf(name);
+        if (idx !== -1) {
+            features.splice(idx, 1);
+            utils.set('features', features);
+        }
+    },
+
+    /**
+     * <p>Resets the message and status associated with the current copy
+     * request.</p>
      * <p>This function should be called on the completion of a copy request
      * regardless of its outcome.</p>
      */
     reset: function () {
-        clipboard.feature = '';
-        clipboard.status = false;
+        urlcopy.message = '';
+        urlcopy.status = false;
+    },
+
+    /**
+     * <p>Stores the values of the specified feature in to their respective
+     * locations.</p>
+     * @param {Object} feature The feature whose values are to be saved.
+     * @param {String} feature.image The file name of the feature's image.
+     * @param {Integer} feature.index The index representing the feature's
+     * display order.
+     * @param {Boolean} feature.enabled <code>true</code> if the feature is
+     * enabled; otherwise <code>false</code>.
+     * @param {String} feature.name The unique name of the feature.
+     * @param {Boolean} feature.readOnly <code>true</code> if the feature is
+     * read-only and certain values cannot be editted by the user; otherwise
+     * <code>false</code>.
+     * @param {String} feature.shortcut The keyboard shortcut assigned to the
+     * feature.
+     * @param {String} feature.template The mustache template for the feature.
+     * @param {String} feature.title The title of the feature.
+     * @returns {Object} The feature provided.
+     * @since 0.1.0.0
+     * @private
+     */
+    saveFeature: function (feature) {
+        var name = feature.name;
+        utils.set('feat_' + name + '_image', feature.image);
+        utils.set('feat_' + name + '_index', feature.index);
+        utils.set('feat_' + name + '_enabled', feature.enabled);
+        utils.set('feat_' + name + '_readonly', feature.readOnly);
+        utils.set('feat_' + name + '_shortcut', feature.shortcut);
+        utils.set('feat_' + name + '_template', feature.template);
+        utils.set('feat_' + name + '_title', feature.title);
+        return feature;
+    },
+
+    /**
+     * <p>Stores the values of each of the speciifed features in to their
+     * respective locations.</p>
+     * @param {Array} features The features whose values are to be saved.
+     * @returns {Array} The array of features provided.
+     * @since 0.1.0.0
+     */
+    saveFeatures: function (features) {
+        var names = [];
+        for (var i = 0; i < features.length; i++) {
+            names.push(features[i].name);
+            urlcopy.saveFeature(features[i]);
+        }
+        utils.set('features', names);
+        return features;
     },
 
     /**
      * <p>Displays a Chrome notification to inform the user on whether or not
      * the copy request was successful.</p>
-     * <p>This function ensures that the clipboard is reset and that
+     * <p>This function ensures that urlcopy is reset and that
      * notifications are only displayed if specified by the user (or by
      * default).</p>
-     * @see clipboard.reset
+     * @see urlcopy.reset
      */
     showNotification: function () {
-        if (utils.get('settingNotification')) {
-            webkitNotifications
-                    .createHTMLNotification(
-                        chrome.extension.getURL('pages/notification.html')
-                    ).show();
+        if (utils.get('notifications')) {
+            webkitNotifications.createHTMLNotification(
+                chrome.extension.getURL('pages/notification.html')
+            ).show();
         } else {
-            clipboard.reset();
+            urlcopy.reset();
         }
     },
 
     /**
-     * <p>Updates the list of features to reflect the order specified by the
-     * user (or by default).</p>
-     * <p>It is important that this function is called whenever the order of the
-     * features might have changed.</p>
+     * <p>Updates the list of features stored locally to reflect that stored
+     * in localStorage.</p>
+     * <p>It is important that this function is called whenever features might
+     * of changed as this also updates the prepared popup HTML.</p>
      */
     updateFeatures: function () {
-        var count = helper.countProperties(feature);
-        clipboard.features = [];
-        for (var i = 0; i < count; i++) {
-            clipboard.features[i] = clipboard.getFeature(i);
-        }
-        helper.buildPopup();
+        urlcopy.features = urlcopy.loadFeatures();
+        urlcopy.buildPopup();
     }
 
 };
 
 /**
- * <p>Represents copy request features supported by the extension.</p>
- * <p>Each feature provides the information required to use it.</p>
- * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
- * @since 0.0.2.1
- * @namespace
- */
-var feature = {
-
-    /**
-     * <p>Represents the feature that generates the formatted HTML for an anchor
-     * tag that can be inserted in to any HTML to link to the URL.</p>
-     * @namespace
-     */
-    anchor: {
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        image: function () {
-            return 'copy_anchor.png';
-        },
-        /**
-         * @returns {Integer}
-         * @since 0.1.0.0
-         */
-        index: function () {
-            return utils.get('copy_anchor_index');
-        },
-        /** @returns {Boolean} */
-        isEnabled: function () {
-            return utils.get('copy_anchor_enabled');
-        },
-        /** @type String */
-        name: 'copy_anchor',
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        shortcut: function () {
-            return utils.get('copy_anchor_shortcut');
-        },
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        template: function () {
-            return '<a href="{{source}}"{#doAnchorTitle} title="{{title}}"{/doAnchorTitle}>{{title}}</a>';
-        },
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        title: function () {
-            return chrome.i18n.getMessage('copy_anchor');
-        }
-    },
-
-    /**
-     * <p>Represents the feature that generates the formatted BBCode for a
-     * <code>url</code> tag that can be added to most forum posts to link to the
-     * URL.</p>
-     * @namespace
-     */
-    bbcode: {
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        image: function () {
-            return 'copy_bbcode.png';
-        },
-        /**
-         * @returns {Integer}
-         * @since 0.1.0.0
-         */
-        index: function () {
-            return utils.get('copy_bbcode_index');
-        },
-        /** @returns {Boolean} */
-        isEnabled: function () {
-            return utils.get('copy_bbcode_enabled');
-        },
-        /** @type String */
-        name: 'copy_bbcode',
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        shortcut: function () {
-            return utils.get('copy_bbcode_shortcut');
-        },
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        template: function () {
-            return '[url={source}]{title}[/url]';
-        },
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        title: function () {
-            return chrome.i18n.getMessage('copy_bbcode');
-        }
-    },
-
-    /**
-     * <p>Represents the feature that encodes the URL so it can be used in
-     * special situations.</p>
-     * @namespace
-     */
-    encoded: {
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        image: function () {
-            return 'copy_encoded.png';
-        },
-        /**
-         * @returns {Integer}
-         * @since 0.1.0.0
-         */
-        index: function () {
-            return utils.get('copy_encoded_index');
-        },
-        /** @returns {Boolean} */
-        isEnabled: function () {
-            return utils.get('copy_encoded_enabled');
-        },
-        /** @type String */
-        name: 'copy_encoded',
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        shortcut: function () {
-            return utils.get('copy_encoded_shortcut');
-        },
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        template: function () {
-            return '{encoded}';
-        },
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        title: function () {
-            return chrome.i18n.getMessage('copy_encoded');
-        }
-    },
-
-    /**
-     * <p>Represents the feature that retrieves a shortened version of the URL
-     * which can be used anywhere, but more commonly micro-blogging or social
-     * networking sites.</p>
-     * @namespace
-     */
-    'short': {
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        image: function () {
-            return 'copy_short.png';
-        },
-        /**
-         * @returns {Integer}
-         * @since 0.1.0.0
-         */
-        index: function () {
-            return utils.get('copy_short_index');
-        },
-        /** @returns {Boolean} */
-        isEnabled: function () {
-            return utils.get('copy_short_enabled');
-        },
-        /** @type String */
-        name: 'copy_short',
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        shortcut: function () {
-            return utils.get('copy_short_shortcut');
-        },
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        template: function () {
-            return '{short}';
-        },
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        title: function () {
-            return chrome.i18n.getMessage('copy_short');
-        }
-    },
-
-    /**
-     * <p>Represents the feature that simply uses the original URL which can be
-     * used anywhere.</p>
-     * @namespace
-     */
-    url: {
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        image: function () {
-            return 'copy_url.png';
-        },
-        /**
-         * @returns {Integer}
-         * @since 0.1.0.0
-         */
-        index: function () {
-            return utils.get('copy_url_index');
-        },
-        /** @returns {Boolean} */
-        isEnabled: function () {
-            return utils.get('copy_url_enabled');
-        },
-        /** @type String */
-        name: 'copy_url',
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        shortcut: function () {
-            return utils.get('copy_url_shortcut');
-        },
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        template: function () {
-            return '{source}';
-        },
-        /**
-         * @returns {String}
-         * @since 0.1.0.0
-         */
-        title: function () {
-            return chrome.i18n.getMessage('copy_url');
-        }
-    }
-
-};
-
-/**
- * <p>Provides helper functions used by the background page.</p>
- * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
- * @since 0.0.2.1
- * @namespace
- */
-var helper = {
-
-    /**
-     * <p>Prepends slashes to any escape characters in the string provided.</p>
-     * @param {String} str The string to be parsed.
-     * @returns {String} The parsed string.
-     */
-    addSlashes: function (str) {
-        return str
-            .replace('\\', '\\\\')
-            .replace('"', '\\"')
-            .replace('\'', '\\\'');
-    },
-
-    /**
-     * <p>Creates a <code>&lt;li/&gt;</code> representing the feature provided.
-     * This is to be inserted in to the <code>&lt;ul/&gt;</code> in the popup
-     * page but is created here to optimize display times for the popup.</p>
-     * @param {feature} feature The information of the feature to be used.
-     * @returns {jQuery} The generated <code>&lt;li/&gt;</code> jQuery object.
-     * @since 0.1.0.0
-     * @requires jQuery
-     * @private
-     */
-    buildFeature: function (feature) {
-        var item = $('<li/>', {
-            id: feature.id + 'Item',
-            name: feature.name,
-            onclick: 'popup.sendRequest(this);'
-        });
-        var image = '../images/' + (feature.image() || 'copy_url.png');
-        var menu = $('<div/>', {
-            'class': 'menu',
-            id: feature.id,
-            style: 'background-image: url(\'' + image + '\');'
-        });
-        menu.append($('<span/>', {
-            'class': 'text',
-            id: feature.id + 'Text'
-        }));
-        if (utils.get('settingShortcut')) {
-            var modifiers = clipboard.shortcutModifiers;
-            if (clipboard.isThisPlatform('mac')) {
-                modifiers = clipboard.shortcutMacModifiers;
-            }
-            menu.append($('<span/>', {
-                'class': 'shortcut',
-                id: feature.id + 'Shortcut',
-                text: modifiers + feature.shortcut()
-            }));
-        }
-        return item.append(menu);
-    },
-
-    /**
-     * <p>Builds the HTML to populate the popup with to optimize popup loading
-     * times.</p>
-     * @since 0.1.0.0
-     * @requires jQuery
-     */
-    buildPopup: function () {
-        var loadDiv = $('<div id="loadDiv"/>');
-        loadDiv.append($('<img src="../images/loading.gif"/>'), $('<div/>', {
-            text: chrome.i18n.getMessage('shortening')
-        }));
-        var item = $('<div id="item"/>');
-        var itemList = $('<ul/>');
-        itemList.append($('<li id="ieTabItem"/>').append(
-            $('<div/>', {
-                'class': 'menu',
-                style: 'background-image: url(\'../images/explorer.png\')'
-            }).append(
-                $('<span/>', {
-                    'class': 'text',
-                    text: chrome.i18n.getMessage('ie_tab')
-                })
-            )
-        ));
-        // Generates the HTML for each feature
-        for (var key in feature) {
-            if (feature[key].isEnabled()) {
-                itemList.append(helper.buildFeature(feature[key]));
-            }
-        }
-        item.append(itemList);
-        /*
-         * Calculates the widest text <code>&lt;div/&gt;</code> in the popup and
-         * assigns that width to all others.
-         */
-        var textItems = itemList.find('li .text'),
-            width = 0;
-        textItems.each(function () {
-            var scrollWidth = this.scrollWidth;
-            if (scrollWidth > width) {
-                width = scrollWidth;
-            }
-        });
-        textItems.css('width', width + 'px');
-        clipboard.popupHTML = $('<div/>').append(loadDiv, item).html();
-    },
-
-    /**
-     * <p>Calls the active URL Shortener service with the URL provided in order
-     * to obtain a corresponding short URL.</p>
-     * <p>This function also handles the result of the call by either copying
-     * the returned URL to the clipboard or showing a failure message (if
-     * notifications are enabled by the user) as well as ensuring the popup page
-     * is closed.</p>
-     * @param {String} url The URL to be shortened and added to the clipboard.
-     * @see shortener
-     */
-    callUrlShortener: function (url) {
-        helper.callUrlShortenerHelper(url, function (url, service) {
-            var params = service.getParameters(url) || {};
-            var req = new XMLHttpRequest();
-            req.open(service.method, service.url + '?' + $.param(params), true);
-            req.setRequestHeader('Content-Type', service.contentType);
-            if (service.oauth && service.isOAuthEnabled()) {
-                req.setRequestHeader('Authorization',
-                        service.oauth.getAuthorizationHeader(service.url,
-                        service.method, params));
-            }
-            req.onreadystatechange = function () {
-                if (req.readyState === 4) {
-                    var output = service.output(req.responseText);
-                    if (output) {
-                        clipboard.copy(output);
-                    } else {
-                        clipboard.status = false;
-                        clipboard.showNotification();
-                    }
-                    var popup = chrome.extension.getViews({type: 'popup'})[0];
-                    if (popup) {
-                        popup.close();
-                    }
-                }
-            };
-            req.send(service.input(url));
-        });
-    },
-
-    /**
-     * <p>Helper method which determines when the callback function provided is
-     * called depending on whether or not the active URL Shortener supports
-     * OAuth.</p>
-     * @param {String} url The URL to be shortened and added to the clipboard.
-     * @param {Function} callback The function that is called either
-     * immediately or once autherized if OAuth is supported.
-     * @see helper.callUrlShortener
-     * @private
-     */
-    callUrlShortenerHelper: function (url, callback) {
-        var service = clipboard.getUrlShortener();
-        if (service.oauth && service.isOAuthEnabled()) {
-            service.oauth.authorize(function () {
-                callback(url, service);
-            });
-        } else {
-            callback(url, service);
-        }
-    },
-
-    /**
-     * <p>Counts the number of properties that are associated with the object
-     * provided.</p>
-     * <p>This function only counts properties that actually belong to the
-     * object and does not count properties added via prototype.</p>
-     * @param {Object} obj The object to be used.
-     * @return {Integer} The number of properties belonging to the object
-     * provided.
-     */
-    countProperties: function (obj) {
-        var count = 0;
-        for (var p in obj) {
-            if (obj.hasOwnProperty(p)) {
-                count++;
-            }
-        }
-        return count;
-    },
-
-    /**
-     * <p>Attempts to create formatted HTML for an anchor tag using the data
-     * provided.</p>
-     * @param {Object} data The information to be used to create the anchor.
-     * @param {String} data.href The URL to be associated with the anchor.
-     * @param {String} data.text The text contents of the anchor.
-     * @param {String} [data.title] The title of the anchor.
-     * @returns {String} The formatted HTML for the generated anchor tag.
-     * @requires jQuery
-     */
-    createAnchor: function (data) {
-        if (!data.target && utils.get('settingTargetAttr')) {
-            data.target = '_blank';
-        }
-        return $('<div/>').append($('<a/>', data)).html();
-    },
-
-    /**
-     * <p>Attempts to create formatted BBCode for a <code>url</code> tag using
-     * the data provided.</p>
-     * @param {Object} data The information to be used to create the BBCode.
-     * @param {String} [data.text] The text contents of the BBCode.
-     * @param {String} data.url The URL to be associated with the BBCode.
-     * @returns {String} The formatted BBCode for the generated <code>url</code>
-     * tag.
-     */
-    createBBCode: function (data) {
-        if (data.text) {
-            return '[url=' + data.url + ']' + data.text + '[/url]';
-        } else {
-            return '[url]' + data.url + '[/url]';
-        }
-    },
-
-    /**
-     * <p>Decodes the URL provided.</p>
-     * <p>This function fully decodes the URL provided and does not ignore
-     * beginning.</p>
-     * @param {String} url The URL to be decoded.
-     * @returns {String} The decoded URL.
-     * @see decodeURIComponent
-     */
-    decode: function (url) {
-        return decodeURIComponent(url);
-    },
-
-    /**
-     * <p>Encodes the URL provided.</p>
-     * <p>This function fully encodes the URL provided and does not ignore
-     * beginning.</p>
-     * @param {String} url The URL to be encoded.
-     * @returns {String} The encoded URL.
-     * @see encodeURIComponent
-     */
-    encode: function (url) {
-        return encodeURIComponent(url);
-    },
-
-    /**
-     * <p>Replaces any escape characters with their entity counterparts in the
-     * string provided.</p>
-     * @param {String} str The string to be parsed.
-     * @returns {String} The parsed string.
-     */
-    replaceEntities: function (str) {
-        return str
-            .replace('&', '&amp;')
-            .replace('"', '&quot;')
-            .replace('<', '&lt;')
-            .replace('>', '&gt;');
-    }
-
-};
-
-/**
- * <p>Provides an interface to by used by {@link clipboard} for copy requests on
+ * <p>Provides an interface to by used by {@link urlcopy} for copy requests on
  * tabs where the IE Tab is currently active.</p>
  * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
  * @since 0.0.2.0
@@ -1140,105 +1018,19 @@ var ietab = {
     titlePrefix: 'IE: ',
 
     /**
-     * <p>Copies generated formatted HTML for an anchor tag to the clipboard.</p>
-     * @param {Tab} tab The tab whose information is to be used to generate the
-     * anchor tag.
-     * @requires jQuery
-     */
-    copyAnchor: function (tab) {
-        var data = {href: tab.url};
-        if (utils.get('settingIeTabExtract')) {
-            data.href = helper.decode(ietab.extractUrl(data.href));
-        }
-        data.text = tab.title || data.href;
-        if (tab.title) {
-            if (utils.get('settingIeTabTitle')) {
-                data.text = ietab.extractTitle(data.text);
-            }
-            if (utils.get('settingTitleAttr')) {
-                data.title = helper.addSlashes(data.text);
-            }
-        }
-        data.text = helper.replaceEntities(data.text);
-        clipboard.copy(helper.createAnchor(data));
-    },
-
-    /**
-     * <p>Copies generated formatted BBCode for a <code>url</code> tag to the
-     * clipboard.</p>
-     * @param {Tab} tab The tab whose information is to be used to generate the
-     * <code>url</code> tag.
-     */
-    copyBBCode: function (tab) {
-        var data = {
-            text: tab.title,
-            url: tab.url
-        };
-        if (utils.get('settingIeTabExtract')) {
-            data.url = helper.decode(ietab.extractUrl(data.url));
-        }
-        if (data.text && utils.get('settingIeTabTitle')) {
-            data.text = ietab.extractTitle(data.text);
-        }
-        clipboard.copy(helper.createBBCode(data));
-    },
-
-    /**
-     * <p>Copies the encoded URL to the clipboard.</p>
-     * @param {Tab} tab The tab whose information is to be used to generated the
-     * encoded URL.
-     */
-    copyEncoded: function (tab) {
-        var url = tab.url;
-        if (utils.get('settingIeTabExtract')) {
-            url = ietab.extractUrl(url);
-        } else {
-            var embeddedUrl = ietab.extractUrl(url);
-            var index = url.indexOf(embeddedUrl);
-            url = helper.encode(url.substring(0, index)) + embeddedUrl;
-        }
-        clipboard.copy(url);
-    },
-
-    /**
-     * <p>Copies the shortened version of the URL to the clipboard.</p>
-     * @param {Tab} tab The tab whose information is to be used to generate the
-     * short URL.
-     * @see helper.callUrlShortener
-     */
-    copyShortUrl: function (tab) {
-        var url = tab.url;
-        if (utils.get('settingIeTabExtract')) {
-            url = helper.decode(ietab.extractUrl(url));
-        }
-        helper.callUrlShortener(url);
-    },
-
-    /**
-     * <p>Copies the URL to the clipboard.</p>
-     * @param {Tab} tab The tab whose information is to be used.
-     */
-    copyUrl: function (tab) {
-        var url = tab.url;
-        if (utils.get('settingIeTabExtract')) {
-            url = helper.decode(ietab.extractUrl(url));
-        }
-        clipboard.copy(url);
-    },
-
-    /**
      * <p>Attempts to extract the title embedded within that used by the IE Tab
      * extension.</p>
      * <p>If no title prefix was detected the string provided is returned.</p>
      * @param {String} str The string from which to extract the embedded title.
      * @returns {String} The title extracted from the string or the string if no
      * prefix was detected.
-     * @private
      */
     extractTitle: function (str) {
-        var idx = str.indexOf(ietab.titlePrefix);
-        if (idx !== -1) {
-            return str.substring(idx + ietab.titlePrefix.length);
+        if (str) {
+            var idx = str.indexOf(ietab.titlePrefix);
+            if (idx !== -1) {
+                return str.substring(idx + ietab.titlePrefix.length);
+            }
         }
         return str;
     },
@@ -1252,12 +1044,13 @@ var ietab = {
      * @param {String} str The string from which to extract the embedded URL.
      * @returns {String} The URL extracted from the string or the string if no
      * embedded URL was found.
-     * @private
      */
     extractUrl: function (str) {
-        var idx = str.indexOf(ietab.containerSegment);
-        if (idx !== -1) {
-            return str.substring(idx + ietab.containerSegment.length);
+        if (str) {
+            var idx = str.indexOf(ietab.containerSegment);
+            if (idx !== -1) {
+                return str.substring(idx + ietab.containerSegment.length);
+            }
         }
         return str;
     },
@@ -1270,127 +1063,8 @@ var ietab = {
      * otherwise <code>false</code>.
      */
     isActive: function (tab) {
-        return clipboard.isSpecialPage(tab) &&
-                tab.url.indexOf(ietab.extensionId) !== -1;
-    }
-
-};
-
-/**
- * <p>Represents URL Shortener services supported by the extension.</p>
- * <p>Each shortener provides the information required to use its service and
- * the logic to prepare the data to be sent and parse the data received.</p>
- * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
- * @since 0.0.2.1
- * @namespace
- */
-var shortener = {
-
-    /**
-     * <p>Represents the bit.ly service.</p>
-     * @namespace
-     */
-    bitly: {
-        /** @type String */
-        contentType: 'application/x-www-form-urlencoded',
-        /**
-         * @param {String} url
-         * @returns {Object}
-         */
-        getParameters: function (url) {
-            var params = {
-                'login': 'urlcopy',
-                'apiKey': 'R_05858399e8a60369e1d1562817b77b39',
-                'longUrl': url,
-                'format': 'json'
-            };
-            if (utils.get('bitlyXApiKey') && utils.get('bitlyXLogin')) {
-                params.x_apiKey = utils.get('bitlyXApiKey');
-                params.x_login = utils.get('bitlyXLogin');
-            }
-            return params;
-        },
-        /**
-         * @param {String} url
-         * @returns {String}
-         */
-        input: function (url) {
-            return null;
-        },
-        /** @returns {Boolean} */
-        isEnabled: function () {
-            return utils.get('bitlyEnabled');
-        },
-        /** @type String */
-        method: 'GET',
-        /** @type String */
-        name: 'bit.ly',
-        /**
-         * @param {String} resp
-         * @returns {String}
-         */
-        output: function (resp) {
-            return JSON.parse(resp).data.url;
-        },
-        /** @type String */
-        url: 'http://api.bitly.com/v3/shorten'
-    },
-
-    /**
-     * <p>Represents the Google URL Shortener service.</p>
-     * @namespace
-     */
-    google: {
-        /** @type String */
-        contentType: 'application/json',
-        /**
-         * @param {String} url
-         * @returns {Object}
-         */
-        getParameters: function (url) {
-            var params = {
-                'key': 'AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY'
-            };
-            return params;
-        },
-        /**
-         * @param {String} url
-         * @returns {String}
-         */
-        input: function (url) {
-            return JSON.stringify({'longUrl': url});
-        },
-        /** @returns {Boolean} */
-        isEnabled: function () {
-            return utils.get('googleEnabled');
-        },
-        /** @returns {Boolean} */
-        isOAuthEnabled: function () {
-            return utils.get('googleOAuthEnabled');
-        },
-        /** @type String */
-        method: 'POST',
-        /** @type String */
-        name: 'goo.gl',
-        /** @type Object */
-        oauth: ChromeExOAuth.initBackgroundPage({
-            'request_url': 'https://www.google.com/accounts/OAuthGetRequestToken',
-            'authorize_url': 'https://www.google.com/accounts/OAuthAuthorizeToken',
-            'access_url': 'https://www.google.com/accounts/OAuthGetAccessToken',
-            'consumer_key': 'anonymous',
-            'consumer_secret': 'anonymous',
-            'scope': 'https://www.googleapis.com/auth/urlshortener',
-            'app_name': 'URL-Copy'
-        }),
-        /**
-         * @param {String} resp
-         * @returns {String}
-         */
-        output: function (resp) {
-            return JSON.parse(resp).id;
-        },
-        /** @type String */
-        url: 'https://www.googleapis.com/urlshortener/v1/url'
+        return (urlcopy.isSpecialPage(tab) &&
+                tab.url.indexOf(ietab.extensionId) !== -1);
     }
 
 };

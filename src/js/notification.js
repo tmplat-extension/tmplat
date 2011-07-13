@@ -11,33 +11,36 @@ var notification = {
      * <p>This involves inserting and configuring the UI elements as well as the
      * insertion of localized Strings based on the result of the copy request.
      * </p>
-     * @see clipboard.showNotification
+     * @see urlcopy.showNotification
      */
     init: function () {
         var bg = chrome.extension.getBackgroundPage(),
             div = document.getElementById('tip'),
-            result = (bg.clipboard.status) ? 'copy_success' : 'copy_fail',
-            sub = chrome.i18n.getMessage(bg.clipboard.feature + '_notification');
+            result = (bg.urlcopy.status) ? 'copy_success' : 'copy_fail';
         /*
          * Styles the tip and inserts relevant localized String depending on the
-         * result of the copy request.
+         * result of the copy request or the existence of an override message.
          */
         div.className = result;
-        div.innerHTML = chrome.i18n.getMessage(result, sub);
+        if (bg.urlcopy.message) {
+            div.innerHTML = bg.urlcopy.message;
+        } else {
+            div.innerHTML = chrome.i18n.getMessage(result);
+        }
         /*
-         * Important: Resets the clipboard to avoid affecting copy requests.
-         * If user disabled the notifications option this is still called in
-         * clipboard.showNotification for safety.
+         * Important: Resets urlcopy to avoid affecting copy requests. If user
+         * disabled the notifications option this is still called in
+         * urlcopy.showNotification for safety.
          */
-        bg.clipboard.reset();
+        bg.urlcopy.reset();
         /*
          * Sets a timer to close the notification after if user enabled option;
          * otherwise stays open until closed manually by user.
          */
-        if (utils.get('settingNotificationTimer') > 0) {
+        if (utils.get('notificationDuration') > 0) {
             window.setTimeout(function () {
                 window.close();
-            }, utils.get('settingNotificationTimer'));
+            }, utils.get('notificationDuration'));
         }
     }
 

@@ -14,7 +14,7 @@ var utils = {
      * @since 0.1.0.0
      */
     exists: function (key) {
-        return key in localStorage;
+        return localStorage.hasOwnProperty(key);
     },
 
     /**
@@ -27,9 +27,9 @@ var utils = {
      * if none exists.
      * @see JSON.parse
      */
-    get: function (key) {
+    'get': function (key) {
         var value = localStorage[key];
-        if (typeof(value) !== 'undefined') {
+        if (typeof value !== 'undefined') {
             return JSON.parse(value);
         }
         return value;
@@ -48,7 +48,7 @@ var utils = {
      */
     init: function (key, defaultValue) {
         var value = utils.get(key);
-        if (typeof(value) === 'undefined') {
+        if (typeof value === 'undefined') {
             value = defaultValue;
         }
         return utils.set(key, value);
@@ -68,6 +68,27 @@ var utils = {
     },
 
     /**
+     * <p>Copies the value of the existing key to that of the new key then
+     * removes the old key from localStorage.</p>
+     * <p>If the old key doesn't exist in localStorage the specified default
+     * value will be assigned to it instead.</p>
+     * @param {String} oldKey The key whose value is to be copied and then
+     * removed.
+     * @param {String} newKey The key whose value is to be set.
+     * @param [defaultValue] The value to be assigned to the new key if the old
+     * key didn't exist.
+     * @since 0.1.0.0
+     */
+    rename: function (oldKey, newKey, defaultValue) {
+        if (utils.exists(oldKey)) {
+            utils.set(newKey, utils.get(oldKey));
+            utils.remove(oldKey);
+        } else {
+            utils.set(newKey, defaultValue);
+        }
+    },
+
+    /**
      * <p>Sets the value of the specified key in localStorage.</p>
      * <p>If the specified value is undefined it is assigned directly to the
      * key; otherwise it is transformed to a JSON String.</p>
@@ -77,9 +98,9 @@ var utils = {
      * undefined if there was none.
      * @see JSON.stringify
      */
-    set: function (key, value) {
+    'set': function (key, value) {
         var oldValue = utils.get(key);
-        if (typeof(value) !== 'undefined') {
+        if (typeof value !== 'undefined') {
             localStorage[key] = JSON.stringify(value);
         } else {
             localStorage[key] = value;

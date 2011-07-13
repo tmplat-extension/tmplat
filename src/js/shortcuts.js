@@ -8,16 +8,14 @@
     document.body.addEventListener('keyup', function (e) {
         var isMac = navigator.userAgent.toLowerCase().indexOf('mac') !== -1;
         if ((e.ctrlKey && e.altKey && !isMac) ||
-            (e.metaKey && e.shiftKey && isMac)) {
-            if (data.feature) {
-                chrome.extension.sendRequest({
-                    data: {
-                        event: e,
-                        key: String.fromCharCode(e.keyCode).toUpperCase()
-                    },
-                    type: 'shortcut'
-                });
-            }
+                (e.metaKey && e.shiftKey && isMac)) {
+            chrome.extension.sendRequest({
+                data: {
+                    event: e,
+                    key: String.fromCharCode(e.keyCode).toUpperCase()
+                },
+                type: 'shortcut'
+            });
         }
     }, false);
 }());

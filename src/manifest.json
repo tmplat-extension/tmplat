@@ -31,6 +31,7 @@
     "name": "__MSG_name__",
     "options_page": "pages/options.html",
     "permissions": [
+        "management",
         "notifications",
         "tabs",
         "<all_urls>"

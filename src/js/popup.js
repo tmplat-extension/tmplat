@@ -15,7 +15,7 @@ var popup = {
     init: function () {
         var bg = chrome.extension.getBackgroundPage();
         // Inserts prepared HTML in to body element
-        document.body.innerHTML = bg.clipboard.popupHTML;
+        document.body.innerHTML = bg.urlcopy.popupHTML;
         // Shows IE Tab indicator if extension is detected for the selected tab
         chrome.tabs.getSelected(null, function (tab) {
             if (bg.ietab.isActive(tab)) {
@@ -23,7 +23,7 @@ var popup = {
             }
         });
         // Fix dimensions if shortcuts are enabled
-        if (utils.get('settingShortcut')) {
+        if (utils.get('shortcuts')) {
             document.body.style = 'min-width: 190px';
         }
     },
@@ -37,7 +37,7 @@ var popup = {
     sendRequest: function (item) {
         chrome.extension.sendRequest({
             data: {
-                feature: item.getAttribute('name')
+                name: item.getAttribute('name')
             },
             type: 'popup'
         });
