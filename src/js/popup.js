@@ -16,12 +16,6 @@ var popup = {
         var bg = chrome.extension.getBackgroundPage();
         // Inserts prepared HTML in to body element
         document.body.innerHTML = bg.urlcopy.popupHTML;
-        // Shows IE Tab indicator if extension is detected for the selected tab
-        chrome.tabs.getSelected(null, function (tab) {
-            if (bg.ietab.isActive(tab)) {
-                document.getElementById('ieTabItem').style.display = 'block';
-            }
-        });
         // Fix dimensions of feature text
         popup.resizePopupText();
         // Fix dimensions if shortcuts are enabled

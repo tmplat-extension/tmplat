@@ -287,17 +287,6 @@ var urlcopy = {
         loadDiv.append($('<img src="../images/loading.gif"/>'), $('<div/>', {
             text: chrome.i18n.getMessage('shortening')
         }));
-        itemList.append($('<li id="ieTabItem"/>').append(
-            $('<div/>', {
-                'class': 'menu',
-                style: 'background-image: url(\'../images/explorer.png\')'
-            }).append(
-                $('<span/>', {
-                    'class': 'text',
-                    text: chrome.i18n.getMessage('ie_tab')
-                })
-            )
-        ));
         // Generates the HTML for each feature
         for (var i = 0; i < urlcopy.features.length; i++) {
             if (urlcopy.features[i].enabled) {
