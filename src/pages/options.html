@@ -29,10 +29,26 @@
             input {cursor: pointer;}
             #ieTabSettingDiv {display: none;}
             #ieTabFooter {font-weight: bold;}
-            .closeBtn {margin: 25px 0 0 0;}
+            .bottom-controls {margin: 25px 0 0 0;}
             #footer {font-size: 13px; text-align: center;}
+            /* Facebox */
+            #facebox {left: 0; position: absolute; text-align: left; top: 0; z-index: 100;}
+            #facebox .popup {border: 3px solid rgba(0,0,0,0); border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; box-shadow:0 0 18px rgba(0,0,0,0.4); -moz-box-shadow: 0 0 18px rgba(0,0,0,0.4); -webkit-box-shadow: 0 0 18px rgba(0,0,0,0.4); position: relative;}
+            #facebox .content {display: table; width: 370px; padding: 10px 18px 10px 10px; background: white; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;}
+            #facebox .content > p:first-child {margin-top: 0;}
+            #facebox .content > p:last-child {margin-bottom: 0;}
+            #facebox .close {background: white; padding: 2px; position: absolute; right: 5px; top: 5px;}
+            #facebox .close img {opacity: 0.3;}
+            #facebox .close:hover img {opacity: 1.0;}
+            #facebox .loading {text-align: center;}
+            #facebox .image {text-align: center;}
+            #facebox img {border: 0; margin: 0;}
+            #facebox_overlay {height: 100%; left: 0; position: fixed; top: 0; width: 100%;}
+            .facebox_hide {z-index: -100;}
+            .facebox_overlayBG {background-color: black; z-index: 99;}
         </style>
         <script type="text/javascript" src="../js/jquery.min.js"></script>
+        <script type="text/javascript" src="../js/facebox.min.js"></script>
         <script type="text/javascript" src="../js/utils.js"></script>
         <script type="text/javascript" src="../js/options.js"></script>
         <script type="text/javascript">
@@ -44,44 +60,64 @@
     <body>
         <div class="contentBox">
             <div id="header">
-                <h1 id="optionTitle"></h1>
+                <h1 id="options_hdr"></h1>
             </div>
-            <div id="featureSettingDiv" class="section">
-                <h4 id="featureSetting" class="toggle-expand"></h4>
+            <div id="features_sct" class="section">
+                <h4 id="features_hdr" class="toggle-expand"></h4>
                 <div class="content">
                     <div>
                         <table style="border: none; border-collapse; collapse; width: 100%">
                             <tr>
                                 <td colspan="2" rowspan="2" style="width: 50%">
-                                    <select id="settingFeatures" size="5" style="width: 100%"></select>
+                                    <select id="features" size="5" style="width: 100%"></select>
                                 </td>
                                 <td style="padding-top: 10px">
-                                    <button id="moveUpButton"><img src="../images/move_up_disabled.gif" /></button>
+                                    <button id="moveUp_btn"><img src="../images/move_up_disabled.gif" /></button>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <button id="moveDownButton"><img src="../images/move_down_disabled.gif" /></button>
+                                    <button id="moveDown_btn"><img src="../images/move_down_disabled.gif" /></button>
                                 </td>
                             </tr>
                             <tr>
                                 <td colspan="3">
-                                    <button id="addButton">Add</button>
-                                    <label>
-                                        <input id="settingFeatureName" type="text" maxlength="32" size="32" disabled="disabled" placeholder="Name" />
-                                    </label>
+                                    <table style="border: none; border-collapse; collapse; width: 100%">
+                                        <tr>
+                                            <td style="width: 1%">
+                                                <button id="add_btn">Add</button>
+                                            </td>
+                                            <td style="width: 1%">
+                                                <label>
+                                                    <input id="feature_name" class="read-only" type="text" maxlength="16" size="32" placeholder="Name" />
+                                                </label>
+                                            </td>
+                                            <td>
+                                                <button id="delete_btn" class="toggle-feature" disabled>Delete</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>&nbsp;</td>
+                                            <td>
+                                                <label>
+                                                    <input id="feature_title" class="toggle-feature read-only" type="text" maxlength="32" size="32" disabled placeholder="Title" />
+                                                </label>
+                                            </td>
+                                            <td>&nbsp;</td>
+                                        </tr>
+                                    </table>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label>
-                                        <input type="checkbox" id="settingFeatureEnabled" disabled="disabled" />
-                                        <span id="settingFeatureEnabledText"></span>
+                                        <input id="feature_enabled" type="checkbox" class="toggle-feature" disabled />
+                                        <span id="feature_enabled_txt"></span>
                                     </label>
                                 </td>
                                 <td style="text-align: right">
                                     <label>
-                                        <span id="settingFeatureShortcutText"></span><input type="text" id="settingFeatureShortcut" disabled="disabled" maxlength="1" size="1" style="text-transform: uppercase" />
+                                        <span id="feature_shortcut_txt"></span><input id="feature_shortcut" type="text" class="toggle-feature" disabled maxlength="1" size="1" style="text-transform: uppercase" />
                                     </label>
                                 </td>
                                 <td>&nbsp;</td>
@@ -89,208 +125,154 @@
                             <tr>
                                 <td colspan="3">
                                     <label>
-                                        <textarea id="settingFeatureTemplate" rows="5" cols="50" disabled="disabled" placeholder="Template"></textarea>
+                                        <textarea id="feature_template" class="toggle-feature read-only" rows="5" cols="50" disabled placeholder="Template"></textarea>
                                     </label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <button id="updateButton">Update</button>
-                                </td>
-                                <td style="text-align: right">
-                                    <button id="deleteButton">Delete</button>
-                                </td>
-                                <td>&nbsp;</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div style="margin-top: 25px">
-                        <!-- TODO: Overlay/Dialog/Slide? -->
-                        <a href="javascript:void(0)" id="customFeaturesTemplateHelp">Need help creating templates?</a>
-                    </div>
-                </div>
-            </div>
-            <div id="customFeatureSettingDiv" class="section">
-                <h4 id="customFeatureSetting" class="toggle-expand">Custom Features Settings:</h4>
-                <div class="content">
-                    <div>
-                        <table class="features" style="border: none; border-collapse; collapse; width: 100%">
-                            <tr class="feature template first collapsed">
-                                <td>
-                                    <input class="deleteButton" type="image" src="../images/delete.png" />
-                                    <input class="moveUpButton" type="image" src="../images/move_up_disabled.gif" />
-                                    <input class="moveDownButton" type="image" src="../images/move_down.gif" />
-                                </td>
-                                <td style="text-align: left">
-                                    <input class="featureName" type="text" maxlength="32" size="32" placeholder="Name" disabled="disabled" />
-                                </td>
-                                <td style="width: 40%">
-                                    <div class="collapsed">
-                                        <a class="expandFeature" href="javascript:void(0)">show details</a>
-                                    </div>
-                                    <div class="expanded">
-                                        <a class="collapseFeature" href="javascript:void(0)">hide details</a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="feature template second collapsed">
-                                <td>&nbsp;</td>
-                                <td style="text-align: left">
-                                    <label>
-                                        <span class="featureShortcutText"></span><input type="text" class="featureShortcut" maxlength="1" size="1" />
-                                    </label>
-                                </td>
-                                <td>
-                                    <label>
-                                        <input type="checkbox" class="featureEnabled" disabled="disabled" />
-                                        <span class="featureEnabledText"></span>
-                                    </label>
-                                </td>
-                            </tr>
-                            <tr class="feature template third collapsed">
-                                <td>&nbsp;</td>
-                                <td colspan="2" style="text-align: left">
-                                    <textarea class="featureTemplate" rows="5" cols="50" placeholder="Template" disabled="disabled"></textarea>
-                                </td>
-                            </tr>
-                            <!--<tr id="copy_url">
-                                <td>
-                                    <input class="deleteButton" type="image" src="../images/delete.png" style="display: none" />
-                                    <input class="moveUpButton" type="image" src="../images/move_up_disabled.gif" />
-                                    <input class="moveDownButton" type="image" src="../images/move_down.gif" />
-                                </td>
-                                <td>
-                                    <div>
-                                        <input class="featureName" type="text" maxlength="32" size="32" placeholder="Name" disabled="disabled" value="URL" />
-                                        <a class="expandFeature" href="javascript:void(0)" style="display: none">show</a>
-                                        <label class="extra-content">
-                                            <input type="checkbox" class="featureEnabled" checked="checked" disabled="disabled" />
-                                            <span class="featureEnabledText"></span>
-                                        </label>
-                                    </div>
-                                    <div class="extra-content">
-                                        <textarea class="featureTemplate" rows="5" cols="50" placeholder="Template" disabled="disabled">{{{source}}}</textarea>
-                                        <br />
-                                        <label>
-                                            <span class="featureShortcutText"></span><input type="text" class="featureShortcut" maxlength="1" size="1" value="U" />
-                                        </label>
-                                        <a class="collapseFeature" href="javascript:void(0)">hide</a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr id="copy_bbcode">
-                                <td>
-                                    <input class="deleteButton" type="image" src="../images/delete.png" />
-                                    <input class="moveUpButton" type="image" src="../images/move_up.gif" />
-                                    <input class="moveDownButton" type="image" src="../images/move_down.gif" />
-                                </td>
-                                <td>
-                                    <div>
-                                        <input class="featureName" type="text" maxlength="32" size="32" placeholder="Name" disabled="disabled" value="BBCode" />
-                                        <a class="expandFeature" href="javascript:void(0)" style="display: none">show</a>
-                                        <label class="extra-content">
-                                            <input type="checkbox" class="featureEnabled" />
-                                            <span class="featureEnabledText"></span>
-                                        </label>
-                                    </div>
-                                    <div class="extra-content">
-                                        <textarea class="featureTemplate" rows="5" cols="50" placeholder="Template" spellcheck="false" disabled="disabled">{{#title}}
-[url={{{source}}}]{{{title}}}[/url]
-{{/title}}
-{{^title}}
-[url]{{{source}}}[/url]
-{{/title}}</textarea>
-                                        <br />
-                                        <label>
-                                            <span class="featureShortcutText"></span><input type="text" class="featureShortcut" maxlength="1" size="1" value="B" />
-                                        </label>
-                                        <a class="collapseFeature" href="javascript:void(0)">hide</a>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr id="custom_1" class="custom-feature">
-                                <td>
-                                    <input class="deleteButton" type="image" src="../images/delete.png" />
-                                    <input class="moveUpButton" type="image" src="../images/move_up.gif" />
-                                    <input class="moveDownButton" type="image" src="../images/move_down_disabled.gif" />
-                                </td>
-                                <td>
-                                    <div>
-                                        <input class="featureName" type="text" maxlength="32" size="32" placeholder="Name" value="Title + URL" />
-                                        <a class="expandFeature" href="javascript:void(0)" style="display: none">show</a>
-                                        <label class="extra-content">
-                                            <input type="checkbox" class="featureEnabled" />
-                                            <span class="featureEnabledText"></span>
-                                        </label>
-                                    </div>
-                                    <div class="extra-content">
-                                        <textarea class="featureTemplate" rows="5" cols="50" placeholder="Template">{{{title}}} : {{{source}}}</textarea>
-                                        <br />
-                                        <label>
-                                            <span class="featureShortcutText"></span><input type="text" class="featureShortcut" maxlength="1" size="1" value="T" />
-                                        </label>
-                                        <a class="collapseFeature" href="javascript:void(0)">hide</a>
-                                    </div>
-                                </td>
-                            </tr>-->
-                            <tr>
-                                <td>
-                                    <input id="addButton" type="image" src="../images/add.png" />
-                                </td>
-                                <td colspan="2">
-                                    <input id="newFeatureName" type="text" maxlength="32" size="32" placeholder="Name" />
                                 </td>
                             </tr>
                         </table>
                     </div>
                     <div style="margin-top: 25px">
                         <!-- TODO: Overlay/Dialog/Slide? -->
-                        <a href="javascript:void(0)" id="customFeaturesTemplateHelp">Need help creating templates?</a>
+                        <a id="template_help_lnk" href="javascript:void(0)">Need help creating templates?</a>
                     </div>
                 </div>
             </div>
-            <div id="urlShortenerSettingDiv" class="section">
-                <h4 id="urlShortenerSetting" class="toggle-expand"></h4>
+            <div id="shorteners_sct" class="section">
+                <h4 id="shorteners_hdr" class="toggle-expand"></h4>
                 <div class="content">
                     <div>
                         <table class="styled" style="border: none; border-collapse; collapse; width: 100%">
                             <thead>
                                 <tr>
-                                    <th id="urlShortenerEnabledHeader" style="text-align: center; width: 12%"></th>
-                                    <th id="urlShortenerNameHeader" style="width: 33%"></th>
-                                    <th id="urlShortenerConfigHeader" style="width: 55%"></th>
+                                    <th id="shorteners_enabled_hdr" style="text-align: center; width: 12%"></th>
+                                    <th id="shorteners_name_hdr" style="width: 23%"></th>
+                                    <th id="shorteners_config_hdr" style="width: 65%"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr style="vertical-align: top">
-                                    <td style="text-align: center"><input type="radio" name="settingEnabledUrlShortener" id="bitlyEnabled" /></td>
+                                    <td style="text-align: center"><input type="radio" name="enabled_shortener" id="bitly_enabled" /></td>
                                     <td><a href="http://bit.ly" target="_blank">bit.ly</a></td>
                                     <td>
-                                        <div>
-                                            <label>
-                                                <a href="http://bit.ly/a/sign_up" target="_blank"><span id="bitlyXLoginText"></span></a><br />
-                                                <input type="text" id="bitlyXLogin" />
-                                            </label>
-                                        </div>
-                                        <div>
-                                            <label>
-                                                <a href="http://bit.ly/a/your_api_key" target="_blank"><span id="bitlyXApiKeyText"></span></a><br />
-                                                <input type="text" id="bitlyXApiKey" />
-                                            </label>
-                                        </div>
+                                        <table style="border: none; border-collapse; collapse; width: 100%">
+                                            <tr>
+                                                <td style="width: 40%">
+                                                    <label for="bity_xlogin">
+                                                        <span id="bitly_xlogin_txt"></span>
+                                                    </label>
+                                                    <a href="#bitly_xlogin_tip" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                    <div id="bitly_xlogin_tip" style="display: none">
+                                                        <p>This is the username provided to you when you registered your <a href="http://bit.ly/a/account" target="_blank">bit.ly account</a>.</p>
+                                                        <p>Haven't registered with <strong>bit.ly</strong>?</p>
+                                                        <p><a href="http://bit.ly/a/sign_up" target="_blank">Sign up now</a></p>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <input type="text" id="bity_xlogin" size="28" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="bitly_xapi_key">
+                                                        <span id="bitly_xapi_key_txt"></span>
+                                                    </label>
+                                                    <a href="#bitly_xapi_key_tip" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                    <div id="bitly_xapi_key_tip" style="display: none">
+                                                        <p>The API key allows <strong>URL Copy</strong> to shorten links via <strong>bit.ly</strong> on your behalf.</p>
+                                                        <p><a href="http://bit.ly/a/your_api_key" target="_blank">Get your API key</a></p>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <input type="password" id="bitly_xapi_key" size="28" />
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                                 <tr style="vertical-align: top">
-                                    <td style="text-align: center"><input type="radio" name="settingEnabledUrlShortener" id="googleEnabled" /></td>
+                                    <td style="text-align: center"><input type="radio" name="enabled_shortener" id="googl_enabled" /></td>
                                     <td><a href="http://goo.gl" target="_blank">goo.gl</a></td>
                                     <td>
                                         <div>
                                             <label>
-                                                <input type="checkbox" id="googleOAuthEnabled" />
-                                                <span id="googleOAuthEnabledText"></span>
-                                                <span><a href="http://oauth.net/" target="_blank">OAuth</a></span>
+                                                <input type="checkbox" id="googl_oauth_enabled" />
+                                                <span id="googl_oauth_enabled_txt"></span>
                                             </label>
+                                        <a href="#googl_oauth_enabled_tip" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                        <div id="googl_oauth_enabled_tip" style="display: none">
+                                                <p><a href="http://oauth.net" target="_blank">OAuth</a> is an open protocol that aims to standardize the way desktop and web applications access a user's private data. OAuth provides a mechanism for users to grant access to private data without sharing their private credentials (username/password).</p>
+                                                <p><strong>URL Copy</strong> uses OAuth to shorten links via <strong>goo.gl</strong> on your behalf.</p>
+                                            </a>
                                         </div>
+                                    </td>
+                                </tr>
+                                <tr style="vertical-align: top">
+                                    <td style="text-align: center"><input type="radio" name="enabled_shortener" id="yourls_enabled" /></td>
+                                    <td><a href="http://yourls.org" target="_blank">YOURLS</a></td>
+                                    <td>
+                                        <table style="border: none; border-collapse; collapse; width: 100%">
+                                            <tr>
+                                                <td style="width: 40%">
+                                                    <label for="yourls_url">
+                                                        <span id="yourls_url_txt">URL</span>
+                                                    </label>
+                                                    <a href="#yourls_url_tip" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                    <div id="yourls_url_tip" style="display: none">
+                                                        <p>The URL to the API of the <strong>YOURLS</strong> installation (e.g. <code>http://example.com/yourls-api.php</code>).</p>
+                                                        <p><a href="http://yourls.org/#Config" target="_blank">See documentation</a></p>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <input type="url" id="yourls_url" size="28" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="border-bottom: 1px dashed #AAA"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="yourls_username">
+                                                        <span id="yourls_username_txt">Username</span>
+                                                    </label>
+                                                    <a href="#yourls_credentials_tip" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                    <div id="yourls_credentials_tip" style="display: none">
+                                                        <p>Both the username and password are only required if the <strong>YOURLS</strong> installation is private <em>and</em> you're <strong>not</strong> using the <a href="http://code.google.com/p/yourls/wiki/PasswordlessAPI" target="_blank">passwordless API</a>.</p>
+                                                        <p><a href="http://yourls.org/#Config" target="_blank">See documentation</a></p>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <input type="text" id="yourls_username" size="28" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="yourls_password">
+                                                        <span id="yourls_password_txt">Password</span>
+                                                    </label>
+                                                    <a href="#yourls_credentials_tip" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                </td>
+                                                <td>
+                                                    <input type="password" id="yourls_password" size="28" />
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2" style="font-weight: bold; text-align: center">OR</td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="yourls_signature">
+                                                        <span id="yourls_signature_txt">Signature</span>
+                                                    </label>
+                                                    <a href="#yourls_signature_tip" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                    <div id="yourls_signature_tip" style="display: none">
+                                                        <p>This is required if only if the <strong>YOURLS</strong> installation is private <em>and</em> you <strong>are</strong> using the <a href="http://code.google.com/p/yourls/wiki/PasswordlessAPI" target="_blank">passwordless API</a>.</p>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <input type="password" id="yourls_signature" size="28" />
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                             </tbody>
@@ -298,83 +280,60 @@
                     </div>
                 </div>
             </div>
-            <div id="anchorSettingDiv" class="section">
-                <h4 id="anchorSetting" class="toggle-expand"></h4>
+            <div id="anchors" class="section">
+                <h4 id="anchors_hdr" class="toggle-expand"></h4>
                 <div class="content">
                     <div>
                         <label>
-                            <input type="checkbox" id="settingTitleAttr" />
-                            <span id="settingTitleAttrText"></span>
+                            <input type="checkbox" id="doAnchorTitle" />
+                            <span id="doAnchorTitle_txt"></span>
                         </label>
                     </div>
                     <div>
                         <label>
-                            <input type="checkbox" id="settingTargetAttr" />
-                            <span id="settingTargetAttrText"></span>
+                            <input type="checkbox" id="doAnchorTarget" />
+                            <span id="doAnchorTarget_txt"></span>
                         </label>
                     </div>
                 </div>
             </div>
-            <div id="notificationSettingDiv" class="section">
-                <h4 id="notificationSetting" class="toggle-expand"></h4>
+            <div id="notifications_sct" class="section">
+                <h4 id="notifications_hdr" class="toggle-expand"></h4>
                 <div class="content">
                     <div>
                         <label>
-                            <input type="checkbox" id="settingNotification" />
-                            <span id="settingNotificationText"></span>
+                            <input type="checkbox" id="notifications" />
+                            <span id="notifications_txt"></span>
                         </label>
                     </div>
                     <div style="margin: 5px 0 0 4px">
                         <label>
-                            <span id="settingNotificationTimerText1"></span>
-                            <select id="settingNotificationTimer"></select>
-                            <span id="settingNotificationTimerText2"></span>
+                            <span id="notificationDuration_txt1"></span>
+                            <select id="notificationDuration"></select>
+                            <span id="notificationDuration_txt2"></span>
                         </label>
                     </div>
                 </div>
             </div>
-            <div id="shortcutSettingDiv" class="section">
-                <h4 id="shorcutSetting" class="toggle-expand"></h4>
+            <div id="shortcuts_sct" class="section">
+                <h4 id="shortcuts_hdr" class="toggle-expand"></h4>
                 <div class="content">
                     <div>
                         <label>
-                            <input type="checkbox" id="settingShortcut" />
-                            <span id="settingShortcutText"></span>
+                            <input type="checkbox" id="shortcuts" />
+                            <span id="shortcuts_txt"></span>
                         </label>
                     </div>
                 </div>
             </div>
-            <div id="ieTabSettingDiv" class="section">
-                <h4 id="ieTabSetting" class="toggle-expand"></h4>
-                <div class="content">
-                    <div>
-                        <label>
-                            <input type="checkbox" id="settingIeTabExtract" />
-                            <span id="settingIeTabExtractText"></span>
-                        </label>
-                    </div>
-                    <div>
-                        <label>
-                            <input type="checkbox" id="settingIeTabTitle" />
-                            <span id="settingIeTabTitleText"></span>
-                        </label>
-                    </div>
-                    <div style="margin: 15px 0 0 4px">
-                        <span id="ieTabFooter"></span>
-                        <a href="https://chrome.google.com/webstore/detail/hehijbfgiekmjfkfjpbkbammjbdenadd" id="ieTabExtension" target="_blank"></a>
-                        |
-                        <a href="http://www.ietab.net/" id="ieTabWebsite" target="_blank"></a>
-                    </div>
-                </div>
-            </div>
-            <div class="closeBtn">
+            <div class="bottom-controls">
                 <table style="border: none; border-collapse; collapse; width: 100%">
                     <tr>
                         <td style="width: 50%">
-                            <button id="saveAndClose"></button>
+                            <button id="saveAndClose_btn"></button>
                         </td>
                         <td style="text-align: right">
-                            <span><a href="javascript:void(0)" id="collapseAll"></a> &#124; <a href="javascript:void(0)" id="expandAll"></a></span>
+                            <span><a href="javascript:void(0)" id="collapseAll_lnk"></a> &#124; <a href="javascript:void(0)" id="expandAll_lnk"></a></span>
                         </td>
                     </tr>
                 </table>

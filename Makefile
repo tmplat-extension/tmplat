@@ -20,8 +20,7 @@ base_dirs = bin\
 	bin/images\
 	bin/js\
 	bin/pages
-base_locale_dirs = bin/_locales/en\
-	bin/_locales/fr
+base_locale_dirs = bin/_locales/en
 
 extra_bin_files = bin/js/chrome_ex_oauth.js\
 	bin/js/chrome_ex_oauthsimple.js\

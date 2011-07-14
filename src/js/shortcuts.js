@@ -11,7 +11,6 @@
                 (e.metaKey && e.shiftKey && isMac)) {
             chrome.extension.sendRequest({
                 data: {
-                    event: e,
                     key: String.fromCharCode(e.keyCode).toUpperCase()
                 },
                 type: 'shortcut'

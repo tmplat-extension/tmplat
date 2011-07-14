@@ -94,15 +94,6 @@ var urlcopy = {
     popupHTML: '',
 
     /**
-     * <p>The regular expression used to validate feature name inputs.</p>
-     * @see urlcopy.isNameValid
-     * @since 0.1.0.0
-     * @private
-     * @type RegExp
-     */
-    rValidName: /^[A-Za-z0-9]+$/,
-
-    /**
      * <p>String representation of the keyboard modifiers listened to by this
      * extension on Windows/Linux platforms.</p>
      * @since 0.1.0.0
@@ -249,7 +240,7 @@ var urlcopy = {
      * <p>Creates a <code>&lt;li/&gt;</code> representing the feature provided.
      * This is to be inserted in to the <code>&lt;ul/&gt;</code> in the popup
      * page but is created here to optimize display times for the popup.</p>
-     * @param {feature} feature The information of the feature to be used.
+     * @param {Object} feature The information of the feature to be used.
      * @returns {jQuery} The generated <code>&lt;li/&gt;</code> jQuery object.
      * @since 0.1.0.0
      * @requires jQuery
@@ -258,18 +249,16 @@ var urlcopy = {
     buildFeature: function (feature) {
         var image = '../images/' + (feature.image || 'copy_url.png'),
             item = $('<li/>', {
-                id: feature.id + 'Item',
                 name: feature.name,
                 onclick: 'popup.sendRequest(this);'
             }),
             menu = $('<div/>', {
                 'class': 'menu',
-                id: feature.id,
                 style: 'background-image: url(\'' + image + '\');'
             });
         menu.append($('<span/>', {
             'class': 'text',
-            id: feature.id + 'Text'
+            text: feature.title
         }));
         if (utils.get('shortcuts')) {
             var modifiers = urlcopy.shortcutModifiers;
@@ -278,7 +267,6 @@ var urlcopy = {
             }
             menu.append($('<span/>', {
                 'class': 'shortcut',
-                id: feature.id + 'Shortcut',
                 text: modifiers + feature.shortcut
             }));
         }
@@ -294,7 +282,7 @@ var urlcopy = {
      */
     buildPopup: function () {
         var item = $('<div id="item"/>'),
-            itemList = $('<ul/>'),
+            itemList = $('<ul id="itemList"/>'),
             loadDiv = $('<div id="loadDiv"/>');
         loadDiv.append($('<img src="../images/loading.gif"/>'), $('<div/>', {
             text: chrome.i18n.getMessage('shortening')
@@ -317,19 +305,6 @@ var urlcopy = {
             }
         }
         item.append(itemList);
-        /*
-         * Calculates the widest text <code>&lt;div/&gt;</code> in the popup
-         * and assigns that width to all others.
-         */
-        var textItems = itemList.find('li .text'),
-            width = 0;
-        textItems.each(function () {
-            var scrollWidth = this.scrollWidth;
-            if (scrollWidth > width) {
-                width = scrollWidth;
-            }
-        });
-        textItems.css('width', width + 'px');
         urlcopy.popupHTML = $('<div/>').append(loadDiv, item).html();
     },
 
@@ -353,34 +328,36 @@ var urlcopy = {
      * @private
      */
     buildTemplateData: function (tab, shortCallback) {
-        var data = {};
+        var data = {}, title = '', url = {};
         if (ietab.isActive(tab)) {
-            $.extend(data, $.url(ietab.extractUrl(tab.url)), {
-                title: ietab.extractTitle(tab.title)
-            });
+            title = ietab.extractTitle(tab.title);
+            url = $.url(ietab.extractUrl(tab.url));
         } else {
-            $.extend(data, $.url(tab.url), {title: tab.title});
+            title = tab.title;
+            url = $.url(tab.url);
         }
-        if (!data.title) {
-            data.title = data.source;
-        }
-        $.extend(data, {
+        $.extend(data, url.attr(), {
             doAnchorTarget: utils.get('doAnchorTarget'),
             doAnchorTitle: utils.get('doAnchorTitle'),
-            encoded: encodeURIComponent(data.source),
+            encoded: encodeURIComponent(url.attr('source')),
             favicon: tab.favIconUrl,
-            fparams: data.fparams(),
-            fsegments: data.fsegments(),
-            notificationDuration: utils.get('notificationDuration'),
+            fparam: url.fparam,
+            fparams: url.fparam(),
+            fsegment: url.fsegment,
+            fsegments: url.fsegment(),
+            notificationDuration: utils.get('notificationDuration') / 1000,
             notifications: utils.get('notifications'),
             originalSource: tab.url,
-            originalTitle: tab.title || data.source,
-            params: data.params(),
-            segments: data.segments(),
+            originalTitle: tab.title || url.attr('source'),
+            param: url.param,
+            params: url.param(),
+            segment: url.segment,
+            segments: url.segment(),
             'short': function () {
                 return shortCallback();
             },
-            shortcuts: utils.get('shortcuts')
+            shortcuts: utils.get('shortcuts'),
+            title: title || url.attr('source')
         });
         return data;
     },
@@ -446,6 +423,7 @@ var urlcopy = {
      * function.</p>
      * @param {String} str The string to be added to the clipboard.
      * @requires document.execCommand
+     * @requires jQuery
      */
     copy: function (str) {
         var popup = chrome.extension.getViews({type: 'popup'})[0],
@@ -482,6 +460,24 @@ var urlcopy = {
                         urlcopy.executeScriptsInExistingTabs);
             }
         });
+    },
+
+    /**
+     * <p>Attempts to return the information for the any feature with the
+     * specified shortcut assigned to it.</p>
+     * @param {String} shortcut The shortcut to be queried.
+     * @returns {Object} The function using the shortcut provided, if possible.
+     * @since 0.1.0.0
+     */
+    getFeatureWithShortcut: function (shortcut) {
+        var feature;
+        for (var i = 0; i < urlcopy.features.length; i++) {
+            if (urlcopy.features[i].shortcut === shortcut) {
+                feature = urlcopy.features[i];
+                break;
+            }
+        }
+        return feature;
     },
 
     /**
@@ -529,11 +525,11 @@ var urlcopy = {
      */
     init_update: function () {
         // TODO: Remove function in v0.1.0.1
-        utils.rename('settingNotification', 'notifications');
-        utils.rename('settingNotificationTimer', 'notificationDuration');
-        utils.rename('settingShortcut', 'shortcuts');
-        utils.rename('settingTargetAttr', 'doAnchorTarget');
-        utils.rename('settingTitleAttr', 'doAnchorTitle');
+        utils.rename('settingNotification', 'notifications', true);
+        utils.rename('settingNotificationTimer', 'notificationDuration', 3000);
+        utils.rename('settingShortcut', 'shortcuts', true);
+        utils.rename('settingTargetAttr', 'doAnchorTarget', false);
+        utils.rename('settingTitleAttr', 'doAnchorTitle', false);
         utils.remove('settingIeTabExtract');
         utils.remove('settingIeTabTitle');
     },
@@ -601,16 +597,16 @@ var urlcopy = {
      */
     initFeatures_update: function () {
         // TODO: Remove function in v0.1.0.1
-        utils.rename('copyAnchorEnabled', 'feat__anchor_enabled');
-        utils.rename('copyAnchorOrder', 'feat__anchor_index');
-        utils.rename('copyBBCodeEnabled', 'feat__bbcode_enabled');
-        utils.rename('copyBBCodeOrder', 'feat__bbcode_index');
-        utils.rename('copyEncodedEnabled', 'feat__encoded_enabled');
-        utils.rename('copyEncodedOrder', 'feat__encoded_index');
-        utils.rename('copyShortEnabled', 'feat__short_enabled');
-        utils.rename('copyShortOrder', 'feat__short_index');
-        utils.rename('copyUrlEnabled', 'feat__url_enabled');
-        utils.rename('copyUrlOrder', 'feat__url_index');
+        utils.rename('copyAnchorEnabled', 'feat__anchor_enabled', true);
+        utils.rename('copyAnchorOrder', 'feat__anchor_index', 2);
+        utils.rename('copyBBCodeEnabled', 'feat__bbcode_enabled', false);
+        utils.rename('copyBBCodeOrder', 'feat__bbcode_index', 4);
+        utils.rename('copyEncodedEnabled', 'feat__encoded_enabled', true);
+        utils.rename('copyEncodedOrder', 'feat__encoded_index', 3);
+        utils.rename('copyShortEnabled', 'feat__short_enabled', true);
+        utils.rename('copyShortOrder', 'feat__short_index', 1);
+        utils.rename('copyUrlEnabled', 'feat__url_enabled', true);
+        utils.rename('copyUrlOrder', 'feat__url_index', 0);
     },
 
     /**
@@ -624,7 +620,7 @@ var urlcopy = {
         utils.init('bitly_xapi_key', '');
         utils.init('bitly_xlogin', '');
         utils.init('googl_enabled', true);
-        utils.init('googl_oath_enabled', true);
+        utils.init('googl_oauth_enabled', true);
         utils.init('yourls_enabled', false);
         utils.init('yourls_password', '');
         utils.init('yourls_signature', '');
@@ -640,11 +636,11 @@ var urlcopy = {
      */
     initUrlShorteners_update: function () {
         // TODO: Remove function in v0.1.0.1
-        utils.rename('bitlyEnabled', 'bitly_enabled');
-        utils.rename('bitlyXApiKey', 'bitly_xapi_key');
-        utils.rename('bitlyXLogin', 'bitly_xlogin');
-        utils.rename('googleEnabled', 'googl_enabled');
-        utils.rename('googleOAuthEnabled', 'googl_oath_enabled');
+        utils.rename('bitlyEnabled', 'bitly_enabled', false);
+        utils.rename('bitlyXApiKey', 'bitly_xapi_key', '');
+        utils.rename('bitlyXLogin', 'bitly_xlogin', '');
+        utils.rename('googleEnabled', 'googl_enabled', true);
+        utils.rename('googleOAuthEnabled', 'googl_oauth_enabled', true);
     },
 
     /**
@@ -662,30 +658,6 @@ var urlcopy = {
             }
         }
         return false;
-    },
-
-    /**
-     * <p>Returns whether or not the specified name is available for use as a
-     * feature.</p>
-     * @param {String} name The name to be queried.
-     * @returns {Boolean} <code>true</code> if the name is not already in use;
-     * otherwise <code>false</code>.
-     * @since 0.1.0.0
-     */
-    isNameAvailable: function (name) {
-        return utils.get('features').indexOf(name) === -1;
-    },
-
-    /**
-     * <p>Returns whether or not the specified name is valid for use as a
-     * feature.</p>
-     * @param {String} name The name to be queried.
-     * @returns {Boolean} <code>true</code> if the name is valid; otherwise
-     * <code>false</code>.
-     * @since 0.1.0.0
-     */
-    isNameValid: function (name) {
-        return name.search(urlcopy.rValidName) !== -1;
     },
 
     /**
@@ -847,12 +819,7 @@ var urlcopy = {
                 feature = urlcopy.loadFeature(request.data.name);
                 break;
             case 'shortcut':
-                for (var i = 0; i < urlcopy.features.length; i++) {
-                    if (urlcopy.features[i].shortcut === request.data.key) {
-                        feature = urlcopy.features[i];
-                        break;
-                    }
-                }
+                feature = urlcopy.getFeatureWithShortcut(request.data.key);
                 break;
             }
             if (feature) {

@@ -27,7 +27,7 @@ var utils = {
      * if none exists.
      * @see JSON.parse
      */
-    'get': function (key) {
+    get: function (key) {
         var value = localStorage[key];
         if (typeof value !== 'undefined') {
             return JSON.parse(value);
@@ -75,7 +75,7 @@ var utils = {
      * @param {String} oldKey The key whose value is to be copied and then
      * removed.
      * @param {String} newKey The key whose value is to be set.
-     * @param [defaultValue] The value to be assigned to the new key if the old
+     * @param defaultValue The value to be assigned to the new key if the old
      * key didn't exist.
      * @since 0.1.0.0
      */
@@ -98,7 +98,7 @@ var utils = {
      * undefined if there was none.
      * @see JSON.stringify
      */
-    'set': function (key, value) {
+    set: function (key, value) {
         var oldValue = utils.get(key);
         if (typeof value !== 'undefined') {
             localStorage[key] = JSON.stringify(value);

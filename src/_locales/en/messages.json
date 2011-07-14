@@ -2,37 +2,22 @@
    "copy_anchor": {
       "message": "Anchor"
    },
-   "copy_anchor_notification": {
-      "message": "Anchor code"
-   },
    "copy_bbcode": {
-      "message": "BBCode"
-   },
-   "copy_bbcode_notification": {
       "message": "BBCode"
    },
    "copy_encoded": {
       "message": "Encoded"
    },
-   "copy_encoded_notification": {
-      "message": "Encoded URL"
-   },
    "copy_fail": {
-      "message": "$1 could not be added to the clipboard"
+      "message": "URL could not be added to the clipboard"
    },
    "copy_short": {
       "message": "Short"
    },
-   "copy_short_notification": {
-      "message": "Shortened URL"
-   },
    "copy_success": {
-      "message": "$1 has been added to the clipboard"
+      "message": "URL has been added to the clipboard"
    },
    "copy_url": {
-      "message": "URL"
-   },
-   "copy_url_notification": {
       "message": "URL"
    },
    "description": {
@@ -54,7 +39,7 @@
       "message": "OAuth Redirect Page"
    },
    "opt_anchor_header": {
-      "message": "Anchor Settings:"
+      "message": "Anchors"
    },
    "opt_anchor_target_text": {
       "message": "Include \u003Ccode\u003Etarget\u003C/code\u003E attribute to open link in new window"
@@ -78,25 +63,16 @@
       "message": "Enabled"
    },
    "opt_feature_header": {
-      "message": "Feature Settings:"
+      "message": "Features"
    },
    "opt_footer": {
       "message": "&copy;$1 Alasdair Mercer"
    },
-   "opt_ie_tab_extract_text": {
-      "message": "Copy URL used internally by IE Tab"
-   },
-   "opt_ie_tab_footer": {
-      "message": "IE Tab:"
-   },
-   "opt_ie_tab_header": {
-      "message": "IE Tab Settings:"
-   },
-   "opt_ie_tab_title_text": {
-      "message": "Remove prefix from IE Tab titles"
+   "opt_ie_tab": {
+      "message": "IE Tab"
    },
    "opt_notification_header": {
-      "message": "Notification Settings:"
+      "message": "Notifications"
    },
    "opt_notification_text": {
       "message": "Enable notifications (i.e. success, failure)"
@@ -108,7 +84,7 @@
       "message": "seconds (Disable auto-hide: \u003Cem\u003E0\u003C/em\u003E)"
    },
    "opt_url_shortener_api_key_text": {
-      "message": "API Key:"
+      "message": "API Key"
    },
    "opt_url_shortener_config_header": {
       "message": "Configuration"
@@ -117,22 +93,22 @@
       "message": "Enabled"
    },
    "opt_url_shortener_header": {
-      "message": "URL Shortener Settings:"
+      "message": "URL Shorteners"
    },
    "opt_url_shortener_name_header": {
       "message": "Name"
    },
    "opt_url_shortener_oauth_enable_text": {
-      "message": "Enable"
+      "message": "Enable OAuth"
    },
    "opt_url_shortener_username_text": {
-      "message": "Username:"
+      "message": "Username"
    },
    "opt_save_button": {
       "message": "Save &amp; Close"
    },
    "opt_shortcut_header": {
-      "message": "Shortcut Settings:"
+      "message": "Shortcuts"
    },
    "opt_shortcut_text": {
       "message": "Enable keyboard shortcuts"

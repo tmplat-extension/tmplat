@@ -7,6 +7,15 @@
 var options = {
 
     /**
+     * <p>The regular expression used to validate feature name inputs.</p>
+     * @see options.isNameValid
+     * @since 0.1.0.0
+     * @private
+     * @type RegExp
+     */
+    rValidName: /^[A-Za-z0-9]+$/,
+
+    /**
      * <p>Collapses the contents of all sections.</p>
      * @param {Event} [event] The event triggered.
      * @event
@@ -19,6 +28,20 @@ var options = {
     },
 
     /**
+     * <p>Detects installed extensions that are supported by this extension.</p>
+     * <p>For each supported extension found this function calls the callback
+     * function with the information for that extension.</p>
+     * @param {function} callback The function to be called with each extensions
+     * details.
+     * @since 0.1.0.0
+     * @private
+     */
+    detectExtensions: function (callback) {
+        var bg = chrome.extension.getBackgroundPage();
+        chrome.management.get(bg.ietab.extensionId, callback);
+    },
+
+    /**
      * <p>Expands the contents of all sections.</p>
      * @param {Event} [event] The event triggered.
      * @event
@@ -28,6 +51,24 @@ var options = {
     expandAll: function (event) {
         $('.section h4').addClass('toggle-collapse')
                 .removeClass('toggle-expand').next('.content').slideDown();
+    },
+
+    /**
+     * <p>Replaces the value of the specified attribute of the selected
+     * element(s) to the localized String looked up from Chrome.</p>
+     * @param {String} selector A String containing a jQuery selector expression
+     * to select the element(s) to be modified.
+     * @param {String} attribute The name of the attribute to be modified.
+     * @param {String} name The name of the localized message to be retrieved.
+     * @param {String|String[]} [sub] The String(s) to substituted in the
+     * returned message (where applicable).
+     * @returns {jQuery} The modified element(s) wrapped in jQuery.
+     * @since 0.1.0.0
+     * @requires jQuery
+     * @private
+     */
+    i18nAttribute: function (selector, attribute, name, sub) {
+        return $(selector).attr(attribute, chrome.i18n.getMessage(name, sub));
     },
 
     /**
@@ -44,10 +85,7 @@ var options = {
      * @private
      */
     i18nReplace: function (selector, name, sub) {
-        if (typeof(sub) !== 'undefined') {
-            return $(selector).html(chrome.i18n.getMessage(name, sub));
-        }
-        return $(selector).html(chrome.i18n.getMessage(name));
+        return $(selector).html(chrome.i18n.getMessage(name, sub));
     },
 
     /**
@@ -59,74 +97,104 @@ var options = {
      */
     init: function () {
         // Inserts localized Strings
-        options.i18nReplace('title, #optionTitle', 'opt_title');
-        options.i18nReplace('#featureSetting', 'opt_feature_header');
+        options.i18nReplace('title, #options_hdr', 'opt_title');
+        options.i18nReplace('#features_hdr', 'opt_feature_header');
         // TODO: Remove ID selector
-        options.i18nReplace('#settingFeatureEnabledText, .featureEnabledText',
+        options.i18nReplace('#feature_enabled_txt, .feature_enabled_txt',
                 'opt_feature_enabled_text');
-        options.i18nReplace('#urlShortenerSetting', 'opt_url_shortener_header');
-        options.i18nReplace('#urlShortenerNameHeader',
+        options.i18nReplace('#shorteners_hdr', 'opt_url_shortener_header');
+        options.i18nReplace('#shorteners_name_hdr',
                 'opt_url_shortener_name_header');
-        options.i18nReplace('#urlShortenerEnabledHeader',
+        options.i18nReplace('#shorteners_enabled_hdr',
                 'opt_url_shortener_enabled_header');
-        options.i18nReplace('#urlShortenerConfigHeader',
+        options.i18nReplace('#shorteners_config_hdr',
                 'opt_url_shortener_config_header');
-        options.i18nReplace('#bitlyXLoginText',
+        options.i18nReplace('#bitly_xlogin_txt',
                 'opt_url_shortener_username_text');
-        options.i18nReplace('#bitlyXApiKeyText',
+        options.i18nReplace('#bitly_xapi_key_txt',
                 'opt_url_shortener_api_key_text');
-        options.i18nReplace('#googleOAuthEnabledText',
+        options.i18nReplace('#googl_oauth_enabled_txt',
                 'opt_url_shortener_oauth_enable_text');
-        options.i18nReplace('#anchorSetting', 'opt_anchor_header');
-        options.i18nReplace('#settingTargetAttrText', 'opt_anchor_target_text');
-        options.i18nReplace('#settingTitleAttrText', 'opt_anchor_title_text');
-        options.i18nReplace('#notificationSetting', 'opt_notification_header');
-        options.i18nReplace('#settingNotificationText', 'opt_notification_text');
-        options.i18nReplace('#settingNotificationTimerText1',
+        options.i18nReplace('#anchors_hdr', 'opt_anchor_header');
+        options.i18nReplace('#doAnchorTarget_txt', 'opt_anchor_target_text');
+        options.i18nReplace('#doAnchorTitle_txt', 'opt_anchor_title_text');
+        options.i18nReplace('#notifications_hdr', 'opt_notification_header');
+        options.i18nReplace('#notifications_txt', 'opt_notification_text');
+        options.i18nReplace('#notificationDuration_txt1',
                 'opt_notification_timer_text1');
-        options.i18nReplace('#settingNotificationTimerText2',
+        options.i18nReplace('#notificationDuration_txt2',
                 'opt_notification_timer_text2');
-        options.i18nReplace('#shorcutSetting', 'opt_shortcut_header');
-        options.i18nReplace('#settingShortcutText', 'opt_shortcut_text');
-        options.i18nReplace('#ieTabSetting', 'opt_ie_tab_header');
-        options.i18nReplace('#settingIeTabExtractText',
-                'opt_ie_tab_extract_text');
-        options.i18nReplace('#settingIeTabTitleText', 'opt_ie_tab_title_text');
-        options.i18nReplace('#ieTabFooter', 'opt_ie_tab_footer');
-        options.i18nReplace('#ieTabExtension', 'extension');
-        options.i18nReplace('#ieTabWebsite', 'website');
-        options.i18nReplace('#saveAndClose', 'opt_save_button');
-        options.i18nReplace('#expandAll', 'opt_expand_all');
-        options.i18nReplace('#collapseAll', 'opt_collapse_all');
+        options.i18nReplace('#shortcuts_hdr', 'opt_shortcut_header');
+        options.i18nReplace('#shortcuts_txt', 'opt_shortcut_text');
+        options.i18nReplace('#saveAndClose_btn', 'opt_save_button');
+        options.i18nReplace('#expandAll_lnk', 'opt_expand_all');
+        options.i18nReplace('#collapseAll_lnk', 'opt_collapse_all');
         options.i18nReplace('#footer', 'opt_footer',
                 String(new Date().getFullYear()));
         // Binds options:collapseAll and options:expandAll events to the links
-        $('#collapseAll').click(options.collapseAll);
-        $('#expandAll').click(options.expandAll);
+        $('#collapseAll_lnk').click(options.collapseAll);
+        $('#expandAll_lnk').click(options.expandAll);
         // Binds options:saveAndClose event to button
-        $('#saveAndClose').click(options.saveAndClose);
+        $('#saveAndClose_btn').click(options.saveAndClose);
         // Binds options:toggleSection to section headers
         $('.section h4').click(options.toggleSection);
         // Loads current option values
         options.load();
         var bg = chrome.extension.getBackgroundPage(), keyMods = '';
-        if (bg.clipboard.isThisPlatform('mac')) {
-            keyMods = bg.clipboard.shortcutMacModifiers;
+        if (bg.urlcopy.isThisPlatform('mac')) {
+            keyMods = bg.urlcopy.shortcutMacModifiers;
         } else {
-            keyMods = bg.clipboard.shortcutModifiers;
+            keyMods = bg.urlcopy.shortcutModifiers;
         }
         // TODO: Remove ID selector
-        $('#settingFeatureShortcutText, .featureShortcutText').html(keyMods);
+        $('#feature_shortcut_txt, .featureShortcutText').html(keyMods);
+        // Initialize facebox
+        $('a[rel*=facebox]').facebox();
+        // TODO: Replace with extension detection
         // Displays IE Tab options if extension is detected
         // TODO: Verify data sent/received with IE Tab author and ammend below
         chrome.extension.sendRequest(bg.ietab.extensionId, {
-            'key': 'version',
-            'type': 'GETLS'
+            key: 'version',
+            type: 'GETLS'
         }, function (response) {
             if (response) {
                 $('#ieTabSettingDiv').show();
             }
         });
+    },
+
+    /**
+     * <p>Returns whether or not the specified name is available for use as a
+     * feature.</p>
+     * @param {String} name The name to be queried.
+     * @returns {Boolean} <code>true</code> if the name is not already in use;
+     * otherwise <code>false</code>.
+     * @requires jQuery
+     * @since 0.1.0.0
+     * @private
+     */
+    isNameAvailable: function (name) {
+        var available = true;
+        $('#features option').each(function () {
+            if ($(this).val() === name) {
+                available = false;
+                return false;
+            }
+        });
+        return available;
+    },
+
+    /**
+     * <p>Returns whether or not the specified name is valid for use as a
+     * feature.</p>
+     * @param {String} name The name to be queried.
+     * @returns {Boolean} <code>true</code> if the name is valid; otherwise
+     * <code>false</code>.
+     * @since 0.1.0.0
+     * @private
+     */
+    isNameValid: function (name) {
+        return name.search(options.rValidName) !== -1;
     },
 
     /**
@@ -137,31 +205,46 @@ var options = {
         options.loadFeatures();
         options.loadNotifications();
         options.loadUrlShorteners();
-        if (utils.get('settingShortcut')) {
-            $('#settingShortcut').attr('checked', 'checked');
+        if (utils.get('shortcuts')) {
+            $('#shortcuts').attr('checked', 'checked');
         } else {
-            $('#settingShortcut').removeAttr('checked');
+            $('#shortcuts').removeAttr('checked');
         }
-        if (utils.get('settingTargetAttr')) {
-            $('#settingTargetAttr').attr('checked', 'checked');
+        if (utils.get('doAnchorTarget')) {
+            $('#doAnchorTarget').attr('checked', 'checked');
         } else {
-            $('#settingTargetAttr').removeAttr('checked');
+            $('#doAnchorTarget').removeAttr('checked');
         }
-        if (utils.get('settingTitleAttr')) {
-            $('#settingTitleAttr').attr('checked', 'checked');
+        if (utils.get('doAnchorTitle')) {
+            $('#doAnchorTitle').attr('checked', 'checked');
         } else {
-            $('#settingTitleAttr').removeAttr('checked');
+            $('#doAnchorTitle').removeAttr('checked');
         }
-        if (utils.get('settingIeTabExtract')) {
-            $('#settingIeTabExtract').removeAttr('checked');
-        } else {
-            $('#settingIeTabExtract').attr('checked', 'checked');
-        }
-        if (utils.get('settingIeTabTitle')) {
-            $('#settingIeTabTitle').attr('checked', 'checked');
-        } else {
-            $('#settingIeTabTitle').removeAttr('checked');
-        }
+    },
+
+    /**
+     * <p>Creates a <code>&lt;option/&gt;</code> representing the feature
+     * provided. This is to be inserted in to the <code>&lt;select/&gt;</code>
+     * managing features on the options page.</p>
+     * @param {Object} feature The information of the feature to be used.
+     * @returns {jQuery} The <code>&lt;option/&gt;</code> element in a jQuery
+     * wrapper.
+     * @requires jQuery
+     * @since 0.1.0.0
+     * @private
+     */
+    loadFeature: function (feature) {
+        var opt = $('<option/>', {
+            text: feature.title,
+            value: feature.name
+        }).appendTo('#features');
+        opt.data('image', feature.image);
+        opt.data('index', String(feature.index));
+        opt.data('enabled', String(feature.enabled));
+        opt.data('readOnly', String(feature.readOnly));
+        opt.data('shortcut', feature.shortcut);
+        opt.data('template', feature.template);
+        return opt;
     },
 
     /**
@@ -173,90 +256,131 @@ var options = {
     loadFeatures: function () {
         var bg = chrome.extension.getBackgroundPage();
         // Ensures clean slate
-        $('#settingFeatures option').remove();
+        $('#features option').remove();
         // Creates and inserts options representing features
-        for (var i = 0; i < bg.clipboard.features.length; i++) {
-            var feature = bg.clipboard.features[i];
-            var opt = $('<option/>', {
-                'text': chrome.i18n.getMessage(feature.name),
-                'value': feature.name
-            }).appendTo('#settingFeatures');
-            opt.data('enabled', String(feature.isEnabled()));
+        for (var i = 0; i < bg.urlcopy.features.length; i++) {
+            options.loadFeature(bg.urlcopy.features[i]);
         }
         /*
          * Whenever the selected option changes we want all the controls to
          * represent the current selection (where possible).
          */
-        $('#settingFeatures').change(function (event) {
-            var opt = $(this).find('option:selected');
+        $('#features').change(function (event) {
+            var $this = $(this),
+                opt = $this.find('option:selected');
             // Disables all the controls as no option is selected
             if (opt.length === 0) {
-                $('#moveDownButton, #moveUpButton, #settingFeatureEnabled')
+                $('#moveUp_btn, #moveDown_btn, .toggle-feature')
                         .attr('disabled', 'disabled');
+                $('#add_btn, #feature_name, #feature_title')
+                        .removeAttr('disabled');
+                $('#feature_name, #feature_title').removeAttr('readonly');
+                $('#feature_enabled').removeAttr('checked');
+                $('#feature_name').val('');
+                $('#feature_shortcut').val('');
+                $('#feature_template').val('');
+                $('#feature_title').val('');
             } else {
+                $('#add_btn, #feature_name').attr('disabled', 'disabled');
+                $('.toggle-feature').removeAttr('disabled');
                 // Disables 'up' control as option is at top of the list
                 if (opt.is(':first-child')) {
-                    $('#moveUpButton').attr('disabled', 'disabled');
+                    $('#moveUp_btn').attr('disabled', 'disabled');
                 } else {
-                    $('#moveUpButton').removeAttr('disabled');
+                    $('#moveUp_btn').removeAttr('disabled');
                 }
                 // Disables 'down' control as option is at bottom of the list
                 if (opt.is(':last-child')) {
-                    $('#moveDownButton').attr('disabled', 'disabled');
+                    $('#moveDown_btn').attr('disabled', 'disabled');
                 } else {
-                    $('#moveDownButton').removeAttr('disabled');
+                    $('#moveDown_btn').removeAttr('disabled');
                 }
-                // Updates checkbox control to reflect if the feature's enabled
+                // Updates feature index to ensure order is maintained
+                opt.data('index', String($this.find('option').index(opt)));
+                // Updates fields and controls to reflect selected feature
+                $('#feature_name').val(opt.val());
+                $('#feature_shortcut').val(opt.data('shortcut'));
+                $('#feature_template').val(opt.data('template'));
+                $('#feature_title').val(opt.text());
                 if (opt.data('enabled') === 'true') {
-                    $('#settingFeatureEnabled').attr('checked', 'checked');
+                    $('#feature_enabled').attr('checked', 'checked');
                 } else {
-                    $('#settingFeatureEnabled').removeAttr('checked');
+                    $('#feature_enabled').removeAttr('checked');
                 }
-                /*
-                 * Disables checkbox control if option is for 'copy_url'
-                 * feature.
-                 */
-                if (bg.feature.url.name === opt.val()) {
-                    $('#settingFeatureEnabled').attr('disabled', 'disabled');
+                if (opt.data('readOnly') === 'true') {
+                    $('#delete_btn, .read-only').attr('disabled', 'disabled');
+                    $('.read-only').attr('readonly', 'readonly');
                 } else {
-                    $('#settingFeatureEnabled').removeAttr('disabled');
+                    $('#delete_btn, .read-only').removeAttr('disabled');
+                    $('.read-only').removeAttr('readonly');
                 }
             }
             /*
              * Ensures correct arrows display in 'up'/'down' controls depending
              * on whether or not the controls are disabled.
              */
-            // TODO: Is this required on every change or just once?
-            $('#moveDownButton:not([disabled]) img').attr('src',
+            $('#moveDown_btn:not([disabled]) img').attr('src',
                     '../images/move_down.gif');
-            $('#moveUpButton:not([disabled]) img').attr('src',
+            $('#moveUp_btn:not([disabled]) img').attr('src',
                     '../images/move_up.gif');
-            $('#moveDownButton[disabled] img').attr('src',
+            $('#moveDown_btn[disabled] img').attr('src',
                     '../images/move_down_disabled.gif');
-            $('#moveUpButton[disabled] img').attr('src',
+            $('#moveUp_btn[disabled] img').attr('src',
                     '../images/move_up_disabled.gif');
         }).change();
+        // TODO
+        $('#add_btn').click(function (event) {
+            var name = $('#feature_name').val().trim(),
+                title = $('#feature_title').val().trim();
+            if (options.isNameValid(name)) {
+                if (options.isNameAvailable(name)) {
+                    var opt = options.loadFeature({
+                        image: 'copy_url.png',
+                        enabled: true,
+                        name: name,
+                        readOnly: false,
+                        shortcut: '',
+                        template: '',
+                        title: title
+                    });
+                    opt.attr('selected', 'selected');
+                    $('#features').change().focus();
+                } else {
+                    // TODO: Notify user of unavailable name
+                }
+            } else {
+                // TODO: Notify user of invalid name
+            }
+        });
+        // Removes selected unprotected feature
+        $('#delete_btn').click(function (event) {
+            var opt = $('#features option:selected');
+            if (opt.data('readOnly') !== 'true') {
+                opt.remove();
+                $('#features').change();
+            }
+        });
         /*
          * Moves the selected option down one when the 'down' control is
          * clicked.
          */
-        $('#moveDownButton').click(function (event) {
-            var opt = $('#settingFeatures option:selected');
+        $('#moveDown_btn').click(function (event) {
+            var opt = $('#features option:selected');
             opt.insertAfter(opt.next());
-            $('#settingFeatures').change();
+            $('#features').change();
         });
         // Moves the selected option up one when the 'up' control is clicked
-        $('#moveUpButton').click(function (event) {
-            var opt = $('#settingFeatures option:selected');
+        $('#moveUp_btn').click(function (event) {
+            var opt = $('#features option:selected');
             opt.insertBefore(opt.prev());
-            $('#settingFeatures').change();
+            $('#features').change();
         });
         /*
          * Updates the 'enabled' data bound to the selected option when the
          * checkbox control is clicked.
          */
-        $('#settingFeatureEnabled').click(function (event) {
-            $('#settingFeatures option:selected').data('enabled',
+        $('#feature_enabled').click(function (event) {
+            $('#features option:selected').data('enabled',
                     String($(this).is(':checked')));
         });
     },
@@ -268,27 +392,27 @@ var options = {
      * @private
      */
     loadNotifications: function () {
-        if (utils.get('settingNotification')) {
-            $('#settingNotification').attr('checked', 'checked');
+        if (utils.get('notifications')) {
+            $('#notifications').attr('checked', 'checked');
         } else {
-            $('#settingNotification').removeAttr('checked');
+            $('#notifications').removeAttr('checked');
         }
         var timeInSecs = 0;
-        if (utils.get('settingNotificationTimer') > timeInSecs) {
-            timeInSecs = utils.get('settingNotificationTimer') / 1000;
+        if (utils.get('notificationDuration') > timeInSecs) {
+            timeInSecs = utils.get('notificationDuration') / 1000;
         }
         // Ensures clean slate
-        $('#settingNotificationTimer option').remove();
+        $('#notificationDuration option').remove();
         // Creates and inserts options for available auto-hide time in seconds
         for (var i = 0; i <= 30; i++) {
             var opt = $('<option/>', {
-                'text': i,
-                'value': i
+                text: i,
+                value: i
             });
             if (i === timeInSecs) {
                 opt.attr('selected', 'selected');
             }
-            opt.appendTo('#settingNotificationTimer');
+            opt.appendTo('#notificationDuration');
         }
     },
 
@@ -299,19 +423,23 @@ var options = {
      * @private
      */
     loadUrlShorteners: function () {
-        $('input[name="settingEnabledUrlShortener"]').each(function () {
+        $('input[name="enabled_shortener"]').each(function () {
             var radio = $(this);
             if (utils.get(radio.attr('id'))) {
                 radio.attr('checked', 'checked');
             }
         });
-        $('#bitlyXApiKey').val(utils.get('bitlyXApiKey'));
-        $('#bitlyXLogin').val(utils.get('bitlyXLogin'));
-        if (utils.get('googleOAuthEnabled')) {
-            $('#googleOAuthEnabled').attr('checked', 'checked');
+        $('#bitly_xapi_key').val(utils.get('bitly_xapi_key'));
+        $('#bitly_xlogin').val(utils.get('bitly_xlogin'));
+        if (utils.get('googl_oauth_enabled')) {
+            $('#googl_oauth_enabled').attr('checked', 'checked');
         } else {
-            $('#googleOAuthEnabled').removeAttr('checked');
+            $('#googl_oauth_enabled').removeAttr('checked');
         }
+        $('#yourls_password').val(utils.get('yourls_password'));
+        $('#yourls_signature').val(utils.get('yourls_signature'));
+        $('#yourls_url').val(utils.get('yourls_url'));
+        $('#yourls_username').val(utils.get('yourls_username'));
     },
 
     /**
@@ -319,12 +447,9 @@ var options = {
      * @requires jQuery
      */
     save: function () {
-        utils.set('settingShortcut', $('#settingShortcut').is(':checked'));
-        utils.set('settingTargetAttr', $('#settingTargetAttr').is(':checked'));
-        utils.set('settingTitleAttr', $('#settingTitleAttr').is(':checked'));
-        utils.set('settingIeTabExtract',
-                !$('#settingIeTabExtract').is(':checked'));
-        utils.set('settingIeTabTitle', $('#settingIeTabTitle').is(':checked'));
+        utils.set('shortcuts', $('#shortcuts').is(':checked'));
+        utils.set('doAnchorTarget', $('#doAnchorTarget').is(':checked'));
+        utils.set('doAnchorTitle', $('#doAnchorTitle').is(':checked'));
         options.saveFeatures();
         options.saveNotifications();
         options.saveUrlShorteners();
@@ -357,7 +482,7 @@ var options = {
          * Updates each individual feature settings based on their
          * corresponding options.
          */
-        $('#settingFeatures option').each(function (index) {
+        $('#features option').each(function (index) {
             var opt = $(this);
             switch (opt.val()) {
                 case bg.feature.anchor.name:
@@ -388,7 +513,7 @@ var options = {
             }
         });
         // Ensures features data reflects the updated settings
-        bg.clipboard.updateFeatures();
+        bg.urlcopy.updateFeatures();
     },
 
     /**
@@ -398,11 +523,10 @@ var options = {
      * @private
      */
     saveNotifications: function () {
-        utils.set('settingNotification',
-                $('#settingNotification').is(':checked'));
-        var timeInSecs = $('#settingNotificationTimer').val();
+        utils.set('notifications', $('#notifications').is(':checked'));
+        var timeInSecs = $('#notificationDuration').val();
         timeInSecs = (timeInSecs) ? parseInt(timeInSecs, 10) * 1000 : 0;
-        utils.set('settingNotificationTimer', timeInSecs);
+        utils.set('notificationDuration', timeInSecs);
     },
 
     /**
@@ -412,14 +536,18 @@ var options = {
      * @private
      */
     saveUrlShorteners: function () {
-        $('input[name="settingEnabledUrlShortener"]').each(function () {
+        $('input[name="enabled_shortener"]').each(function () {
             var radio = $(this);
             utils.set(radio.attr('id'), radio.is(':checked'));
         });
-        utils.set('bitlyXApiKey', $('#bitlyXApiKey').val());
-        utils.set('bitlyXLogin', $('#bitlyXLogin').val());
-        utils.set('googleOAuthEnabled',
-                $('#googleOAuthEnabled').is(':checked'));
+        utils.set('bitly_xapi_key', $('#bitly_xapi_key').val());
+        utils.set('bitly_xlogin', $('#bitly_xlogin').val());
+        utils.set('googl_oauth_enabled',
+                $('#googl_oauth_enabled').is(':checked'));
+        utils.set('yourls_password', $('#yourls_password').val());
+        utils.set('yourls_signature', $('#yourls_signature').val());
+        utils.set('yourls_url', $('#yourls_url').val());
+        utils.set('yourls_username', $('#yourls_username').val());
     },
 
     /**

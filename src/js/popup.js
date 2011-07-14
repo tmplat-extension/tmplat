@@ -19,12 +19,38 @@ var popup = {
         // Shows IE Tab indicator if extension is detected for the selected tab
         chrome.tabs.getSelected(null, function (tab) {
             if (bg.ietab.isActive(tab)) {
-                document.getElementById('ieTabItem').style = 'display: block';
+                document.getElementById('ieTabItem').style.display = 'block';
             }
         });
+        // Fix dimensions of feature text
+        popup.resizePopupText();
         // Fix dimensions if shortcuts are enabled
         if (utils.get('shortcuts')) {
-            document.body.style = 'min-width: 190px';
+            document.body.style.minWidth = '190px';
+        }
+    },
+
+    
+    /**
+     * <p>Calculates the widest text <code>&lt;div/&gt;</code> in the popup
+     * and assigns that width to all others.</p>
+     * @since 0.1.0.0
+     * @private
+     */
+    resizePopupText: function () {
+        var itemList = document.getElementById('itemList'),
+            textItems = document.getElementsByClassName('text'),
+            scrollWidth = 0,
+            width = 0;
+        // var textItems = itemList.find('li .text');
+        for (var i = 0; i < textItems.length; i++) {
+            scrollWidth = textItems[i].scrollWidth;
+            if (scrollWidth > width) {
+                width = scrollWidth;
+            }
+        }
+        for (var j = 0; j < textItems.length; j++) {
+            textItems[j].style.width = width + 'px';
         }
     },
 
@@ -33,6 +59,7 @@ var popup = {
      * item.</p>
      * @event
      * @param {Element} item The calling feature item clicked.
+     * @since 0.1.0.0
      */
     sendRequest: function (item) {
         chrome.extension.sendRequest({
