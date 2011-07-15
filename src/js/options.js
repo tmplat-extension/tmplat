@@ -16,6 +16,23 @@ var options = {
     rValidName: /^[A-Za-z0-9]+$/,
 
     /**
+     * <p>The regular expression used to validate keyboard shortcut inputs.</p>
+     * @see options.isShortcutValid
+     * @since 0.1.0.0
+     * @private
+     * @type RegExp
+     */
+    rValidShortcut: /[A-Z0-9]/,
+
+    /**
+     * <p>The partial URL of Chrome extensions on the web store.</p>
+     * @since 0.1.0.0
+     * @private
+     * @type String
+     */
+    webstoreUrl: 'https://chrome.google.com/webstore/detail/',
+
+    /**
      * <p>Collapses the contents of all sections.</p>
      * @param {Event} [event] The event triggered.
      * @event
@@ -28,17 +45,37 @@ var options = {
     },
 
     /**
-     * <p>Detects installed extensions that are supported by this extension.</p>
-     * <p>For each supported extension found this function calls the callback
-     * function with the information for that extension.</p>
-     * @param {function} callback The function to be called with each extensions
-     * details.
+     * <p>Displays the details of the extension based on the information
+     * provided.</p>
+     * <p>This method is called for each supported extension detected.</p>
+     * @param {ExtensionInfo} info The information on the installed extension.
      * @since 0.1.0.0
      * @private
      */
-    detectExtensions: function (callback) {
-        var bg = chrome.extension.getBackgroundPage();
-        chrome.management.get(bg.ietab.extensionId, callback);
+    displayExtension: function (info) {
+        if (!info) {
+            return;
+        }
+        var iconUrl = options.getSmallestIcon(info.icons).url;
+        if (!info.enabled) {
+            iconUrl += '?grayscale=true';
+        }
+        $('#extensions').append(
+            $('<li/>').append(
+                $('<a/>', {
+                    href: options.webstoreUrl + info.id,
+                    target: '_blank',
+                    title: info.name + ' (' + info.version + ')'
+                }).append(
+                    $('<img/>', {
+                        height: 16,
+                        src: iconUrl,
+                        width: 16
+                    })
+                )
+            )
+        ).show();
+        $('#extensions_status_txt').hide();
     },
 
     /**
@@ -51,6 +88,25 @@ var options = {
     expandAll: function (event) {
         $('.section h4').addClass('toggle-collapse')
                 .removeClass('toggle-expand').next('.content').slideDown();
+    },
+
+    /**
+     * <p>Returns the information for the icon in the specified array with the
+     * smallest dimensions.</p>
+     * @param {Array} icons The icons to be queried.
+     * @returns {IconInfo} The details of the smallest icon within the array
+     * provided.
+     * @since 0.1.0.0
+     * @private
+     */
+    getSmallestIcon: function (icons) {
+        var icon;
+        for (var i = 0; i < icons.length; i++) {
+            if (!icon || icons[i].size < icon.size) {
+                icon = icons[i];
+            }
+        }
+        return icon;
     },
 
     /**
@@ -98,9 +154,22 @@ var options = {
     init: function () {
         // Inserts localized Strings
         options.i18nReplace('title, #options_hdr', 'opt_title');
+        options.i18nReplace('#errors_hdr', 'opt_errors_header');
+        options.i18nReplace('#add_btn', 'opt_add_button');
+        options.i18nReplace('#delete_btn', 'opt_delete_button');
+        options.i18nReplace('#delete_no_btn', 'opt_no_button');
+        options.i18nReplace('#delete_yes_btn', 'opt_yes_button');
+        options.i18nReplace('#update_btn', 'opt_update_button');
         options.i18nReplace('#features_hdr', 'opt_feature_header');
-        // TODO: Remove ID selector
-        options.i18nReplace('#feature_enabled_txt, .feature_enabled_txt',
+        options.i18nAttribute('a[rel=facebox]', 'title', 'opt_help_text');
+        options.i18nAttribute('#feature_name', 'placeholder',
+                'opt_feature_name_text');
+        options.i18nAttribute('#feature_title', 'placeholder',
+                'opt_feature_title_text');
+        options.i18nAttribute('#feature_template', 'placeholder',
+                'opt_feature_template_text');
+        options.i18nReplace('#template_help_lnk', 'opt_feature_template_help');
+        options.i18nReplace('#feature_enabled_txt',
                 'opt_feature_enabled_text');
         options.i18nReplace('#shorteners_hdr', 'opt_url_shortener_header');
         options.i18nReplace('#shorteners_name_hdr',
@@ -115,6 +184,14 @@ var options = {
                 'opt_url_shortener_api_key_text');
         options.i18nReplace('#googl_oauth_enabled_txt',
                 'opt_url_shortener_oauth_enable_text');
+        options.i18nReplace('#yourls_url_txt', 'opt_url_shortener_url_text');
+        options.i18nReplace('#yourls_username_txt',
+                'opt_url_shortener_username_text');
+        options.i18nReplace('#yourls_password_txt',
+                'opt_url_shortener_password_text');
+        options.i18nReplace('#yourls_or_txt', 'opt_or_text');
+        options.i18nReplace('#yourls_signature_txt',
+                'opt_url_shortener_signature_text');
         options.i18nReplace('#anchors_hdr', 'opt_anchor_header');
         options.i18nReplace('#doAnchorTarget_txt', 'opt_anchor_target_text');
         options.i18nReplace('#doAnchorTitle_txt', 'opt_anchor_title_text');
@@ -126,41 +203,44 @@ var options = {
                 'opt_notification_timer_text2');
         options.i18nReplace('#shortcuts_hdr', 'opt_shortcut_header');
         options.i18nReplace('#shortcuts_txt', 'opt_shortcut_text');
-        options.i18nReplace('#saveAndClose_btn', 'opt_save_button');
-        options.i18nReplace('#expandAll_lnk', 'opt_expand_all');
-        options.i18nReplace('#collapseAll_lnk', 'opt_collapse_all');
+        options.i18nReplace('.save-btn', 'opt_save_button');
+        options.i18nReplace('.expand-all-btn', 'opt_expand_all_button');
+        options.i18nReplace('.collapse-all-btn', 'opt_collapse_all_button');
+        options.i18nReplace('#extensions_hdr', 'opt_extensions_header');
+        options.i18nReplace('#extensions_status_txt',
+                'opt_extensions_status_text');
         options.i18nReplace('#footer', 'opt_footer',
                 String(new Date().getFullYear()));
-        // Binds options:collapseAll and options:expandAll events to the links
-        $('#collapseAll_lnk').click(options.collapseAll);
-        $('#expandAll_lnk').click(options.expandAll);
+        // TODO: Replace remaining help sections using i18n
+        /*
+         * Binds options:collapseAll and options:expandAll events to the
+         * buttons.
+         */
+        $('.collapse-all-btn').click(options.collapseAll);
+        $('.expand-all-btn').click(options.expandAll);
         // Binds options:saveAndClose event to button
-        $('#saveAndClose_btn').click(options.saveAndClose);
+        $('.save-btn').click(options.saveAndClose);
         // Binds options:toggleSection to section headers
         $('.section h4').click(options.toggleSection);
         // Loads current option values
         options.load();
-        var bg = chrome.extension.getBackgroundPage(), keyMods = '';
+        var bg = chrome.extension.getBackgroundPage(),
+            keyMods = '';
         if (bg.urlcopy.isThisPlatform('mac')) {
             keyMods = bg.urlcopy.shortcutMacModifiers;
         } else {
             keyMods = bg.urlcopy.shortcutModifiers;
         }
-        // TODO: Remove ID selector
-        $('#feature_shortcut_txt, .featureShortcutText').html(keyMods);
+        $('#feature_shortcut_txt').html(keyMods);
         // Initialize facebox
         $('a[rel*=facebox]').facebox();
-        // TODO: Replace with extension detection
-        // Displays IE Tab options if extension is detected
-        // TODO: Verify data sent/received with IE Tab author and ammend below
-        chrome.extension.sendRequest(bg.ietab.extensionId, {
-            key: 'version',
-            type: 'GETLS'
-        }, function (response) {
-            if (response) {
-                $('#ieTabSettingDiv').show();
-            }
-        });
+        // Displays supported extensions if they are detected
+        for (var i = 0; i < bg.urlcopy.support.length; i++) {
+            try {
+                chrome.management.get(bg.urlcopy.support[i],
+                        options.displayExtension);
+            } catch (e) {}
+        }
     },
 
     /**
@@ -187,7 +267,7 @@ var options = {
     /**
      * <p>Returns whether or not the specified name is valid for use as a
      * feature.</p>
-     * @param {String} name The name to be queried.
+     * @param {String} name The name to be tested.
      * @returns {Boolean} <code>true</code> if the name is valid; otherwise
      * <code>false</code>.
      * @since 0.1.0.0
@@ -195,6 +275,19 @@ var options = {
      */
     isNameValid: function (name) {
         return name.search(options.rValidName) !== -1;
+    },
+
+    /**
+     * <p>Returns whether or not the specified keyboard shortcut is valid to
+     * assign to a feature.</p>
+     * @param {String} shortcut The keyboard shortcut to be tested.
+     * @returns {Boolean} <code>true</code> if the shortcut is valid; otherwise
+     * <code>false</code>.
+     * @since 0.1.0.0
+     * @private
+     */
+    isShortcutValid: function (shortcut) {
+        return shortcut.search(options.rValidShortcut) !== -1;
     },
 
     /**
@@ -237,9 +330,8 @@ var options = {
         var opt = $('<option/>', {
             text: feature.title,
             value: feature.name
-        }).appendTo('#features');
+        });
         opt.data('image', feature.image);
-        opt.data('index', String(feature.index));
         opt.data('enabled', String(feature.enabled));
         opt.data('readOnly', String(feature.readOnly));
         opt.data('shortcut', feature.shortcut);
@@ -254,18 +346,19 @@ var options = {
      * @private
      */
     loadFeatures: function () {
-        var bg = chrome.extension.getBackgroundPage();
+        var bg = chrome.extension.getBackgroundPage(),
+            features = $('#features');
         // Ensures clean slate
-        $('#features option').remove();
+        features.find('option').remove();
         // Creates and inserts options representing features
         for (var i = 0; i < bg.urlcopy.features.length; i++) {
-            options.loadFeature(bg.urlcopy.features[i]);
+            features.append(options.loadFeature(bg.urlcopy.features[i]));
         }
         /*
          * Whenever the selected option changes we want all the controls to
          * represent the current selection (where possible).
          */
-        $('#features').change(function (event) {
+        features.change(function (event) {
             var $this = $(this),
                 opt = $this.find('option:selected');
             // Disables all the controls as no option is selected
@@ -295,8 +388,6 @@ var options = {
                 } else {
                     $('#moveDown_btn').removeAttr('disabled');
                 }
-                // Updates feature index to ensure order is maintained
-                opt.data('index', String($this.find('option').index(opt)));
                 // Updates fields and controls to reflect selected feature
                 $('#feature_name').val(opt.val());
                 $('#feature_shortcut').val(opt.data('shortcut'));
@@ -328,36 +419,62 @@ var options = {
             $('#moveUp_btn[disabled] img').attr('src',
                     '../images/move_up_disabled.gif');
         }).change();
-        // TODO
+        // Adds a new feature to options based on input values
         $('#add_btn').click(function (event) {
             var name = $('#feature_name').val().trim(),
                 title = $('#feature_title').val().trim();
-            if (options.isNameValid(name)) {
-                if (options.isNameAvailable(name)) {
-                    var opt = options.loadFeature({
-                        image: 'copy_url.png',
-                        enabled: true,
-                        name: name,
-                        readOnly: false,
-                        shortcut: '',
-                        template: '',
-                        title: title
-                    });
-                    opt.attr('selected', 'selected');
-                    $('#features').change().focus();
-                } else {
-                    // TODO: Notify user of unavailable name
-                }
+            $('#errors').find('li').remove();
+            var opt = options.loadFeature({
+                image: 'copy_url.png',
+                enabled: true,
+                name: name,
+                readOnly: false,
+                shortcut: '',
+                template: '',
+                title: title
+            });
+            if (options.validateFeature(opt, true)) {
+                features.append(opt);
+                opt.attr('selected', 'selected');
+                features.change().focus();
             } else {
-                // TODO: Notify user of invalid name
+                $.facebox({div: '#message'});
             }
         });
         // Removes selected unprotected feature
         $('#delete_btn').click(function (event) {
+            $.facebox({div: '#delete_con'});
+        });
+        $('#delete_no_btn').live('click', function (event) {
+            $(document).trigger('close.facebox');
+        });
+        $('#delete_yes_btn').live('click', function (event) {
             var opt = $('#features option:selected');
             if (opt.data('readOnly') !== 'true') {
                 opt.remove();
-                $('#features').change();
+                features.change();
+            }
+            $(document).trigger('close.facebox');
+        });
+        // Updates the data selected feature (doesn't save in localStorage)
+        $('#update_btn').click(function (event) {
+            var opt = $('#features option:selected'),
+                opt2 = options.loadFeature({
+                    image: opt.data('image'),
+                    enabled: $('#feature_enabled').is(':checked'),
+                    name: $('#feature_name').val().trim(),
+                    readOnly: opt.data('readOnly') === 'true',
+                    shortcut: $('#feature_shortcut').val().trim(),
+                    template: $('#feature_template').val(),
+                    title: $('#feature_title').val().trim()
+                });
+            $('#errors').find('li').remove();
+            if (options.validateFeature(opt2, false)) {
+                opt.replaceWith(opt2);
+                opt2.attr('selected', 'selected');
+                features.change().focus();
+            } else {
+                $.facebox({div: '#message'});
             }
         });
         /*
@@ -367,13 +484,13 @@ var options = {
         $('#moveDown_btn').click(function (event) {
             var opt = $('#features option:selected');
             opt.insertAfter(opt.next());
-            $('#features').change();
+            features.change();
         });
         // Moves the selected option up one when the 'up' control is clicked
         $('#moveUp_btn').click(function (event) {
             var opt = $('#features option:selected');
             opt.insertBefore(opt.prev());
-            $('#features').change();
+            features.change();
         });
         /*
          * Updates the 'enabled' data bound to the selected option when the
@@ -464,10 +581,14 @@ var options = {
      * @private
      */
     saveAndClose: function (event) {
-        options.save();
-        chrome.tabs.getSelected(null, function (tab) {
-            chrome.tabs.remove(tab.id);
-        });
+        if (options.validateFeatures()) {
+            options.save();
+            chrome.tabs.getSelected(null, function (tab) {
+                chrome.tabs.remove(tab.id);
+            });
+        } else {
+            $.facebox({div: '#message'});
+        }
     },
 
     /**
@@ -478,6 +599,8 @@ var options = {
      */
     saveFeatures: function () {
         var bg = chrome.extension.getBackgroundPage();
+        // TODO: Update to be dynamic and represent new structure
+        // TODO: Ensure index is used same as with 0.0.2.1
         /*
          * Updates each individual feature settings based on their
          * corresponding options.
@@ -548,6 +671,87 @@ var options = {
         utils.set('yourls_signature', $('#yourls_signature').val());
         utils.set('yourls_url', $('#yourls_url').val());
         utils.set('yourls_username', $('#yourls_username').val());
+    },
+
+    /**
+     * <p>Validates the specified &lt;option&gt; element that represents a
+     * feature.</p>
+     * <p>If an array of keyboard shortcuts is also provided then this function
+     * will validate whether or not the shortcut of the feature being validated
+     * is already in use.</p>
+     * <p>This function adds any validation errors it encounters to a unordered
+     * list which should be displayed to the user at some point if
+     * <code>true</code> is returned.</p>
+     * @param {jQuery} feature The jQuery wrapped &lt;option&gt; to be
+     * validated.
+     * @param {Boolean} isNew <code>true</code> if the feature has yet to be
+     * added; otherwise <code>false</code>.
+     * @param {Array} [usedShortcuts] The array of keyboard shortcuts already
+     * in use.
+     * @returns {Boolean} <code>true</code> if validation errors were
+     * encountered; otherwise <code>false</code>.
+     * @since 0.1.0.0
+     * @private
+     */
+    validateFeature: function (feature, isNew, usedShortcuts) {
+        var errors = $('#errors'),
+            name = feature.val().trim(),
+            shortcut = feature.data('shortcut').trim(),
+            title = feature.text().trim();
+        function createError(name) {
+            return $('<li/>', {
+                html: chrome.i18n.getMessage(name)
+            }).appendTo(errors);
+        }
+        if (feature.data('readOnly') !== 'true') {
+            if (isNew) {
+                if (!options.isNameValid(name)) {
+                    createError('opt_feature_name_invalid');
+                } else if (!options.isNameAvailable(name)) {
+                    createError('opt_feature_name_unavailable');
+                }
+            }
+            if (title.length === 0) {
+                createError('opt_feature_title_invalid');
+            }
+        }
+        if (shortcut && typeof usedShortcuts !== 'undefined') {
+            if (!options.isShortcutValid(shortcut)) {
+                createError('opt_feature_shortcut_invalid');
+            } else if (usedShortcuts.indexOf(shortcut) !== -1) {
+                createError('opt_feature_shortcut_unavailable');
+            }
+        }
+        return errors.find('li').length === 0;
+    },
+
+    /**
+     * <p>Validates all &lt;option&gt; elements that represent features that
+     * are to be stored in localStorage.</p>
+     * <p>This function adds any validation errors it encounters to a unordered
+     * list which should be displayed to the user at some point if
+     * <code>true</code> is returned.</p>
+     * @returns {Boolean} <code>true</code> if validation errors were
+     * encountered; otherwise <code>false</code>.
+     * @since 0.1.0.0
+     * @private
+     */
+    validateFeatures: function () {
+        var errors = $('#errors'),
+            features = $('#features option'),
+            usedShortcuts = [];
+        errors.find('li').remove();
+        features.each(function () {
+            var $this = $(this);
+            if (options.validateFeature($this, false, usedShortcuts)) {
+                usedShortcuts.push($this.data('shortcut').trim());
+            } else {
+                $this.attr('selected', 'selected');
+                $('#features').change().focus();
+                return false;
+            }
+        });
+        return errors.find('li').length === 0;
     },
 
     /**

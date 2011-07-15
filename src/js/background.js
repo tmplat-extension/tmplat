@@ -158,7 +158,7 @@ var urlcopy = {
             return utils.get('googl_enabled');
         },
         isOAuthEnabled: function () {
-            return utils.get('googl_oath_enabled');
+            return utils.get('googl_oauth_enabled');
         },
         method: 'POST',
         name: 'goo.gl',
@@ -216,6 +216,14 @@ var urlcopy = {
      * @type Boolean
      */
     status: false,
+
+    /**
+     * <p>Contains the identifiers of each extension supported by this
+     * extension.</p>
+     * @type Array
+     * @since 0.1.0.0
+     */
+    support: [],
 
     /**
      * <p>Adds the specified feature name to those stored in localStorage.</p>
@@ -298,6 +306,40 @@ var urlcopy = {
     },
 
     /**
+     * <p>Creates an Object containing data based on information derived from
+     * the specified tab and menu item data.</p>
+     * @param {Tab} tab The tab whose information is to be extracted.
+     * @param {OnClickData} onClickData The details about the menu item clicked
+     * and the context where the click happened.
+     * @param {function} shortCallback The function to be called if/when a
+     * shortened URL is requested when parsing the template.
+     * @returns {Object} The data based on information extracted from the tab
+     * provided and its URL. This can contain Strings, Arrays, Objects, and
+     * functions.
+     * @see urlcopy.buildStandardData
+     * @since 0.1.0.0
+     * @requires jQuery
+     * @requires jQuery URL Parser Plugin
+     * @private
+     */
+    buildDerivedData: function (tab, onClickData, shortCallback) {
+        var data = {
+            title: tab.title,
+            url: ''
+        };
+        if (onClickData.frameUrl) {
+            data.url = onClickData.frameUrl;
+        } else if (onClickData.linkUrl) {
+            data.url = onClickData.linkUrl;
+        } else if (onClickData.srcUrl) {
+            data.url = onClickData.srcUrl;
+        } else {
+            data.url = onClickData.pageUrl;
+        }
+        return urlcopy.buildStandardData(data, shortCallback);
+    },
+
+    /**
      * <p>Creates an Object containing data based on information extracted from
      * the specified tab.</p>
      * <p>This function merges this data with additional information relating to
@@ -316,7 +358,7 @@ var urlcopy = {
      * @requires jQuery URL Parser Plugin
      * @private
      */
-    buildTemplateData: function (tab, shortCallback) {
+    buildStandardData: function (tab, shortCallback) {
         var data = {}, title = '', url = {};
         if (ietab.isActive(tab)) {
             title = ietab.extractTitle(tab.title);
@@ -367,7 +409,7 @@ var urlcopy = {
             var params = service.getParameters(url) || {};
             var req = new XMLHttpRequest();
             req.open(service.method, service.url() + '?' + $.param(params),
-                true);
+                    true);
             req.setRequestHeader('Content-Type', service.contentType);
             if (service.oauth && service.isOAuthEnabled()) {
                 req.setRequestHeader('Authorization',
@@ -433,7 +475,12 @@ var urlcopy = {
      */
     executeScriptsInExistingTabs: function (tabs) {
         for (var i = 0; i < tabs.length; i++) {
-            chrome.tabs.executeScript(tabs[i].id, {file: 'js/shortcuts.js'});
+            try {
+                chrome.tabs.executeScript(tabs[i].id, {
+                    file: 'js/shortcuts.js'
+                });
+            } catch (e) {
+            }
         }
     },
 
@@ -453,9 +500,29 @@ var urlcopy = {
 
     /**
      * <p>Attempts to return the information for the any feature with the
+     * specified menu identifier assigned to it.</p>
+     * @param {Integer} menuId The menu identifier to be queried.
+     * @returns {Object} The feature using the menu identifier provided, if
+     * possible.
+     * @since 0.1.0.0
+     * @private
+     */
+    getFeatureWithMenuId: function (menuId) {
+        var feature;
+        for (var i = 0; i < urlcopy.features.length; i++) {
+            if (urlcopy.features[i].menuId === menuId) {
+                feature = urlcopy.features[i];
+                break;
+            }
+        }
+        return feature;
+    },
+
+    /**
+     * <p>Attempts to return the information for the any feature with the
      * specified shortcut assigned to it.</p>
      * @param {String} shortcut The shortcut to be queried.
-     * @returns {Object} The function using the shortcut provided, if possible.
+     * @returns {Object} The feature using the shortcut provided, if possible.
      * @since 0.1.0.0
      */
     getFeatureWithShortcut: function (shortcut) {
@@ -504,6 +571,8 @@ var urlcopy = {
         chrome.extension.onRequestExternal.addListener(
             urlcopy.onExternalRequest
         );
+        // Adds identifiers for supported extensions
+        urlcopy.support.push(ietab.extensionId);
     },
 
     /**
@@ -797,30 +866,38 @@ var urlcopy = {
      */
     onRequestHelper: function (request, sender, sendResponse) {
         chrome.tabs.getSelected(null, function (tab) {
-            var feature,
+            var data = {},
+                feature,
                 popup = chrome.extension.getViews({type: 'popup'})[0],
                 shortCalled = false,
                 shortPlaceholder = 'short' +
-                    (Math.floor(Math.random() * 99999 + 1000));
+                        (Math.floor(Math.random() * 99999 + 1000));
+            function shortCallback() {
+                shortCalled = true;
+                return '{' + shortPlaceholder + '}';
+            }
+            if (popup) {
+                $('#loadDiv', popup.document).show();
+                $('#item', popup.document).hide();
+            }
             switch (request.type) {
+            case 'menu':
+                data = urlcopy.buildDerivedData(tab, request.data,
+                        shortCallback);
+                feature = urlcopy.getFeatureWithMenuId(request.data.menuItemId);
+                break;
             case 'popup':
                 // Should be cheaper than searching urlcopy.features...
+                data = urlcopy.buildStandardData(tab, shortCallback);
                 feature = urlcopy.loadFeature(request.data.name);
                 break;
             case 'shortcut':
+                data = urlcopy.buildStandardData(tab, shortCallback);
                 feature = urlcopy.getFeatureWithShortcut(request.data.key);
                 break;
             }
             if (feature) {
-                if (popup) {
-                    $('#loadDiv', popup.document).show();
-                    $('#item', popup.document).hide();
-                }
-                var data = urlcopy.buildTemplateData(tab, function () {
-                        shortCalled = true;
-                        return '{' + shortPlaceholder + '}';
-                    }),
-                    output = Mustache.to_html(feature.template, data);
+                var output = Mustache.to_html(feature.template, data);
                 if (shortCalled) {
                     urlcopy.callUrlShortener(data.source, function (shortUrl) {
                         if (shortUrl) {
@@ -831,6 +908,10 @@ var urlcopy = {
                     });
                 } else {
                     urlcopy.copy(output);
+                }
+            } else {
+                if (popup) {
+                    popup.close();
                 }
             }
         });
@@ -932,6 +1013,39 @@ var urlcopy = {
     },
 
     /**
+     * <p>Updates the context menu items to reflect respective features.</p>
+     * @since 0.1.0.0
+     * @private
+     */
+    updateContextMenu: function () {
+        // Ensures any previously added context menu items are removed
+        chrome.contextMenus.removeAll(function () {
+            var menuId,
+                parentId = chrome.contextMenus.create({
+                    contexts: ['all'],
+                    title: chrome.i18n.getMessage('name')
+                });
+            function onMenuClick(info, tab) {
+                urlcopy.onRequestHelper({
+                    data: info,
+                    type: 'menu'
+                });
+            }
+            for (var i = 0; i < urlcopy.features.length; i++) {
+                if (urlcopy.features[i].enabled) {
+                    menuId = chrome.contextMenus.create({
+                        contexts: ['all'],
+                        onclick: onMenuClick,
+                        parentId: parentId,
+                        title: urlcopy.features[i].title
+                    });
+                    urlcopy.features[i].menuId = menuId;
+                }
+            }
+        });
+    },
+
+    /**
      * <p>Updates the list of features stored locally to reflect that stored
      * in localStorage.</p>
      * <p>It is important that this function is called whenever features might
@@ -940,6 +1054,7 @@ var urlcopy = {
     updateFeatures: function () {
         urlcopy.features = urlcopy.loadFeatures();
         urlcopy.buildPopup();
+        urlcopy.updateContextMenu();
     }
 
 };

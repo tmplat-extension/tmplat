@@ -17,19 +17,27 @@
             .styled thead th {border-bottom: 1px solid #EEE;}
             .styled thead th:hover {border-bottom-color: #AAA;}
             .styled tbody tr:hover {background-color: #F3F3F3;}
-            .contentBox {background-color: white; border: 3px solid #BEC9CE; border-radius: 20px; height: auto; margin: 50px auto 20px auto; padding: 30px; text-align: left; width: 600px;}
+            .content-box {background-color: white; border: 3px solid #BEC9CE; border-radius: 20px; height: auto; margin: 50px auto 20px auto; padding: 30px; text-align: left; width: 600px;}
             #header {padding-bottom: 1em; padding-top: 1em;}
             #header h1 {background: url('../images/icon_48.png') no-repeat; background-position: 1px 62px; background-size: 48px; color: #3D5D6A; display: inline; font-size: 30px; padding-bottom: 40px; padding-left: 90px; padding-top: 70px;}
-            h4 {border-bottom: 2px dotted #C3C3C3; color: #333; font-size: 15px; line-height: 28px;padding-left: 0.5em;}
+            h4 {border-bottom: 2px dotted #C3C3C3; color: #333; font-size: 15px; line-height: 28px; padding-left: 0.5em;}
+            .controls {margin: 25px 0 0 0;}
             .section .content {display: none; line-height: 25px; padding-left: 55px;}
             .section h4 {background-size: 24px 24px; cursor: pointer;}
             .section h4.toggle-collapse {background: white url('../images/toggle-collapse.png') no-repeat scroll right;}
             .section h4.toggle-expand {background: white url('../images/toggle-expand.png') no-repeat scroll right;}
-            #moveDownButton, #moveUpButton {padding: 3px 3px 1px;}
+            .help {display: none;}
+            #add_btn, #delete_btn, #update_btn {margin-left: 10px;}
+            #moveDown_btn, #moveUp_btn {padding-top: 2px; margin: 5px 10px;}
             input {cursor: pointer;}
-            #ieTabSettingDiv {display: none;}
-            #ieTabFooter {font-weight: bold;}
-            .bottom-controls {margin: 25px 0 0 0;}
+            button, input[type="button"], input[type="file"]::-webkit-file-upload-button, input[type="reset"], input[type="submit"] {background-image: -webkit-gradient(linear, left top, left bottom, from(whiteSmoke), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, whiteSmoke, #F1F1F1); -webkit-border-radius: 2px; -webkit-user-select: none; background-color: whiteSmoke; background-image: linear-gradient(top, whiteSmoke, #F1F1F1); background-image: -o-linear-gradient(top, whiteSmoke, #F1F1F1); border: 1px solid gainsboro; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 2px; color: #666; cursor: pointer; font-size: 11px; font-weight: bold; height: 22px; line-height: 1em; margin: auto 6px; padding: 0 8px; text-align: center;}
+            button:disabled, input[type="button"]:disabled, input[type="file"]:disabled::-webkit-file-upload-button, input[type="reset"]:disabled, input[type="submit"]:disabled {background-image: -webkit-gradient(linear,left top,left bottom, from(#EBEBE4), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, #EBEBE4, #F1F1F1); background-color: #EBEBE4; background-image: linear-gradient(top, #EBEBE4, #F1F1F1); background-image: -o-linear-gradient(top, #EBEBE4, #F1F1F1); border: 1px solid #C6C6C6; color: #AAA; cursor: default;}
+            button:hover:not(:disabled), input[type="button"]:hover:not(:disabled), input[type="file"]::-webkit-file-upload-button:hover:not(:disabled), input[type="reset"]:hover:not(:disabled), input[type="submit"]:hover:not(:disabled) {background-image: -webkit-gradient(linear,left top,left bottom, from(#F8F8F8), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, #F8F8F8, #F1F1F1); -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.1); background-color: #F8F8F8; background-image: linear-gradient(top, #F8F8F8, #F1F1F1); background-image: -o-linear-gradient(top, #F8F8F8, #F1F1F1); border: 1px solid #C6C6C6; box-shadow: 0 1px 1px rgba(0,0,0,0.1); color: #333;}
+            #support {background-color: white; border: 3px solid #BEC9CE; border-radius: 20px; margin: 15px auto; padding: 5px 30px; width: 600px;}
+            #extensions_hdr {margin: 5px 0;}
+            #extensions {list-style-type: none; margin: 0 0 8px 6px; padding: 0;}
+            #extensions li {display: inline-block; padding: 3px 3px 0;}
+            #extensions_status_txt {margin: 0 0 8px 8px;}
             #footer {font-size: 13px; text-align: center;}
             /* Facebox */
             #facebox {left: 0; position: absolute; text-align: left; top: 0; z-index: 100;}
@@ -58,9 +66,25 @@
         </script>
     </head>
     <body>
-        <div class="contentBox">
+        <div class="content-box">
+            <div id="message" style="display: none">
+                <p id="errors_hdr"></p>
+                <ul id="errors"></ul>
+            </div>
             <div id="header">
                 <h1 id="options_hdr"></h1>
+            </div>
+            <div class="controls">
+                <table style="border: none; border-collapse; collapse; width: 100%">
+                    <tr>
+                        <td style="width: 50%">
+                            <button class="save-btn"></button>
+                        </td>
+                        <td style="text-align: right">
+                            <button class="collapse-all-btn"></button> <button class="expand-all-btn"></button>
+                        </td>
+                    </tr>
+                </table>
             </div>
             <div id="features_sct" class="section">
                 <h4 id="features_hdr" class="toggle-expand"></h4>
@@ -71,7 +95,7 @@
                                 <td colspan="2" rowspan="2" style="width: 50%">
                                     <select id="features" size="5" style="width: 100%"></select>
                                 </td>
-                                <td style="padding-top: 10px">
+                                <td style="padding-top: 10px; width: 50%">
                                     <button id="moveUp_btn"><img src="../images/move_up_disabled.gif" /></button>
                                 </td>
                             </tr>
@@ -81,32 +105,54 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="3">
-                                    <table style="border: none; border-collapse; collapse; width: 100%">
-                                        <tr>
-                                            <td style="width: 1%">
-                                                <button id="add_btn">Add</button>
-                                            </td>
-                                            <td style="width: 1%">
-                                                <label>
-                                                    <input id="feature_name" class="read-only" type="text" maxlength="16" size="32" placeholder="Name" />
-                                                </label>
-                                            </td>
-                                            <td>
-                                                <button id="delete_btn" class="toggle-feature" disabled>Delete</button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>&nbsp;</td>
-                                            <td>
-                                                <label>
-                                                    <input id="feature_title" class="toggle-feature read-only" type="text" maxlength="32" size="32" disabled placeholder="Title" />
-                                                </label>
-                                            </td>
-                                            <td>&nbsp;</td>
-                                        </tr>
-                                    </table>
-                                </td>
+                                <tr>
+                                    <td colspan="2">
+                                        <label>
+                                            <input id="feature_name" class="read-only" type="text" maxlength="16" size="32" />
+                                        </label>
+                                        <a href="#feature_name_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                        <div id="feature_name_help" class="help">
+                                            <p>The name is used internally and is only displayed here.</p>
+                                            <p>The following rules apply;</p>
+                                            <ul>
+                                                <li>Must be unique</li>
+                                                <li>Cannot contains spaces or underscores</li>
+                                                <li>Must only contain alphanumeric characters</li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button id="add_btn"></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <label>
+                                            <input id="feature_title" class="toggle-feature read-only" type="text" maxlength="32" size="32" disabled />
+                                        </label>
+                                        <a href="#feature_title_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                        <div id="feature_title_help" class="help">
+                                            <p>The title is displayed in context menus and the drop-down.</p>
+                                            <p>The following rules apply;</p>
+                                            <ul>
+                                                <li>Doesn't have to be unique<br />(but it's recommended)</li>
+                                                <li>Can contain multiple words</li>
+                                                <li>Can contain any characters</li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <button id="delete_btn" class="toggle-feature" disabled></button>
+                                        <div id="delete_con" class="help">
+                                            <p>This action is <strong>permanent</strong> and cannot be reversed.</p>
+                                            <p>Do you want to continue anyway?</p>
+                                            <div style="text-align: right">
+                                                <button id="delete_yes_btn"></button>
+                                                <button id="delete_no_btn"></button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
                             </tr>
                             <tr>
                                 <td>
@@ -114,26 +160,43 @@
                                         <input id="feature_enabled" type="checkbox" class="toggle-feature" disabled />
                                         <span id="feature_enabled_txt"></span>
                                     </label>
+                                    <a href="#feature_enabled_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                    <div id="feature_enabled_help" class="help">
+                                        <p>This indicates whether or not it will appear in the context menu and the drop-down.</p>
+                                    </div>
                                 </td>
                                 <td style="text-align: right">
                                     <label>
                                         <span id="feature_shortcut_txt"></span><input id="feature_shortcut" type="text" class="toggle-feature" disabled maxlength="1" size="1" style="text-transform: uppercase" />
                                     </label>
+                                    <a href="#feature_shortcut_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                    <div id="feature_shortcut_help" class="help">
+                                        <p>The assigned keyboard shortcut which will trigger this feature if/when used.</p>
+                                        <p>The following rules apply;</p>
+                                        <ul>
+                                            <li>Must be unique</li>
+                                            <li>Must be an alphanumeric key<br />(may change in the future)</li>
+                                        </ul>
+                                    </div>
                                 </td>
-                                <td>&nbsp;</td>
+                                <td>
+                                    <button id="update_btn" class="toggle-feature" disabled></button>
+                                </td>
                             </tr>
                             <tr>
                                 <td colspan="3">
                                     <label>
-                                        <textarea id="feature_template" class="toggle-feature read-only" rows="5" cols="50" disabled placeholder="Template"></textarea>
+                                        <textarea id="feature_template" class="toggle-feature read-only" rows="5" cols="50" disabled ></textarea>
                                     </label>
+                                    <div>
+                                        <a id="template_help_lnk" href="#template_help" rel="facebox"></a>
+                                        <div id="template_help" class="help">
+                                            <p>TODO</p>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         </table>
-                    </div>
-                    <div style="margin-top: 25px">
-                        <!-- TODO: Overlay/Dialog/Slide? -->
-                        <a id="template_help_lnk" href="javascript:void(0)">Need help creating templates?</a>
                     </div>
                 </div>
             </div>
@@ -160,8 +223,8 @@
                                                     <label for="bity_xlogin">
                                                         <span id="bitly_xlogin_txt"></span>
                                                     </label>
-                                                    <a href="#bitly_xlogin_tip" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                    <div id="bitly_xlogin_tip" style="display: none">
+                                                    <a href="#bitly_xlogin_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                    <div id="bitly_xlogin_help" class="help">
                                                         <p>This is the username provided to you when you registered your <a href="http://bit.ly/a/account" target="_blank">bit.ly account</a>.</p>
                                                         <p>Haven't registered with <strong>bit.ly</strong>?</p>
                                                         <p><a href="http://bit.ly/a/sign_up" target="_blank">Sign up now</a></p>
@@ -176,8 +239,8 @@
                                                     <label for="bitly_xapi_key">
                                                         <span id="bitly_xapi_key_txt"></span>
                                                     </label>
-                                                    <a href="#bitly_xapi_key_tip" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                    <div id="bitly_xapi_key_tip" style="display: none">
+                                                    <a href="#bitly_xapi_key_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                    <div id="bitly_xapi_key_help" class="help">
                                                         <p>The API key allows <strong>URL Copy</strong> to shorten links via <strong>bit.ly</strong> on your behalf.</p>
                                                         <p><a href="http://bit.ly/a/your_api_key" target="_blank">Get your API key</a></p>
                                                     </a>
@@ -198,8 +261,8 @@
                                                 <input type="checkbox" id="googl_oauth_enabled" />
                                                 <span id="googl_oauth_enabled_txt"></span>
                                             </label>
-                                        <a href="#googl_oauth_enabled_tip" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                        <div id="googl_oauth_enabled_tip" style="display: none">
+                                        <a href="#googl_oauth_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                        <div id="googl_oauth_help" class="help">
                                                 <p><a href="http://oauth.net" target="_blank">OAuth</a> is an open protocol that aims to standardize the way desktop and web applications access a user's private data. OAuth provides a mechanism for users to grant access to private data without sharing their private credentials (username/password).</p>
                                                 <p><strong>URL Copy</strong> uses OAuth to shorten links via <strong>goo.gl</strong> on your behalf.</p>
                                             </a>
@@ -214,10 +277,10 @@
                                             <tr>
                                                 <td style="width: 40%">
                                                     <label for="yourls_url">
-                                                        <span id="yourls_url_txt">URL</span>
+                                                        <span id="yourls_url_txt"></span>
                                                     </label>
-                                                    <a href="#yourls_url_tip" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                    <div id="yourls_url_tip" style="display: none">
+                                                    <a href="#yourls_url_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                    <div id="yourls_url_help" class="help">
                                                         <p>The URL to the API of the <strong>YOURLS</strong> installation (e.g. <code>http://example.com/yourls-api.php</code>).</p>
                                                         <p><a href="http://yourls.org/#Config" target="_blank">See documentation</a></p>
                                                     </a>
@@ -232,10 +295,10 @@
                                             <tr>
                                                 <td>
                                                     <label for="yourls_username">
-                                                        <span id="yourls_username_txt">Username</span>
+                                                        <span id="yourls_username_txt"></span>
                                                     </label>
-                                                    <a href="#yourls_credentials_tip" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                    <div id="yourls_credentials_tip" style="display: none">
+                                                    <a href="#yourls_credentials_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                    <div id="yourls_credentials_help" class="help">
                                                         <p>Both the username and password are only required if the <strong>YOURLS</strong> installation is private <em>and</em> you're <strong>not</strong> using the <a href="http://code.google.com/p/yourls/wiki/PasswordlessAPI" target="_blank">passwordless API</a>.</p>
                                                         <p><a href="http://yourls.org/#Config" target="_blank">See documentation</a></p>
                                                     </a>
@@ -247,24 +310,24 @@
                                             <tr>
                                                 <td>
                                                     <label for="yourls_password">
-                                                        <span id="yourls_password_txt">Password</span>
+                                                        <span id="yourls_password_txt"></span>
                                                     </label>
-                                                    <a href="#yourls_credentials_tip" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                    <a href="#yourls_credentials_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
                                                 </td>
                                                 <td>
                                                     <input type="password" id="yourls_password" size="28" />
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td colspan="2" style="font-weight: bold; text-align: center">OR</td>
+                                                <td id="yourls_or_txt" colspan="2" style="font-weight: bold; text-align: center"></td>
                                             </tr>
                                             <tr>
                                                 <td>
                                                     <label for="yourls_signature">
-                                                        <span id="yourls_signature_txt">Signature</span>
+                                                        <span id="yourls_signature_txt"></span>
                                                     </label>
-                                                    <a href="#yourls_signature_tip" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                    <div id="yourls_signature_tip" style="display: none">
+                                                    <a href="#yourls_signature_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                    <div id="yourls_signature_help" class="help">
                                                         <p>This is required if only if the <strong>YOURLS</strong> installation is private <em>and</em> you <strong>are</strong> using the <a href="http://code.google.com/p/yourls/wiki/PasswordlessAPI" target="_blank">passwordless API</a>.</p>
                                                     </a>
                                                 </td>
@@ -326,18 +389,23 @@
                     </div>
                 </div>
             </div>
-            <div class="bottom-controls">
+            <div class="controls">
                 <table style="border: none; border-collapse; collapse; width: 100%">
                     <tr>
                         <td style="width: 50%">
-                            <button id="saveAndClose_btn"></button>
+                            <button class="save-btn"></button>
                         </td>
                         <td style="text-align: right">
-                            <span><a href="javascript:void(0)" id="collapseAll_lnk"></a> &#124; <a href="javascript:void(0)" id="expandAll_lnk"></a></span>
+                            <button class="collapse-all-btn"></button> <button class="expand-all-btn"></button>
                         </td>
                     </tr>
                 </table>
             </div>
+        </div>
+        <div id="support">
+            <h4 id="extensions_hdr"></h4>
+            <ul id="extensions" style="display: none"></ul>
+            <span id="extensions_status_txt"></span>
         </div>
         <div id="footer"></div>
     </body>

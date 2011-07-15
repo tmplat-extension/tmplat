@@ -26,9 +26,6 @@
    "extension": {
       "message": "Extension"
    },
-   "ie_tab": {
-      "message": "IE Tab"
-   },
    "name": {
       "message": "URL Copy"
    },
@@ -38,26 +35,51 @@
    "oauth_redirect_title": {
       "message": "OAuth Redirect Page"
    },
+   "opt_add_button": {
+      "message": "Add"
+   },
    "opt_anchor_header": {
       "message": "Anchors"
    },
    "opt_anchor_target_text": {
-      "message": "Include \u003Ccode\u003Etarget\u003C/code\u003E attribute to open link in new window"
+      "message": "Include $ATTRIBUTE$ attribute to open link in new window",
+      "placeholders": {
+         "attribute": {
+            "content": "<code>target</code>"
+         }
+      }
    },
    "opt_anchor_title_text": {
-      "message": "Include \u003Ccode\u003Etitle\u003C/code\u003E attribute"
+      "message": "Include $ATTRIBUTE$ attribute",
+      "placeholders": {
+         "attribute": {
+            "content": "<code>title</code>"
+         }
+      }
    },
    "opt_collapse": {
       "message": "Collapse"
    },
-   "opt_collapse_all": {
+   "opt_collapse_all_button": {
       "message": "Collapse All"
+   },
+   "opt_delete_button": {
+      "message": "Delete"
+   },
+   "opt_errors_header": {
+      "message": "The following problem(s) need to be corrected;"
    },
    "opt_expand": {
       "message": "Expand"
    },
-   "opt_expand_all": {
+   "opt_expand_all_button": {
       "message": "Expand All"
+   },
+   "opt_extensions_header": {
+      "message": "Supported Extensions"
+   },
+   "opt_extensions_status_text": {
+      "message": "None detected."
    },
    "opt_feature_enabled_text": {
       "message": "Enabled"
@@ -65,11 +87,46 @@
    "opt_feature_header": {
       "message": "Features"
    },
-   "opt_footer": {
-      "message": "&copy;$1 Alasdair Mercer"
+   "opt_feature_name_invalid": {
+      "message": "Name is missing or contains invalid characters"
    },
-   "opt_ie_tab": {
-      "message": "IE Tab"
+   "opt_feature_name_text": {
+      "message": "Name"
+   },
+   "opt_feature_name_unavailable": {
+      "message": "Name is already in use"
+   },
+   "opt_feature_shortcut_invalid": {
+      "message": "Keyboard shortcut uses invalid key"
+   },
+   "opt_feature_shortcut_unavailable": {
+      "message": "Keyboard shortcut is already in use"
+   },
+   "opt_feature_template_help": {
+      "message": "Need help creating templates?"
+   },
+   "opt_feature_template_text": {
+      "message": "Template"
+   },
+   "opt_feature_title_invalid": {
+      "message": "Title is missing"
+   },
+   "opt_feature_title_text": {
+      "message": "Title"
+   },
+   "opt_footer": {
+      "message": "&copy;$1 $AUTHOR_LINK$",
+      "placeholders": {
+         "author_link": {
+            "content": "<a href=\"http://forchoon.com\" target=\"_blank\" title=\"Visit land of the forchoon cookies\">Alasdair Mercer</a>"
+         }
+      }
+   },
+   "opt_help_text": {
+      "message": "Read help documentation"
+   },
+   "opt_no_button": {
+      "message": "No"
    },
    "opt_notification_header": {
       "message": "Notifications"
@@ -81,7 +138,15 @@
       "message": "Auto-hide notifications after"
    },
    "opt_notification_timer_text2": {
-      "message": "seconds (Disable auto-hide: \u003Cem\u003E0\u003C/em\u003E)"
+      "message": "seconds (Disable auto-hide: $AUTO_HIDE$)",
+      "placeholders": {
+         "auto_hide": {
+            "content": "<em>0</em>"
+         }
+      }
+   },
+   "opt_or_text": {
+      "message": "OR"
    },
    "opt_url_shortener_api_key_text": {
       "message": "API Key"
@@ -101,6 +166,15 @@
    "opt_url_shortener_oauth_enable_text": {
       "message": "Enable OAuth"
    },
+   "opt_url_shortener_password_text": {
+      "message": "Password"
+   },
+   "opt_url_shortener_signature_text": {
+      "message": "Signature"
+   },
+   "opt_url_shortener_url_text": {
+      "message": "URL"
+   },
    "opt_url_shortener_username_text": {
       "message": "Username"
    },
@@ -115,6 +189,12 @@
    },
    "opt_title": {
       "message": "URL Copy Options"
+   },
+   "opt_update_button": {
+      "message": "Update"
+   },
+   "opt_yes_button": {
+      "message": "Yes"
    },
    "shortening": {
       "message": "Please wait..."
