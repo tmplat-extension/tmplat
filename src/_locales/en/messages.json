@@ -1,4 +1,24 @@
 {
+   "confirm_delete": {
+      "message": "$O_PARA$This action is $O_BOLD$permanent$C_BOLD$ and cannot be reversed.$C_PARA$$O_PARA$Do you want to continue anyway?$C_PARA$$BUTTONS$",
+      "placeholders": {
+         "buttons": {
+            "content": "<div style=\"text-align: right\"><button id=\"delete_yes_btn\"></button><button id=\"delete_no_btn\"></button></div>"
+         },
+         "c_bold": {
+            "content": "</strong>"
+         },
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_bold": {
+            "content": "<strong>"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
    "copy_anchor": {
       "message": "Anchor"
    },
@@ -25,6 +45,295 @@
    },
    "extension": {
       "message": "Extension"
+   },
+   "feat_component": {
+      "message": "Component"
+   },
+   "feat_discussion": {
+      "message": "Discussion"
+   },
+   "feat_globe": {
+      "message": "Globe"
+   },
+   "feat_html": {
+      "message": "HTML"
+   },
+   "feat_link": {
+      "message": "Link"
+   },
+   "feat_none": {
+      "message": "None"
+   },
+   "help_bitlyApiKey": {
+      "message": "$O_PARA$The API key allows $O_BOLD$URL Copy$C_BOLD$ to shorten links via $O_BOLD$bit.ly$C_BOLD$ on your behalf.$C_PARA$$O_PARA$$O_LINK_1$Get your API key$C_LINK$$C_PARA$",
+      "placeholders": {
+         "c_bold": {
+            "content": "</strong>"
+         },
+         "c_link": {
+            "content": "</a>"
+         },
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_bold": {
+            "content": "<strong>"
+         },
+         "o_link_1": {
+            "content": "<a href=\"http://bit.ly/a/your_api_key\" target=\"_blank\">"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
+   "help_bitlyUsername": {
+      "message": "$O_PARA$This is the username provided to you when you registered your $O_LINK_1$bit.ly account$C_LINK$.$C_PARA$$O_PARA$Haven't registered with $O_BOLD$bit.ly$C_BOLD$?$C_PARA$$O_PARA$$O_LINK_2$Sign up now$C_LINK$$C_PARA$",
+      "placeholders": {
+         "c_bold": {
+            "content": "</strong>"
+         },
+         "c_link": {
+            "content": "</a>"
+         },
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_bold": {
+            "content": "<strong>"
+         },
+         "o_link_1": {
+            "content": "<a href=\"http://bit.ly/a/account\" target=\"_blank\">"
+         },
+         "o_link_2": {
+            "content": "<a href=\"http://bit.ly/a/sign_up\" target=\"_blank\">"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
+   "help_feature_enabled": {
+      "message": "$O_PARA$This indicates whether or not it will appear in the context menu and the drop-down.$C_PARA$",
+      "placeholders": {
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
+   "help_feature_image": {
+      "message": "$O_PARA$This image is displayed next to the feature in the drop-down.$C_PARA$",
+      "placeholders": {
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
+   "help_feature_name": {
+      "message": "$O_PARA$The name is used internally and is only displayed here.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be unique$C_ITEM$$O_ITEM$Cannot contains spaces or underscores$C_ITEM$$O_ITEM$Must only contain alphanumeric characters$C_ITEM$$C_LIST$$O_PARA$This $O_EMPH$cannot$C_EMPH$ be changed for default features.$C_PARA$",
+      "placeholders": {
+         "c_emph": {
+            "content": "</em>"
+         },
+         "c_item": {
+            "content": "</li>"
+         },
+         "c_list": {
+            "content": "</ul>"
+         },
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_emph": {
+            "content": "<em>"
+         },
+         "o_item": {
+            "content": "<li>"
+         },
+         "o_list": {
+            "content": "<ul>"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
+   "help_feature_shortcut": {
+      "message": "$O_PARA$The assigned keyboard shortcut which will trigger this feature if/when used.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be unique$C_ITEM$$O_ITEM$Must be an alphanumeric key$BREAK$(may change in the future)$C_ITEM$$C_LIST$",
+      "placeholders": {
+         "break": {
+            "content": "<br />"
+         },
+         "c_item": {
+            "content": "</li>"
+         },
+         "c_list": {
+            "content": "</ul>"
+         },
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_item": {
+            "content": "<li>"
+         },
+         "o_list": {
+            "content": "<ul>"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
+   "help_feature_title": {
+      "message": "$O_PARA$The title is displayed in context menus and the drop-down.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Doesn't have to be unique$BREAK$(but it's recommended)$C_ITEM$$O_ITEM$Can contain multiple words$C_ITEM$$O_ITEM$Can contain any characters$C_ITEM$$C_LIST$$O_PARA$This $O_EMPH$cannot$C_EMPH$ be changed for default features.$C_PARA$",
+      "placeholders": {
+         "break": {
+            "content": "<br />"
+         },
+         "c_emph": {
+            "content": "</em>"
+         },
+         "c_item": {
+            "content": "</li>"
+         },
+         "c_list": {
+            "content": "</ul>"
+         },
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_emph": {
+            "content": "<em>"
+         },
+         "o_item": {
+            "content": "<li>"
+         },
+         "o_list": {
+            "content": "<ul>"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
+   "help_googlOAuth": {
+      "message": "$O_PARA$$O_LINK_1$OAuth$C_LINK$ is an open protocol that aims to standardize the way desktop and web applications access a user's private data. OAuth provides a mechanism for users to grant access to private data without sharing their private credentials (username/password).$C_PARA$$O_PARA$$O_BOLD$URL Copy$C_BOLD$ uses OAuth to shorten links via $O_BOLD$goo.gl$C_BOLD$ on your behalf.$C_PARA$",
+      "placeholders": {
+         "c_bold": {
+            "content": "</strong>"
+         },
+         "c_link": {
+            "content": "</a>"
+         },
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_bold": {
+            "content": "<strong>"
+         },
+         "o_link_1": {
+            "content": "<a href=\"http://oauth.net\" target=\"_blank\">"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
+   "help_yourlsCredentials": {
+      "message": "$O_PARA$Both the username and password are only required if the $O_BOLD$YOURLS$C_BOLD$ installation is private $O_EMPH$and$C_EMPH$ you are $O_EMPH$not$C_EMPH$ using the $O_LINK_1$passwordless API$C_LINK$.$C_PARA$$O_PARA$$O_LINK_2$See documentation$C_LINK$$C_PARA$",
+      "placeholders": {
+         "c_bold": {
+            "content": "</strong>"
+         },
+         "c_emph": {
+            "content": "</em>"
+         },
+         "c_link": {
+            "content": "</a>"
+         },
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_bold": {
+            "content": "<strong>"
+         },
+         "o_emph": {
+            "content": "<em>"
+         },
+         "o_link_1": {
+            "content": "<a href=\"http://code.google.com/p/yourls/wiki/PasswordlessAPI\" target=\"_blank\">"
+         },
+         "o_link_2": {
+            "content": "<a href=\"http://yourls.org/#Config\" target=\"_blank\">"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
+   "help_yourlsSignature": {
+      "message": "$O_PARA$This is required if only if the $O_BOLD$YOURLS$C_BOLD$ installation is private $O_EMPH$and$C_EMPH$ you $O_EMPH$are$C_EMPH$ using the $O_LINK_1$passwordless API$C_LINK$.$C_PARA$",
+      "placeholders": {
+         "c_bold": {
+            "content": "</strong>"
+         },
+         "c_emph": {
+            "content": "</em>"
+         },
+         "c_link": {
+            "content": "</a>"
+         },
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_bold": {
+            "content": "<strong>"
+         },
+         "o_emph": {
+            "content": "<em>"
+         },
+         "o_link_1": {
+            "content": "<a href=\"http://code.google.com/p/yourls/wiki/PasswordlessAPI\" target=\"_blank\">"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
+   "help_yourlsUrl": {
+      "message": "$O_PARA$The URL to the API of the $O_BOLD$YOURLS$C_BOLD$ installation (e.g. $O_CODE$http://example.com/yourls-api.php$C_CODE$).$C_PARA$$O_PARA$$O_LINK_1$See documentation$C_LINK$$C_PARA$",
+      "placeholders": {
+         "c_bold": {
+            "content": "</strong>"
+         },
+         "c_code": {
+            "content": "</code>"
+         },
+         "c_link": {
+            "content": "</a>"
+         },
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_bold": {
+            "content": "<strong>"
+         },
+         "o_code": {
+            "content": "<code>"
+         },
+         "o_link_1": {
+            "content": "<a href=\"http://yourls.org/#Config\" target=\"_blank\">"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
    },
    "name": {
       "message": "URL Copy"

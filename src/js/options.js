@@ -7,6 +7,33 @@
 var options = {
 
     /**
+     * <p>The name of image files available to be used as feature icons.</p>
+     * @since 0.1.0.0
+     * @private
+     * @type Array
+     */
+    images: [{
+        file: 'spacer.gif',
+        name: chrome.i18n.getMessage('feat_none'),
+        separate: true
+    }, {
+        file: 'feat_component.png',
+        name: chrome.i18n.getMessage('feat_component')
+    }, {
+        file: 'feat_discussion.png',
+        name: chrome.i18n.getMessage('feat_discussion')
+    }, {
+        file: 'feat_globe.png',
+        name: chrome.i18n.getMessage('feat_globe')
+    }, {
+        file: 'feat_html.png',
+        name: chrome.i18n.getMessage('feat_html')
+    }, {
+        file: 'feat_link.png',
+        name: chrome.i18n.getMessage('feat_link')
+    }],
+
+    /**
      * <p>The regular expression used to validate feature name inputs.</p>
      * @see options.isNameValid
      * @since 0.1.0.0
@@ -40,8 +67,9 @@ var options = {
      * @private
      */
     collapseAll: function (event) {
-        $('.section h4').addClass('toggle-expand')
-                .removeClass('toggle-collapse').next('.content').slideUp();
+        $('.section h4').not('.sections .section h4')
+                .addClass('toggle-expand').removeClass('toggle-collapse')
+                .next('.contents').slideUp();
     },
 
     /**
@@ -86,8 +114,9 @@ var options = {
      * @private
      */
     expandAll: function (event) {
-        $('.section h4').addClass('toggle-collapse')
-                .removeClass('toggle-expand').next('.content').slideDown();
+        $('.section h4').not('.sections .section h4')
+                .addClass('toggle-collapse').removeClass('toggle-expand')
+                .next('.contents').slideDown();
     },
 
     /**
@@ -124,6 +153,9 @@ var options = {
      * @private
      */
     i18nAttribute: function (selector, attribute, name, sub) {
+        if (typeof sub === 'string') {
+            sub = [sub];
+        }
         return $(selector).attr(attribute, chrome.i18n.getMessage(name, sub));
     },
 
@@ -141,6 +173,9 @@ var options = {
      * @private
      */
     i18nReplace: function (selector, name, sub) {
+        if (typeof sub === 'string') {
+            sub = [sub];
+        }
         return $(selector).html(chrome.i18n.getMessage(name, sub));
     },
 
@@ -157,8 +192,6 @@ var options = {
         options.i18nReplace('#errors_hdr', 'opt_errors_header');
         options.i18nReplace('#add_btn', 'opt_add_button');
         options.i18nReplace('#delete_btn', 'opt_delete_button');
-        options.i18nReplace('#delete_no_btn', 'opt_no_button');
-        options.i18nReplace('#delete_yes_btn', 'opt_yes_button');
         options.i18nReplace('#update_btn', 'opt_update_button');
         options.i18nReplace('#features_hdr', 'opt_feature_header');
         options.i18nAttribute('a[rel=facebox]', 'title', 'opt_help_text');
@@ -178,19 +211,19 @@ var options = {
                 'opt_url_shortener_enabled_header');
         options.i18nReplace('#shorteners_config_hdr',
                 'opt_url_shortener_config_header');
-        options.i18nReplace('#bitly_xlogin_txt',
+        options.i18nReplace('#bitlyUsername_txt',
                 'opt_url_shortener_username_text');
-        options.i18nReplace('#bitly_xapi_key_txt',
+        options.i18nReplace('#bitlyApiKey_txt',
                 'opt_url_shortener_api_key_text');
-        options.i18nReplace('#googl_oauth_enabled_txt',
+        options.i18nReplace('#googlOAuth_txt',
                 'opt_url_shortener_oauth_enable_text');
-        options.i18nReplace('#yourls_url_txt', 'opt_url_shortener_url_text');
-        options.i18nReplace('#yourls_username_txt',
+        options.i18nReplace('#yourlsUrl_txt', 'opt_url_shortener_url_text');
+        options.i18nReplace('#yourlsUsername_txt',
                 'opt_url_shortener_username_text');
-        options.i18nReplace('#yourls_password_txt',
+        options.i18nReplace('#yourlsPassword_txt',
                 'opt_url_shortener_password_text');
         options.i18nReplace('#yourls_or_txt', 'opt_or_text');
-        options.i18nReplace('#yourls_signature_txt',
+        options.i18nReplace('#yourlsSignature_txt',
                 'opt_url_shortener_signature_text');
         options.i18nReplace('#anchors_hdr', 'opt_anchor_header');
         options.i18nReplace('#doAnchorTarget_txt', 'opt_anchor_target_text');
@@ -211,7 +244,25 @@ var options = {
                 'opt_extensions_status_text');
         options.i18nReplace('#footer', 'opt_footer',
                 String(new Date().getFullYear()));
-        // TODO: Replace remaining help sections using i18n
+        // Inserts localized help/confirmation sections
+        options.i18nReplace('#feature_enabled_help', 'help_feature_enabled');
+        options.i18nReplace('#feature_image_help', 'help_feature_image');
+        options.i18nReplace('#feature_name_help', 'help_feature_name');
+        options.i18nReplace('#feature_shortcut_help', 'help_feature_shortcut');
+        options.i18nReplace('#feature_title_help', 'help_feature_title');
+        options.i18nReplace('#delete_con', 'confirm_delete');
+        options.i18nReplace('#bitlyUsername_help', 'help_bitlyUsername');
+        options.i18nReplace('#bitlyApiKey_help', 'help_bitlyApiKey');
+        options.i18nReplace('#googlOAuth_help', 'help_googlOAuth');
+        options.i18nReplace('#yourlsUrl_help', 'help_yourlsUrl');
+        options.i18nReplace('#yourlsCredentials_help', 'help_yourlsCredentials');
+        options.i18nReplace('#yourlsSignature_help', 'help_yourlsSignature');
+        // Was done later as buttons didn't exist until now
+        options.i18nReplace('#delete_no_btn', 'opt_no_button');
+        options.i18nReplace('#delete_yes_btn', 'opt_yes_button');
+        $('#template_help').load(
+            chrome.extension.getURL('pages/templates.html')
+        );
         /*
          * Binds options:collapseAll and options:expandAll events to the
          * buttons.
@@ -221,7 +272,7 @@ var options = {
         // Binds options:saveAndClose event to button
         $('.save-btn').click(options.saveAndClose);
         // Binds options:toggleSection to section headers
-        $('.section h4').click(options.toggleSection);
+        $('.section h4').live('click', options.toggleSection);
         // Loads current option values
         options.load();
         var bg = chrome.extension.getBackgroundPage(),
@@ -295,6 +346,7 @@ var options = {
      * @requires jQuery
      */
     load: function () {
+        options.loadImages();
         options.loadFeatures();
         options.loadNotifications();
         options.loadUrlShorteners();
@@ -316,8 +368,46 @@ var options = {
     },
 
     /**
+     * <p>Creates a <code>&lt;option/&gt;</code> for each image available for
+     * features.</p>
+     * <p>This is to be inserted in to the <code>&lt;select/&gt;</code>
+     * containing feature images on the options page.</p>
+     * @requires jQuery
+     * @since 0.1.0.0
+     * @private
+     */
+    loadImages: function () {
+        var imagePreview = $('#feature_image_preview'),
+            images = $('#feature_image');
+        for (var i = 0; i < options.images.length; i++) {
+            images.append(
+                $('<option/>', {
+                    text: options.images[i].name,
+                    value: options.images[i].file
+                })
+            );
+            if (options.images[i].separate) {
+                images.append(
+                    $('<option/>', {
+                        disabled: 'disabled',
+                        text: '---------------'
+                    })
+                );
+            }
+        }
+        images.change(function () {
+            var opt = images.find('option:selected');
+            imagePreview.attr({
+                src: '../images/' + opt.val(),
+                title: opt.text()
+            });
+        }).change();
+    },
+
+    /**
      * <p>Creates a <code>&lt;option/&gt;</code> representing the feature
-     * provided. This is to be inserted in to the <code>&lt;select/&gt;</code>
+     * provided.</p>
+     * <p>This is to be inserted in to the <code>&lt;select/&gt;</code>
      * managing features on the options page.</p>
      * @param {Object} feature The information of the feature to be used.
      * @returns {jQuery} The <code>&lt;option/&gt;</code> element in a jQuery
@@ -331,8 +421,8 @@ var options = {
             text: feature.title,
             value: feature.name
         });
-        opt.data('image', feature.image);
         opt.data('enabled', String(feature.enabled));
+        opt.data('image', feature.image);
         opt.data('readOnly', String(feature.readOnly));
         opt.data('shortcut', feature.shortcut);
         opt.data('template', feature.template);
@@ -369,6 +459,9 @@ var options = {
                         .removeAttr('disabled');
                 $('#feature_name, #feature_title').removeAttr('readonly');
                 $('#feature_enabled').removeAttr('checked');
+                $('#feature_image option').first().attr('selected',
+                        'selected');
+                $('#feature_image').change();
                 $('#feature_name').val('');
                 $('#feature_shortcut').val('');
                 $('#feature_template').val('');
@@ -389,6 +482,15 @@ var options = {
                     $('#moveDown_btn').removeAttr('disabled');
                 }
                 // Updates fields and controls to reflect selected feature
+                var imgOpt = $('#feature_image option[value="' +
+                        opt.data('image') + '"]');
+                if (imgOpt.length === 0) {
+                    $('#feature_image option').first().attr('selected',
+                            'selected');
+                } else {
+                    imgOpt.attr('selected', 'selected');
+                }
+                $('#feature_image').change();
                 $('#feature_name').val(opt.val());
                 $('#feature_shortcut').val(opt.data('shortcut'));
                 $('#feature_template').val(opt.data('template'));
@@ -425,8 +527,8 @@ var options = {
                 title = $('#feature_title').val().trim();
             $('#errors').find('li').remove();
             var opt = options.loadFeature({
-                image: 'copy_url.png',
                 enabled: true,
+                image: 'spacer.gif',
                 name: name,
                 readOnly: false,
                 shortcut: '',
@@ -460,8 +562,8 @@ var options = {
         $('#update_btn').click(function (event) {
             var opt = $('#features option:selected'),
                 opt2 = options.loadFeature({
-                    image: opt.data('image'),
                     enabled: $('#feature_enabled').is(':checked'),
+                    image: $('#feature_image option:selected').val().trim(),
                     name: $('#feature_name').val().trim(),
                     readOnly: opt.data('readOnly') === 'true',
                     shortcut: $('#feature_shortcut').val().trim(),
@@ -546,17 +648,17 @@ var options = {
                 radio.attr('checked', 'checked');
             }
         });
-        $('#bitly_xapi_key').val(utils.get('bitly_xapi_key'));
-        $('#bitly_xlogin').val(utils.get('bitly_xlogin'));
-        if (utils.get('googl_oauth_enabled')) {
-            $('#googl_oauth_enabled').attr('checked', 'checked');
+        $('#bitlyApiKey').val(utils.get('bitlyApiKey'));
+        $('#bitlyUsername').val(utils.get('bitlyUsername'));
+        if (utils.get('googlOAuth')) {
+            $('#googlOAuth').attr('checked', 'checked');
         } else {
-            $('#googl_oauth_enabled').removeAttr('checked');
+            $('#googlOAuth').removeAttr('checked');
         }
-        $('#yourls_password').val(utils.get('yourls_password'));
-        $('#yourls_signature').val(utils.get('yourls_signature'));
-        $('#yourls_url').val(utils.get('yourls_url'));
-        $('#yourls_username').val(utils.get('yourls_username'));
+        $('#yourlsPassword').val(utils.get('yourlsPassword'));
+        $('#yourlsSignature').val(utils.get('yourlsSignature'));
+        $('#yourlsUrl').val(utils.get('yourlsUrl'));
+        $('#yourlsUsername').val(utils.get('yourlsUsername'));
     },
 
     /**
@@ -598,44 +700,27 @@ var options = {
      * @private
      */
     saveFeatures: function () {
-        var bg = chrome.extension.getBackgroundPage();
-        // TODO: Update to be dynamic and represent new structure
-        // TODO: Ensure index is used same as with 0.0.2.1
+        var bg = chrome.extension.getBackgroundPage(),
+            features = [];
         /*
          * Updates each individual feature settings based on their
          * corresponding options.
          */
         $('#features option').each(function (index) {
             var opt = $(this);
-            switch (opt.val()) {
-                case bg.feature.anchor.name:
-                    utils.set('copyAnchorEnabled',
-                            opt.data('enabled') === 'true');
-                    utils.set('copyAnchorOrder', index);
-                    break;
-                case bg.feature.bbcode.name:
-                    utils.set('copyBBCodeEnabled',
-                            opt.data('enabled') === 'true');
-                    utils.set('copyBBCodeOrder', index);
-                    break;
-                case bg.feature.encoded.name:
-                    utils.set('copyEncodedEnabled',
-                            opt.data('enabled') === 'true');
-                    utils.set('copyEncodedOrder', index);
-                    break;
-                case bg.feature.short.name:
-                    utils.set('copyShortEnabled',
-                            opt.data('enabled') === 'true');
-                    utils.set('copyShortOrder', index);
-                    break;
-                case bg.feature.url.name:
-                    utils.set('copyUrlEnabled',
-                            opt.data('enabled') === 'true');
-                    utils.set('copyUrlOrder', index);
-                    break;
-            }
+            features.push({
+                image: opt.data('image'),
+                index: index,
+                enabled: opt.data('enabled') === 'true',
+                name: opt.val(),
+                readOnly: opt.data('readOnly') === 'true',
+                shortcut: opt.data('shortcut'),
+                template: opt.data('template'),
+                title: opt.text()
+            });
         });
         // Ensures features data reflects the updated settings
+        bg.urlcopy.saveFeatures(features);
         bg.urlcopy.updateFeatures();
     },
 
@@ -663,14 +748,13 @@ var options = {
             var radio = $(this);
             utils.set(radio.attr('id'), radio.is(':checked'));
         });
-        utils.set('bitly_xapi_key', $('#bitly_xapi_key').val());
-        utils.set('bitly_xlogin', $('#bitly_xlogin').val());
-        utils.set('googl_oauth_enabled',
-                $('#googl_oauth_enabled').is(':checked'));
-        utils.set('yourls_password', $('#yourls_password').val());
-        utils.set('yourls_signature', $('#yourls_signature').val());
-        utils.set('yourls_url', $('#yourls_url').val());
-        utils.set('yourls_username', $('#yourls_username').val());
+        utils.set('bitlyApiKey', $('#bitlyApiKey').val());
+        utils.set('bitlyUsername', $('#bitlyUsername').val());
+        utils.set('googlOAuth', $('#googlOAuth').is(':checked'));
+        utils.set('yourlsPassword', $('#yourlsPassword').val());
+        utils.set('yourlsSignature', $('#yourlsSignature').val());
+        utils.set('yourlsUrl', $('#yourlsUrl').val());
+        utils.set('yourlsUsername', $('#yourlsUsername').val());
     },
 
     /**
@@ -763,8 +847,8 @@ var options = {
      * @private
      */
     toggleSection: function (event) {
-        $(event.target).toggleClass('toggle-collapse toggle-expand')
-                .next('.content').slideToggle();
+        $(this).toggleClass('toggle-collapse toggle-expand')
+                .next('.contents').slideToggle();
     }
 
 };

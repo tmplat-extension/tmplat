@@ -1,0 +1,244 @@
+<style type="text/css">
+    .tmpl-defs tbody tr td:first-child {font-weight: bold;}
+    .tmpl-defs tbody tr td {vertical-align: top;}
+    #template {height: 300px; overflow: auto; padding-right: 5px; width: 500px;}
+</style>
+<div id="template">
+<div class="sections">
+    <div id="template_intro_sct" class="section">
+        <h4 id="template_intro_hdr" class="toggle-expand">Introduction</h4>
+        <div class="contents">
+            <p>Intro...</p>
+        </div>
+    </div>
+    <div id="template_simple_values_sct" class="section">
+        <h4 id="template_simple_values_hdr" class="toggle-expand">Simple Values</h4>
+        <div class="contents">
+            <p>Simple values...</p>
+            <table class="styled tmpl-defs">
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Name</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>base</td>
+                        <td>The base domain (e.g. <code>https://www.example.com:443</code>)</td>
+                    </tr>
+                    <tr>
+                        <td>directory</td>
+                        <td>The directory part of the path (e.g. <code>/folder/dir/</code>)</td>
+                    </tr>
+                    <tr>
+                        <td>encoded</td>
+                        <td>The whole URL being parsed (encoded)</td>
+                    </tr>
+                    <tr>
+                        <td>favicon*</td>
+                        <td>The whole URL of the page's favicon</td>
+                    </tr>
+                    <tr>
+                        <td>file</td>
+                        <td>The basename of the file (e.g. <code>index.html</code>)</td>
+                    </tr>
+                    <tr>
+                        <td>fragment/anchor</td>
+                        <td>The entire string after the hash (#) symbol</td>
+                    </tr>
+                    <tr>
+                        <td>host</td>
+                        <td>For example; <code>www.example.com</code>, <code>localhost</code></td>
+                    </tr>
+                    <tr>
+                        <td>originalSource</td>
+                        <td>The original whole URL being parsed (may be different than <strong>source</strong> if a supported extension was detected and the value of <strong>source</strong> was extracted from this)</td>
+                    </tr>
+                    <tr>
+                        <td>originalTitle*</td>
+                        <td>The original title of the page (may be different than <strong>title</strong> if a supported extension was detected and the value of <strong>title</strong> was extracted from this)</td>
+                    </tr>
+                    <tr>
+                        <td>path</td>
+                        <td>The path to the file (e.g. <code>/folder/dir/index.html</code>)</td>
+                    </tr>
+                    <tr>
+                        <td>port</td>
+                        <td>For example; <code>80</code>, <code>443</code></td>
+                    </tr>
+                    <tr>
+                        <td>protocol</td>
+                        <td>For example; <code>http</code>, <code>https</code>, <code>file</code></td>
+                    </tr>
+                    <tr>
+                        <td>query</td>
+                        <td>The entire querystring if it exists (e.g. <code>item=value&amp;item2=value2</code>)</td>
+                    </tr>
+                    <tr>
+                        <td>relative</td>
+                        <td>The relative path to the file including the query string (e.g. <code>/folder/dir/index.html?item=value</code>)</td>
+                    </tr>
+                    <tr>
+                        <td>short</td>
+                        <td>The whole URL being parsed (shortened via the active URL shortener)</td>
+                    </tr>
+                    <tr>
+                        <td>source</td>
+                        <td>The whole URL being parsed</td>
+                    </tr>
+                    <tr>
+                        <td>title*</td>
+                        <td>The title of the page or <strong>source</strong> if the title could not be detected (e.g. page had not finished loading)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="template_complex_values" class="section">
+        <h4 id="template_complex_values_hdr" class="toggle-expand">Complex Values</h4>
+        <div class="contents">
+            <p>Complex values...</p>
+            <table class="styled tmpl-defs">
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Name</th>
+                        <th style="width: 10%">Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>fparams</td>
+                        <td>Map</td>
+                        <td>The key/value pairs of all parameters within the hash fragment (e.g. <code>{ 'foo':'bar', 'fu':'baz' }</code>)</td>
+                    </tr>
+                    <tr>
+                        <td>fsegments</td>
+                        <td>Array</td>
+                        <td>The segments from the hash fragment's path</td>
+                    </tr>
+                    <tr>
+                        <td>params</td>
+                        <td>Map</td>
+                        <td>The key/value pairs of all parameters (e.g. <code>{ 'foo':'bar', 'fu':'baz' }</code>)</td>
+                    </tr>
+                    <tr>
+                        <td>segments</td>
+                        <td>Array</td>
+                        <td>The segments from the URL's path</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="template_options" class="section">
+        <h4 id="template_options_hdr" class="toggle-expand">Options</h4>
+        <div class="contents">
+            <p>Options...</p>
+            <table class="styled tmpl-defs">
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Name</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>bitly</td>
+                        <td>Whether or not <a href="http://bit.ly" target="_blank">bit.ly</a> is the enabled URL shortener</td>
+                    </tr>
+                    <tr>
+                        <td>bitlyApiKey*</td>
+                        <td>The API Key associated with your <a href="http://bit.ly/a/account" target="_blank">bit.ly account</a></td>
+                    </tr>
+                    <tr>
+                        <td>bitlyUsername*</td>
+                        <td>The username associated with your <a href="http://bit.ly/a/account" target="_blank">bit.ly account</a></td>
+                    </tr>
+                    <tr>
+                        <td>doAnchorTarget</td>
+                        <td>Whether or not the option to include the anchor tag's <code>target</code> attribute is enabled</td>
+                    </tr>
+                    <tr>
+                        <td>doAnchorTitle</td>
+                        <td>Whether or not the option to include the anchor tag's <code>title</code> attribute is enabled</td>
+                    </tr>
+                    <tr>
+                        <td>googl</td>
+                        <td>Whether or not <a href="http://goo.gl" target="_blank">goo.gl</a> is the enabled URL shortener</td>
+                    </tr>
+                    <tr>
+                        <td>googlOAuth</td>
+                        <td>Whether or not <a href="http://oauth.net" target="_blank">OAuth</a> is enabled for <a href="http://goo.gl" target="_blank">goo.gl</a></td>
+                    </tr>
+                    <tr>
+                        <td>notificationDuration</td>
+                        <td>The number of seconds notifications are to last</td>
+                    </tr>
+                    <tr>
+                        <td>notifications</td>
+                        <td>Whether or not the option to show notifications is enabled</td>
+                    </tr>
+                    <tr>
+                        <td>shortcuts</td>
+                        <td>Whether or not the option to allow keyboard shortcuts is enabled</td>
+                    </tr>
+                    <tr>
+                        <td>yourls</td>
+                        <td>Whether or not <a href="http://yourls.org" target="_blank">YOURLS<a/> is the enabled URL shortener</td>
+                    </tr>
+                    <tr>
+                        <td>yourlsPassword*</td>
+                        <td>The password associated with your <a href="http://yourls.org" target="_blank">YOURLS<a/> installation</td>
+                    </tr>
+                    <tr>
+                        <td>yourlsSignature*</td>
+                        <td>The signature associated with your <a href="http://yourls.org" target="_blank">YOURLS<a/> installation (e.g. <code>3002a61584</code>)</td>
+                    </tr>
+                    <tr>
+                        <td>yourlsUrl*</td>
+                        <td>The URL of your <a href="http://yourls.org" target="_blank">YOURLS<a/> installation (e.g. <code>http://example.com/yourls-api.php</code>)</td>
+                    </tr>
+                    <tr>
+                        <td>yourlsUsername*</td>
+                        <td>The username associated with your <a href="http://yourls.org" target="_blank">YOURLS<a/> installation</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="template_functions" class="section">
+        <h4 id="template_functions_hdr" class="toggle-expand">Functions</h4>
+        <div class="contents">
+            <p>Functions...</p>
+            <table class="styled tmpl-defs">
+                <thead>
+                    <tr>
+                        <th style="width: 25%">Name</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>fparam</td>
+                        <td>Pass in a string to access that parameter's value from within the hash fragment</td>
+                    </tr>
+                    <tr>
+                        <td>fsegment</td>
+                        <td>Pass in an integer value to get the value of that segment from within the hash fragment (you can also pass in negative values, in which case it will count back from the end of the path rather than forwards from the start)</td>
+                    </tr>
+                    <tr>
+                        <td>param</td>
+                        <td>Pass in a string to access that parameter's value</td>
+                    </tr>
+                    <tr>
+                        <td>segment</td>
+                        <td>Pass in an integer value to get the value of that segment (you can also pass in negative values, in which case it will count back from the end of the path rather than forwards from the start)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</div>

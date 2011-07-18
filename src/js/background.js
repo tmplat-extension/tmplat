@@ -21,45 +21,45 @@ var urlcopy = {
      * @type Array
      */
     defaultFeatures: [{
-        image: 'copy_anchor.png',
-        index: 2,
         enabled: true,
+        image: 'feat_html.png',
+        index: 2,
         name: '_anchor',
         readOnly: true,
         shortcut: 'A',
-        template: '<a href="{{source}}"{#doAnchorTitle} title="{{title}}"{/doAnchorTitle}>{{title}}</a>',
+        template: '<a href="{{source}}"{#doAnchorTarget} target="_blank"{/doAnchorTarget}{#doAnchorTitle} title="{{title}}"{/doAnchorTitle}>{{title}}</a>',
         title: chrome.i18n.getMessage('copy_anchor')
     }, {
-        image: 'copy_bbcode.png',
-        index: 4,
         enabled: false,
+        image: 'feat_discussion.png',
+        index: 4,
         name: '_bbcode',
         readOnly: true,
         shortcut: 'B',
         template: '[url={source}]{title}[/url]',
         title: chrome.i18n.getMessage('copy_bbcode')
     }, {
-        image: 'copy_encoded.png',
-        index: 3,
         enabled: true,
+        image: 'feat_component.png',
+        index: 3,
         name: '_encoded',
         readOnly: true,
         shortcut: 'E',
         template: '{encoded}',
         title: chrome.i18n.getMessage('copy_encoded')
     }, {
-        image: 'copy_short.png',
-        index: 1,
         enabled: true,
+        image: 'feat_link.png',
+        index: 1,
         name: '_short',
         readOnly: true,
         shortcut: 'S',
         template: '{short}',
         title: chrome.i18n.getMessage('copy_short')
     }, {
-        image: 'copy_url.png',
-        index: 0,
         enabled: true,
+        image: 'feat_globe.png',
+        index: 0,
         name: '_url',
         readOnly: true,
         shortcut: 'U',
@@ -124,9 +124,9 @@ var urlcopy = {
                 login: 'urlcopy',
                 longUrl: url
             };
-            if (utils.get('bitly_xapi_key') && utils.get('bitly_xlogin')) {
-                params.x_apiKey = utils.get('bitly_xapi_key');
-                params.x_login = utils.get('bitly_xlogin');
+            if (utils.get('bitlyApiKey') && utils.get('bitlyUsername')) {
+                params.x_apiKey = utils.get('bitlyApiKey');
+                params.x_login = utils.get('bitlyUsername');
             }
             return params;
         },
@@ -134,7 +134,7 @@ var urlcopy = {
             return null;
         },
         isEnabled: function () {
-            return utils.get('bitly_enabled');
+            return utils.get('bitly');
         },
         method: 'GET',
         name: 'bit.ly',
@@ -155,10 +155,10 @@ var urlcopy = {
             return JSON.stringify({longUrl: url});
         },
         isEnabled: function () {
-            return utils.get('googl_enabled');
+            return utils.get('googl');
         },
         isOAuthEnabled: function () {
-            return utils.get('googl_oauth_enabled');
+            return utils.get('googlOAuth');
         },
         method: 'POST',
         name: 'goo.gl',
@@ -185,11 +185,11 @@ var urlcopy = {
                 format: 'json',
                 url: url
             };
-            if (utils.get('yourls_username') && utils.get('yourls_password')) {
-                params.password = utils.get('yourls_password');
-                params.username = utils.get('yourls_username');
-            } else if (utils.get('yourls_signature')) {
-                params.signature = utils.get('yourls_signature');
+            if (utils.get('yourlsPassword') && utils.get('yourlsUsername')) {
+                params.password = utils.get('yourlsPassword');
+                params.username = utils.get('yourlsUsername');
+            } else if (utils.get('yourlsSignature')) {
+                params.signature = utils.get('yourlsSignature');
             }
             return params;
         },
@@ -197,7 +197,7 @@ var urlcopy = {
             return null;
         },
         isEnabled: function () {
-            return utils.get('yourls_enabled');
+            return utils.get('yourls');
         },
         method: 'POST',
         name: 'YOURLS',
@@ -205,7 +205,7 @@ var urlcopy = {
             return JSON.parse(resp).shorturl;
         },
         url: function () {
-            return utils.get('yourls_url');
+            return utils.get('yourlsUrl');
         }
     }],
 
@@ -255,7 +255,7 @@ var urlcopy = {
      * @private
      */
     buildFeature: function (feature) {
-        var image = '../images/' + (feature.image || 'copy_url.png'),
+        var image = '../images/' + (feature.image || 'spacer.png'),
             item = $('<li/>', {
                 name: feature.name,
                 onclick: 'popup.sendRequest(this);'
@@ -275,7 +275,7 @@ var urlcopy = {
             }
             menu.append($('<span/>', {
                 'class': 'shortcut',
-                text: modifiers + feature.shortcut
+                html: (feature.shortcut) ? modifiers + feature.shortcut : ''
             }));
         }
         return item.append(menu);
@@ -368,6 +368,9 @@ var urlcopy = {
             url = $.url(tab.url);
         }
         $.extend(data, url.attr(), {
+            bitly: utils.get('bitly'),
+            bitlyApiKey: utils.get('bitlyApiKey'),
+            bitlyUsername: utils.get('bitlyUsername'),
             doAnchorTarget: utils.get('doAnchorTarget'),
             doAnchorTitle: utils.get('doAnchorTitle'),
             encoded: encodeURIComponent(url.attr('source')),
@@ -376,6 +379,8 @@ var urlcopy = {
             fparams: url.fparam(),
             fsegment: url.fsegment,
             fsegments: url.fsegment(),
+            googl: utils.get('googl'),
+            googlOAuth: utils.get('googlOAuth'),
             notificationDuration: utils.get('notificationDuration') / 1000,
             notifications: utils.get('notifications'),
             originalSource: tab.url,
@@ -388,7 +393,12 @@ var urlcopy = {
                 return shortCallback();
             },
             shortcuts: utils.get('shortcuts'),
-            title: title || url.attr('source')
+            title: title || url.attr('source'),
+            yourls: utils.get('yourls'),
+            yourlsPassword: utils.get('yourlsPassword'),
+            yourlsSignature: utils.get('yourlsSignature'),
+            yourlsUrl: utils.get('yourlsUrl'),
+            yourlsUsername: utils.get('yourlsUsername')
         });
         return data;
     },
@@ -465,6 +475,24 @@ var urlcopy = {
         if (popup) {
             popup.close();
         }
+    },
+
+    /**
+     * <p>Deletes the values of the feature with the specified name from
+     * their respective locations.</p>
+     * @param {String} name The name of the feature whose values are to be
+     * deleted.
+     * @since 0.1.0.0
+     * @private
+     */
+    deleteFeature: function (name) {
+        utils.remove('feat_' + name + '_enabled');
+        utils.remove('feat_' + name + '_image');
+        utils.remove('feat_' + name + '_index');
+        utils.remove('feat_' + name + '_readonly');
+        utils.remove('feat_' + name + '_shortcut');
+        utils.remove('feat_' + name + '_template');
+        utils.remove('feat_' + name + '_title');
     },
 
     /**
@@ -558,7 +586,7 @@ var urlcopy = {
      * listeners and adding the request listeners.</p>
      */
     init: function () {
-        urlcopy.init_update(); // TODO: Remove call in v0.1.0.1
+        urlcopy.init_update();
         utils.init('notifications', true);
         utils.init('notificationDuration', 3000);
         utils.init('shortcuts', true);
@@ -582,7 +610,6 @@ var urlcopy = {
      * @private
      */
     init_update: function () {
-        // TODO: Remove function in v0.1.0.1
         utils.rename('settingNotification', 'notifications', true);
         utils.rename('settingNotificationTimer', 'notificationDuration', 3000);
         utils.rename('settingShortcut', 'shortcuts', true);
@@ -622,7 +649,7 @@ var urlcopy = {
      */
     initFeature: function (feature) {
         var name = feature.name;
-        utils.set('feat_' + name + '_image', feature.image);
+        utils.init('feat_' + name + '_image', feature.image);
         utils.init('feat_' + name + '_index', feature.index);
         utils.init('feat_' + name + '_enabled', feature.enabled);
         utils.set('feat_' + name + '_readonly', feature.readOnly);
@@ -639,7 +666,7 @@ var urlcopy = {
      * @private
      */
     initFeatures: function () {
-        urlcopy.initFeatures_update(); // TODO: Remove call in v0.1.0.1
+        urlcopy.initFeatures_update();
         utils.init('features', []);
         for (var i = 0; i < urlcopy.defaultFeatures.length; i++) {
             urlcopy.initFeature(urlcopy.defaultFeatures[i]);
@@ -654,7 +681,6 @@ var urlcopy = {
      * @private
      */
     initFeatures_update: function () {
-        // TODO: Remove function in v0.1.0.1
         utils.rename('copyAnchorEnabled', 'feat__anchor_enabled', true);
         utils.rename('copyAnchorOrder', 'feat__anchor_index', 2);
         utils.rename('copyBBCodeEnabled', 'feat__bbcode_enabled', false);
@@ -673,17 +699,17 @@ var urlcopy = {
      * @private
      */
     initUrlShorteners: function () {
-        urlcopy.initUrlShorteners_update(); // TODO: Remove call in v0.1.0.1
-        utils.init('bitly_enabled', false);
-        utils.init('bitly_xapi_key', '');
-        utils.init('bitly_xlogin', '');
-        utils.init('googl_enabled', true);
-        utils.init('googl_oauth_enabled', true);
-        utils.init('yourls_enabled', false);
-        utils.init('yourls_password', '');
-        utils.init('yourls_signature', '');
-        utils.init('yourls_url', '');
-        utils.init('yourls_username', '');
+        urlcopy.initUrlShorteners_update();
+        utils.init('bitly', false);
+        utils.init('bitlyApiKey', '');
+        utils.init('bitlyUsername', '');
+        utils.init('googl', true);
+        utils.init('googlOAuth', true);
+        utils.init('yourls', false);
+        utils.init('yourlsPassword', '');
+        utils.init('yourlsSignature', '');
+        utils.init('yourlsUrl', '');
+        utils.init('yourlsUsername', '');
     },
 
     /**
@@ -693,12 +719,11 @@ var urlcopy = {
      * @private
      */
     initUrlShorteners_update: function () {
-        // TODO: Remove function in v0.1.0.1
-        utils.rename('bitlyEnabled', 'bitly_enabled', false);
-        utils.rename('bitlyXApiKey', 'bitly_xapi_key', '');
-        utils.rename('bitlyXLogin', 'bitly_xlogin', '');
-        utils.rename('googleEnabled', 'googl_enabled', true);
-        utils.rename('googleOAuthEnabled', 'googl_oauth_enabled', true);
+        utils.rename('bitlyEnabled', 'bitly', false);
+        utils.rename('bitlyXApiKey', 'bitlyApiKey', '');
+        utils.rename('bitlyXLogin', 'bitlyUsername', '');
+        utils.rename('googleEnabled', 'googl', true);
+        utils.rename('googleOAuthEnabled', 'googlOAuth', true);
     },
 
     /**
@@ -750,9 +775,9 @@ var urlcopy = {
      */
     loadFeature: function (name) {
         return {
+            enabled: utils.get('feat_' + name + '_enabled'),
             image: utils.get('feat_' + name + '_image'),
             index: utils.get('feat_' + name + '_index'),
-            enabled: utils.get('feat_' + name + '_enabled'),
             name: name,
             readOnly: utils.get('feat_' + name + '_readonly'),
             shortcut: utils.get('feat_' + name + '_shortcut'),
@@ -967,9 +992,9 @@ var urlcopy = {
      */
     saveFeature: function (feature) {
         var name = feature.name;
+        utils.set('feat_' + name + '_enabled', feature.enabled);
         utils.set('feat_' + name + '_image', feature.image);
         utils.set('feat_' + name + '_index', feature.index);
-        utils.set('feat_' + name + '_enabled', feature.enabled);
         utils.set('feat_' + name + '_readonly', feature.readOnly);
         utils.set('feat_' + name + '_shortcut', feature.shortcut);
         utils.set('feat_' + name + '_template', feature.template);
@@ -980,15 +1005,24 @@ var urlcopy = {
     /**
      * <p>Stores the values of each of the speciifed features in to their
      * respective locations.</p>
+     * <p>Any features no longer in use are removed from localStorage in an
+     * attempt to keep capacity under control.</p>
      * @param {Array} features The features whose values are to be saved.
      * @returns {Array} The array of features provided.
      * @since 0.1.0.0
      */
     saveFeatures: function (features) {
-        var names = [];
+        var names = [],
+            oldNames = utils.get('features');
         for (var i = 0; i < features.length; i++) {
             names.push(features[i].name);
             urlcopy.saveFeature(features[i]);
+        }
+        // Ensures any features no longer used are removed from localStorage
+        for (var j = 0; j < oldNames.length; j++) {
+            if (names.indexOf(oldNames[j]) === -1) {
+                urlcopy.deleteFeature(oldNames[j]);
+            }
         }
         utils.set('features', names);
         return features;

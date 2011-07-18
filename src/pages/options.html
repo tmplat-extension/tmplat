@@ -4,8 +4,10 @@
         <title></title>
         <style type="text/css">
             body {background-color: #EBEFF9; font-family: Arial, sans-serif; font-size: 13px; margin: 10px;}
-            a, a:active, a:link, a:visited {color: #3D5D6A; font-weight: bold; text-decoration: none;}
+            a, a:active, a:link, a:visited {color: #3D5D6A; cursor: pointer; font-weight: bold; text-decoration: none;}
             a:hover {text-decoration: underline;}
+            a[rel="facebox"] {outline: 0;}
+            table {border: 0; border-collapse; collapse; width: 100%;}
             .features tr td:first-child {padding-top: 6px; text-align: right; vertical-align: top;}
             .feature td {text-align: left;}
             .feature.first .expanded, .feature.collapsed.first .collapsed {display: block;}
@@ -22,10 +24,11 @@
             #header h1 {background: url('../images/icon_48.png') no-repeat; background-position: 1px 62px; background-size: 48px; color: #3D5D6A; display: inline; font-size: 30px; padding-bottom: 40px; padding-left: 90px; padding-top: 70px;}
             h4 {border-bottom: 2px dotted #C3C3C3; color: #333; font-size: 15px; line-height: 28px; padding-left: 0.5em;}
             .controls {margin: 25px 0 0 0;}
-            .section .content {display: none; line-height: 25px; padding-left: 55px;}
+            .section .contents {display: none; line-height: 25px; padding-left: 55px;}
             .section h4 {background-size: 24px 24px; cursor: pointer;}
             .section h4.toggle-collapse {background: white url('../images/toggle-collapse.png') no-repeat scroll right;}
             .section h4.toggle-expand {background: white url('../images/toggle-expand.png') no-repeat scroll right;}
+            .sections .section .contents {padding-left: 5px;}
             .help {display: none;}
             #add_btn, #delete_btn, #update_btn {margin-left: 10px;}
             #moveDown_btn, #moveUp_btn {padding-top: 2px; margin: 5px 10px;}
@@ -75,7 +78,7 @@
                 <h1 id="options_hdr"></h1>
             </div>
             <div class="controls">
-                <table style="border: none; border-collapse; collapse; width: 100%">
+                <table>
                     <tr>
                         <td style="width: 50%">
                             <button class="save-btn"></button>
@@ -88,9 +91,9 @@
             </div>
             <div id="features_sct" class="section">
                 <h4 id="features_hdr" class="toggle-expand"></h4>
-                <div class="content">
+                <div class="contents">
                     <div>
-                        <table style="border: none; border-collapse; collapse; width: 100%">
+                        <table>
                             <tr>
                                 <td colspan="2" rowspan="2" style="width: 50%">
                                     <select id="features" size="5" style="width: 100%"></select>
@@ -110,16 +113,8 @@
                                         <label>
                                             <input id="feature_name" class="read-only" type="text" maxlength="16" size="32" />
                                         </label>
-                                        <a href="#feature_name_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                        <div id="feature_name_help" class="help">
-                                            <p>The name is used internally and is only displayed here.</p>
-                                            <p>The following rules apply;</p>
-                                            <ul>
-                                                <li>Must be unique</li>
-                                                <li>Cannot contains spaces or underscores</li>
-                                                <li>Must only contain alphanumeric characters</li>
-                                            </ul>
-                                        </div>
+                                        <a href="#feature_name_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                        <div id="feature_name_help" class="help"></div>
                                     </td>
                                     <td>
                                         <button id="add_btn"></button>
@@ -130,27 +125,12 @@
                                         <label>
                                             <input id="feature_title" class="toggle-feature read-only" type="text" maxlength="32" size="32" disabled />
                                         </label>
-                                        <a href="#feature_title_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                        <div id="feature_title_help" class="help">
-                                            <p>The title is displayed in context menus and the drop-down.</p>
-                                            <p>The following rules apply;</p>
-                                            <ul>
-                                                <li>Doesn't have to be unique<br />(but it's recommended)</li>
-                                                <li>Can contain multiple words</li>
-                                                <li>Can contain any characters</li>
-                                            </ul>
-                                        </div>
+                                        <a href="#feature_title_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                        <div id="feature_title_help" class="help"></div>
                                     </td>
                                     <td>
                                         <button id="delete_btn" class="toggle-feature" disabled></button>
-                                        <div id="delete_con" class="help">
-                                            <p>This action is <strong>permanent</strong> and cannot be reversed.</p>
-                                            <p>Do you want to continue anyway?</p>
-                                            <div style="text-align: right">
-                                                <button id="delete_yes_btn"></button>
-                                                <button id="delete_no_btn"></button>
-                                            </div>
-                                        </div>
+                                        <div id="delete_con" class="help"></div>
                                     </td>
                                 </tr>
                             </tr>
@@ -160,27 +140,28 @@
                                         <input id="feature_enabled" type="checkbox" class="toggle-feature" disabled />
                                         <span id="feature_enabled_txt"></span>
                                     </label>
-                                    <a href="#feature_enabled_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                    <div id="feature_enabled_help" class="help">
-                                        <p>This indicates whether or not it will appear in the context menu and the drop-down.</p>
-                                    </div>
+                                    <a href="#feature_enabled_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                    <div id="feature_enabled_help" class="help"></div>
                                 </td>
                                 <td style="text-align: right">
                                     <label>
                                         <span id="feature_shortcut_txt"></span><input id="feature_shortcut" type="text" class="toggle-feature" disabled maxlength="1" size="1" style="text-transform: uppercase" />
                                     </label>
-                                    <a href="#feature_shortcut_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                    <div id="feature_shortcut_help" class="help">
-                                        <p>The assigned keyboard shortcut which will trigger this feature if/when used.</p>
-                                        <p>The following rules apply;</p>
-                                        <ul>
-                                            <li>Must be unique</li>
-                                            <li>Must be an alphanumeric key<br />(may change in the future)</li>
-                                        </ul>
-                                    </div>
+                                    <a href="#feature_shortcut_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                    <div id="feature_shortcut_help" class="help"></div>
                                 </td>
                                 <td>
                                     <button id="update_btn" class="toggle-feature" disabled></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <label>
+                                        <img id="feature_image_preview" width="16" height="16" style="margin-bottom: -3px" />
+                                        <select id="feature_image" class="toggle-feature"></select>
+                                    </label>
+                                    <a href="#feature_image_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                    <div id="feature_image_help" class="help"></div>
                                 </td>
                             </tr>
                             <tr>
@@ -190,9 +171,7 @@
                                     </label>
                                     <div>
                                         <a id="template_help_lnk" href="#template_help" rel="facebox"></a>
-                                        <div id="template_help" class="help">
-                                            <p>TODO</p>
-                                        </div>
+                                        <div id="template_help" class="help"></div>
                                     </div>
                                 </td>
                             </tr>
@@ -202,9 +181,9 @@
             </div>
             <div id="shorteners_sct" class="section">
                 <h4 id="shorteners_hdr" class="toggle-expand"></h4>
-                <div class="content">
+                <div class="contents">
                     <div>
-                        <table class="styled" style="border: none; border-collapse; collapse; width: 100%">
+                        <table class="styled">
                             <thead>
                                 <tr>
                                     <th id="shorteners_enabled_hdr" style="text-align: center; width: 12%"></th>
@@ -214,79 +193,65 @@
                             </thead>
                             <tbody>
                                 <tr style="vertical-align: top">
-                                    <td style="text-align: center"><input type="radio" name="enabled_shortener" id="bitly_enabled" /></td>
+                                    <td style="text-align: center"><input type="radio" name="enabled_shortener" id="bitly" /></td>
                                     <td><a href="http://bit.ly" target="_blank">bit.ly</a></td>
                                     <td>
-                                        <table style="border: none; border-collapse; collapse; width: 100%">
+                                        <table>
                                             <tr>
                                                 <td style="width: 40%">
-                                                    <label for="bity_xlogin">
-                                                        <span id="bitly_xlogin_txt"></span>
+                                                    <label for="bitlyUsername">
+                                                        <span id="bitlyUsername_txt"></span>
                                                     </label>
-                                                    <a href="#bitly_xlogin_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                    <div id="bitly_xlogin_help" class="help">
-                                                        <p>This is the username provided to you when you registered your <a href="http://bit.ly/a/account" target="_blank">bit.ly account</a>.</p>
-                                                        <p>Haven't registered with <strong>bit.ly</strong>?</p>
-                                                        <p><a href="http://bit.ly/a/sign_up" target="_blank">Sign up now</a></p>
-                                                    </a>
+                                                    <a href="#bitlyUsername_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                    <div id="bitlyUsername_help" class="help"></div>
                                                 </td>
                                                 <td>
-                                                    <input type="text" id="bity_xlogin" size="28" />
+                                                    <input type="text" id="bitlyUsername" size="28" />
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <label for="bitly_xapi_key">
-                                                        <span id="bitly_xapi_key_txt"></span>
+                                                    <label for="bitlyApiKey">
+                                                        <span id="bitlyApiKey_txt"></span>
                                                     </label>
-                                                    <a href="#bitly_xapi_key_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                    <div id="bitly_xapi_key_help" class="help">
-                                                        <p>The API key allows <strong>URL Copy</strong> to shorten links via <strong>bit.ly</strong> on your behalf.</p>
-                                                        <p><a href="http://bit.ly/a/your_api_key" target="_blank">Get your API key</a></p>
-                                                    </a>
+                                                    <a href="#bitlyApiKey_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                    <div id="bitlyApiKey_help" class="help"></div>
                                                 </td>
                                                 <td>
-                                                    <input type="password" id="bitly_xapi_key" size="28" />
+                                                    <input type="password" id="bitlyApiKey" size="28" />
                                                 </td>
                                             </tr>
                                         </table>
                                     </td>
                                 </tr>
                                 <tr style="vertical-align: top">
-                                    <td style="text-align: center"><input type="radio" name="enabled_shortener" id="googl_enabled" /></td>
+                                    <td style="text-align: center"><input type="radio" name="enabled_shortener" id="googl" /></td>
                                     <td><a href="http://goo.gl" target="_blank">goo.gl</a></td>
                                     <td>
                                         <div>
                                             <label>
-                                                <input type="checkbox" id="googl_oauth_enabled" />
-                                                <span id="googl_oauth_enabled_txt"></span>
+                                                <input type="checkbox" id="googlOAuth" />
+                                                <span id="googlOAuth_txt"></span>
                                             </label>
-                                        <a href="#googl_oauth_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                        <div id="googl_oauth_help" class="help">
-                                                <p><a href="http://oauth.net" target="_blank">OAuth</a> is an open protocol that aims to standardize the way desktop and web applications access a user's private data. OAuth provides a mechanism for users to grant access to private data without sharing their private credentials (username/password).</p>
-                                                <p><strong>URL Copy</strong> uses OAuth to shorten links via <strong>goo.gl</strong> on your behalf.</p>
-                                            </a>
-                                        </div>
+                                        <a href="#googlOAuth_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                        <div id="googlOAuth_help" class="help"></div>
                                     </td>
                                 </tr>
                                 <tr style="vertical-align: top">
-                                    <td style="text-align: center"><input type="radio" name="enabled_shortener" id="yourls_enabled" /></td>
+                                    <td style="text-align: center"><input type="radio" name="enabled_shortener" id="yourls" /></td>
                                     <td><a href="http://yourls.org" target="_blank">YOURLS</a></td>
                                     <td>
-                                        <table style="border: none; border-collapse; collapse; width: 100%">
+                                        <table>
                                             <tr>
                                                 <td style="width: 40%">
-                                                    <label for="yourls_url">
-                                                        <span id="yourls_url_txt"></span>
+                                                    <label for="yourlsUrl">
+                                                        <span id="yourlsUrl_txt"></span>
                                                     </label>
-                                                    <a href="#yourls_url_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                    <div id="yourls_url_help" class="help">
-                                                        <p>The URL to the API of the <strong>YOURLS</strong> installation (e.g. <code>http://example.com/yourls-api.php</code>).</p>
-                                                        <p><a href="http://yourls.org/#Config" target="_blank">See documentation</a></p>
-                                                    </a>
+                                                    <a href="#yourlsUrl_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                    <div id="yourlsUrl_help" class="help"></div>
                                                 </td>
                                                 <td>
-                                                    <input type="url" id="yourls_url" size="28" />
+                                                    <input type="url" id="yourlsUrl" size="28" />
                                                 </td>
                                             </tr>
                                             <tr>
@@ -294,28 +259,25 @@
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <label for="yourls_username">
-                                                        <span id="yourls_username_txt"></span>
+                                                    <label for="yourlsUsername">
+                                                        <span id="yourlsUsername_txt"></span>
                                                     </label>
-                                                    <a href="#yourls_credentials_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                    <div id="yourls_credentials_help" class="help">
-                                                        <p>Both the username and password are only required if the <strong>YOURLS</strong> installation is private <em>and</em> you're <strong>not</strong> using the <a href="http://code.google.com/p/yourls/wiki/PasswordlessAPI" target="_blank">passwordless API</a>.</p>
-                                                        <p><a href="http://yourls.org/#Config" target="_blank">See documentation</a></p>
-                                                    </a>
+                                                    <a href="#yourlsCredentials_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                    <div id="yourlsCredentials_help" class="help"></div>
                                                 </td>
                                                 <td>
-                                                    <input type="text" id="yourls_username" size="28" />
+                                                    <input type="text" id="yourlsUsername" size="28" />
                                                 </td>
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <label for="yourls_password">
-                                                        <span id="yourls_password_txt"></span>
+                                                    <label for="yourlsPassword">
+                                                        <span id="yourlsPassword_txt"></span>
                                                     </label>
-                                                    <a href="#yourls_credentials_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                    <a href="#yourlsCredentials_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
                                                 </td>
                                                 <td>
-                                                    <input type="password" id="yourls_password" size="28" />
+                                                    <input type="password" id="yourlsPassword" size="28" />
                                                 </td>
                                             </tr>
                                             <tr>
@@ -323,16 +285,14 @@
                                             </tr>
                                             <tr>
                                                 <td>
-                                                    <label for="yourls_signature">
-                                                        <span id="yourls_signature_txt"></span>
+                                                    <label for="yourlsSignature">
+                                                        <span id="yourlsSignature_txt"></span>
                                                     </label>
-                                                    <a href="#yourls_signature_help" rel="facebox"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                    <div id="yourls_signature_help" class="help">
-                                                        <p>This is required if only if the <strong>YOURLS</strong> installation is private <em>and</em> you <strong>are</strong> using the <a href="http://code.google.com/p/yourls/wiki/PasswordlessAPI" target="_blank">passwordless API</a>.</p>
-                                                    </a>
+                                                    <a href="#yourlsSignature_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                                    <div id="yourlsSignature_help" class="help"></div>
                                                 </td>
                                                 <td>
-                                                    <input type="password" id="yourls_signature" size="28" />
+                                                    <input type="password" id="yourlsSignature" size="28" />
                                                 </td>
                                             </tr>
                                         </table>
@@ -345,7 +305,7 @@
             </div>
             <div id="anchors" class="section">
                 <h4 id="anchors_hdr" class="toggle-expand"></h4>
-                <div class="content">
+                <div class="contents">
                     <div>
                         <label>
                             <input type="checkbox" id="doAnchorTitle" />
@@ -362,7 +322,7 @@
             </div>
             <div id="notifications_sct" class="section">
                 <h4 id="notifications_hdr" class="toggle-expand"></h4>
-                <div class="content">
+                <div class="contents">
                     <div>
                         <label>
                             <input type="checkbox" id="notifications" />
@@ -380,7 +340,7 @@
             </div>
             <div id="shortcuts_sct" class="section">
                 <h4 id="shortcuts_hdr" class="toggle-expand"></h4>
-                <div class="content">
+                <div class="contents">
                     <div>
                         <label>
                             <input type="checkbox" id="shortcuts" />
@@ -390,7 +350,7 @@
                 </div>
             </div>
             <div class="controls">
-                <table style="border: none; border-collapse; collapse; width: 100%">
+                <table>
                     <tr>
                         <td style="width: 50%">
                             <button class="save-btn"></button>
