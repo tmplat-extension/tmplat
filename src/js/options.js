@@ -7,6 +7,15 @@
 var options = {
 
     /**
+     * <p>The default locale to use if none were found matching in
+     * {@link options.locales}.</p>
+     * @since 0.1.0.0
+     * @private
+     * @type String
+     */
+    defaultLocale: 'en',
+
+    /**
      * <p>The name of image files available to be used as feature icons.</p>
      * @since 0.1.0.0
      * @private
@@ -32,6 +41,14 @@ var options = {
         file: 'feat_link.png',
         name: chrome.i18n.getMessage('feat_link')
     }],
+
+    /**
+     * <p>The locales supported by this extension.</p>
+     * @since 0.1.0.0
+     * @private
+     * @type Array
+     */
+    locales: ['en'],
 
     /**
      * <p>The regular expression used to validate feature name inputs.</p>
@@ -67,9 +84,8 @@ var options = {
      * @private
      */
     collapseAll: function (event) {
-        $('.section h4').not('.sections .section h4')
-                .addClass('toggle-expand').removeClass('toggle-collapse')
-                .next('.contents').slideUp();
+        $('.section h4').addClass('toggle-expand')
+                .removeClass('toggle-collapse').next('.contents').slideUp();
     },
 
     /**
@@ -114,9 +130,8 @@ var options = {
      * @private
      */
     expandAll: function (event) {
-        $('.section h4').not('.sections .section h4')
-                .addClass('toggle-collapse').removeClass('toggle-expand')
-                .next('.contents').slideDown();
+        $('.section h4').addClass('toggle-collapse')
+                .removeClass('toggle-expand').next('.contents').slideDown();
     },
 
     /**
@@ -257,12 +272,6 @@ var options = {
         options.i18nReplace('#yourlsUrl_help', 'help_yourlsUrl');
         options.i18nReplace('#yourlsCredentials_help', 'help_yourlsCredentials');
         options.i18nReplace('#yourlsSignature_help', 'help_yourlsSignature');
-        // Was done later as buttons didn't exist until now
-        options.i18nReplace('#delete_no_btn', 'opt_no_button');
-        options.i18nReplace('#delete_yes_btn', 'opt_yes_button');
-        $('#template_help').load(
-            chrome.extension.getURL('pages/templates.html')
-        );
         /*
          * Binds options:collapseAll and options:expandAll events to the
          * buttons.
@@ -273,6 +282,22 @@ var options = {
         $('.save-btn').click(options.saveAndClose);
         // Binds options:toggleSection to section headers
         $('.section h4').live('click', options.toggleSection);
+        // Binds options:toggleTemplateSection to template section items
+        $('.template-section').live('click', options.toggleTemplateSection);
+        // Loads template section from locale-specific file
+        var locale = options.defaultLocale,
+            uiLocale = chrome.i18n.getMessage('@@ui_locale');
+        for (var i = 0; i < options.locales.length; i++) {
+            if (uiLocale === options.locales[i]) {
+                locale = uiLocale;
+                break;
+            }
+        }
+        $('#template_help').load(
+            chrome.extension.getURL('pages/templates_' + locale + '.html')
+        , function () {
+            $('.template-section:first-child').click();
+        });
         // Loads current option values
         options.load();
         var bg = chrome.extension.getBackgroundPage(),
@@ -286,9 +311,9 @@ var options = {
         // Initialize facebox
         $('a[rel*=facebox]').facebox();
         // Displays supported extensions if they are detected
-        for (var i = 0; i < bg.urlcopy.support.length; i++) {
+        for (var j = 0; j < bg.urlcopy.support.length; j++) {
             try {
-                chrome.management.get(bg.urlcopy.support[i],
+                chrome.management.get(bg.urlcopy.support[j],
                         options.displayExtension);
             } catch (e) {}
         }
@@ -843,12 +868,29 @@ var options = {
      * the event.</p>
      * @param {Event} [event] The event triggered.
      * @event
-     * @requies jQuery
+     * @requires jQuery
      * @private
      */
     toggleSection: function (event) {
         $(this).toggleClass('toggle-collapse toggle-expand')
                 .next('.contents').slideToggle();
+    },
+
+    /**
+     * <p>Toggles the visibility of the content of the template section that
+     * triggered the event.</p>
+     * @param {Event} [event] The event triggered.
+     * @event
+     * @since 0.1.0.0
+     * @requires jQuery
+     * @private
+     */
+    toggleTemplateSection: function (event) {
+        var $this = $(this),
+            table = $this.parents('.template-table');
+        table.find('.template-section.selected').removeClass('selected');
+        table.find('.template-display').html($this.addClass('selected')
+                .next('.template-content').html()).scrollTop(0);
     }
 
 };

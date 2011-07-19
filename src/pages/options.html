@@ -7,6 +7,9 @@
             a, a:active, a:link, a:visited {color: #3D5D6A; cursor: pointer; font-weight: bold; text-decoration: none;}
             a:hover {text-decoration: underline;}
             a[rel="facebox"] {outline: 0;}
+            code, pre {font: 12px 'Bitstream Vera Sans Mono','Courier',monospace;}
+            code {background-color: #F8F8F8; border: 1px solid #DEDEDE; font-size: 13px; padding: 0 2px; border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
+            pre {background-color: #F8F8F8; border: 1px solid #CCC; font-size: 13px; line-height: 19px; margin: 20px 0; overflow: auto; padding: 6px 10px; order-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
             table {border: 0; border-collapse; collapse; width: 100%;}
             .features tr td:first-child {padding-top: 6px; text-align: right; vertical-align: top;}
             .feature td {text-align: left;}
@@ -42,6 +45,18 @@
             #extensions li {display: inline-block; padding: 3px 3px 0;}
             #extensions_status_txt {margin: 0 0 8px 8px;}
             #footer {font-size: 13px; text-align: center;}
+            .template {height: 300px; padding-right: 5px; width: 500px;}
+            .template-display {height: 300px; overflow: auto; padding-right: 5px; width: 395px;}
+            .template-table {height: 100%;}
+            .template-table > tbody > tr > td {vertical-align: top;}
+            .template-table > tbody > tr > td:first-child {border-right: 2px dotted #C3C3C3; padding-right: 10px;}
+            .template-sections {list-style-type: none; margin: 0; padding: 0;}
+            .template-section {cursor: pointer; display: inline-block; font-weight: bold; padding: 5px; width: 100%;}
+            .template-section:hover {background-color: #F3F3F3 !important; color: black !important;}
+            .template-section.selected {background-color: #C3C3C3; color: white;}
+            .template-content {display: none;}
+            .template-definitions tbody tr td {vertical-align: top;}
+            .template-definitions tbody tr td:first-child, .template-definition {color: #666;}
             /* Facebox */
             #facebox {left: 0; position: absolute; text-align: left; top: 0; z-index: 100;}
             #facebox .popup {border: 3px solid rgba(0,0,0,0); border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; box-shadow:0 0 18px rgba(0,0,0,0.4); -moz-box-shadow: 0 0 18px rgba(0,0,0,0.4); -webkit-box-shadow: 0 0 18px rgba(0,0,0,0.4); position: relative;}

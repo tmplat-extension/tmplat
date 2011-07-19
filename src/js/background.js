@@ -107,7 +107,7 @@ var urlcopy = {
      * @since 0.1.0.0
      * @type String
      */
-    shortcutMacModifiers: '&#8984;-Shift-',
+    shortcutMacModifiers: 'Shift-&#8997;-',
 
     /**
      * <p>The URL shortener services supported by this extension.</p>
