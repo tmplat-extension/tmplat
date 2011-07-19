@@ -13,6 +13,8 @@
 * Major rewrite of code including huge optimization work and performance improvements
 * Updated [jQuery](http://jquery.com) to 1.6.2
 * Removed [jQuery](http://jquery.com) dependencies from all but the background and options pages to optimize page loads
+* Removed support for the French language
+* Changed how supported extensions are used to be less intrusive
 * And lots more...
 
 2011.04.11, Version 0.0.2.1
