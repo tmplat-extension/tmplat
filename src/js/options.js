@@ -293,9 +293,8 @@ var options = {
                 break;
             }
         }
-        $('#template_help').load(
-            chrome.extension.getURL('pages/templates_' + locale + '.html')
-        , function () {
+        $('#template_help').load(chrome.extension.getURL('pages/templates_' +
+                locale + '.html'), function () {
             $('.template-section:first-child').click();
         });
         // Loads current option values
