@@ -1,4 +1,4 @@
-URL-Copy, Google Chrome extension that copies URL to clipboard in many useful ways  
+URL Copy, Google Chrome extension that copies URL to clipboard in many useful ways  
 Copyright (C) 2011 Alasdair Mercer
 
 This program is free software: you can redistribute it and/or modify  
