@@ -6,7 +6,7 @@
     }
     var isMac = navigator.userAgent.toLowerCase().indexOf('mac') !== -1;
     document.body.setAttribute('url_copy_injected', true);
-    document.body.addEventListener('keyup', function (e) {
+    window.addEventListener('keyup', function (e) {
         if ((!isMac && e.ctrlKey && e.altKey) ||
                 (isMac && e.shiftKey && e.altKey)) {
             chrome.extension.sendRequest({
@@ -16,5 +16,5 @@
                 type: 'shortcut'
             });
         }
-    }, false);
+    });
 })();

@@ -499,6 +499,12 @@
    "opt_update_button": {
       "message": "Update"
    },
+   "shortener_config_error": {
+      "message": "Configuration problem found with $1"
+   },
+   "shortener_error": {
+      "message": "Could not get a successful response from $1"
+   },
    "shortening": {
       "message": "Please wait..."
    },

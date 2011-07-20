@@ -1,3 +1,9 @@
+2011.07.20, Version 0.1.0.1
+
+* Fixed problem where URL shortener options were being forgotten when
+* Added some feedback messages if/when any errors occur when copying a shortened URL (i.e. could not reach URL shortener service)
+* Attempted to make keyboard shortcuts work more consistently
+
 2011.07.19, Version 0.1.0.0
 
 * Add feature customization including a template system

@@ -342,11 +342,11 @@ var urlcopy = {
     /**
      * <p>Creates an Object containing data based on information extracted from
      * the specified tab.</p>
-     * <p>This function merges this data with additional information relating to
-     * the URL of the tab.</p>
+     * <p>This function merges this data with additional information relating
+     * to the URL of the tab.</p>
      * <p>If a shortened URL is requested when parsing the template later the
-     * callback function specified is called to handle this scenario as we don't
-     * want to call a URL shortener service unless it is required.</p>
+     * callback function specified is called to handle this scenario as we
+     * don't want to call a URL shortener service unless it is required.</p>
      * @param {Tab} tab The tab whose information is to be extracted.
      * @param {function} shortCallback The function to be called if/when a
      * shortened URL is requested when parsing the template.
@@ -416,22 +416,44 @@ var urlcopy = {
      */
     callUrlShortener: function (url, callback) {
         urlcopy.callUrlShortenerHelper(url, function (url, service) {
-            var params = service.getParameters(url) || {};
-            var req = new XMLHttpRequest();
-            req.open(service.method, service.url() + '?' + $.param(params),
-                    true);
-            req.setRequestHeader('Content-Type', service.contentType);
-            if (service.oauth && service.isOAuthEnabled()) {
-                req.setRequestHeader('Authorization',
-                        service.oauth.getAuthorizationHeader(service.url(),
-                        service.method, params));
+            var name = service.name;
+            if (!service.url()) {
+                callback({
+                    message: chrome.i18n.getMessage('shortener_config_error',
+                            name),
+                    shortener: name,
+                    success: false
+                });
+                return;
             }
-            req.onreadystatechange = function () {
-                if (req.readyState === 4) {
-                    callback(service.output(req.responseText));
+            try {
+                var params = service.getParameters(url) || {};
+                var req = new XMLHttpRequest();
+                req.open(service.method, service.url() + '?' + $.param(params),
+                        true);
+                req.setRequestHeader('Content-Type', service.contentType);
+                if (service.oauth && service.isOAuthEnabled()) {
+                    req.setRequestHeader('Authorization',
+                            service.oauth.getAuthorizationHeader(service.url(),
+                            service.method, params));
                 }
-            };
-            req.send(service.input(url));
+                req.onreadystatechange = function () {
+                    if (req.readyState === 4) {
+                        callback({
+                            shortUrl: service.output(req.responseText),
+                            shortener: name,
+                            success: true
+                        });
+                    }
+                };
+                req.send(service.input(url));
+            } catch (e) {
+                callback({
+                    message: chrome.i18n.getMessage('shortener_error', name),
+                    shortener: name,
+                    success: false
+                });
+            }
         });
     },
 
@@ -467,14 +489,10 @@ var urlcopy = {
      * @requires jQuery
      */
     copy: function (str) {
-        var popup = chrome.extension.getViews({type: 'popup'})[0],
-            sandbox = $('#sandbox').val(str).select();
+        var sandbox = $('#sandbox').val(str).select();
         urlcopy.status = document.execCommand('copy', false, null);
         sandbox.val('');
         urlcopy.showNotification();
-        if (popup) {
-            popup.close();
-        }
     },
 
     /**
@@ -576,7 +594,12 @@ var urlcopy = {
                 return urlcopy.shorteners[i];
             }
         }
-        // Returns goo.gl service by default
+        /*
+         * Should never reach here but we'll return goo.gl service by default
+         * after ensuring it's enabled from now on to save some time next
+         * lookup.
+         */
+        utils.set('googl', true);
         return urlcopy.shorteners[1];
     },
 
@@ -909,7 +932,8 @@ var urlcopy = {
             case 'menu':
                 data = urlcopy.buildDerivedData(tab, request.data,
                         shortCallback);
-                feature = urlcopy.getFeatureWithMenuId(request.data.menuItemId);
+                feature = urlcopy.getFeatureWithMenuId(
+                        request.data.menuItemId);
                 break;
             case 'popup':
                 // Should be cheaper than searching urlcopy.features...
@@ -924,11 +948,19 @@ var urlcopy = {
             if (feature) {
                 var output = Mustache.to_html(feature.template, data);
                 if (shortCalled) {
-                    urlcopy.callUrlShortener(data.source, function (shortUrl) {
-                        if (shortUrl) {
+                    urlcopy.callUrlShortener(data.source, function (response) {
+                        if (response.success && response.shortUrl) {
                             var newData = {};
-                            newData[shortPlaceholder] = shortUrl;
+                            newData[shortPlaceholder] = response.shortUrl;
                             urlcopy.copy(Mustache.to_html(output, newData));
+                        } else {
+                            if (!response.message) {
+                                response.message = chrome.i18n.getMessage(
+                                        'shortener_error', response.shortener);
+                            }
+                            urlcopy.message = response.message;
+                            urlcopy.status = false;
+                            urlcopy.showNotification();
                         }
                     });
                 } else {
@@ -1037,12 +1069,16 @@ var urlcopy = {
      * @see urlcopy.reset
      */
     showNotification: function () {
+        var popup = chrome.extension.getViews({type: 'popup'})[0];
         if (utils.get('notifications')) {
             webkitNotifications.createHTMLNotification(
                 chrome.extension.getURL('pages/notification.html')
             ).show();
         } else {
             urlcopy.reset();
+        }
+        if (popup) {
+            popup.close();
         }
     },
 
@@ -1127,8 +1163,8 @@ var ietab = {
      * extension.</p>
      * <p>If no title prefix was detected the string provided is returned.</p>
      * @param {String} str The string from which to extract the embedded title.
-     * @returns {String} The title extracted from the string or the string if no
-     * prefix was detected.
+     * @returns {String} The title extracted from the string or the string if
+     * no prefix was detected.
      */
     extractTitle: function (str) {
         if (str) {

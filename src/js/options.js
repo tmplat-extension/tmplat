@@ -156,8 +156,8 @@ var options = {
     /**
      * <p>Replaces the value of the specified attribute of the selected
      * element(s) to the localized String looked up from Chrome.</p>
-     * @param {String} selector A String containing a jQuery selector expression
-     * to select the element(s) to be modified.
+     * @param {String} selector A String containing a jQuery selector
+     * expression to select the element(s) to be modified.
      * @param {String} attribute The name of the attribute to be modified.
      * @param {String} name The name of the localized message to be retrieved.
      * @param {String|String[]} [sub] The String(s) to substituted in the
@@ -177,8 +177,8 @@ var options = {
     /**
      * <p>Replaces the inner HTML of the selected element(s) with the localized
      * String looked up from Chrome.</p>
-     * @param {String} selector A String containing a jQuery selector expression
-     * to select the element(s) to be modified.
+     * @param {String} selector A String containing a jQuery selector
+     * expression to select the element(s) to be modified.
      * @param {String} name The name of the localized message to be retrieved.
      * @param {String|String[]} [sub] The String(s) to substituted in the
      * returned message (where applicable).
@@ -270,7 +270,8 @@ var options = {
         options.i18nReplace('#bitlyApiKey_help', 'help_bitlyApiKey');
         options.i18nReplace('#googlOAuth_help', 'help_googlOAuth');
         options.i18nReplace('#yourlsUrl_help', 'help_yourlsUrl');
-        options.i18nReplace('#yourlsCredentials_help', 'help_yourlsCredentials');
+        options.i18nReplace('#yourlsCredentials_help',
+                'help_yourlsCredentials');
         options.i18nReplace('#yourlsSignature_help', 'help_yourlsSignature');
         /*
          * Binds options:collapseAll and options:expandAll events to the
@@ -769,16 +770,16 @@ var options = {
      */
     saveUrlShorteners: function () {
         $('input[name="enabled_shortener"]').each(function () {
-            var radio = $(this);
-            utils.set(radio.attr('id'), radio.is(':checked'));
+            var $this = $(this);
+            utils.set($this.attr('id'), $this.is(':checked'));
         });
-        utils.set('bitlyApiKey', $('#bitlyApiKey').val());
-        utils.set('bitlyUsername', $('#bitlyUsername').val());
+        utils.set('bitlyApiKey', $('#bitlyApiKey').val().trim());
+        utils.set('bitlyUsername', $('#bitlyUsername').val().trim());
         utils.set('googlOAuth', $('#googlOAuth').is(':checked'));
         utils.set('yourlsPassword', $('#yourlsPassword').val());
-        utils.set('yourlsSignature', $('#yourlsSignature').val());
-        utils.set('yourlsUrl', $('#yourlsUrl').val());
-        utils.set('yourlsUsername', $('#yourlsUsername').val());
+        utils.set('yourlsSignature', $('#yourlsSignature').val().trim());
+        utils.set('yourlsUrl', $('#yourlsUrl').val().trim());
+        utils.set('yourlsUsername', $('#yourlsUsername').val().trim());
     },
 
     /**
@@ -798,6 +799,7 @@ var options = {
      * in use.
      * @returns {Boolean} <code>true</code> if validation errors were
      * encountered; otherwise <code>false</code>.
+     * @requires jQuery
      * @since 0.1.0.0
      * @private
      */
@@ -841,6 +843,7 @@ var options = {
      * <code>true</code> is returned.</p>
      * @returns {Boolean} <code>true</code> if validation errors were
      * encountered; otherwise <code>false</code>.
+     * @requires jQuery
      * @since 0.1.0.0
      * @private
      */

@@ -81,10 +81,10 @@ var utils = {
      */
     rename: function (oldKey, newKey, defaultValue) {
         if (utils.exists(oldKey)) {
-            utils.set(newKey, utils.get(oldKey));
+            utils.init(newKey, utils.get(oldKey));
             utils.remove(oldKey);
         } else {
-            utils.set(newKey, defaultValue);
+            utils.init(newKey, defaultValue);
         }
     },
 
