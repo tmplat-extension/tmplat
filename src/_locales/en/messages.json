@@ -37,6 +37,9 @@
    "copy_success": {
       "message": "URL has been added to the clipboard"
    },
+   "copy_template_fail": {
+      "message": "&quot;$1&quot; is using an invalid template"
+   },
    "copy_url": {
       "message": "URL"
    },
@@ -136,8 +139,11 @@
       }
    },
    "help_feature_name": {
-      "message": "$O_PARA$The name is used internally and is only displayed here.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be unique$C_ITEM$$O_ITEM$Cannot contains spaces or underscores$C_ITEM$$O_ITEM$Must only contain alphanumeric characters$C_ITEM$$C_LIST$$O_PARA$This $O_EMPH$cannot$C_EMPH$ be changed for default features.$C_PARA$",
+      "message": "$O_PARA$The name is used internally and is only displayed here.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be unique$C_ITEM$$O_ITEM$Cannot contains spaces or underscores$BREAK$(an underscore is prefixed to official feature names to prevent any possible conflicts with user creations)$C_ITEM$$O_ITEM$Must only contain alphanumeric characters$C_ITEM$$C_LIST$$O_PARA$This $O_EMPH$cannot$C_EMPH$ be changed for official features.$C_PARA$",
       "placeholders": {
+         "break": {
+            "content": "<br />"
+         },
          "c_emph": {
             "content": "</em>"
          },
@@ -191,7 +197,7 @@
       }
    },
    "help_feature_title": {
-      "message": "$O_PARA$The title is displayed in context menus and the drop-down.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Doesn't have to be unique$BREAK$(but it's recommended)$C_ITEM$$O_ITEM$Can contain multiple words$C_ITEM$$O_ITEM$Can contain any characters$C_ITEM$$C_LIST$$O_PARA$This $O_EMPH$cannot$C_EMPH$ be changed for default features.$C_PARA$",
+      "message": "$O_PARA$The title is displayed in context menus and the drop-down.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Doesn't have to be unique$BREAK$(but it's recommended)$C_ITEM$$O_ITEM$Can contain multiple words$C_ITEM$$O_ITEM$Can contain any characters$C_ITEM$$C_LIST$$O_PARA$This $O_EMPH$cannot$C_EMPH$ be changed for official features.$C_PARA$",
       "placeholders": {
          "break": {
             "content": "<br />"
@@ -395,6 +401,9 @@
    },
    "opt_feature_header": {
       "message": "Features"
+   },
+   "opt_feature_image_text": {
+      "message": "Image"
    },
    "opt_feature_name_invalid": {
       "message": "Name is missing or contains invalid characters"
