@@ -27,7 +27,7 @@ var urlcopy = {
         name: '_anchor',
         readOnly: true,
         shortcut: 'A',
-        template: '<a href="{{source}}"{#doAnchorTarget} target="_blank"{/doAnchorTarget}{#doAnchorTitle} title="{{title}}"{/doAnchorTitle}>{{title}}</a>',
+        template: '<a href="{{url}}"{#doAnchorTarget} target="_blank"{/doAnchorTarget}{#doAnchorTitle} title="{{title}}"{/doAnchorTitle}>{{title}}</a>',
         title: chrome.i18n.getMessage('copy_anchor')
     }, {
         enabled: false,
@@ -36,7 +36,7 @@ var urlcopy = {
         name: '_bbcode',
         readOnly: true,
         shortcut: 'B',
-        template: '[url={source}]{title}[/url]',
+        template: '[url={url}]{title}[/url]',
         title: chrome.i18n.getMessage('copy_bbcode')
     }, {
         enabled: true,
@@ -45,7 +45,7 @@ var urlcopy = {
         name: '_encoded',
         readOnly: true,
         shortcut: 'E',
-        template: '{encoded}',
+        template: '{#encode}{url}{/encode}',
         title: chrome.i18n.getMessage('copy_encoded')
     }, {
         enabled: true,
@@ -63,7 +63,7 @@ var urlcopy = {
         name: '_url',
         readOnly: true,
         shortcut: 'U',
-        template: '{source}',
+        template: '{url}',
         title: chrome.i18n.getMessage('copy_url')
     }],
 
@@ -373,27 +373,52 @@ var urlcopy = {
             bitlyUsername: utils.get('bitlyUsername'),
             doAnchorTarget: utils.get('doAnchorTarget'),
             doAnchorTitle: utils.get('doAnchorTitle'),
+            encode: function () {
+                return function (text, render) {
+                    return encodeURIComponent(render(text));
+                };
+            },
+            // Deprecated since 0.1.0.2, use encode instead
             encoded: encodeURIComponent(url.attr('source')),
             favicon: tab.favIconUrl,
-            fparam: url.fparam,
+            fparam: function () {
+                return function (text, render) {
+                    return url.fparam(render(text));
+                };
+            },
             fparams: url.fparam(),
-            fsegment: url.fsegment,
+            fsegment: function () {
+                return function (text, render) {
+                    return url.fsegment(parseInt(render(text), 10));
+                };
+            },
             fsegments: url.fsegment(),
             googl: utils.get('googl'),
             googlOAuth: utils.get('googlOAuth'),
             notificationDuration: utils.get('notificationDuration') / 1000,
             notifications: utils.get('notifications'),
+            // Deprecated since 0.1.0.2, use originalUrl instead
             originalSource: tab.url,
             originalTitle: tab.title || url.attr('source'),
-            param: url.param,
+            originalUrl: tab.url,
+            param: function () {
+                return function (text, render) {
+                    return url.param(render(text));
+                };
+            },
             params: url.param(),
-            segment: url.segment,
+            segment: function () {
+                return function (text, render) {
+                    return url.segment(parseInt(render(text), 10));
+                };
+            },
             segments: url.segment(),
             'short': function () {
                 return shortCallback();
             },
             shortcuts: utils.get('shortcuts'),
             title: title || url.attr('source'),
+            url: url.attr('source'),
             yourls: utils.get('yourls'),
             yourlsPassword: utils.get('yourlsPassword'),
             yourlsSignature: utils.get('yourlsSignature'),
@@ -946,6 +971,13 @@ var urlcopy = {
                 break;
             }
             if (feature) {
+                if (!feature.template) {
+                    urlcopy.message = chrome.i18n.getMessage(
+                            'copy_template_fail', feature.title);
+                    urlcopy.status = false;
+                    urlcopy.showNotification();
+                    return;
+                }
                 var output = Mustache.to_html(feature.template, data);
                 if (shortCalled) {
                     urlcopy.callUrlShortener(data.source, function (response) {

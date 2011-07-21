@@ -26,7 +26,7 @@
                         </ul>
                         <h3>Notes</h3>
                         <p>If you are having problems with understanding this documentation please <a href="https://chrome.google.com/webstore/detail/dcjnfaoifoefmnbhhlbppaebgnccfddf" target="_blank">leave a comment here</a> and I'll try to help you and take your comments on board, updating the documentation if required.</p>
-                        <p>For more examples try looking at the templates used by the default features.</p>
+                        <p>For more examples try looking at the templates used by the offical features.</p>
                     </li>
                     <li class="template-section">Simple Values</li>
                     <li class="template-content">
@@ -49,10 +49,6 @@
                                     <td>The directory part of the path (e.g. <code>/folder/dir/</code>)</td>
                                 </tr>
                                 <tr>
-                                    <td>encoded</td>
-                                    <td>The whole URL being parsed (encoded)</td>
-                                </tr>
-                                <tr>
                                     <td>favicon</td>
                                     <td>The whole URL of the page's favicon</td>
                                 </tr>
@@ -69,12 +65,12 @@
                                     <td>For example; <code>www.example.com</code>, <code>localhost</code></td>
                                 </tr>
                                 <tr>
-                                    <td>originalSource</td>
-                                    <td>The original whole URL being parsed (may be different than <span class="template-definition">source</span> if a supported extension was detected and the value of <span class="template-definition">source</span> was extracted from this)</td>
-                                </tr>
-                                <tr>
                                     <td>originalTitle</td>
                                     <td>The original title of the page (may be different than <span class="template-definition">title</span> if a supported extension was detected and the value of <span class="template-definition">title</span> was extracted from this)</td>
+                                </tr>
+                                <tr>
+                                    <td>originalUrl</td>
+                                    <td>The original whole URL being parsed (may be different than <span class="template-definition">url</span> if a supported extension was detected and the value of <span class="template-definition">url</span> was extracted from this)</td>
                                 </tr>
                                 <tr>
                                     <td>path</td>
@@ -90,7 +86,7 @@
                                 </tr>
                                 <tr>
                                     <td>query</td>
-                                    <td>The entire querystring if it exists (e.g. <code>item=value&amp;item2=value2</code>)</td>
+                                    <td>The entire query string if it exists (e.g. <code>item=value&amp;item2=value2</code>)</td>
                                 </tr>
                                 <tr>
                                     <td>relative</td>
@@ -101,12 +97,12 @@
                                     <td>The whole URL being parsed (shortened via the active URL shortener)</td>
                                 </tr>
                                 <tr>
-                                    <td>source</td>
-                                    <td>The whole URL being parsed</td>
+                                    <td>title</td>
+                                    <td>The title of the page or <span class="template-definition">url</span> if the title could not be detected (e.g. page had not finished loading)</td>
                                 </tr>
                                 <tr>
-                                    <td>title</td>
-                                    <td>The title of the page or <span class="template-definition">source</span> if the title could not be detected (e.g. page had not finished loading)</td>
+                                    <td>url</td>
+                                    <td>The whole URL being parsed</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -256,7 +252,7 @@
                         <h3>Examples</h3>
                         <p>These examples will be using the following URL;<pre>http://example.com/test/index.html</pre></p>
                         <p>To include the <code>title</code> attribute in an anchor tag only if the user wants it;
-<pre>&lt;a href=&quot;{{source}}&quot;{#doAnchorTitle} title=&quot;{{title}}&quot;{/doAnchorTitle}&gt;This is a test!&lt;/a&gt;</pre>
+<pre>&lt;a href=&quot;{{url}}&quot;{#doAnchorTitle} title=&quot;{{title}}&quot;{/doAnchorTitle}&gt;This is a test!&lt;/a&gt;</pre>
                         Would output the following if this option was enabled by the user;
 <pre>&lt;a href=&quot;http://example.com/test/index.html&quot; title=&quot;Test&quot;&gt;This is a test!&lt;/a&gt;</pre>
                         However, if the user disabled this option it would output as follows;
@@ -274,6 +270,11 @@
                                     <th>Description</th>
                                 </tr>
                             </thead>
+                                <tr>
+                                    <td>encode</td>
+                                    <td>String</td>
+                                    <td>Encodes the text provided so that it can be safely used in a query string</td>
+                                </tr>
                             <tbody>
                                 <tr>
                                     <td>fparam</td>
@@ -282,7 +283,7 @@
                                 </tr>
                                 <tr>
                                     <td>fsegment</td>
-                                    <td>Integer</td>
+                                    <td>Number</td>
                                     <td>Access the value of the segment provided from within the hash fragment</td>
                                 </tr>
                                 <tr>
@@ -292,7 +293,7 @@
                                 </tr>
                                 <tr>
                                     <td>segment</td>
-                                    <td>Integer</td>
+                                    <td>Number</td>
                                     <td>Access the value of the segment provided</td>
                                 </tr>
                             </tbody>
@@ -305,6 +306,10 @@
                         </ul>
                         <h3>Examples</h3>
                         <p>These examples will be using the following URL;<pre>http://example.com/test/index.html?foo=bar&amp;fu=baz</pre></p>
+                        <p>If you wanted to pass the whole URL as parameter;</p>
+<pre>{#encode}{url}{/encode}</pre>
+                        <p>Would escape all the characters of the URL and output the following;</p>
+<pre>http%3A%2F%2Fexample.com%2Ftest%2Findex.html%3Ffoo%3Dbar%26fu%3Dbaz</pre>
                         <p>To access the 2nd <span class="template-definition">segment</span>;
 <pre>&lt;p&gt;{#segment}2{/segment}&lt;/p&gt;</pre>
                         Would output the following;
