@@ -16,7 +16,6 @@ base_files = src/js/background.js\
 base_bin_files = $(subst src/,bin/,$(base_files))
 base_dirs = bin\
 	bin/_locales\
-	bin/css\
 	bin/images\
 	bin/js\
 	bin/pages
