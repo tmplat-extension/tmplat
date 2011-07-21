@@ -209,11 +209,10 @@ var options = {
         options.i18nReplace('#delete_btn', 'opt_delete_button');
         options.i18nReplace('#update_btn', 'opt_update_button');
         options.i18nReplace('#features_hdr', 'opt_feature_header');
+        options.i18nReplace('#feature_name_txt', 'opt_feature_name_text');
+        options.i18nReplace('#feature_title_txt', 'opt_feature_title_text');
+        options.i18nReplace('#feature_image_txt', 'opt_feature_image_text');
         options.i18nAttribute('a[rel=facebox]', 'title', 'opt_help_text');
-        options.i18nAttribute('#feature_name', 'placeholder',
-                'opt_feature_name_text');
-        options.i18nAttribute('#feature_title', 'placeholder',
-                'opt_feature_title_text');
         options.i18nAttribute('#feature_template', 'placeholder',
                 'opt_feature_template_text');
         options.i18nReplace('#template_help_lnk', 'opt_feature_template_help');
@@ -591,7 +590,8 @@ var options = {
                     image: $('#feature_image option:selected').val().trim(),
                     name: $('#feature_name').val().trim(),
                     readOnly: opt.data('readOnly') === 'true',
-                    shortcut: $('#feature_shortcut').val().trim(),
+                    shortcut: $('#feature_shortcut').val().trim()
+                            .toUpperCase(),
                     template: $('#feature_template').val(),
                     title: $('#feature_title').val().trim()
                 });
