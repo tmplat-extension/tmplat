@@ -15,6 +15,17 @@ var urlcopy = {
     blacklistedExtensions: [],
 
     /**
+     * <p>The details of the user's current browser.</p>
+     * @since 0.1.0.3
+     * @private
+     * @type Object
+     */
+    browser: {
+        title: 'Chrome',
+        version: ''
+    },
+
+    /**
      * <p>The default features to be used by this extension.</p>
      * @since 0.1.0.0
      * @private
@@ -83,6 +94,32 @@ var urlcopy = {
      * @type String
      */
     message: '',
+
+    /**
+     * <p>The name of the user's operating system.</p>
+     * @since 0.1.0.3
+     * @private
+     * @type String
+     */
+    operatingSystem: '',
+
+    /**
+     * <p>The details used to determine the operating system being used by the
+     * user.</p>
+     * @since 0.1.0.3
+     * @private
+     * @type Array
+     */
+    operatingSystems: [{
+        substring: 'Win',
+        title: 'Windows'
+    }, {
+        substring: 'Mac',
+        title: 'Mac'
+    }, {
+        substring: 'Linux',
+        title: 'Linux'
+    }],
 
     /**
      * <p>The HTML to populate the popup with.</p>
@@ -220,10 +257,18 @@ var urlcopy = {
     /**
      * <p>Contains the identifiers of each extension supported by this
      * extension.</p>
-     * @type Array
      * @since 0.1.0.0
+     * @type Array
      */
     support: [],
+
+    /**
+     * <p>The current version of this extension.</p>
+     * @since 0.1.0.3
+     * @private
+     * @type String
+     */
+    version: '',
 
     /**
      * <p>Adds the specified feature name to those stored in localStorage.</p>
@@ -371,6 +416,9 @@ var urlcopy = {
             bitly: utils.get('bitly'),
             bitlyApiKey: utils.get('bitlyApiKey'),
             bitlyUsername: utils.get('bitlyUsername'),
+            browser: urlcopy.browser.title,
+            browserVersion: urlcopy.browser.version,
+            cookies: window.navigator.cookieEnabled,
             doAnchorTarget: utils.get('doAnchorTarget'),
             doAnchorTitle: utils.get('doAnchorTitle'),
             encode: function () {
@@ -395,12 +443,15 @@ var urlcopy = {
             fsegments: url.fsegment(),
             googl: utils.get('googl'),
             googlOAuth: utils.get('googlOAuth'),
+            java: window.navigator.javaEnabled(),
             notificationDuration: utils.get('notificationDuration') / 1000,
             notifications: utils.get('notifications'),
+            offline: !window.navigator.onLine,
             // Deprecated since 0.1.0.2, use originalUrl instead
             originalSource: tab.url,
             originalTitle: tab.title || url.attr('source'),
             originalUrl: tab.url,
+            os: urlcopy.operatingSystem,
             param: function () {
                 return function (text, render) {
                     return url.param(render(text));
@@ -419,6 +470,7 @@ var urlcopy = {
             shortcuts: utils.get('shortcuts'),
             title: title || url.attr('source'),
             url: url.attr('source'),
+            version: urlcopy.version,
             yourls: utils.get('yourls'),
             yourlsPassword: utils.get('yourlsPassword'),
             yourlsSignature: utils.get('yourlsSignature'),
@@ -570,6 +622,22 @@ var urlcopy = {
     },
 
     /**
+     * <p>Attempts to return the current version of the user's browser.</p>
+     * @returns {String} The browser's version.
+     * @since 0.1.0.3
+     * @private
+     */
+    getBrowserVersion: function () {
+        var str = navigator.userAgent,
+            idx = str.indexOf(urlcopy.browser.title);
+        if (idx !== -1) {
+            str = str.substring(idx + urlcopy.browser.title.length + 1);
+            idx = str.indexOf(' ');
+            return (idx === -1) ? str : str.substring(0, idx);
+        }
+    },
+
+    /**
      * <p>Attempts to return the information for the any feature with the
      * specified menu identifier assigned to it.</p>
      * @param {Integer} menuId The menu identifier to be queried.
@@ -605,6 +673,25 @@ var urlcopy = {
             }
         }
         return feature;
+    },
+
+    /**
+     * <p>Attempts to return the operating system being used by the user.</p>
+     * @returns {String} The user's operating system.
+     * @since 0.1.0.3
+     * @private
+     */
+    getOperatingSystem: function () {
+        var os = {},
+            str = navigator.platform;
+        for (var i = 0; i < urlcopy.operatingSystems.length; i++) {
+            os = urlcopy.operatingSystems[i];
+            if (str.indexOf(os.substring) !== -1) {
+                str = os.title;
+                break;
+            }
+        }
+        return str;
     },
 
     /**
@@ -647,6 +734,13 @@ var urlcopy = {
         chrome.extension.onRequestExternal.addListener(
             urlcopy.onExternalRequest
         );
+        // Derives static browser and OS information
+        urlcopy.browser.version = urlcopy.getBrowserVersion();
+        urlcopy.operatingSystem = urlcopy.getOperatingSystem();
+        // Derives extension's version
+        $.getJSON(chrome.extension.getURL('manifest.json'), function (data) {
+            urlcopy.version = data.version;
+        });
         // Adds identifiers for supported extensions
         urlcopy.support.push(ietab.extensionId);
     },
@@ -950,8 +1044,8 @@ var urlcopy = {
                 return '{' + shortPlaceholder + '}';
             }
             if (popup) {
-                $('#loadDiv', popup.document).show();
                 $('#item', popup.document).hide();
+                $('#loadDiv', popup.document).show();
             }
             switch (request.type) {
             case 'menu':

@@ -207,7 +207,6 @@ var options = {
         options.i18nReplace('#errors_hdr', 'opt_errors_header');
         options.i18nReplace('#add_btn', 'opt_add_button');
         options.i18nReplace('#delete_btn', 'opt_delete_button');
-        options.i18nReplace('#update_btn', 'opt_update_button');
         options.i18nReplace('#features_hdr', 'opt_feature_header');
         options.i18nReplace('#feature_name_txt', 'opt_feature_name_text');
         options.i18nReplace('#feature_title_txt', 'opt_feature_title_text');
@@ -461,7 +460,8 @@ var options = {
      */
     loadFeatures: function () {
         var bg = chrome.extension.getBackgroundPage(),
-            features = $('#features');
+            features = $('#features'),
+            lastSelectedFeature = {};
         // Ensures clean slate
         features.find('option').remove();
         // Creates and inserts options representing features
@@ -475,14 +475,19 @@ var options = {
         features.change(function (event) {
             var $this = $(this),
                 opt = $this.find('option:selected');
+            if (lastSelectedFeature.length) {
+                options.updateFeature(lastSelectedFeature);
+            }
             // Disables all the controls as no option is selected
             if (opt.length === 0) {
+                lastSelectedFeature = {};
+                options.i18nReplace('#add_btn', 'opt_add_button');
                 $('#moveUp_btn, #moveDown_btn, .toggle-feature')
                         .attr('disabled', 'disabled');
-                $('#add_btn, #feature_name, #feature_title')
-                        .removeAttr('disabled');
-                $('#feature_name, #feature_title').removeAttr('readonly');
-                $('#feature_enabled').removeAttr('checked');
+                $('.read-only, .read-only-always').removeAttr('disabled');
+                $('.read-only, .read-only-always').removeAttr('readonly');
+                $('#delete_btn').attr('disabled', 'disabled');
+                $('#feature_enabled').attr('checked', 'checked');
                 $('#feature_image option').first().attr('selected',
                         'selected');
                 $('#feature_image').change();
@@ -491,7 +496,10 @@ var options = {
                 $('#feature_template').val('');
                 $('#feature_title').val('');
             } else {
-                $('#add_btn, #feature_name').attr('disabled', 'disabled');
+                lastSelectedFeature = opt;
+                options.i18nReplace('#add_btn', 'opt_add_new_button');
+                $('.read-only-always').attr('disabled', 'disabled');
+                $('.read-only-always').attr('readonly', 'readonly');
                 $('.toggle-feature').removeAttr('disabled');
                 // Disables 'up' control as option is at top of the list
                 if (opt.is(':first-child')) {
@@ -525,10 +533,10 @@ var options = {
                     $('#feature_enabled').removeAttr('checked');
                 }
                 if (opt.data('readOnly') === 'true') {
-                    $('#delete_btn, .read-only').attr('disabled', 'disabled');
+                    $('.read-only').attr('disabled', 'disabled');
                     $('.read-only').attr('readonly', 'readonly');
                 } else {
-                    $('#delete_btn, .read-only').removeAttr('disabled');
+                    $('.read-only').removeAttr('disabled');
                     $('.read-only').removeAttr('readonly');
                 }
             }
@@ -547,24 +555,32 @@ var options = {
         }).change();
         // Adds a new feature to options based on input values
         $('#add_btn').click(function (event) {
-            var name = $('#feature_name').val().trim(),
-                title = $('#feature_title').val().trim();
-            $('#errors').find('li').remove();
-            var opt = options.loadFeature({
-                enabled: true,
-                image: 'spacer.gif',
-                name: name,
-                readOnly: false,
-                shortcut: '',
-                template: '',
-                title: title
-            });
-            if (options.validateFeature(opt, true)) {
-                features.append(opt);
-                opt.attr('selected', 'selected');
-                features.change().focus();
+            var opt = features.find('option:selected');
+            if (opt.length) {
+                features.val([]);
+                features.change();
+                $('#feature_name').focus();
             } else {
-                $.facebox({div: '#message'});
+                var name = $('#feature_name').val().trim(),
+                    title = $('#feature_title').val().trim();
+                $('#errors').find('li').remove();
+                opt = options.loadFeature({
+                    enabled: String($('#feature_enabled').is(':checked')),
+                    image: $('#feature_image option:selected').val().trim(),
+                    name: name,
+                    readOnly: false,
+                    shortcut: $('#feature_shortcut').val().trim()
+                            .toUpperCase(),
+                    template: $('#feature_template').val(),
+                    title: title
+                });
+                if (options.validateFeature(opt, true)) {
+                    features.append(opt);
+                    opt.attr('selected', 'selected');
+                    features.change().focus();
+                } else {
+                    $.facebox({div: '#message'});
+                }
             }
         });
         // Removes selected unprotected feature
@@ -578,46 +594,24 @@ var options = {
             var opt = $('#features option:selected');
             if (opt.data('readOnly') !== 'true') {
                 opt.remove();
-                features.change();
+                features.change().focus();
             }
             $(document).trigger('close.facebox');
-        });
-        // Updates the data selected feature (doesn't save in localStorage)
-        $('#update_btn').click(function (event) {
-            var opt = $('#features option:selected'),
-                opt2 = options.loadFeature({
-                    enabled: $('#feature_enabled').is(':checked'),
-                    image: $('#feature_image option:selected').val().trim(),
-                    name: $('#feature_name').val().trim(),
-                    readOnly: opt.data('readOnly') === 'true',
-                    shortcut: $('#feature_shortcut').val().trim()
-                            .toUpperCase(),
-                    template: $('#feature_template').val(),
-                    title: $('#feature_title').val().trim()
-                });
-            $('#errors').find('li').remove();
-            if (options.validateFeature(opt2, false)) {
-                opt.replaceWith(opt2);
-                opt2.attr('selected', 'selected');
-                features.change().focus();
-            } else {
-                $.facebox({div: '#message'});
-            }
         });
         /*
          * Moves the selected option down one when the 'down' control is
          * clicked.
          */
         $('#moveDown_btn').click(function (event) {
-            var opt = $('#features option:selected');
+            var opt = features.find('option:selected');
             opt.insertAfter(opt.next());
-            features.change();
+            features.change().focus();
         });
         // Moves the selected option up one when the 'up' control is clicked
         $('#moveUp_btn').click(function (event) {
-            var opt = $('#features option:selected');
+            var opt = features.find('option:selected');
             opt.insertBefore(opt.prev());
-            features.change();
+            features.change().focus();
         });
         /*
          * Updates the 'enabled' data bound to the selected option when the
@@ -708,6 +702,7 @@ var options = {
      * @private
      */
     saveAndClose: function (event) {
+        options.updateFeature($('#features option:selected'));
         if (options.validateFeatures()) {
             options.save();
             chrome.tabs.getSelected(null, function (tab) {
@@ -780,6 +775,59 @@ var options = {
         utils.set('yourlsSignature', $('#yourlsSignature').val().trim());
         utils.set('yourlsUrl', $('#yourlsUrl').val().trim());
         utils.set('yourlsUsername', $('#yourlsUsername').val().trim());
+    },
+
+    /**
+     * <p>Toggles the visibility of the content of the section that triggered
+     * the event.</p>
+     * @param {Event} [event] The event triggered.
+     * @event
+     * @requires jQuery
+     * @private
+     */
+    toggleSection: function (event) {
+        $(this).toggleClass('toggle-collapse toggle-expand')
+                .next('.contents').slideToggle();
+    },
+
+    /**
+     * <p>Toggles the visibility of the content of the template section that
+     * triggered the event.</p>
+     * @param {Event} [event] The event triggered.
+     * @event
+     * @since 0.1.0.0
+     * @requires jQuery
+     * @private
+     */
+    toggleTemplateSection: function (event) {
+        var $this = $(this),
+            table = $this.parents('.template-table');
+        table.find('.template-section.selected').removeClass('selected');
+        table.find('.template-display').html($this.addClass('selected')
+                .next('.template-content').html()).scrollTop(0);
+    },
+
+    /**
+     * <p>Updates the specified &lt;option&gt; element that represents a
+     * feature with values taken from the available fields.</p>
+     * @param {jQuery} opt The jQuery wrapped &lt;option&gt; to be
+     * updated.
+     * @since 0.1.0.3
+     * @requires jQuery
+     * @private
+     */
+    updateFeature: function (opt) {
+        if (opt.length) {
+            opt.data('enabled', String($('#feature_enabled').is(':checked')));
+            opt.data('image',
+                    $('#feature_image option:selected').val().trim());
+            opt.data('shortcut',
+                    $('#feature_shortcut').val().trim().toUpperCase());
+            opt.data('template', $('#feature_template').val());
+            opt.text($('#feature_title').val().trim());
+            opt.val($('#feature_name').val().trim());
+            return opt;
+        }
     },
 
     /**
@@ -863,36 +911,6 @@ var options = {
             }
         });
         return errors.find('li').length === 0;
-    },
-
-    /**
-     * <p>Toggles the visibility of the content of the section that triggered
-     * the event.</p>
-     * @param {Event} [event] The event triggered.
-     * @event
-     * @requires jQuery
-     * @private
-     */
-    toggleSection: function (event) {
-        $(this).toggleClass('toggle-collapse toggle-expand')
-                .next('.contents').slideToggle();
-    },
-
-    /**
-     * <p>Toggles the visibility of the content of the template section that
-     * triggered the event.</p>
-     * @param {Event} [event] The event triggered.
-     * @event
-     * @since 0.1.0.0
-     * @requires jQuery
-     * @private
-     */
-    toggleTemplateSection: function (event) {
-        var $this = $(this),
-            table = $this.parents('.template-table');
-        table.find('.template-section.selected').removeClass('selected');
-        table.find('.template-display').html($this.addClass('selected')
-                .next('.template-content').html()).scrollTop(0);
     }
 
 };

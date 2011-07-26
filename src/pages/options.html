@@ -110,7 +110,7 @@
                     <div>
                         <table>
                             <tr>
-                                <td colspan="2" rowspan="2" style="width: 50%">
+                                <td colspan="2" rowspan="2" style="min-width: 354px">
                                     <select id="features" size="5" style="width: 100%"></select>
                                 </td>
                                 <td style="padding-top: 10px; width: 50%">
@@ -135,7 +135,7 @@
                                                     <div id="feature_name_help" class="help"></div>
                                                 </td>
                                                 <td>
-                                                    <input id="feature_name" class="read-only" type="text" maxlength="16" size="32" />
+                                                    <input id="feature_name" class="read-only-always" type="text" maxlength="16" size="32" />
                                                 </td>
                                             </tr>
                                         </table>
@@ -156,13 +156,13 @@
                                                     <div id="feature_title_help" class="help"></div>
                                                 </td>
                                                 <td>
-                                                    <input id="feature_title" class="toggle-feature read-only" type="text" maxlength="32" size="32" disabled />
+                                                    <input id="feature_title" class="read-only" type="text" maxlength="32" size="32" />
                                                 </td>
                                             </tr>
                                         </table>
                                     </td>
                                     <td>
-                                        <button id="delete_btn" class="toggle-feature" disabled></button>
+                                        <button id="delete_btn" class="read-only"></button>
                                         <div id="delete_con" class="help"></div>
                                     </td>
                                 </tr>
@@ -179,20 +179,18 @@
                                                 <div id="feature_image_help" class="help"></div>
                                             </td>
                                             <td>
-                                                <select id="feature_image" class="toggle-feature"></select>
+                                                <select id="feature_image"></select>
                                                 <img id="feature_image_preview" width="16" height="16" style="margin-bottom: -3px" />
                                             </td>
                                         </tr>
                                     </table>
                                 </td>
-                                <td>
-                                    <button id="update_btn" class="toggle-feature" disabled></button>
-                                </td>
+                                <td>&nbsp;</td>
                             </tr>
                             <tr>
                                 <td>
                                     <label>
-                                        <input id="feature_enabled" type="checkbox" class="toggle-feature" disabled />
+                                        <input id="feature_enabled" type="checkbox" checked />
                                         <span id="feature_enabled_txt"></span>
                                     </label>
                                     <a href="#feature_enabled_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
@@ -200,7 +198,7 @@
                                 </td>
                                 <td style="text-align: right">
                                     <label>
-                                        <span id="feature_shortcut_txt"></span><input id="feature_shortcut" type="text" class="toggle-feature" disabled maxlength="1" size="1" style="text-transform: uppercase" />
+                                        <span id="feature_shortcut_txt"></span><input id="feature_shortcut" type="text" maxlength="1" size="1" style="text-transform: uppercase" />
                                     </label>
                                     <a href="#feature_shortcut_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
                                     <div id="feature_shortcut_help" class="help"></div>
@@ -210,7 +208,7 @@
                             <tr>
                                 <td colspan="3">
                                     <label>
-                                        <textarea id="feature_template" class="toggle-feature read-only" rows="5" cols="50" disabled ></textarea>
+                                        <textarea id="feature_template" class="read-only" rows="5" cols="50" style="resize: vertical"></textarea>
                                     </label>
                                     <div>
                                         <a id="template_help_lnk" href="#template_help" rel="facebox"></a>
