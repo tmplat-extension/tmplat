@@ -1,3 +1,13 @@
+2011.07.27, Version 0.1.1.0
+
+* The "cookies" template simple tag has been renamed to "cookiesEnabled"
+* New "cookies" template complex tag allows iteration over cookie names
+* New "cookie" template function tag allows access to cookie values
+* New "selection" template simple tag allows access to the currently selected text on the page (only available when accessed via the context menu)
+* Updated the notification messages to be more generic
+* Added option to disable the context (right-click) menu (available in templates via the new "contextMenu" option tag)
+* Slightly rearranged the options page
+
 2011.07.26, Version 0.1.0.3
 
 * Renamed "Features" to "Templates" for simplicity

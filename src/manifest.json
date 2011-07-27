@@ -32,10 +32,11 @@
     "options_page": "pages/options.html",
     "permissions": [
         "contextMenus",
+        "cookies",
         "management",
         "notifications",
         "tabs",
         "<all_urls>"
     ],
-    "version": "0.1.0.3"
+    "version": "0.1.1.0"
 }

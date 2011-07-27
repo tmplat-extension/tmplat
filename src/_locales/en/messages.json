@@ -29,16 +29,16 @@
       "message": "Encoded"
    },
    "copy_fail": {
-      "message": "URL could not be added to the clipboard"
+      "message": "Template could not be added to the clipboard"
    },
    "copy_short": {
       "message": "Short"
    },
    "copy_success": {
-      "message": "URL has been added to the clipboard"
+      "message": "Template has been added to the clipboard"
    },
    "copy_template_fail": {
-      "message": "&quot;$1&quot; is using an invalid template"
+      "message": "&quot;$1&quot; is using invalid template code"
    },
    "copy_url": {
       "message": "URL"
@@ -381,6 +381,9 @@
    "opt_collapse_all_button": {
       "message": "Collapse All"
    },
+   "opt_context_menu_text": {
+      "message": "Enable the context menu"
+   },
    "opt_delete_button": {
       "message": "Delete"
    },
@@ -443,6 +446,9 @@
          }
       }
    },
+   "opt_general_header": {
+      "message": "General"
+   },
    "opt_help_text": {
       "message": "Read help documentation"
    },
@@ -498,9 +504,6 @@
    },
    "opt_save_button": {
       "message": "Save &amp; Close"
-   },
-   "opt_shortcut_header": {
-      "message": "Shortcuts"
    },
    "opt_shortcut_text": {
       "message": "Enable keyboard shortcuts"

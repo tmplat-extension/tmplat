@@ -238,6 +238,9 @@ var options = {
         options.i18nReplace('#yourls_or_txt', 'opt_or_text');
         options.i18nReplace('#yourlsSignature_txt',
                 'opt_url_shortener_signature_text');
+        options.i18nReplace('#general_hdr', 'opt_general_header');
+        options.i18nReplace('#contextMenu_txt', 'opt_context_menu_text');
+        options.i18nReplace('#shortcuts_txt', 'opt_shortcut_text');
         options.i18nReplace('#anchors_hdr', 'opt_anchor_header');
         options.i18nReplace('#doAnchorTarget_txt', 'opt_anchor_target_text');
         options.i18nReplace('#doAnchorTitle_txt', 'opt_anchor_title_text');
@@ -247,8 +250,6 @@ var options = {
                 'opt_notification_timer_text1');
         options.i18nReplace('#notificationDuration_txt2',
                 'opt_notification_timer_text2');
-        options.i18nReplace('#shortcuts_hdr', 'opt_shortcut_header');
-        options.i18nReplace('#shortcuts_txt', 'opt_shortcut_text');
         options.i18nReplace('.save-btn', 'opt_save_button');
         options.i18nReplace('.expand-all-btn', 'opt_expand_all_button');
         options.i18nReplace('.collapse-all-btn', 'opt_collapse_all_button');
@@ -373,6 +374,11 @@ var options = {
         options.loadFeatures();
         options.loadNotifications();
         options.loadUrlShorteners();
+        if (utils.get('contextMenu')) {
+            $('#contextMenu').attr('checked', 'checked');
+        } else {
+            $('#contextMenu').removeAttr('checked');
+        }
         if (utils.get('shortcuts')) {
             $('#shortcuts').attr('checked', 'checked');
         } else {
@@ -685,6 +691,7 @@ var options = {
      * @requires jQuery
      */
     save: function () {
+        utils.set('contextMenu', $('#contextMenu').is(':checked'));
         utils.set('shortcuts', $('#shortcuts').is(':checked'));
         utils.set('doAnchorTarget', $('#doAnchorTarget').is(':checked'));
         utils.set('doAnchorTitle', $('#doAnchorTitle').is(':checked'));

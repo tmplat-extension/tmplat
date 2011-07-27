@@ -271,6 +271,41 @@ var urlcopy = {
     version: '',
 
     /**
+     * <p>Adds extra data to the specified object.</p>
+     * @param {Object} data The data to receive the additional data.
+     * @param {Object} extraData The object containing the additional data.
+     * @param {Object} extraData.cookies The array of cookies to be extracted.
+     * @returns {Object} The updated data object.
+     * @since 0.1.1.0
+     * @private
+     */
+    addAdditionalData: function (data, extraData) {
+        // Extracts the names of every cookie
+        var cookies = [];
+        for (var i = 0; i < extraData.cookies.length; i++) {
+            cookies.push(extraData.cookies[i].name);
+        }
+        $.extend(data, {
+            cookie: function () {
+                return function (text, render) {
+                    var name = render(text),
+                        value = '';
+                    // Attempts to find the value for the cookie name
+                    for (var j = 0; j < extraData.cookies.length; j++) {
+                        if (extraData.cookies[j].name === name) {
+                            value = extraData.cookies[j].value;
+                            break;
+                        }
+                    }
+                    return value;
+                };
+            },
+            cookies: cookies
+        });
+        return data;
+    },
+
+    /**
      * <p>Adds the specified feature name to those stored in localStorage.</p>
      * <p>The feature name is only added if it doesn't already exist.</p>
      * @param {String} name The feature name to be stored.
@@ -287,6 +322,41 @@ var urlcopy = {
             return true;
         }
         return false;
+    },
+
+    /**
+     * <p>Creates an Object containing data based on information derived from
+     * the specified tab and menu item data.</p>
+     * @param {Tab} tab The tab whose information is to be extracted.
+     * @param {OnClickData} onClickData The details about the menu item clicked
+     * and the context where the click happened.
+     * @param {function} shortCallback The function to be called if/when a
+     * shortened URL is requested when parsing the template.
+     * @returns {Object} The data based on information extracted from the tab
+     * provided and its URL. This can contain Strings, Arrays, Objects, and
+     * functions.
+     * @see urlcopy.buildStandardData
+     * @since 0.1.0.0
+     * @requires jQuery
+     * @requires jQuery URL Parser Plugin
+     * @private
+     */
+    buildDerivedData: function (tab, onClickData, shortCallback) {
+        var data = {
+            selectionText: onClickData.selectionText,
+            title: tab.title,
+            url: ''
+        };
+        if (onClickData.frameUrl) {
+            data.url = onClickData.frameUrl;
+        } else if (onClickData.linkUrl) {
+            data.url = onClickData.linkUrl;
+        } else if (onClickData.srcUrl) {
+            data.url = onClickData.srcUrl;
+        } else {
+            data.url = onClickData.pageUrl;
+        }
+        return urlcopy.buildStandardData(data, shortCallback);
     },
 
     /**
@@ -351,40 +421,6 @@ var urlcopy = {
     },
 
     /**
-     * <p>Creates an Object containing data based on information derived from
-     * the specified tab and menu item data.</p>
-     * @param {Tab} tab The tab whose information is to be extracted.
-     * @param {OnClickData} onClickData The details about the menu item clicked
-     * and the context where the click happened.
-     * @param {function} shortCallback The function to be called if/when a
-     * shortened URL is requested when parsing the template.
-     * @returns {Object} The data based on information extracted from the tab
-     * provided and its URL. This can contain Strings, Arrays, Objects, and
-     * functions.
-     * @see urlcopy.buildStandardData
-     * @since 0.1.0.0
-     * @requires jQuery
-     * @requires jQuery URL Parser Plugin
-     * @private
-     */
-    buildDerivedData: function (tab, onClickData, shortCallback) {
-        var data = {
-            title: tab.title,
-            url: ''
-        };
-        if (onClickData.frameUrl) {
-            data.url = onClickData.frameUrl;
-        } else if (onClickData.linkUrl) {
-            data.url = onClickData.linkUrl;
-        } else if (onClickData.srcUrl) {
-            data.url = onClickData.srcUrl;
-        } else {
-            data.url = onClickData.pageUrl;
-        }
-        return urlcopy.buildStandardData(data, shortCallback);
-    },
-
-    /**
      * <p>Creates an Object containing data based on information extracted from
      * the specified tab.</p>
      * <p>This function merges this data with additional information relating
@@ -418,7 +454,8 @@ var urlcopy = {
             bitlyUsername: utils.get('bitlyUsername'),
             browser: urlcopy.browser.title,
             browserVersion: urlcopy.browser.version,
-            cookies: window.navigator.cookieEnabled,
+            contextMenu: utils.get('contextMenu'),
+            cookiesEnabled: window.navigator.cookieEnabled,
             doAnchorTarget: utils.get('doAnchorTarget'),
             doAnchorTitle: utils.get('doAnchorTitle'),
             encode: function () {
@@ -467,6 +504,7 @@ var urlcopy = {
             'short': function () {
                 return shortCallback();
             },
+            selection: tab.selectionText || '',
             shortcuts: utils.get('shortcuts'),
             title: title || url.attr('source'),
             url: url.attr('source'),
@@ -722,6 +760,7 @@ var urlcopy = {
      */
     init: function () {
         urlcopy.init_update();
+        utils.init('contextMenu', true);
         utils.init('notifications', true);
         utils.init('notificationDuration', 3000);
         utils.init('shortcuts', true);
@@ -1065,33 +1104,39 @@ var urlcopy = {
                 break;
             }
             if (feature) {
-                if (!feature.template) {
-                    urlcopy.message = chrome.i18n.getMessage(
-                            'copy_template_fail', feature.title);
-                    urlcopy.status = false;
-                    urlcopy.showNotification();
-                    return;
-                }
-                var output = Mustache.to_html(feature.template, data);
-                if (shortCalled) {
-                    urlcopy.callUrlShortener(data.source, function (response) {
-                        if (response.success && response.shortUrl) {
-                            var newData = {};
-                            newData[shortPlaceholder] = response.shortUrl;
-                            urlcopy.copy(Mustache.to_html(output, newData));
-                        } else {
-                            if (!response.message) {
-                                response.message = chrome.i18n.getMessage(
-                                        'shortener_error', response.shortener);
+                chrome.cookies.getAll({url: data.url}, function (cookies) {
+                    urlcopy.addAdditionalData(data, {cookies: cookies});
+                    if (!feature.template) {
+                        urlcopy.message = chrome.i18n.getMessage(
+                                'copy_template_fail', feature.title);
+                        urlcopy.status = false;
+                        urlcopy.showNotification();
+                        return;
+                    }
+                    var output = Mustache.to_html(feature.template, data);
+                    if (shortCalled) {
+                        urlcopy.callUrlShortener(data.source,
+                                function (response) {
+                            if (response.success && response.shortUrl) {
+                                var newData = {};
+                                newData[shortPlaceholder] = response.shortUrl;
+                                urlcopy.copy(Mustache.to_html(output,
+                                        newData));
+                            } else {
+                                if (!response.message) {
+                                    response.message = chrome.i18n.getMessage(
+                                            'shortener_error',
+                                            response.shortener);
+                                }
+                                urlcopy.message = response.message;
+                                urlcopy.status = false;
+                                urlcopy.showNotification();
                             }
-                            urlcopy.message = response.message;
-                            urlcopy.status = false;
-                            urlcopy.showNotification();
-                        }
-                    });
-                } else {
-                    urlcopy.copy(output);
-                }
+                        });
+                    } else {
+                        urlcopy.copy(output);
+                    }
+                });
             } else {
                 if (popup) {
                     popup.close();
@@ -1216,26 +1261,28 @@ var urlcopy = {
     updateContextMenu: function () {
         // Ensures any previously added context menu items are removed
         chrome.contextMenus.removeAll(function () {
-            var menuId,
-                parentId = chrome.contextMenus.create({
-                    contexts: ['all'],
-                    title: chrome.i18n.getMessage('name')
-                });
             function onMenuClick(info, tab) {
                 urlcopy.onRequestHelper({
                     data: info,
                     type: 'menu'
                 });
             }
-            for (var i = 0; i < urlcopy.features.length; i++) {
-                if (urlcopy.features[i].enabled) {
-                    menuId = chrome.contextMenus.create({
+            if (utils.get('contextMenu')) {
+                var menuId,
+                    parentId = chrome.contextMenus.create({
                         contexts: ['all'],
-                        onclick: onMenuClick,
-                        parentId: parentId,
-                        title: urlcopy.features[i].title
+                        title: chrome.i18n.getMessage('name')
                     });
-                    urlcopy.features[i].menuId = menuId;
+                for (var i = 0; i < urlcopy.features.length; i++) {
+                    if (urlcopy.features[i].enabled) {
+                        menuId = chrome.contextMenus.create({
+                            contexts: ['all'],
+                            onclick: onMenuClick,
+                            parentId: parentId,
+                            title: urlcopy.features[i].title
+                        });
+                        urlcopy.features[i].menuId = menuId;
+                    }
                 }
             }
         });

@@ -26,7 +26,7 @@
                         </ul>
                         <h3>Notes</h3>
                         <p>If you are having problems with understanding this documentation please <a href="https://chrome.google.com/webstore/detail/dcjnfaoifoefmnbhhlbppaebgnccfddf" target="_blank">leave a comment here</a> and I'll try to help you and take your comments on board, updating the documentation if required.</p>
-                        <p>For more examples try looking at the offical templates.</p>
+                        <p>For more examples try looking at the predefined templates.</p>
                     </li>
                     <li class="template-section">Simple Values</li>
                     <li class="template-content">
@@ -93,6 +93,10 @@
                                     <td>The relative path to the file including the query string (e.g. <code>/folder/dir/index.html?item=value</code>)</td>
                                 </tr>
                                 <tr>
+                                    <td>selection</td>
+                                    <td>The currently selected text (only available when accessed via the context menu)</td>
+                                </tr>
+                                <tr>
                                     <td>short</td>
                                     <td>The whole URL being parsed (shortened via the active URL shortener)</td>
                                 </tr>
@@ -120,6 +124,11 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <tr>
+                                    <td>cookies</td>
+                                    <td>Array</td>
+                                    <td>The names of all cookies associated with <span class="template-definition">url</span></td>
+                                </tr>
                                 <tr>
                                     <td>fparams</td>
                                     <td>Map</td>
@@ -173,6 +182,21 @@
                         However, if the query string was empty it would output;
 <pre>
   &lt;b&gt;No parameters!&lt;/b&gt;
+</pre>
+                        Using the following you can access the name and values of all available cookies;
+<pre>
+&lt;ul&gt;
+{#cookies}
+  &lt;li&gt;{.} = {#cookie}{.}{/cookie}&lt;/li&gt;
+{/cookies}
+&lt;/ul&gt;
+</pre>
+                        This will output in something like the following;
+<pre>
+&lt;ul&gt;
+  &lt;li&gt;JSESSIONID = 2pkffy9ivmpfwntf12y6o4cgu&lt;/li&gt;
+  &lt;li&gt;__utmc = 224978569&lt;/li&gt;
+&lt;/ul&gt;
 </pre></p>
                     </li>
                     <li class="template-section">Options</li>
@@ -208,7 +232,11 @@
                                     <td>The current version of the browser (e.g. <code>12.0.742.122</code>)</td>
                                 </tr>
                                 <tr>
-                                    <td>cookies</td>
+                                    <td>contextMenu</td>
+                                    <td>Whether or not the option to show the context-menu is enabled</td>
+                                </tr>
+                                <tr>
+                                    <td>cookiesEnabled</td>
                                     <td>Whether or not cookies are enabled</td>
                                 </tr>
                                 <tr>
@@ -298,12 +326,17 @@
                                     <th>Description</th>
                                 </tr>
                             </thead>
+                            <tbody>
+                                <tr>
+                                    <td>cookie</td>
+                                    <td>String</td>
+                                    <td>Access the value of the cookie provided</td>
+                                </tr>
                                 <tr>
                                     <td>encode</td>
                                     <td>String</td>
                                     <td>Encodes the text provided so that it can be safely used in a query string</td>
                                 </tr>
-                            <tbody>
                                 <tr>
                                     <td>fparam</td>
                                     <td>String</td>
