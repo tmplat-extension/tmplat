@@ -109,7 +109,7 @@ var options = {
                 $('<a/>', {
                     href: options.webstoreUrl + info.id,
                     target: '_blank',
-                    title: info.name + ' (' + info.version + ')'
+                    title: info.name + ' [' + info.version + ']'
                 }).append(
                     $('<img/>', {
                         height: 16,
@@ -312,9 +312,11 @@ var options = {
         // Displays supported extensions if they are detected
         for (var j = 0; j < bg.urlcopy.support.length; j++) {
             try {
-                chrome.management.get(bg.urlcopy.support[j],
+                chrome.management.get(bg.urlcopy.support[j].extensionId,
                         options.displayExtension);
-            } catch (e) {}
+            } catch (e) {
+                console.log(e.message || e);
+            }
         }
     },
 

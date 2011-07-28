@@ -201,7 +201,7 @@ var urlcopy = {
         name: 'goo.gl',
         oauth: ChromeExOAuth.initBackgroundPage({
             access_url: 'https://www.google.com/accounts/OAuthGetAccessToken',
-            app_name: 'URL-Copy',
+            app_name: 'URL-Copy', // TODO: chrome.i18n.getMessage('name')
             authorize_url: 'https://www.google.com/accounts/OAuthAuthorizeToken',
             consumer_key: 'anonymous',
             consumer_secret: 'anonymous',
@@ -255,12 +255,93 @@ var urlcopy = {
     status: false,
 
     /**
-     * <p>Contains the identifiers of each extension supported by this
-     * extension.</p>
+     * <p>Contains the extensions supported by this extension for compatibility
+     * purposes.</p>
      * @since 0.1.0.0
      * @type Array
      */
-    support: [],
+    support: [{
+        // IE Tab
+        extensionId: 'hehijbfgiekmjfkfjpbkbammjbdenadd',
+        title: function (title) {
+            var str = 'IE: ';
+            if (title) {
+                var idx = title.indexOf(str);
+                if (idx !== -1) {
+                    return title.substring(idx + str.length);
+                }
+            }
+            return title;
+        },
+        url: function (url) {
+            var str = 'iecontainer.html#url=';
+            if (url) {
+                var idx = url.indexOf(str);
+                if (idx !== -1) {
+                    return decodeURIComponent(url.substring(idx + str.length));
+                }
+            }
+            return url;
+        }
+    }, {
+        // IE Tab Classic
+        extensionId: 'miedgcmlgpmdagojnnbemlkgidepfjfi',
+        title: function (title) {
+            return title;
+        },
+        url: function (url) {
+            var str = 'ie.html#';
+            if (url) {
+                var idx = url.indexOf(str);
+                if (idx !== -1) {
+                    return url.substring(idx + str.length);
+                }
+            }
+            return url;
+        }
+    }, {
+        // IE Tab Multi (Enhance)
+        extensionId: 'fnfnbeppfinmnjnjhedifcfllpcfgeea',
+        title: function (title) {
+            return title;
+        },
+        url: function (url) {
+            var str = 'navigate.html?chromeurl=',
+                str2 = '[escape]';
+            if (url) {
+                var idx = url.indexOf(str);
+                if (idx !== -1) {
+                    url = url.substring(idx + str.length);
+                    if (url && url.indexOf(str2) === 0) {
+                        url = decodeURIComponent(url.substring(str2.length));
+                    }
+                    return url;
+                }
+            }
+            return url;
+        }
+    }, {
+        // Mozilla Gecko Tab
+        extensionId: 'icoloanbecehinobmflpeglknkplbfbm',
+        title: function (title) {
+            return title;
+        },
+        url: function (url) {
+            var str = 'navigate.html?chromeurl=',
+                str2 = '[escape]';
+            if (url) {
+                var idx = url.indexOf(str);
+                if (idx !== -1) {
+                    url = url.substring(idx + str.length);
+                    if (url && url.indexOf(str2) === 0) {
+                        url = decodeURIComponent(url.substring(str2.length));
+                    }
+                    return url;
+                }
+            }
+            return url;
+        }
+    }],
 
     /**
      * <p>The current version of this extension.</p>
@@ -440,11 +521,20 @@ var urlcopy = {
      * @private
      */
     buildStandardData: function (tab, shortCallback) {
-        var data = {}, title = '', url = {};
-        if (ietab.isActive(tab)) {
-            title = ietab.extractTitle(tab.title);
-            url = $.url(ietab.extractUrl(tab.url));
-        } else {
+        var compatibility = false,
+            data = {},
+            title = '',
+            url = {};
+        for (var i = 0; i < urlcopy.support.length; i++) {
+            if (urlcopy.isExtensionActive(tab,
+                urlcopy.support[i].extensionId)) {
+                title = urlcopy.support[i].title(tab.title);
+                url = $.url(urlcopy.support[i].url(tab.url));
+                compatibility = true;
+                break;
+            }
+        }
+        if (!compatibility) {
             title = tab.title;
             url = $.url(tab.url);
         }
@@ -563,6 +653,7 @@ var urlcopy = {
                 };
                 req.send(service.input(url));
             } catch (e) {
+                console.log(e.message || e);
                 callback({
                     message: chrome.i18n.getMessage('shortener_error', name),
                     shortener: name,
@@ -641,6 +732,7 @@ var urlcopy = {
                     file: 'js/shortcuts.js'
                 });
             } catch (e) {
+                console.log(e.message || e);
             }
         }
     },
@@ -780,8 +872,6 @@ var urlcopy = {
         $.getJSON(chrome.extension.getURL('manifest.json'), function (data) {
             urlcopy.version = data.version;
         });
-        // Adds identifiers for supported extensions
-        urlcopy.support.push(ietab.extensionId);
     },
 
     /**
@@ -922,6 +1012,22 @@ var urlcopy = {
             }
         }
         return false;
+    },
+
+    /**
+     * <p>Returns whether or not the extension with the specified identifier is
+     * active on the tab provided.</p>
+     * @param {Tab} tab The tab to be tested.
+     * @param {String} extensionId The identifier of the extension to be
+     * tested.
+     * @returns {Boolean} <code>true</code> if the extension is active on the
+     * tab provided; otherwise <code>false</code>.
+     * @since 0.1.1.1
+     * @private
+     */
+    isExtensionActive: function (tab, extensionId) {
+        return (urlcopy.isSpecialPage(tab) &&
+                tab.url.indexOf(extensionId) !== -1);
     },
 
     /**
@@ -1105,7 +1211,9 @@ var urlcopy = {
             }
             if (feature) {
                 chrome.cookies.getAll({url: data.url}, function (cookies) {
-                    urlcopy.addAdditionalData(data, {cookies: cookies});
+                    urlcopy.addAdditionalData(data, {
+                        cookies: cookies || []
+                    });
                     if (!feature.template) {
                         urlcopy.message = chrome.i18n.getMessage(
                                 'copy_template_fail', feature.title);
@@ -1298,87 +1406,6 @@ var urlcopy = {
         urlcopy.features = urlcopy.loadFeatures();
         urlcopy.buildPopup();
         urlcopy.updateContextMenu();
-    }
-
-};
-
-/**
- * <p>Provides an interface to by used by {@link urlcopy} for copy requests on
- * tabs where the IE Tab is currently active.</p>
- * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
- * @since 0.0.2.0
- * @namespace
- */
-var ietab = {
-
-    /**
-     * <p>The segment of the URI which precedes the embedded URL.</p>
-     * @private
-     * @type String
-     */
-    containerSegment: 'iecontainer.html#url=',
-
-    /**
-     * <p>The identifier of the IE Tab extension.</p>
-     * @type String
-     */
-    extensionId: 'hehijbfgiekmjfkfjpbkbammjbdenadd',
-
-    /**
-     * <p>The String prepended to the title by IE Tab.</p>
-     * @private
-     * @type String
-     */
-    titlePrefix: 'IE: ',
-
-    /**
-     * <p>Attempts to extract the title embedded within that used by the IE Tab
-     * extension.</p>
-     * <p>If no title prefix was detected the string provided is returned.</p>
-     * @param {String} str The string from which to extract the embedded title.
-     * @returns {String} The title extracted from the string or the string if
-     * no prefix was detected.
-     */
-    extractTitle: function (str) {
-        if (str) {
-            var idx = str.indexOf(ietab.titlePrefix);
-            if (idx !== -1) {
-                return str.substring(idx + ietab.titlePrefix.length);
-            }
-        }
-        return str;
-    },
-
-    /**
-     * <p>Attempts to extract the URL embedded within that used by the IE Tab
-     * extension.</p>
-     * <p>The embedded URL is returned as-is and is not decoded prior to being
-     * returned. If no embedded URL was found the string provided is returned.
-     * </p>
-     * @param {String} str The string from which to extract the embedded URL.
-     * @returns {String} The URL extracted from the string or the string if no
-     * embedded URL was found.
-     */
-    extractUrl: function (str) {
-        if (str) {
-            var idx = str.indexOf(ietab.containerSegment);
-            if (idx !== -1) {
-                return str.substring(idx + ietab.containerSegment.length);
-            }
-        }
-        return str;
-    },
-
-    /**
-     * <p>Determines whether or not the IE Tab extension is currently active on
-     * the tab provided.</p>
-     * @param {Tab} tab The tab to be tested.
-     * @returns {Boolean} <code>true</code> if the IE Tab extension is active;
-     * otherwise <code>false</code>.
-     */
-    isActive: function (tab) {
-        return (urlcopy.isSpecialPage(tab) &&
-                tab.url.indexOf(ietab.extensionId) !== -1);
     }
 
 };
