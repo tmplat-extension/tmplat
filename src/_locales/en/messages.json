@@ -3,7 +3,7 @@
       "message": "$O_PARA$This action is $O_BOLD$permanent$C_BOLD$ and cannot be reversed.$C_PARA$$O_PARA$Do you want to continue anyway?$C_PARA$$BUTTONS$",
       "placeholders": {
          "buttons": {
-            "content": "<div style=\"text-align: right\"><button id=\"delete_yes_btn\">Yes</button><button id=\"delete_no_btn\">No</button></div>"
+            "content": "<div style=\"text-align: right\"><button class=\"delete_yes_btn\">Yes</button><button class=\"delete_no_btn\">No</button></div>"
          },
          "c_bold": {
             "content": "</strong>"
@@ -18,6 +18,46 @@
             "content": "<p>"
          }
       }
+   },
+   "confirm_export_stage1": {
+      "message": "$O_PARA$Select the template(s) you want to export;$C_PARA$$LIST$$BUTTONS$",
+      "placeholders": {
+         "buttons": {
+            "content": "<table><tr><td style=\"width: 50%\"><button class=\"export_select_all_btn\">All</button><button class=\"export_deselect_all_btn\">None</button></td><td style=\"text-align: right\"><button class=\"export_yes_btn\" disabled=\"disabled\">Continue</button><button class=\"export_no_btn\">Cancel</button></td></tr></table>"
+         },
+         "c_para": {
+            "content": "</p>"
+         },
+         "list": {
+            "content": "<ul class=\"export_con_list\"></ul>"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
+   "confirm_export_stage2": {
+      "message": "$O_PARA$Copy or save the following locally;$C_PARA$$TEXTAREA$$BUTTONS$",
+      "placeholders": {
+         "buttons": {
+            "content": "<table><tr><td style=\"width: 50%\"><button class=\"export_save_btn\">Save As...</button></td><td style=\"text-align: right\"><button class=\"export_close_btn\">Close</button></td></tr></table>"
+         },
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_para": {
+            "content": "<p>"
+         },
+         "textarea": {
+            "content": "<textarea class=\"export_content\" cols=\"38\" rows=\"6\"></textarea>"
+         }
+      }
+   },
+   "copied": {
+      "message": "Copied"
+   },
+   "copy": {
+      "message": "Copy"
    },
    "copy_anchor": {
       "message": "Anchor"
@@ -396,11 +436,8 @@
    "opt_expand_all_button": {
       "message": "Expand All"
    },
-   "opt_extensions_header": {
-      "message": "Supported Extensions"
-   },
-   "opt_extensions_status_text": {
-      "message": "None detected."
+   "opt_export_button": {
+      "message": "Export"
    },
    "opt_feature_enabled_text": {
       "message": "Enabled"
@@ -451,6 +488,9 @@
    },
    "opt_help_text": {
       "message": "Read help documentation"
+   },
+   "opt_import_button": {
+      "message": "Import"
    },
    "opt_notification_header": {
       "message": "Notifications"
@@ -510,6 +550,12 @@
    },
    "opt_title": {
       "message": "URL Copy Options"
+   },
+   "paste": {
+      "message": "Paste"
+   },
+   "pasted": {
+      "message": "Pasted"
    },
    "shortener_config_error": {
       "message": "Configuration problem found with $1"

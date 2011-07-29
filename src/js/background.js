@@ -10,7 +10,7 @@ var urlcopy = {
      * <p>A list of blacklisted extension IDs who should be prevented from
      * making requests to the extension.</p>
      * @private
-     * @type Array
+     * @type String[]
      */
     blacklistedExtensions: [],
 
@@ -29,11 +29,11 @@ var urlcopy = {
      * <p>The default features to be used by this extension.</p>
      * @since 0.1.0.0
      * @private
-     * @type Array
+     * @type Object[]
      */
     defaultFeatures: [{
         enabled: true,
-        image: 'feat_html.png',
+        image: 4,
         index: 2,
         name: '_anchor',
         readOnly: true,
@@ -42,7 +42,7 @@ var urlcopy = {
         title: chrome.i18n.getMessage('copy_anchor')
     }, {
         enabled: false,
-        image: 'feat_discussion.png',
+        image: 2,
         index: 4,
         name: '_bbcode',
         readOnly: true,
@@ -51,7 +51,7 @@ var urlcopy = {
         title: chrome.i18n.getMessage('copy_bbcode')
     }, {
         enabled: true,
-        image: 'feat_component.png',
+        image: 1,
         index: 3,
         name: '_encoded',
         readOnly: true,
@@ -60,7 +60,7 @@ var urlcopy = {
         title: chrome.i18n.getMessage('copy_encoded')
     }, {
         enabled: true,
-        image: 'feat_link.png',
+        image: 5,
         index: 1,
         name: '_short',
         readOnly: true,
@@ -69,7 +69,7 @@ var urlcopy = {
         title: chrome.i18n.getMessage('copy_short')
     }, {
         enabled: true,
-        image: 'feat_globe.png',
+        image: 3,
         index: 0,
         name: '_url',
         readOnly: true,
@@ -82,9 +82,42 @@ var urlcopy = {
      * <p>The list of copy request features supported by the extension.</p>
      * <p>This list ordered to match that specified by the user.</p>
      * @see urlcopy.updateFeatures
-     * @type Array
+     * @type Object[]
      */
     features: [],
+
+    /**
+     * <p>The details of the images available as feature icons.</p>
+     * @since 0.2.0.0
+     * @private
+     * @type Object[]
+     */
+    images: [{
+        file: 'spacer.gif',
+        id: 0,
+        name: chrome.i18n.getMessage('feat_none'),
+        separate: true
+    }, {
+        file: 'feat_component.png',
+        id: 1,
+        name: chrome.i18n.getMessage('feat_component')
+    }, {
+        file: 'feat_discussion.png',
+        id: 2,
+        name: chrome.i18n.getMessage('feat_discussion')
+    }, {
+        file: 'feat_globe.png',
+        id: 3,
+        name: chrome.i18n.getMessage('feat_globe')
+    }, {
+        file: 'feat_html.png',
+        id: 4,
+        name: chrome.i18n.getMessage('feat_html')
+    }, {
+        file: 'feat_link.png',
+        id: 5,
+        name: chrome.i18n.getMessage('feat_link')
+    }],
 
     /**
      * <p>Provides potential of displaying a message to the user other than the
@@ -108,7 +141,7 @@ var urlcopy = {
      * user.</p>
      * @since 0.1.0.3
      * @private
-     * @type Array
+     * @type Object[]
      */
     operatingSystems: [{
         substring: 'Win',
@@ -150,7 +183,7 @@ var urlcopy = {
      * <p>The URL shortener services supported by this extension.</p>
      * @since 0.1.0.0
      * @private
-     * @type Array
+     * @type Object[]
      */
     shorteners: [{
         contentType: 'application/x-www-form-urlencoded',
@@ -258,7 +291,7 @@ var urlcopy = {
      * <p>Contains the extensions supported by this extension for compatibility
      * purposes.</p>
      * @since 0.1.0.0
-     * @type Array
+     * @type Object[]
      */
     support: [{
         // IE Tab
@@ -355,7 +388,8 @@ var urlcopy = {
      * <p>Adds extra data to the specified object.</p>
      * @param {Object} data The data to receive the additional data.
      * @param {Object} extraData The object containing the additional data.
-     * @param {Object} extraData.cookies The array of cookies to be extracted.
+     * @param {Object[]} extraData.cookies The array of cookies to be
+     * extracted.
      * @returns {Object} The updated data object.
      * @since 0.1.1.0
      * @private
@@ -451,8 +485,15 @@ var urlcopy = {
      * @private
      */
     buildFeature: function (feature) {
-        var image = '../images/' + (feature.image || 'spacer.png'),
-            item = $('<li/>', {
+        var image = '';
+        for (var j = 0; j < urlcopy.images.length; j++) {
+            if (urlcopy.images[j].id === feature.image) {
+                image = '../images/' + urlcopy.images[j].file;
+                break;
+            }
+        }
+        image = image || '../images/spacer.png';
+        var item = $('<li/>', {
                 name: feature.name,
                 onclick: 'popup.sendRequest(this);'
             }),
@@ -691,14 +732,21 @@ var urlcopy = {
      * extension. All supported copy requests should, at some point, call this
      * function.</p>
      * @param {String} str The string to be added to the clipboard.
+     * @param {Boolean} [hidden] <code>true</code> to avoid updating
+     * {@link urlcopy.status} and showing a notification; otherwise
+     * <code>false</code>.
      * @requires document.execCommand
      * @requires jQuery
      */
-    copy: function (str) {
-        var sandbox = $('#sandbox').val(str).select();
-        urlcopy.status = document.execCommand('copy', false, null);
+    copy: function (str, hidden) {
+        var result = false,
+            sandbox = $('#sandbox').val(str).select();
+        result = document.execCommand('copy', false, null);
         sandbox.val('');
-        urlcopy.showNotification();
+        if (!hidden) {
+            urlcopy.status = result;
+            urlcopy.showNotification();
+        }
     },
 
     /**
@@ -722,7 +770,7 @@ var urlcopy = {
     /**
      * <p>Injects and executes the <code>shortcuts.js</code> script within each
      * of the tabs provided (where valid).</p>
-     * @param {Array} tabs The tabs to execute the script in.
+     * @param {Object[]} tabs The tabs to execute the script in.
      * @private
      */
     executeScriptsInExistingTabs: function (tabs) {
@@ -851,6 +899,11 @@ var urlcopy = {
      * listeners and adding the request listeners.</p>
      */
     init: function () {
+        utils.init('update_progress', {
+            features: false,
+            settings: false,
+            shorteners: false
+        });
         urlcopy.init_update();
         utils.init('contextMenu', true);
         utils.init('notifications', true);
@@ -881,6 +934,12 @@ var urlcopy = {
      * @private
      */
     init_update: function () {
+        // Checks if settings need updated
+        var progress = utils.get('update_progress');
+        if (progress.settings) {
+            return;
+        }
+        // Updates settings accordingly
         utils.rename('settingNotification', 'notifications', true);
         utils.rename('settingNotificationTimer', 'notificationDuration', 3000);
         utils.rename('settingShortcut', 'shortcuts', true);
@@ -888,6 +947,9 @@ var urlcopy = {
         utils.rename('settingTitleAttr', 'doAnchorTitle', false);
         utils.remove('settingIeTabExtract');
         utils.remove('settingIeTabTitle');
+        // Ensures settings are not updated again
+        progress.settings = true;
+        utils.set('update_progress', progress);
     },
 
     /**
@@ -899,8 +961,7 @@ var urlcopy = {
      * <p>Names of initialized features are also added to that stored in
      * localStorage if they do not already exist there.</p>
      * @param {Object} feature The feature whose values are to be initialized.
-     * @param {String} feature.image The file name of the feature's image
-     * (overwrites).
+     * @param {Integer} feature.image The identifier of the feature's image.
      * @param {Integer} feature.index The index representing the feature's
      * display order.
      * @param {Boolean} feature.enabled <code>true</code> if the feature is
@@ -937,8 +998,8 @@ var urlcopy = {
      * @private
      */
     initFeatures: function () {
-        urlcopy.initFeatures_update();
         utils.init('features', []);
+        urlcopy.initFeatures_update();
         for (var i = 0; i < urlcopy.defaultFeatures.length; i++) {
             urlcopy.initFeature(urlcopy.defaultFeatures[i]);
         }
@@ -952,6 +1013,12 @@ var urlcopy = {
      * @private
      */
     initFeatures_update: function () {
+        // Checks if features need updated
+        var progress = utils.get('update_progress');
+        if (progress.features) {
+            return;
+        }
+        // Updates features accordingly
         utils.rename('copyAnchorEnabled', 'feat__anchor_enabled', true);
         utils.rename('copyAnchorOrder', 'feat__anchor_index', 2);
         utils.rename('copyBBCodeEnabled', 'feat__bbcode_enabled', false);
@@ -962,6 +1029,26 @@ var urlcopy = {
         utils.rename('copyShortOrder', 'feat__short_index', 1);
         utils.rename('copyUrlEnabled', 'feat__url_enabled', true);
         utils.rename('copyUrlOrder', 'feat__url_index', 0);
+        // Updates images accordingly (0.2.0.0 update)
+        var image,
+            names = utils.get('features');
+        for (var i = 0; i < names.length; i++) {
+            image = utils.get('feat_' + names[i] + '_image');
+            if (typeof image === 'string') {
+                for (var j = 0; j < urlcopy.images.length; j++) {
+                    if (urlcopy.images[j].file === image) {
+                        utils.set('feat_' + names[i] + '_image',
+                                urlcopy.images[j].id);
+                        break;
+                    }
+                }
+            } else if (typeof image === 'undefined') {
+                utils.set('feat_' + names[i] + '_image', 0);
+            }
+        }
+        // Ensures features are not updated again
+        progress.features = true;
+        utils.set('update_progress', progress);
     },
 
     /**
@@ -990,11 +1077,20 @@ var urlcopy = {
      * @private
      */
     initUrlShorteners_update: function () {
+        // Checks if URL shorteners need updated
+        var progress = utils.get('update_progress');
+        if (progress.shorteners) {
+            return;
+        }
+        // Updates URL shorteners accordingly
         utils.rename('bitlyEnabled', 'bitly', false);
         utils.rename('bitlyXApiKey', 'bitlyApiKey', '');
         utils.rename('bitlyXLogin', 'bitlyUsername', '');
         utils.rename('googleEnabled', 'googl', true);
         utils.rename('googleOAuthEnabled', 'googlOAuth', true);
+        // Ensures URL shorteners are not updated again
+        progress.shorteners = true;
+        utils.set('update_progress', progress);
     },
 
     /**
@@ -1077,7 +1173,7 @@ var urlcopy = {
      * <p>Loads the values of each stored feature from their respective
      * locations.</p>
      * <p>The array returned is sorted based on the index of each feature.</p>
-     * @returns {Array} The array of the features loaded.
+     * @returns {Object[]} The array of the features loaded.
      * @since 0.1.0.0
      */
     loadFeatures: function () {
@@ -1284,7 +1380,7 @@ var urlcopy = {
      * <p>Stores the values of the specified feature in to their respective
      * locations.</p>
      * @param {Object} feature The feature whose values are to be saved.
-     * @param {String} feature.image The file name of the feature's image.
+     * @param {Integer} feature.image The identifier of the feature's image.
      * @param {Integer} feature.index The index representing the feature's
      * display order.
      * @param {Boolean} feature.enabled <code>true</code> if the feature is
@@ -1318,8 +1414,8 @@ var urlcopy = {
      * respective locations.</p>
      * <p>Any features no longer in use are removed from localStorage in an
      * attempt to keep capacity under control.</p>
-     * @param {Array} features The features whose values are to be saved.
-     * @returns {Array} The array of features provided.
+     * @param {Object[]} features The features whose values are to be saved.
+     * @returns {Object[]} The array of features provided.
      * @since 0.1.0.0
      */
     saveFeatures: function (features) {

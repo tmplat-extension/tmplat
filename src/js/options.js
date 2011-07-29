@@ -16,33 +16,6 @@ var options = {
     defaultLocale: 'en',
 
     /**
-     * <p>The name of image files available to be used as feature icons.</p>
-     * @since 0.1.0.0
-     * @private
-     * @type Array
-     */
-    images: [{
-        file: 'spacer.gif',
-        name: chrome.i18n.getMessage('feat_none'),
-        separate: true
-    }, {
-        file: 'feat_component.png',
-        name: chrome.i18n.getMessage('feat_component')
-    }, {
-        file: 'feat_discussion.png',
-        name: chrome.i18n.getMessage('feat_discussion')
-    }, {
-        file: 'feat_globe.png',
-        name: chrome.i18n.getMessage('feat_globe')
-    }, {
-        file: 'feat_html.png',
-        name: chrome.i18n.getMessage('feat_html')
-    }, {
-        file: 'feat_link.png',
-        name: chrome.i18n.getMessage('feat_link')
-    }],
-
-    /**
      * <p>The locales supported by this extension.</p>
      * @since 0.1.0.0
      * @private
@@ -89,37 +62,34 @@ var options = {
     },
 
     /**
-     * <p>Displays the details of the extension based on the information
-     * provided.</p>
-     * <p>This method is called for each supported extension detected.</p>
-     * @param {ExtensionInfo} info The information on the installed extension.
-     * @since 0.1.0.0
+     * <p>Creates a JSON string to export the features with the specified
+     * names.</p>
+     * @param {String[]} names The names of the features to export.
+     * @returns {String} The JSON string generated containing the exported
+     * values.
+     * @since 0.2.0.0
      * @private
      */
-    displayExtension: function (info) {
-        if (!info) {
-            return;
+    createExport: function (names) {
+        var bg = chrome.extension.getBackgroundPage(),
+            data = {
+                templates: [],
+                version: bg.urlcopy.version
+            },
+            opt = {};
+        for (var i = 0; i < names.length; i++) {
+            opt = $('#features option[value="' + names[i] + '"]');
+            data.templates.push({
+                enabled: opt.data('enabled') === 'true',
+                image: parseInt(opt.data('image')),
+                index: i,
+                name: opt.val(),
+                shortcut: opt.data('shortcut'),
+                template: opt.data('template'),
+                title: opt.text()
+            });
         }
-        var iconUrl = options.getSmallestIcon(info.icons).url;
-        if (!info.enabled) {
-            iconUrl += '?grayscale=true';
-        }
-        $('#extensions').append(
-            $('<li/>').append(
-                $('<a/>', {
-                    href: options.webstoreUrl + info.id,
-                    target: '_blank',
-                    title: info.name + ' [' + info.version + ']'
-                }).append(
-                    $('<img/>', {
-                        height: 16,
-                        src: iconUrl,
-                        width: 16
-                    })
-                )
-            )
-        ).show();
-        $('#extensions_status_txt').hide();
+        return JSON.stringify(data);
     },
 
     /**
@@ -207,6 +177,10 @@ var options = {
         options.i18nReplace('#errors_hdr', 'opt_errors_header');
         options.i18nReplace('#add_btn', 'opt_add_button');
         options.i18nReplace('#delete_btn', 'opt_delete_button');
+        options.i18nReplace('#import_btn', 'opt_import_button');
+        options.i18nReplace('#export_btn', 'opt_export_button');
+        options.i18nReplace('.export_con_stage1', 'confirm_export_stage1');
+        options.i18nReplace('.export_con_stage2', 'confirm_export_stage2');
         options.i18nReplace('#features_hdr', 'opt_feature_header');
         options.i18nReplace('#feature_name_txt', 'opt_feature_name_text');
         options.i18nReplace('#feature_title_txt', 'opt_feature_title_text');
@@ -253,9 +227,6 @@ var options = {
         options.i18nReplace('.save-btn', 'opt_save_button');
         options.i18nReplace('.expand-all-btn', 'opt_expand_all_button');
         options.i18nReplace('.collapse-all-btn', 'opt_collapse_all_button');
-        options.i18nReplace('#extensions_hdr', 'opt_extensions_header');
-        options.i18nReplace('#extensions_status_txt',
-                'opt_extensions_status_text');
         options.i18nReplace('#footer', 'opt_footer',
                 String(new Date().getFullYear()));
         // Inserts localized help/confirmation sections
@@ -309,15 +280,6 @@ var options = {
         $('#feature_shortcut_txt').html(keyMods);
         // Initialize facebox
         $('a[rel*=facebox]').facebox();
-        // Displays supported extensions if they are detected
-        for (var j = 0; j < bg.urlcopy.support.length; j++) {
-            try {
-                chrome.management.get(bg.urlcopy.support[j].extensionId,
-                        options.displayExtension);
-            } catch (e) {
-                console.log(e.message || e);
-            }
-        }
     },
 
     /**
@@ -408,16 +370,15 @@ var options = {
      * @private
      */
     loadImages: function () {
-        var imagePreview = $('#feature_image_preview'),
+        var bg = chrome.extension.getBackgroundPage(),
+            imagePreview = $('#feature_image_preview'),
             images = $('#feature_image');
-        for (var i = 0; i < options.images.length; i++) {
-            images.append(
-                $('<option/>', {
-                    text: options.images[i].name,
-                    value: options.images[i].file
-                })
-            );
-            if (options.images[i].separate) {
+        for (var i = 0; i < bg.urlcopy.images.length; i++) {
+            opt = $('<option/>', {
+                text: bg.urlcopy.images[i].name,
+                value: bg.urlcopy.images[i].id
+            }).appendTo(images).data('file', bg.urlcopy.images[i].file);
+            if (bg.urlcopy.images[i].separate) {
                 images.append(
                     $('<option/>', {
                         disabled: 'disabled',
@@ -429,7 +390,7 @@ var options = {
         images.change(function () {
             var opt = images.find('option:selected');
             imagePreview.attr({
-                src: '../images/' + opt.val(),
+                src: '../images/' + opt.data('file'),
                 title: opt.text()
             });
         }).change();
@@ -453,7 +414,7 @@ var options = {
             value: feature.name
         });
         opt.data('enabled', String(feature.enabled));
-        opt.data('image', feature.image);
+        opt.data('image', String(feature.image));
         opt.data('readOnly', String(feature.readOnly));
         opt.data('shortcut', feature.shortcut);
         opt.data('template', feature.template);
@@ -467,6 +428,7 @@ var options = {
      * @private
      */
     loadFeatures: function () {
+        // TODO: Tidy function by splitting it up
         var bg = chrome.extension.getBackgroundPage(),
             features = $('#features'),
             lastSelectedFeature = {};
@@ -574,7 +536,7 @@ var options = {
                 $('#errors').find('li').remove();
                 opt = options.loadFeature({
                     enabled: String($('#feature_enabled').is(':checked')),
-                    image: $('#feature_image option:selected').val().trim(),
+                    image: parseInt($('#feature_image option:selected').val()),
                     name: name,
                     readOnly: false,
                     shortcut: $('#feature_shortcut').val().trim()
@@ -595,16 +557,142 @@ var options = {
         $('#delete_btn').click(function (event) {
             $.facebox({div: '#delete_con'});
         });
-        $('#delete_no_btn').live('click', function (event) {
+        $('.delete_no_btn').live('click', function (event) {
             $(document).trigger('close.facebox');
         });
-        $('#delete_yes_btn').live('click', function (event) {
+        $('.delete_yes_btn').live('click', function (event) {
             var opt = $('#features option:selected');
             if (opt.data('readOnly') !== 'true') {
                 opt.remove();
                 features.change().focus();
             }
             $(document).trigger('close.facebox');
+        });
+        // Supports import process
+        $('#import_btn').click(function (event) {
+            options.updateFeature($('#features option:selected'));
+            $('.import_con_stage1').show();
+            $('.import_con_stage2, .import_con_stage3').hide();
+            $('.import_content').val('');
+            $('.import_error').text('').hide();
+            $.facebox({div: '#import_con'});
+        });
+        $('.import_file_btn').live('change', function (event) {
+            // TODO: Test
+            var $this = $(this),
+                file = event.target.files[0],
+                reader = new FileReader();
+            reader.onerror = function (evt) {
+                // TODO: i18n
+                var message = '';
+                switch (evt.target.error.code) {
+                case evt.target.error.NOT_FOUND_ERR:
+                    message = 'Could not find file!';
+                    break;
+                case evt.target.error.ABORT_ERR:
+                    message = 'Aborted!';
+                    break;
+                default:
+                    message = 'Unable to read file!';
+                };
+                $('.import_error').text(message).show();
+            };
+            reader.onload = function (evt) {
+                try {
+                    JSON.parse(evt.target.result);
+                    $('.import_error').text('').hide();
+                    $('.import_content').val(evt.target.result);
+                } catch (e) {
+                    $('.import_content').val('');
+                    $('.import_error').text('Invalid file!').show();
+                }
+            };
+            reader.readAsText(file);
+        });
+        $('.import_no_btn, .import_close_btn').live('click', function (event) {
+            $(document).trigger('close.facebox');
+        });
+        $('.import_yes_btn').live('click', function (event) {
+            // TODO: Code
+            // readImport($('.import_error').val());
+            // If errors, show them...
+            // Otherwise, load templates in to list and let user pick those to import
+            // Then load in new settings, validating as you go and never overwriting read-only values
+        });
+        // Supports export process
+        $('.export_con_list [name="export_templates"]').live('change',
+                function (event) {
+                    var checkedItems = $(this).parents('.export_con_list')
+                            .find('[name="export_templates"]:checked');
+                    if (checkedItems.length > 0) {
+                        $('.export_yes_btn').removeAttr('disabled');
+                    } else {
+                        $('.export_yes_btn').attr('disabled', 'disabled');
+                    }
+                });
+        $('#export_btn').click(function (event) {
+            var list = $('.export_con_list');
+            list.find('li').remove();
+            options.updateFeature($('#features option:selected'));
+            $('.export_yes_btn').attr('disabled', 'disabled');
+            $('.export_con_stage1').show();
+            $('.export_con_stage2').hide();
+            $('.export_content').val('');
+            features.find('option').each(function () {
+                var opt = $(this),
+                    optEnabled = opt.data('enabled') === 'true';
+                $('<li/>').append(
+                    $('<label/>').append(
+                        $('<input/>', {
+                            name: 'export_templates',
+                            type: 'checkbox',
+                            value: opt.val()
+                        }),
+                        $('<span/>', {
+                            style: optEnabled ? '' : 'font-style: italic',
+                            text: opt.text()
+                        })
+                    )
+                ).appendTo(list);
+            });
+            $.facebox({div: '#export_con'});
+        });
+        $('.export_deselect_all_btn').live('click', function (event) {
+            $('.export_con_list [name="export_templates"]')
+                    .removeAttr('checked');
+            $('.export_yes_btn').attr('disabled', 'disabled');
+        });
+        $('.export_select_all_btn').live('click', function (event) {
+            $('.export_con_list [name="export_templates"]').attr('checked',
+                    'checked');
+            $('.export_yes_btn').removeAttr('disabled');
+        });
+        $('.export_no_btn, .export_close_btn').live('click', function (event) {
+            $(document).trigger('close.facebox');
+        });
+        $('.export_yes_btn').live('click', function (event) {
+            var $this = $(this).attr('disabled', 'disabled'),
+                items = $this.parents('.export_con_stage1')
+                        .find('.export_con_list [name="export_templates"]'),
+                names = [];
+            items.filter(':checked').each(function () {
+                names.push($(this).val());
+            });
+            $('.export_content').val(options.createExport(names));
+            $('.export_con_stage1').hide();
+            $('.export_con_stage2').show();
+        });
+        $('.export_save_btn').live('click', function (event) {
+            /*
+             * TODO: Is there a better way of doing this?
+             * 
+             * - Can't suggest file name!
+             * - Will text/csv ALWAYS be saved?
+             */
+            var str = $(this).parents('.export_con_stage2')
+                    .find('.export_content').val();
+            window.location = 'data:text/csv;charset=utf8,' +
+                    encodeURIComponent(str);
         });
         /*
          * Moves the selected option down one when the 'down' control is
@@ -738,9 +826,9 @@ var options = {
         $('#features option').each(function (index) {
             var opt = $(this);
             features.push({
-                image: opt.data('image'),
-                index: index,
                 enabled: opt.data('enabled') === 'true',
+                image: parseInt(opt.data('image')),
+                index: index,
                 name: opt.val(),
                 readOnly: opt.data('readOnly') === 'true',
                 shortcut: opt.data('shortcut'),
@@ -828,8 +916,7 @@ var options = {
     updateFeature: function (opt) {
         if (opt.length) {
             opt.data('enabled', String($('#feature_enabled').is(':checked')));
-            opt.data('image',
-                    $('#feature_image option:selected').val().trim());
+            opt.data('image', $('#feature_image option:selected').val());
             opt.data('shortcut',
                     $('#feature_shortcut').val().trim().toUpperCase());
             opt.data('template', $('#feature_template').val());

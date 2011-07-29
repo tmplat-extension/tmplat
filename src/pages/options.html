@@ -33,17 +33,14 @@
             .section h4.toggle-expand {background: white url('../images/toggle-expand.png') no-repeat scroll right;}
             .sections .section .contents {padding-left: 5px;}
             .help {display: none;}
-            #add_btn, #delete_btn, #update_btn {margin-left: 10px;}
+            #add_btn, #delete_btn, #export_btn, #import_btn {margin-left: 10px;}
             #moveDown_btn, #moveUp_btn {padding-top: 2px; margin: 5px 10px;}
+            .import_error {color: #C00; font-style: italic;}
+            .export_con_list {list-style-type: none;}
             input {cursor: pointer;}
-            button, input[type="button"], input[type="file"]::-webkit-file-upload-button, input[type="reset"], input[type="submit"] {background-image: -webkit-gradient(linear, left top, left bottom, from(whiteSmoke), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, whiteSmoke, #F1F1F1); -webkit-border-radius: 2px; -webkit-user-select: none; background-color: whiteSmoke; background-image: linear-gradient(top, whiteSmoke, #F1F1F1); background-image: -o-linear-gradient(top, whiteSmoke, #F1F1F1); border: 1px solid gainsboro; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 2px; color: #666; cursor: pointer; font-size: 11px; font-weight: bold; height: 22px; line-height: 1em; margin: auto 6px; padding: 0 8px; text-align: center;}
+            button, input[type="button"], input[type="file"]::-webkit-file-upload-button, input[type="reset"], input[type="submit"] {background-image: -webkit-gradient(linear, left top, left bottom, from(whiteSmoke), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, whiteSmoke, #F1F1F1); -webkit-border-radius: 2px; -webkit-user-select: none; background-color: whiteSmoke; background-image: linear-gradient(top, whiteSmoke, #F1F1F1); background-image: -o-linear-gradient(top, whiteSmoke, #F1F1F1); border: 1px solid gainsboro; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 2px; color: #666; cursor: pointer; font-size: 11px; font-weight: bold; height: 22px; line-height: 1em; margin: auto 6px auto auto; padding: 0 8px; text-align: center;}
             button:disabled, input[type="button"]:disabled, input[type="file"]:disabled::-webkit-file-upload-button, input[type="reset"]:disabled, input[type="submit"]:disabled {background-image: -webkit-gradient(linear,left top,left bottom, from(#EBEBE4), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, #EBEBE4, #F1F1F1); background-color: #EBEBE4; background-image: linear-gradient(top, #EBEBE4, #F1F1F1); background-image: -o-linear-gradient(top, #EBEBE4, #F1F1F1); border: 1px solid #C6C6C6; color: #AAA; cursor: default;}
             button:hover:not(:disabled), input[type="button"]:hover:not(:disabled), input[type="file"]::-webkit-file-upload-button:hover:not(:disabled), input[type="reset"]:hover:not(:disabled), input[type="submit"]:hover:not(:disabled) {background-image: -webkit-gradient(linear,left top,left bottom, from(#F8F8F8), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, #F8F8F8, #F1F1F1); -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.1); background-color: #F8F8F8; background-image: linear-gradient(top, #F8F8F8, #F1F1F1); background-image: -o-linear-gradient(top, #F8F8F8, #F1F1F1); border: 1px solid #C6C6C6; box-shadow: 0 1px 1px rgba(0,0,0,0.1); color: #333;}
-            #support {background-color: white; border: 3px solid #BEC9CE; border-radius: 20px; margin: 15px auto; padding: 5px 30px; width: 600px;}
-            #extensions_hdr {margin: 5px 0;}
-            #extensions {list-style-type: none; margin: 0 0 8px 6px; padding: 0;}
-            #extensions li {display: inline-block; padding: 3px 3px 0;}
-            #extensions_status_txt {margin: 0 0 8px 8px;}
             #footer {font-size: 13px; text-align: center;}
             .template {height: 300px; padding-right: 5px; width: 500px;}
             .template-display {height: 300px; overflow: auto; padding-right: 5px; width: 395px;}
@@ -202,7 +199,38 @@
                                         </tr>
                                     </table>
                                 </td>
-                                <td>&nbsp;</td>
+                                <td>
+                                    <button id="import_btn"></button>
+                                    <div id="import_con" class="help">
+                                        <!-- TODO: Complete, test & i18n -->
+                                        <div class="import_con_stage1">
+                                            <p>Paste or upload the your exported data;</p>
+                                            <textarea class="import_content" cols="38" rows="6"></textarea>
+                                            <table>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        <input class="import_file_btn" type="file" />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td style="width: 50%">
+                                                        <span class="import_error"></span>
+                                                    </td>
+                                                    <td style="text-align: right">
+                                                        <button class="import_yes_btn">Continue</button>
+                                                        <button class="import_no_btn">Cancel</button>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                        <div class="import_con_stage2">
+                                            
+                                        </div>
+                                        <div class="import_con_stage3">
+                                            
+                                        </div>
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
                                 <td>
@@ -220,7 +248,13 @@
                                     <a href="#feature_shortcut_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
                                     <div id="feature_shortcut_help" class="help"></div>
                                 </td>
-                                <td>&nbsp;</td>
+                                <td>
+                                    <button id="export_btn"></button>
+                                    <div id="export_con" class="help">
+                                        <div class="export_con_stage1"></div>
+                                        <div class="export_con_stage2"></div>
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
                                 <td colspan="3">
@@ -408,11 +442,6 @@
                     </tr>
                 </table>
             </div>
-        </div>
-        <div id="support">
-            <h4 id="extensions_hdr"></h4>
-            <ul id="extensions" style="display: none"></ul>
-            <span id="extensions_status_txt"></span>
         </div>
         <div id="footer"></div>
     </body>
