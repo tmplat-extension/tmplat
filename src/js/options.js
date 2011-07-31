@@ -614,57 +614,46 @@ var options = {
         });
         $('.import_yes_btn').live('click', function (event) {
             // TODO: Code
-            // readImport($('.import_error').val());
+            try {
+                options.readImport($('.import_content').val());
+            } catch (e) {
+                $('.import_error').text('Unable to parse data!').show();
+            }
             // If errors, show them...
             // Otherwise, load templates in to list and let user pick those to import
             // Then load in new settings, validating as you go and never overwriting read-only values
         });
         // Supports export process
-        $('.export_con_list [name="export_templates"]').live('change',
-                function (event) {
-                    var checkedItems = $(this).parents('.export_con_list')
-                            .find('[name="export_templates"]:checked');
-                    if (checkedItems.length > 0) {
-                        $('.export_yes_btn').removeAttr('disabled');
-                    } else {
-                        $('.export_yes_btn').attr('disabled', 'disabled');
-                    }
-                });
+        $('.export_con_list').live('change', function (event) {
+            if ($(this).find('option:selected').length > 0) {
+                $('.export_yes_btn').removeAttr('disabled');
+            } else {
+                $('.export_yes_btn').attr('disabled', 'disabled');
+            }
+        });
         $('#export_btn').click(function (event) {
             var list = $('.export_con_list');
-            list.find('li').remove();
+            list.find('option').remove();
             options.updateFeature($('#features option:selected'));
             $('.export_yes_btn').attr('disabled', 'disabled');
             $('.export_con_stage1').show();
             $('.export_con_stage2').hide();
             $('.export_content').val('');
             features.find('option').each(function () {
-                var opt = $(this),
-                    optEnabled = opt.data('enabled') === 'true';
-                $('<li/>').append(
-                    $('<label/>').append(
-                        $('<input/>', {
-                            name: 'export_templates',
-                            type: 'checkbox',
-                            value: opt.val()
-                        }),
-                        $('<span/>', {
-                            style: optEnabled ? '' : 'font-style: italic',
-                            text: opt.text()
-                        })
-                    )
-                ).appendTo(list);
+                var opt = $(this);
+                $('<option/>', {
+                    text: opt.text(),
+                    value: opt.val()
+                }).appendTo(list);
             });
             $.facebox({div: '#export_con'});
         });
         $('.export_deselect_all_btn').live('click', function (event) {
-            $('.export_con_list [name="export_templates"]')
-                    .removeAttr('checked');
+            $('.export_con_list option').removeAttr('selected').parent().focus();
             $('.export_yes_btn').attr('disabled', 'disabled');
         });
         $('.export_select_all_btn').live('click', function (event) {
-            $('.export_con_list [name="export_templates"]').attr('checked',
-                    'checked');
+            $('.export_con_list option').attr('selected', 'selected').parent().focus();
             $('.export_yes_btn').removeAttr('disabled');
         });
         $('.export_no_btn, .export_close_btn').live('click', function (event) {
@@ -673,9 +662,9 @@ var options = {
         $('.export_yes_btn').live('click', function (event) {
             var $this = $(this).attr('disabled', 'disabled'),
                 items = $this.parents('.export_con_stage1')
-                        .find('.export_con_list [name="export_templates"]'),
+                        .find('.export_con_list option'),
                 names = [];
-            items.filter(':checked').each(function () {
+            items.filter(':selected').each(function () {
                 names.push($(this).val());
             });
             $('.export_content').val(options.createExport(names));
@@ -687,11 +676,11 @@ var options = {
              * TODO: Is there a better way of doing this?
              * 
              * - Can't suggest file name!
-             * - Will text/csv ALWAYS be saved?
+             * - Will text/json ALWAYS be saved?
              */
             var str = $(this).parents('.export_con_stage2')
                     .find('.export_content').val();
-            window.location = 'data:text/csv;charset=utf8,' +
+            window.location = 'data:text/json;charset=utf8,' +
                     encodeURIComponent(str);
         });
         /*
@@ -774,6 +763,14 @@ var options = {
         $('#yourlsSignature').val(utils.get('yourlsSignature'));
         $('#yourlsUrl').val(utils.get('yourlsUrl'));
         $('#yourlsUsername').val(utils.get('yourlsUsername'));
+    },
+
+    /**
+     * TODO: Code, doc & test
+     */
+    readImport: function (str) {
+        var data = JSON.parse(str);
+        return data;
     },
 
     /**

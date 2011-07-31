@@ -29,7 +29,7 @@
             "content": "</p>"
          },
          "list": {
-            "content": "<ul class=\"export_con_list\"></ul>"
+            "content": "<select class=\"export_con_list\" size=\"5\" multiple></select>"
          },
          "o_para": {
             "content": "<p>"
