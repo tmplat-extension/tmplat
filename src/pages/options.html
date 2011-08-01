@@ -16,7 +16,6 @@
             .feature.first .expanded, .feature.collapsed.first .collapsed {display: block;}
             .feature.first .collapsed, .feature.collapsed.first .expanded {display: none;}
             .feature.collapsed.second, .feature.collapsed.third {display: none;}
-            .feature.template {/*TODO: display: none;*/}
             .featureShortcut {text-transform: uppercase;}
             .features tr:last-child td:first-child {padding-top: 8px !important;}
             .styled thead th {border-bottom: 1px solid #EEE;}
@@ -30,6 +29,7 @@
             #navigation-footer div {background-color: white; border-radius: 20px 20px 0 0; height: 20px;}
             .content-box {background-color: white; border: 3px solid #BEC9CE; border-radius: 0 0 20px 20px; border-top: 0; height: auto;  margin: 0 auto 20px auto; padding: 10px 30px 30px; text-align: left; width: 600px;}
             h4 {border-bottom: 2px dotted #C3C3C3; color: #333; font-size: 15px; line-height: 28px; padding-left: 0.5em;}
+            .tab {display: none;}
             .controls {margin: 25px 0 0 0;}
             .section .contents {line-height: 25px; padding-left: 55px;}
             .sections .section .contents {padding-left: 5px;}
@@ -87,7 +87,7 @@
     </head>
     <body>
         <ul id="navigation">
-            <li id="general_nav" class="selected" data-href="#general_tab"></li>
+            <li id="general_nav" data-href="#general_tab"></li>
             <li id="features_nav" data-href="#features_tab"></li>
             <li id="shorteners_nav" data-href="#shorteners_tab"></li>
         </ul>
@@ -151,7 +151,7 @@
                     </div>
                 </div>
             </div>
-            <div id="features_tab" class="tab" style="display: none">
+            <div id="features_tab" class="tab">
                 <div id="features_sct" class="section">
                     <h4 id="features_hdr"></h4>
                     <div class="contents">
@@ -327,7 +327,7 @@
                     </div>
                 </div>
             </div>
-            <div id="shorteners_tab" class="tab" style="display: none">
+            <div id="shorteners_tab" class="tab">
                 <div id="shorteners_sct" class="section">
                     <h4 id="shorteners_hdr"></h4>
                     <div class="contents">

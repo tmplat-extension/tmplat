@@ -53,12 +53,6 @@
          }
       }
    },
-   "copied": {
-      "message": "Copied"
-   },
-   "copy": {
-      "message": "Copy"
-   },
    "copy_anchor": {
       "message": "Anchor"
    },
@@ -430,12 +424,6 @@
          }
       }
    },
-   "opt_collapse": {
-      "message": "Collapse"
-   },
-   "opt_collapse_all_button": {
-      "message": "Collapse All"
-   },
    "opt_context_menu_text": {
       "message": "Enable the context menu"
    },
@@ -444,12 +432,6 @@
    },
    "opt_errors_header": {
       "message": "The following problem(s) need to be corrected;"
-   },
-   "opt_expand": {
-      "message": "Expand"
-   },
-   "opt_expand_all_button": {
-      "message": "Expand All"
    },
    "opt_export_button": {
       "message": "Export"
@@ -562,15 +544,6 @@
    },
    "opt_shortcut_text": {
       "message": "Enable keyboard shortcuts"
-   },
-   "opt_title": {
-      "message": "URL Copy Options"
-   },
-   "paste": {
-      "message": "Paste"
-   },
-   "pasted": {
-      "message": "Pasted"
    },
    "shortener_config_error": {
       "message": "Configuration problem found with $1"

@@ -214,7 +214,7 @@ var options = {
      */
     init: function () {
         // Inserts localized Strings
-        options.i18nReplace('title, #options_hdr', 'opt_title');
+        options.i18nReplace('title', 'name');
         options.i18nReplace('#errors_hdr', 'opt_errors_header');
         options.i18nReplace('#add_btn', 'opt_add_button');
         options.i18nReplace('#delete_btn', 'opt_delete_button');
@@ -291,8 +291,12 @@ var options = {
                 $this.siblings().removeClass('selected');
                 $this.addClass('selected');
                 $($this.attr('data-href')).show().siblings('.tab').hide();
+                utils.set('options_active_tab', $this.attr('id'));
             }
         });
+        // Reflects persisted tab
+        utils.init('options_active_tab', 'general_nav');
+        $('#' + utils.get('options_active_tab')).click();
         // Binds options:saveAndClose event to button
         $('.save-btn').click(options.saveAndClose);
         // Binds options:toggleTemplateSection to template section items
