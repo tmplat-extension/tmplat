@@ -83,18 +83,6 @@ var options = {
     },
 
     /**
-     * <p>Collapses the contents of all sections.</p>
-     * @param {Event} [event] The event triggered.
-     * @event
-     * @requies jQuery
-     * @private
-     */
-    collapseAll: function (event) {
-        $('.section h4').addClass('toggle-expand')
-                .removeClass('toggle-collapse').next('.contents').slideUp();
-    },
-
-    /**
      * <p>Creates a JSON string to export the features with the specified
      * names.</p>
      * @param {String[]} names The names of the features to export.
@@ -155,18 +143,6 @@ var options = {
             };
         }
         return feature;
-    },
-
-    /**
-     * <p>Expands the contents of all sections.</p>
-     * @param {Event} [event] The event triggered.
-     * @event
-     * @requies jQuery
-     * @private
-     */
-    expandAll: function (event) {
-        $('.section h4').addClass('toggle-collapse')
-                .removeClass('toggle-expand').next('.contents').slideDown();
     },
 
     /**
@@ -246,7 +222,8 @@ var options = {
         options.i18nReplace('#export_btn', 'opt_export_button');
         options.i18nReplace('.export_con_stage1', 'confirm_export_stage1');
         options.i18nReplace('.export_con_stage2', 'confirm_export_stage2');
-        options.i18nReplace('#features_hdr', 'opt_feature_header');
+        options.i18nReplace('#features_hdr, #features_nav',
+                'opt_feature_header');
         options.i18nReplace('#feature_name_txt', 'opt_feature_name_text');
         options.i18nReplace('#feature_title_txt', 'opt_feature_title_text');
         options.i18nReplace('#feature_image_txt', 'opt_feature_image_text');
@@ -256,7 +233,8 @@ var options = {
         options.i18nReplace('#template_help_lnk', 'opt_feature_template_help');
         options.i18nReplace('#feature_enabled_txt',
                 'opt_feature_enabled_text');
-        options.i18nReplace('#shorteners_hdr', 'opt_url_shortener_header');
+        options.i18nReplace('#shorteners_hdr, #shorteners_nav',
+                'opt_url_shortener_header');
         options.i18nReplace('#shorteners_name_hdr',
                 'opt_url_shortener_name_header');
         options.i18nReplace('#shorteners_enabled_hdr',
@@ -277,7 +255,7 @@ var options = {
         options.i18nReplace('#yourls_or_txt', 'opt_or_text');
         options.i18nReplace('#yourlsSignature_txt',
                 'opt_url_shortener_signature_text');
-        options.i18nReplace('#general_hdr', 'opt_general_header');
+        options.i18nReplace('#general_hdr, #general_nav', 'opt_general_header');
         options.i18nReplace('#contextMenu_txt', 'opt_context_menu_text');
         options.i18nReplace('#shortcuts_txt', 'opt_shortcut_text');
         options.i18nReplace('#anchors_hdr', 'opt_anchor_header');
@@ -290,8 +268,6 @@ var options = {
         options.i18nReplace('#notificationDuration_txt2',
                 'opt_notification_timer_text2');
         options.i18nReplace('.save-btn', 'opt_save_button');
-        options.i18nReplace('.expand-all-btn', 'opt_expand_all_button');
-        options.i18nReplace('.collapse-all-btn', 'opt_collapse_all_button');
         options.i18nReplace('#footer', 'opt_footer',
                 String(new Date().getFullYear()));
         // Inserts localized help/confirmation sections
@@ -308,16 +284,17 @@ var options = {
         options.i18nReplace('#yourlsCredentials_help',
                 'help_yourlsCredentials');
         options.i18nReplace('#yourlsSignature_help', 'help_yourlsSignature');
-        /*
-         * Binds options:collapseAll and options:expandAll events to the
-         * buttons.
-         */
-        $('.collapse-all-btn').click(options.collapseAll);
-        $('.expand-all-btn').click(options.expandAll);
+        // Binds tab selection event to tabs
+        $('#navigation li').click(function (event) {
+            var $this = $(this);
+            if (!$this.hasClass('selected')) {
+                $this.siblings().removeClass('selected');
+                $this.addClass('selected');
+                $($this.attr('data-href')).show().siblings('.tab').hide();
+            }
+        });
         // Binds options:saveAndClose event to button
         $('.save-btn').click(options.saveAndClose);
-        // Binds options:toggleSection to section headers
-        $('.section h4').live('click', options.toggleSection);
         // Binds options:toggleTemplateSection to template section items
         $('.template-section').live('click', options.toggleTemplateSection);
         // Loads template section from locale-specific file
@@ -1036,19 +1013,6 @@ var options = {
         utils.set('yourlsSignature', $('#yourlsSignature').val().trim());
         utils.set('yourlsUrl', $('#yourlsUrl').val().trim());
         utils.set('yourlsUsername', $('#yourlsUsername').val().trim());
-    },
-
-    /**
-     * <p>Toggles the visibility of the content of the section that triggered
-     * the event.</p>
-     * @param {Event} [event] The event triggered.
-     * @event
-     * @requires jQuery
-     * @private
-     */
-    toggleSection: function (event) {
-        $(this).toggleClass('toggle-collapse toggle-expand')
-                .next('.contents').slideToggle();
     },
 
     /**
