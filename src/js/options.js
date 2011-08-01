@@ -49,6 +49,39 @@ var options = {
      */
     webstoreUrl: 'https://chrome.google.com/webstore/detail/',
 
+    // TODO: Doc & test
+    addImportedFeature: function (feature) {
+        var bg = chrome.extension.getBackgroundPage(),
+            newFeature;
+        if (options.isNameValid(feature.name) && feature.name.length <= 32) {
+            newFeature = {
+                content: feature.content,
+                enabled: feature.enabled,
+                image: 0,
+                name: feature.name,
+                readOnly: false,
+                shortcut: '',
+                title: chrome.i18n.getMessage('untitled')
+            };
+            // Only uses image if identifier exists
+            for (var i = 0; i < bg.urlcopy.images.length; i++) {
+                if (bg.urlcopy.images[i].id === feature.image) {
+                    newFeature.image = feature.image;
+                    break;
+                }
+            }
+            // Only uses valid shortcuts
+            if (options.isShortcutValid(feature.shortcut)) {
+                newFeature.shortcut = feature.shortcut;
+            }
+            // Only uses valid titles
+            if (feature.title.length > 0 && feature.title.length <= 32) {
+                newFeature.title = feature.title;
+            }
+        }
+        return newFeature;
+    },
+
     /**
      * <p>Collapses the contents of all sections.</p>
      * @param {Event} [event] The event triggered.
@@ -80,16 +113,48 @@ var options = {
         for (var i = 0; i < names.length; i++) {
             opt = $('#features option[value="' + names[i] + '"]');
             data.templates.push({
+                content: opt.data('content'),
                 enabled: opt.data('enabled') === 'true',
                 image: parseInt(opt.data('image')),
-                index: i,
                 name: opt.val(),
                 shortcut: opt.data('shortcut'),
-                template: opt.data('template'),
                 title: opt.text()
             });
         }
         return JSON.stringify(data);
+    },
+
+    // TODO: Doc & test
+    createImport: function (str) {
+        var data = {};
+        try {
+            data = JSON.parse(str);
+        } catch (e) {
+            throw chrome.i18n.getMessage('error_import_data');
+        }
+        if (!$.isArray(data.templates) || data.templates.length === 0 ||
+                $.type(data.version) !== 'string') {
+            throw chrome.i18n.getMessage('error_import_invalid');
+        }
+        return data;
+    },
+
+    // TODO: Docs
+    deriveFeature: function (option) {
+        var feature;
+        if (option.length > 0) {
+            feature = {
+                content: option.data('content'),
+                enabled: option.data('enabled') === 'true',
+                image: parseInt(option.data('image')),
+                index: option.parent().find('option').index(option),
+                name: option.val(),
+                readOnly: option.data('readOnly') === 'true',
+                shortcut: option.data('shortcut'),
+                title: option.text()
+            };
+        }
+        return feature;
     },
 
     /**
@@ -286,20 +351,26 @@ var options = {
      * <p>Returns whether or not the specified name is available for use as a
      * feature.</p>
      * @param {String} name The name to be queried.
+     * @param {String[]} [additionalNames] A list of additional names to be
+     * checked.
      * @returns {Boolean} <code>true</code> if the name is not already in use;
      * otherwise <code>false</code>.
      * @requires jQuery
      * @since 0.1.0.0
      * @private
      */
-    isNameAvailable: function (name) {
+    isNameAvailable: function (name, additionalNames) {
         var available = true;
         $('#features option').each(function () {
             if ($(this).val() === name) {
                 available = false;
+                // Breaks out of $.each
                 return false;
             }
         });
+        if (available && $.isArray(additionalNames)) {
+            available = additionalNames.indexOf(name) === -1;
+        }
         return available;
     },
 
@@ -361,42 +432,6 @@ var options = {
     },
 
     /**
-     * <p>Creates a <code>&lt;option/&gt;</code> for each image available for
-     * features.</p>
-     * <p>This is to be inserted in to the <code>&lt;select/&gt;</code>
-     * containing feature images on the options page.</p>
-     * @requires jQuery
-     * @since 0.1.0.0
-     * @private
-     */
-    loadImages: function () {
-        var bg = chrome.extension.getBackgroundPage(),
-            imagePreview = $('#feature_image_preview'),
-            images = $('#feature_image');
-        for (var i = 0; i < bg.urlcopy.images.length; i++) {
-            opt = $('<option/>', {
-                text: bg.urlcopy.images[i].name,
-                value: bg.urlcopy.images[i].id
-            }).appendTo(images).data('file', bg.urlcopy.images[i].file);
-            if (bg.urlcopy.images[i].separate) {
-                images.append(
-                    $('<option/>', {
-                        disabled: 'disabled',
-                        text: '---------------'
-                    })
-                );
-            }
-        }
-        images.change(function () {
-            var opt = images.find('option:selected');
-            imagePreview.attr({
-                src: '../images/' + opt.data('file'),
-                title: opt.text()
-            });
-        }).change();
-    },
-
-    /**
      * <p>Creates a <code>&lt;option/&gt;</code> representing the feature
      * provided.</p>
      * <p>This is to be inserted in to the <code>&lt;select/&gt;</code>
@@ -413,11 +448,11 @@ var options = {
             text: feature.title,
             value: feature.name
         });
+        opt.data('content', feature.content);
         opt.data('enabled', String(feature.enabled));
         opt.data('image', String(feature.image));
         opt.data('readOnly', String(feature.readOnly));
         opt.data('shortcut', feature.shortcut);
-        opt.data('template', feature.template);
         return opt;
     },
 
@@ -428,7 +463,11 @@ var options = {
      * @private
      */
     loadFeatures: function () {
-        // TODO: Tidy function by splitting it up
+        /*
+         * TODO: Tidy function by splitting it up.
+         * Ensure that each new function is still referencing correct variables
+         * (bg, features, lastSelectedFeature etc.)
+         */
         var bg = chrome.extension.getBackgroundPage(),
             features = $('#features'),
             lastSelectedFeature = {};
@@ -495,7 +534,7 @@ var options = {
                 $('#feature_image').change();
                 $('#feature_name').val(opt.val());
                 $('#feature_shortcut').val(opt.data('shortcut'));
-                $('#feature_template').val(opt.data('template'));
+                $('#feature_template').val(opt.data('content'));
                 $('#feature_title').val(opt.text());
                 if (opt.data('enabled') === 'true') {
                     $('#feature_enabled').attr('checked', 'checked');
@@ -527,21 +566,20 @@ var options = {
         $('#add_btn').click(function (event) {
             var opt = features.find('option:selected');
             if (opt.length) {
-                features.val([]);
-                features.change();
+                features.val([]).change();
                 $('#feature_name').focus();
             } else {
                 var name = $('#feature_name').val().trim(),
                     title = $('#feature_title').val().trim();
                 $('#errors').find('li').remove();
                 opt = options.loadFeature({
+                    content: $('#feature_template').val(),
                     enabled: String($('#feature_enabled').is(':checked')),
                     image: parseInt($('#feature_image option:selected').val()),
                     name: name,
                     readOnly: false,
                     shortcut: $('#feature_shortcut').val().trim()
                             .toUpperCase(),
-                    template: $('#feature_template').val(),
                     title: title
                 });
                 if (options.validateFeature(opt, true)) {
@@ -569,8 +607,16 @@ var options = {
             $(document).trigger('close.facebox');
         });
         // Supports import process
+        $('.import_con_list').live('change', function (event) {
+            if ($(this).find('option:selected').length > 0) {
+                $('.import_final_btn').removeAttr('disabled');
+            } else {
+                $('.import_final_btn').attr('disabled', 'disabled');
+            }
+        });
         $('#import_btn').click(function (event) {
             options.updateFeature($('#features option:selected'));
+            features.val([]).change();
             $('.import_con_stage1').show();
             $('.import_con_stage2, .import_con_stage3').hide();
             $('.import_content').val('');
@@ -578,50 +624,94 @@ var options = {
             $.facebox({div: '#import_con'});
         });
         $('.import_file_btn').live('change', function (event) {
-            // TODO: Test
             var $this = $(this),
                 file = event.target.files[0],
                 reader = new FileReader();
             reader.onerror = function (evt) {
-                // TODO: i18n
                 var message = '';
                 switch (evt.target.error.code) {
                 case evt.target.error.NOT_FOUND_ERR:
-                    message = 'Could not find file!';
+                    message = chrome.i18n.getMessage('error_file_not_found');
                     break;
                 case evt.target.error.ABORT_ERR:
-                    message = 'Aborted!';
+                    message = chrome.i18n.getMessage('error_file_aborted');
                     break;
                 default:
-                    message = 'Unable to read file!';
+                    message = chrome.i18n.getMessage('error_file_default');
                 };
                 $('.import_error').text(message).show();
             };
             reader.onload = function (evt) {
-                try {
-                    JSON.parse(evt.target.result);
-                    $('.import_error').text('').hide();
-                    $('.import_content').val(evt.target.result);
-                } catch (e) {
-                    $('.import_content').val('');
-                    $('.import_error').text('Invalid file!').show();
-                }
+                $('.import_content').val(evt.target.result);
+                $('.import_error').text('').hide();
             };
             reader.readAsText(file);
+        });
+        $('.import_back_btn').live('click', function (event) {
+            $('.import_con_stage1').show();
+            $('.import_con_stage2, .import_con_stage3').hide();
         });
         $('.import_no_btn, .import_close_btn').live('click', function (event) {
             $(document).trigger('close.facebox');
         });
         $('.import_yes_btn').live('click', function (event) {
-            // TODO: Code
+            var $this = $(this).attr('disabled', 'disabled'),
+                data,
+                importData,
+                list = $('.import_con_list'),
+                str = $this.parents('.import_con_stage1')
+                        .find('.import_content').val();
+            $('.import_error').text('').hide();
             try {
-                options.readImport($('.import_content').val());
+                importData = options.createImport(str);
             } catch (e) {
-                $('.import_error').text('Unable to parse data!').show();
+                $('.import_error').text(e).show();
             }
-            // If errors, show them...
-            // Otherwise, load templates in to list and let user pick those to import
-            // Then load in new settings, validating as you go and never overwriting read-only values
+            if (importData) {
+                data = options.readImport(importData);
+                if (data.features.length === 0) {
+                    $('.import_con_stage3').show();
+                    $('.import_con_stage1, .import_con_stage2').hide();
+                } else {
+                    list.find('option').remove();
+                    $('.import_count').text(data.features.length);
+                    for (var i = 0; i < data.features.length; i++) {
+                        list.append(options.loadFeature(data.features[i]));
+                    }
+                    $('.import_final_btn').attr('disabled', 'disabled');
+                    $('.import_con_stage2').show();
+                    $('.import_con_stage1, .import_con_stage3').hide();
+                }
+            }
+            $this.removeAttr('disabled');
+        });
+        $('.import_deselect_all_btn').live('click', function (event) {
+            $('.import_con_list option').removeAttr('selected').parent()
+                    .focus();
+            $('.import_final_btn').attr('disabled', 'disabled');
+        });
+        $('.import_select_all_btn').live('click', function (event) {
+            $('.import_con_list option').attr('selected', 'selected').parent()
+                    .focus();
+            $('.import_final_btn').removeAttr('disabled');
+        });
+        $('.import_final_btn').live('click', function (event) {
+            var $this = $(this),
+                list = $this.parents('.import_con_stage2')
+                        .find('.import_con_list');
+            list.find('option:selected').each(function () {
+                var opt = $(this),
+                    existingOpt = features.find('option[value="' + opt.val() +
+                            '"]');
+                opt.removeAttr('selected');
+                if (existingOpt.length === 0) {
+                    features.append(opt);
+                } else {
+                    existingOpt.replaceWith(opt);
+                }
+            });
+            $(document).trigger('close.facebox');
+            features.focus();
         });
         // Supports export process
         $('.export_con_list').live('change', function (event) {
@@ -635,6 +725,7 @@ var options = {
             var list = $('.export_con_list');
             list.find('option').remove();
             options.updateFeature($('#features option:selected'));
+            features.val([]).change();
             $('.export_yes_btn').attr('disabled', 'disabled');
             $('.export_con_stage1').show();
             $('.export_con_stage2').hide();
@@ -649,15 +740,18 @@ var options = {
             $.facebox({div: '#export_con'});
         });
         $('.export_deselect_all_btn').live('click', function (event) {
-            $('.export_con_list option').removeAttr('selected').parent().focus();
+            $('.export_con_list option').removeAttr('selected').parent()
+                    .focus();
             $('.export_yes_btn').attr('disabled', 'disabled');
         });
         $('.export_select_all_btn').live('click', function (event) {
-            $('.export_con_list option').attr('selected', 'selected').parent().focus();
+            $('.export_con_list option').attr('selected', 'selected').parent()
+                    .focus();
             $('.export_yes_btn').removeAttr('disabled');
         });
         $('.export_no_btn, .export_close_btn').live('click', function (event) {
             $(document).trigger('close.facebox');
+            event.preventDefault();
         });
         $('.export_yes_btn').live('click', function (event) {
             var $this = $(this).attr('disabled', 'disabled'),
@@ -672,16 +766,21 @@ var options = {
             $('.export_con_stage2').show();
         });
         $('.export_save_btn').live('click', function (event) {
+            var $this = $(this),
+                str = $this.parents('.export_con_stage2')
+                        .find('.export_content').val();
+            str = encodeURIComponent(str);
             /*
-             * TODO: Is there a better way of doing this?
-             * 
-             * - Can't suggest file name!
-             * - Will text/json ALWAYS be saved?
+             * Attempts to download from server if online for "cleaner" export
+             * and will fall back on "simple" export if offline.
              */
-            var str = $(this).parents('.export_con_stage2')
-                    .find('.export_content').val();
-            window.location = 'data:text/json;charset=utf8,' +
-                    encodeURIComponent(str);
+            if (window.navigator.onLine) {
+                var form = $this.parents('.export_form');
+                form.find('input[name="content"]').val(str);
+            } else {
+                window.location = 'data:text/json;charset=utf8,' + str;
+                event.preventDefault();
+            }
         });
         /*
          * Moves the selected option down one when the 'down' control is
@@ -698,14 +797,42 @@ var options = {
             opt.insertBefore(opt.prev());
             features.change().focus();
         });
-        /*
-         * Updates the 'enabled' data bound to the selected option when the
-         * checkbox control is clicked.
-         */
-        $('#feature_enabled').click(function (event) {
-            $('#features option:selected').data('enabled',
-                    String($(this).is(':checked')));
-        });
+    },
+
+    /**
+     * <p>Creates a <code>&lt;option/&gt;</code> for each image available for
+     * features.</p>
+     * <p>This is to be inserted in to the <code>&lt;select/&gt;</code>
+     * containing feature images on the options page.</p>
+     * @requires jQuery
+     * @since 0.1.0.0
+     * @private
+     */
+    loadImages: function () {
+        var bg = chrome.extension.getBackgroundPage(),
+            imagePreview = $('#feature_image_preview'),
+            images = $('#feature_image');
+        for (var i = 0; i < bg.urlcopy.images.length; i++) {
+            opt = $('<option/>', {
+                text: bg.urlcopy.images[i].name,
+                value: bg.urlcopy.images[i].id
+            }).appendTo(images).data('file', bg.urlcopy.images[i].file);
+            if (bg.urlcopy.images[i].separate) {
+                images.append(
+                    $('<option/>', {
+                        disabled: 'disabled',
+                        text: '---------------'
+                    })
+                );
+            }
+        }
+        images.change(function () {
+            var opt = images.find('option:selected');
+            imagePreview.attr({
+                src: '../images/' + opt.data('file'),
+                title: opt.text()
+            });
+        }).change();
     },
 
     /**
@@ -765,11 +892,51 @@ var options = {
         $('#yourlsUsername').val(utils.get('yourlsUsername'));
     },
 
-    /**
-     * TODO: Code, doc & test
-     */
-    readImport: function (str) {
-        var data = JSON.parse(str);
+    // TODO: Doc & test
+    readImport: function (importData) {
+        var data = {
+                features: []
+            },
+            existing = {},
+            feature = {},
+            names = [];
+        for (var i = 0; i < importData.templates.length; i++) {
+            existing = {};
+            feature = importData.templates[i];
+            if (options.validateImportedFeature(feature)) {
+                if (options.isNameAvailable(feature.name, names)) {
+                    // Attempts to create and add new feature
+                    feature = options.addImportedFeature(feature);
+                    if (feature) {
+                        data.features.push(feature);
+                        names.push(feature.name);
+                    }
+                } else {
+                    // Attempts to update previously imported feature
+                    for (var j = 0; j < data.features.length; j++) {
+                        if (data.features[j].name === feature.name) {
+                            existing = options.updateImportedFeature(feature,
+                                    data.features[j]);
+                            data.features[j] = existing;
+                            break;
+                        }
+                    }
+                    if (!existing.name) {
+                        // Attempts to derive existing feature from options
+                        existing = options.deriveFeature(
+                                $('#features option[value="' + feature.name +
+                                '"]'));
+                        // Attempts to update derived feature
+                        if (existing) {
+                            existing = options.updateImportedFeature(feature,
+                                    existing);
+                            data.features.push(existing);
+                            names.push(existing.name);
+                        }
+                    }
+                }
+            }
+        }
         return data;
     },
 
@@ -823,13 +990,13 @@ var options = {
         $('#features option').each(function (index) {
             var opt = $(this);
             features.push({
+                content: opt.data('content'),
                 enabled: opt.data('enabled') === 'true',
                 image: parseInt(opt.data('image')),
                 index: index,
                 name: opt.val(),
                 readOnly: opt.data('readOnly') === 'true',
                 shortcut: opt.data('shortcut'),
-                template: opt.data('template'),
                 title: opt.text()
             });
         });
@@ -912,15 +1079,41 @@ var options = {
      */
     updateFeature: function (opt) {
         if (opt.length) {
+            opt.data('content', $('#feature_template').val());
             opt.data('enabled', String($('#feature_enabled').is(':checked')));
             opt.data('image', $('#feature_image option:selected').val());
             opt.data('shortcut',
                     $('#feature_shortcut').val().trim().toUpperCase());
-            opt.data('template', $('#feature_template').val());
             opt.text($('#feature_title').val().trim());
             opt.val($('#feature_name').val().trim());
             return opt;
         }
+    },
+
+    // TODO: Doc & test
+    updateImportedFeature: function (feature, existing) {
+        var bg = chrome.extension.getBackgroundPage();
+        // Ensures read-only templates are protected
+        if (!existing.readOnly) {
+            existing.content = feature.content;
+            // Only updates valid titles
+            if (feature.title.length > 0 && feature.title.length <= 32) {
+                existing.title = feature.title;
+            }
+        }
+        existing.enabled = feature.enabled;
+        // Only updates image if identifier exists
+        for (var i = 0; i < bg.urlcopy.images.length; i++) {
+            if (bg.urlcopy.images[i].id === feature.image) {
+                existing.image = feature.image;
+                break;
+            }
+        }
+        // Only updates valid shortcuts
+        if (options.isShortcutValid(feature.shortcut)) {
+            existing.shortcut = feature.shortcut;
+        }
+        return existing;
     },
 
     /**
@@ -1004,6 +1197,17 @@ var options = {
             }
         });
         return errors.find('li').length === 0;
+    },
+
+    // TODO: Doc & test
+    validateImportedFeature: function (feature) {
+        return (typeof feature === 'object' &&
+                typeof feature.content === 'string' &&
+                typeof feature.enabled === 'boolean' &&
+                typeof feature.image === 'number' &&
+                typeof feature.name === 'string' &&
+                typeof feature.shortcut === 'string' &&
+                typeof feature.title === 'string');
     }
 
 };

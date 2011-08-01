@@ -32,49 +32,49 @@ var urlcopy = {
      * @type Object[]
      */
     defaultFeatures: [{
+        content: '<a href="{{url}}"{#doAnchorTarget} target="_blank"{/doAnchorTarget}{#doAnchorTitle} title="{{title}}"{/doAnchorTitle}>{{title}}</a>',
         enabled: true,
         image: 4,
         index: 2,
         name: '_anchor',
         readOnly: true,
         shortcut: 'A',
-        template: '<a href="{{url}}"{#doAnchorTarget} target="_blank"{/doAnchorTarget}{#doAnchorTitle} title="{{title}}"{/doAnchorTitle}>{{title}}</a>',
         title: chrome.i18n.getMessage('copy_anchor')
     }, {
+        content: '[url={url}]{title}[/url]',
         enabled: false,
         image: 2,
         index: 4,
         name: '_bbcode',
         readOnly: true,
         shortcut: 'B',
-        template: '[url={url}]{title}[/url]',
         title: chrome.i18n.getMessage('copy_bbcode')
     }, {
+        content: '{#encode}{url}{/encode}',
         enabled: true,
         image: 1,
         index: 3,
         name: '_encoded',
         readOnly: true,
         shortcut: 'E',
-        template: '{#encode}{url}{/encode}',
         title: chrome.i18n.getMessage('copy_encoded')
     }, {
+        content: '{short}',
         enabled: true,
         image: 5,
         index: 1,
         name: '_short',
         readOnly: true,
         shortcut: 'S',
-        template: '{short}',
         title: chrome.i18n.getMessage('copy_short')
     }, {
+        content: '{url}',
         enabled: true,
         image: 3,
         index: 0,
         name: '_url',
         readOnly: true,
         shortcut: 'U',
-        template: '{url}',
         title: chrome.i18n.getMessage('copy_url')
     }],
 
@@ -446,7 +446,7 @@ var urlcopy = {
      * @param {OnClickData} onClickData The details about the menu item clicked
      * and the context where the click happened.
      * @param {function} shortCallback The function to be called if/when a
-     * shortened URL is requested when parsing the template.
+     * shortened URL is requested when parsing the template's content.
      * @returns {Object} The data based on information extracted from the tab
      * provided and its URL. This can contain Strings, Arrays, Objects, and
      * functions.
@@ -547,12 +547,13 @@ var urlcopy = {
      * the specified tab.</p>
      * <p>This function merges this data with additional information relating
      * to the URL of the tab.</p>
-     * <p>If a shortened URL is requested when parsing the template later the
-     * callback function specified is called to handle this scenario as we
-     * don't want to call a URL shortener service unless it is required.</p>
+     * <p>If a shortened URL is requested when parsing the template's content
+     * later the callback function specified is called to handle this scenario
+     * as we don't want to call a URL shortener service unless it is
+     * required.</p>
      * @param {Tab} tab The tab whose information is to be extracted.
      * @param {function} shortCallback The function to be called if/when a
-     * shortened URL is requested when parsing the template.
+     * shortened URL is requested when parsing the template's content.
      * @returns {Object} The data based on information extracted from the tab
      * provided and its URL. This can contain Strings, Arrays, Objects, and
      * functions.
@@ -758,12 +759,12 @@ var urlcopy = {
      * @private
      */
     deleteFeature: function (name) {
+        utils.remove('feat_' + name + '_content');
         utils.remove('feat_' + name + '_enabled');
         utils.remove('feat_' + name + '_image');
         utils.remove('feat_' + name + '_index');
         utils.remove('feat_' + name + '_readonly');
         utils.remove('feat_' + name + '_shortcut');
-        utils.remove('feat_' + name + '_template');
         utils.remove('feat_' + name + '_title');
     },
 
@@ -900,9 +901,9 @@ var urlcopy = {
      */
     init: function () {
         utils.init('update_progress', {
-            features: false,
-            settings: false,
-            shorteners: false
+            features: [],
+            settings: [],
+            shorteners: []
         });
         urlcopy.init_update();
         utils.init('contextMenu', true);
@@ -934,22 +935,22 @@ var urlcopy = {
      * @private
      */
     init_update: function () {
-        // Checks if settings need updated
-        var progress = utils.get('update_progress');
-        if (progress.settings) {
-            return;
+        var update = utils.get('update_progress');
+        // Checks if 0.1.0.0 update for settings is required
+        if (update.settings.indexOf('0.1.0.0') === -1) {
+            // Performs 0.1.0.0 update for settings
+            utils.rename('settingNotification', 'notifications', true);
+            utils.rename('settingNotificationTimer', 'notificationDuration',
+                    3000);
+            utils.rename('settingShortcut', 'shortcuts', true);
+            utils.rename('settingTargetAttr', 'doAnchorTarget', false);
+            utils.rename('settingTitleAttr', 'doAnchorTitle', false);
+            utils.remove('settingIeTabExtract');
+            utils.remove('settingIeTabTitle');
+            // Ensures 0.1.0.0 update for settings is not performed again
+            update.settings.push('0.1.0.0');
+            utils.set('update_progress', update);
         }
-        // Updates settings accordingly
-        utils.rename('settingNotification', 'notifications', true);
-        utils.rename('settingNotificationTimer', 'notificationDuration', 3000);
-        utils.rename('settingShortcut', 'shortcuts', true);
-        utils.rename('settingTargetAttr', 'doAnchorTarget', false);
-        utils.rename('settingTitleAttr', 'doAnchorTitle', false);
-        utils.remove('settingIeTabExtract');
-        utils.remove('settingIeTabTitle');
-        // Ensures settings are not updated again
-        progress.settings = true;
-        utils.set('update_progress', progress);
     },
 
     /**
@@ -961,19 +962,19 @@ var urlcopy = {
      * <p>Names of initialized features are also added to that stored in
      * localStorage if they do not already exist there.</p>
      * @param {Object} feature The feature whose values are to be initialized.
+     * @param {String} feature.content The mustache template for the feature
+     * (overwrites).
+     * @param {Boolean} feature.enabled <code>true</code> if the feature is
+     * enabled; otherwise <code>false</code>.
      * @param {Integer} feature.image The identifier of the feature's image.
      * @param {Integer} feature.index The index representing the feature's
      * display order.
-     * @param {Boolean} feature.enabled <code>true</code> if the feature is
-     * enabled; otherwise <code>false</code>.
      * @param {String} feature.name The unique name of the feature.
      * @param {Boolean} feature.readOnly <code>true</code> if the feature is
      * read-only and certain values cannot be editted by the user; otherwise
      * <code>false</code> (overwrites).
      * @param {String} feature.shortcut The keyboard shortcut assigned to the
      * feature.
-     * @param {String} feature.template The mustache template for the feature
-     * (overwrites).
      * @param {String} feature.title The title of the feature (overwrites).
      * @returns {Object} The feature provided.
      * @since 0.1.0.0
@@ -981,12 +982,12 @@ var urlcopy = {
      */
     initFeature: function (feature) {
         var name = feature.name;
+        utils.set('feat_' + name + '_content', feature.content);
+        utils.init('feat_' + name + '_enabled', feature.enabled);
         utils.init('feat_' + name + '_image', feature.image);
         utils.init('feat_' + name + '_index', feature.index);
-        utils.init('feat_' + name + '_enabled', feature.enabled);
         utils.set('feat_' + name + '_readonly', feature.readOnly);
         utils.init('feat_' + name + '_shortcut', feature.shortcut);
-        utils.set('feat_' + name + '_template', feature.template);
         utils.set('feat_' + name + '_title', feature.title);
         urlcopy.addFeatureName(name);
         return feature;
@@ -1013,42 +1014,49 @@ var urlcopy = {
      * @private
      */
     initFeatures_update: function () {
-        // Checks if features need updated
-        var progress = utils.get('update_progress');
-        if (progress.features) {
-            return;
+        var update = utils.get('update_progress');
+        // Checks if 0.1.0.0 update for features is required
+        if (update.features.indexOf('0.1.0.0') === -1) {
+            // Performs 0.1.0.0 update for features
+            utils.rename('copyAnchorEnabled', 'feat__anchor_enabled', true);
+            utils.rename('copyAnchorOrder', 'feat__anchor_index', 2);
+            utils.rename('copyBBCodeEnabled', 'feat__bbcode_enabled', false);
+            utils.rename('copyBBCodeOrder', 'feat__bbcode_index', 4);
+            utils.rename('copyEncodedEnabled', 'feat__encoded_enabled', true);
+            utils.rename('copyEncodedOrder', 'feat__encoded_index', 3);
+            utils.rename('copyShortEnabled', 'feat__short_enabled', true);
+            utils.rename('copyShortOrder', 'feat__short_index', 1);
+            utils.rename('copyUrlEnabled', 'feat__url_enabled', true);
+            utils.rename('copyUrlOrder', 'feat__url_index', 0);
+            // Ensures 0.1.0.0 update for features is not performed again
+            update.features.push('0.1.0.0');
+            utils.set('update_progress', update);
         }
-        // Updates features accordingly
-        utils.rename('copyAnchorEnabled', 'feat__anchor_enabled', true);
-        utils.rename('copyAnchorOrder', 'feat__anchor_index', 2);
-        utils.rename('copyBBCodeEnabled', 'feat__bbcode_enabled', false);
-        utils.rename('copyBBCodeOrder', 'feat__bbcode_index', 4);
-        utils.rename('copyEncodedEnabled', 'feat__encoded_enabled', true);
-        utils.rename('copyEncodedOrder', 'feat__encoded_index', 3);
-        utils.rename('copyShortEnabled', 'feat__short_enabled', true);
-        utils.rename('copyShortOrder', 'feat__short_index', 1);
-        utils.rename('copyUrlEnabled', 'feat__url_enabled', true);
-        utils.rename('copyUrlOrder', 'feat__url_index', 0);
-        // Updates images accordingly (0.2.0.0 update)
-        var image,
-            names = utils.get('features');
-        for (var i = 0; i < names.length; i++) {
-            image = utils.get('feat_' + names[i] + '_image');
-            if (typeof image === 'string') {
-                for (var j = 0; j < urlcopy.images.length; j++) {
-                    if (urlcopy.images[j].file === image) {
-                        utils.set('feat_' + names[i] + '_image',
-                                urlcopy.images[j].id);
-                        break;
+        // Checks if 0.2.0.0 update for features is required
+        if (update.features.indexOf('0.2.0.0') === -1) {
+            // Performs 0.2.0.0 update for features
+            var image,
+                names = utils.get('features');
+            for (var i = 0; i < names.length; i++) {
+                utils.rename('feat_' + names[i] + '_template', 'feat_' +
+                        names[i] + '_content');
+                image = utils.get('feat_' + names[i] + '_image');
+                if (typeof image === 'string') {
+                    for (var j = 0; j < urlcopy.images.length; j++) {
+                        if (urlcopy.images[j].file === image) {
+                            utils.set('feat_' + names[i] + '_image',
+                                    urlcopy.images[j].id);
+                            break;
+                        }
                     }
+                } else if (typeof image === 'undefined') {
+                    utils.set('feat_' + names[i] + '_image', 0);
                 }
-            } else if (typeof image === 'undefined') {
-                utils.set('feat_' + names[i] + '_image', 0);
             }
+            // Ensures 0.2.0.0 update for features is not performed again
+            update.features.push('0.2.0.0');
+            utils.set('update_progress', update);
         }
-        // Ensures features are not updated again
-        progress.features = true;
-        utils.set('update_progress', progress);
     },
 
     /**
@@ -1077,20 +1085,19 @@ var urlcopy = {
      * @private
      */
     initUrlShorteners_update: function () {
-        // Checks if URL shorteners need updated
-        var progress = utils.get('update_progress');
-        if (progress.shorteners) {
-            return;
+        var update = utils.get('update_progress');
+        // Checks if 0.1.0.0 update for URL shorteners is required
+        if (update.shorteners.indexOf('0.1.0.0') === -1) {
+            // Performs 0.1.0.0 update for URL shorteners
+            utils.rename('bitlyEnabled', 'bitly', false);
+            utils.rename('bitlyXApiKey', 'bitlyApiKey', '');
+            utils.rename('bitlyXLogin', 'bitlyUsername', '');
+            utils.rename('googleEnabled', 'googl', true);
+            utils.rename('googleOAuthEnabled', 'googlOAuth', true);
+            // Ensures 0.1.0.0 update for URL shorteners is not performed again
+            update.shorteners.push('0.1.0.0');
+            utils.set('update_progress', update);
         }
-        // Updates URL shorteners accordingly
-        utils.rename('bitlyEnabled', 'bitly', false);
-        utils.rename('bitlyXApiKey', 'bitlyApiKey', '');
-        utils.rename('bitlyXLogin', 'bitlyUsername', '');
-        utils.rename('googleEnabled', 'googl', true);
-        utils.rename('googleOAuthEnabled', 'googlOAuth', true);
-        // Ensures URL shorteners are not updated again
-        progress.shorteners = true;
-        utils.set('update_progress', progress);
     },
 
     /**
@@ -1158,13 +1165,13 @@ var urlcopy = {
      */
     loadFeature: function (name) {
         return {
+            content: utils.get('feat_' + name + '_content'),
             enabled: utils.get('feat_' + name + '_enabled'),
             image: utils.get('feat_' + name + '_image'),
             index: utils.get('feat_' + name + '_index'),
             name: name,
             readOnly: utils.get('feat_' + name + '_readonly'),
             shortcut: utils.get('feat_' + name + '_shortcut'),
-            template: utils.get('feat_' + name + '_template'),
             title: utils.get('feat_' + name + '_title')
         };
     },
@@ -1310,14 +1317,14 @@ var urlcopy = {
                     urlcopy.addAdditionalData(data, {
                         cookies: cookies || []
                     });
-                    if (!feature.template) {
+                    if (!feature.content) {
                         urlcopy.message = chrome.i18n.getMessage(
                                 'copy_template_fail', feature.title);
                         urlcopy.status = false;
                         urlcopy.showNotification();
                         return;
                     }
-                    var output = Mustache.to_html(feature.template, data);
+                    var output = Mustache.to_html(feature.content, data);
                     if (shortCalled) {
                         urlcopy.callUrlShortener(data.source,
                                 function (response) {
@@ -1380,18 +1387,18 @@ var urlcopy = {
      * <p>Stores the values of the specified feature in to their respective
      * locations.</p>
      * @param {Object} feature The feature whose values are to be saved.
+     * @param {String} feature.content The mustache template for the feature.
+     * @param {Boolean} feature.enabled <code>true</code> if the feature is
+     * enabled; otherwise <code>false</code>.
      * @param {Integer} feature.image The identifier of the feature's image.
      * @param {Integer} feature.index The index representing the feature's
      * display order.
-     * @param {Boolean} feature.enabled <code>true</code> if the feature is
-     * enabled; otherwise <code>false</code>.
      * @param {String} feature.name The unique name of the feature.
      * @param {Boolean} feature.readOnly <code>true</code> if the feature is
      * read-only and certain values cannot be editted by the user; otherwise
      * <code>false</code>.
      * @param {String} feature.shortcut The keyboard shortcut assigned to the
      * feature.
-     * @param {String} feature.template The mustache template for the feature.
      * @param {String} feature.title The title of the feature.
      * @returns {Object} The feature provided.
      * @since 0.1.0.0
@@ -1399,12 +1406,12 @@ var urlcopy = {
      */
     saveFeature: function (feature) {
         var name = feature.name;
+        utils.set('feat_' + name + '_content', feature.content);
         utils.set('feat_' + name + '_enabled', feature.enabled);
         utils.set('feat_' + name + '_image', feature.image);
         utils.set('feat_' + name + '_index', feature.index);
         utils.set('feat_' + name + '_readonly', feature.readOnly);
         utils.set('feat_' + name + '_shortcut', feature.shortcut);
-        utils.set('feat_' + name + '_template', feature.template);
         utils.set('feat_' + name + '_title', feature.title);
         return feature;
     },

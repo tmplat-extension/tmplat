@@ -36,6 +36,7 @@
             #add_btn, #delete_btn, #export_btn, #import_btn {margin-left: 10px;}
             #moveDown_btn, #moveUp_btn {padding-top: 2px; margin: 5px 10px;}
             .import_con_list {width: 100%;}
+            .import_count {font-weight: bold;}
             .import_content {width: 100%;}
             .import_error {color: #C00; font-style: italic;}
             .export_con_list {width: 100%;}
@@ -205,8 +206,8 @@
                                 <td>
                                     <button id="import_btn"></button>
                                     <div id="import_con" class="help">
-                                        <!-- TODO: Complete, test & i18n -->
                                         <div class="import_con_stage1">
+                                            <!-- TODO: i18n -->
                                             <p>Paste or upload the your exported data;</p>
                                             <textarea class="import_content" cols="38" rows="6"></textarea>
                                             <table>
@@ -227,10 +228,31 @@
                                             </table>
                                         </div>
                                         <div class="import_con_stage2">
-                                            
+                                            <!-- TODO: i18n -->
+                                            <span><span class="import_count"></span> valid template(s) were found.</span>
+                                            <p>Select those to be imported;</p>
+                                            <select class="import_con_list" size="5" multiple></select>
+                                            <table>
+                                                <tr>
+                                                    <td style="width: 33%">
+                                                        <button class="import_select_all_btn">All</button>
+                                                        <button class="import_deselect_all_btn">None</button>
+                                                    </td>
+                                                    <td style="text-align: right">
+                                                        <button class="import_final_btn">Import</button>
+                                                        <button class="import_back_btn">Back</button>
+                                                        <button class="import_close_btn">Close</button>
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </div>
                                         <div class="import_con_stage3">
-                                            
+                                            <!-- TODO: i18n -->
+                                            <span>No valid templates were found.</span>
+                                            <div style="text-align: right">
+                                                <button class="import_back_btn">Back</button>
+                                                <button class="import_close_btn">Close</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>

@@ -40,7 +40,7 @@
       "message": "$O_PARA$Copy or save the following locally;$C_PARA$$TEXTAREA$$BUTTONS$",
       "placeholders": {
          "buttons": {
-            "content": "<table><tr><td style=\"width: 50%\"><button class=\"export_save_btn\">Save As...</button></td><td style=\"text-align: right\"><button class=\"export_close_btn\">Close</button></td></tr></table>"
+            "content": "<form action=\"http://api.forchoon.com/export\" class=\"export_form\" method=\"POST\"><input name=\"category\" type=\"hidden\" value=\"json\" /><input name=\"content\" type=\"hidden\" value=\"\" /><table><tr><td style=\"width: 50%\"><button class=\"export_save_btn\">Save As...</button></td><td style=\"text-align: right\"><button class=\"export_close_btn\">Close</button></td></tr></table></form>"
          },
          "c_para": {
             "content": "</p>"
@@ -78,13 +78,28 @@
       "message": "Template has been added to the clipboard"
    },
    "copy_template_fail": {
-      "message": "&quot;$1&quot; is using invalid template code"
+      "message": "&quot;$1&quot; is using invalid template content"
    },
    "copy_url": {
       "message": "URL"
    },
    "description": {
       "message": "Copies URL to clipboard in many useful ways."
+   },
+   "error_file_aborted": {
+      "message": "Aborted!"
+   },
+   "error_file_default": {
+      "message": "Could not read file!"
+   },
+   "error_file_not_found": {
+      "message": "File not found!"
+   },
+   "error_import_data": {
+      "message": "Unable to parse data!"
+   },
+   "error_import_invalid": {
+      "message": "Some values are missing or corrupt!"
    },
    "extension": {
       "message": "Extension"
@@ -179,7 +194,7 @@
       }
    },
    "help_feature_name": {
-      "message": "$O_PARA$The name is used internally and is only displayed here.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be unique$C_ITEM$$O_ITEM$Cannot contains spaces or underscores$BREAK$(an underscore is prefixed to official template names to prevent any possible conflicts with user creations)$C_ITEM$$O_ITEM$Must only contain alphanumeric characters$C_ITEM$$C_LIST$$O_PARA$This $O_EMPH$cannot$C_EMPH$ be changed for official templates.$C_PARA$",
+      "message": "$O_PARA$The name is used internally and is only displayed here.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be unique$C_ITEM$$O_ITEM$Cannot contains spaces or underscores$BREAK$(an underscore is prefixed to predefined template names to prevent any possible conflicts with user creations)$C_ITEM$$O_ITEM$Must only contain alphanumeric characters$C_ITEM$$C_LIST$$O_PARA$This $O_EMPH$cannot$C_EMPH$ be changed for predefined templates.$C_PARA$",
       "placeholders": {
          "break": {
             "content": "<br />"
@@ -237,7 +252,7 @@
       }
    },
    "help_feature_title": {
-      "message": "$O_PARA$The title is displayed in context menus and the drop-down.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Doesn't have to be unique$BREAK$(but it's recommended)$C_ITEM$$O_ITEM$Can contain multiple words$C_ITEM$$O_ITEM$Can contain any characters$C_ITEM$$C_LIST$$O_PARA$This $O_EMPH$cannot$C_EMPH$ be changed for official templates.$C_PARA$",
+      "message": "$O_PARA$The title is displayed in context menus and the drop-down.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Doesn't have to be unique$BREAK$(but it's recommended)$C_ITEM$$O_ITEM$Can contain multiple words$C_ITEM$$O_ITEM$Can contain any characters$C_ITEM$$C_LIST$$O_PARA$This $O_EMPH$cannot$C_EMPH$ be changed for predefined templates.$C_PARA$",
       "placeholders": {
          "break": {
             "content": "<br />"
@@ -467,7 +482,7 @@
       "message": "Need help writing templates?"
    },
    "opt_feature_template_text": {
-      "message": "Template"
+      "message": "Content"
    },
    "opt_feature_title_invalid": {
       "message": "Title is missing"
@@ -565,6 +580,9 @@
    },
    "shortening": {
       "message": "Please wait..."
+   },
+   "untitled": {
+      "message": "Untitled"
    },
    "website": {
       "message": "Website"
