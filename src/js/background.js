@@ -24,8 +24,23 @@ var urlcopy = {
      * @type Object
      */
     browser: {
+
+        /**
+         * <p>The name of the browser (i.e. <code>Chrome</code>).</p>
+         * @since 0.1.0.3
+         * @private
+         * @type String
+         */
         title: 'Chrome',
+
+        /**
+         * <p>The version of the browser (e.g. <code>12.0.742.122</code>).</p>
+         * @since 0.1.0.3
+         * @private
+         * @type String
+         */
         version: ''
+
     },
 
     /**
@@ -37,7 +52,7 @@ var urlcopy = {
     defaultFeatures: [{
         content: '<a href="{{url}}"{#doAnchorTarget} target="_blank"{/doAnchorTarget}{#doAnchorTitle} title="{{title}}"{/doAnchorTitle}>{{title}}</a>',
         enabled: true,
-        image: 4,
+        image: 11,
         index: 2,
         name: '_anchor',
         readOnly: true,
@@ -46,7 +61,7 @@ var urlcopy = {
     }, {
         content: '[url={url}]{title}[/url]',
         enabled: false,
-        image: 2,
+        image: 7,
         index: 4,
         name: '_bbcode',
         readOnly: true,
@@ -55,7 +70,7 @@ var urlcopy = {
     }, {
         content: '{#encode}{url}{/encode}',
         enabled: true,
-        image: 1,
+        image: 5,
         index: 3,
         name: '_encoded',
         readOnly: true,
@@ -64,7 +79,7 @@ var urlcopy = {
     }, {
         content: '{short}',
         enabled: true,
-        image: 5,
+        image: 16,
         index: 1,
         name: '_short',
         readOnly: true,
@@ -73,7 +88,7 @@ var urlcopy = {
     }, {
         content: '{url}',
         enabled: true,
-        image: 3,
+        image: 8,
         index: 0,
         name: '_url',
         readOnly: true,
@@ -101,25 +116,141 @@ var urlcopy = {
         name: chrome.i18n.getMessage('feat_none'),
         separate: true
     }, {
-        file: 'feat_component.png',
+        file: 'feat_auction.png',
         id: 1,
+        name: chrome.i18n.getMessage('feat_auction')
+    }, {
+        file: 'feat_bug.png',
+        id: 2,
+        name: chrome.i18n.getMessage('feat_bug')
+    }, {
+        file: 'feat_clipboard.png',
+        id: 3,
+        name: chrome.i18n.getMessage('feat_clipboard')
+    }, {
+        file: 'feat_clipboard_empty.png',
+        id: 4,
+        name: chrome.i18n.getMessage('feat_clipboard_empty')
+    }, {
+        file: 'feat_component.png',
+        id: 5,
         name: chrome.i18n.getMessage('feat_component')
     }, {
+        file: 'feat_cookies.png',
+        id: 6,
+        name: chrome.i18n.getMessage('feat_cookies')
+    }, {
         file: 'feat_discussion.png',
-        id: 2,
+        id: 7,
         name: chrome.i18n.getMessage('feat_discussion')
     }, {
         file: 'feat_globe.png',
-        id: 3,
+        id: 8,
         name: chrome.i18n.getMessage('feat_globe')
     }, {
+        file: 'feat_google.png',
+        id: 9,
+        name: chrome.i18n.getMessage('feat_google')
+    }, {
+        file: 'feat_heart.png',
+        id: 10,
+        name: chrome.i18n.getMessage('feat_heart')
+    }, {
         file: 'feat_html.png',
-        id: 4,
+        id: 11,
         name: chrome.i18n.getMessage('feat_html')
     }, {
+        file: 'feat_key.png',
+        id: 12,
+        name: chrome.i18n.getMessage('feat_key')
+    }, {
+        file: 'feat_lightbulb.png',
+        id: 13,
+        name: chrome.i18n.getMessage('feat_lightbulb')
+    }, {
+        file: 'feat_lighthouse.png',
+        id: 14,
+        name: chrome.i18n.getMessage('feat_lighthouse')
+    }, {
+        file: 'feat_lightning.png',
+        id: 15,
+        name: chrome.i18n.getMessage('feat_lightning')
+    }, {
         file: 'feat_link.png',
-        id: 5,
+        id: 16,
         name: chrome.i18n.getMessage('feat_link')
+    }, {
+        file: 'feat_linux.png',
+        id: 17,
+        name: chrome.i18n.getMessage('feat_linux')
+    }, {
+        file: 'feat_mail.png',
+        id: 18,
+        name: chrome.i18n.getMessage('feat_mail')
+    }, {
+        file: 'feat_newspaper.png',
+        id: 19,
+        name: chrome.i18n.getMessage('feat_newspaper')
+    }, {
+        file: 'feat_note.png',
+        id: 20,
+        name: chrome.i18n.getMessage('feat_note')
+    }, {
+        file: 'feat_page.png',
+        id: 21,
+        name: chrome.i18n.getMessage('feat_page')
+    }, {
+        file: 'feat_plugin.png',
+        id: 22,
+        name: chrome.i18n.getMessage('feat_plugin')
+    }, {
+        file: 'feat_rss.png',
+        id: 23,
+        name: chrome.i18n.getMessage('feat_rss')
+    }, {
+        file: 'feat_script.png',
+        id: 24,
+        name: chrome.i18n.getMessage('feat_script')
+    }, {
+        file: 'feat_scull.png',
+        id: 25,
+        name: chrome.i18n.getMessage('feat_scull')
+    }, {
+        file: 'feat_sign.png',
+        id: 26,
+        name: chrome.i18n.getMessage('feat_sign')
+    }, {
+        file: 'feat_siren.png',
+        id: 27,
+        name: chrome.i18n.getMessage('feat_siren')
+    }, {
+        file: 'feat_star.png',
+        id: 28,
+        name: chrome.i18n.getMessage('feat_star')
+    }, {
+        file: 'feat_support.png',
+        id: 29,
+        name: chrome.i18n.getMessage('feat_support')
+    }, {
+        file: 'feat_tag.png',
+        id: 30,
+        name: chrome.i18n.getMessage('feat_tag')
+    }, {
+        file: 'feat_tags.png',
+        id: 31,
+        name: chrome.i18n.getMessage('feat_tags')
+    }, {
+        file: 'feat_thumb_down.png',
+        id: 32,
+        name: chrome.i18n.getMessage('feat_thumb_down')
+    }, {
+        file: 'feat_thumb_up.png',
+        id: 33,
+        name: chrome.i18n.getMessage('feat_thumb_up')
+    }, {
+        file: 'feat_tools.png',
+        id: 34,
+        name: chrome.i18n.getMessage('feat_tools')
     }],
 
     /**

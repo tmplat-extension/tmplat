@@ -155,8 +155,23 @@
    "extension": {
       "message": "Extension"
    },
+   "feat_auction": {
+      "message": "Auction"
+   },
+   "feat_bug": {
+      "message": "Bug"
+   },
+   "feat_clipboard": {
+      "message": "Clipboard"
+   },
+   "feat_clipboard_empty": {
+      "message": "Clipboard (Empty)"
+   },
    "feat_component": {
       "message": "Component"
+   },
+   "feat_cookies": {
+      "message": "Cookies"
    },
    "feat_discussion": {
       "message": "Discussion"
@@ -164,14 +179,86 @@
    "feat_globe": {
       "message": "Globe"
    },
+   "feat_google": {
+      "message": "Google"
+   },
+   "feat_heart": {
+      "message": "Heart"
+   },
    "feat_html": {
       "message": "HTML"
+   },
+   "feat_key": {
+      "message": "Key"
+   },
+   "feat_lightbulb": {
+      "message": "Lightbulb"
+   },
+   "feat_lighthouse": {
+      "message": "Lighthouse"
+   },
+   "feat_lightning": {
+      "message": "Lightning"
    },
    "feat_link": {
       "message": "Link"
    },
+   "feat_linux": {
+      "message": "Linux"
+   },
+   "feat_mail": {
+      "message": "Mail"
+   },
+   "feat_newspaper": {
+      "message": "Newspaper"
+   },
    "feat_none": {
       "message": "None"
+   },
+   "feat_note": {
+      "message": "Note"
+   },
+   "feat_page": {
+      "message": "Page"
+   },
+   "feat_plugin": {
+      "message": "Plugin"
+   },
+   "feat_rss": {
+      "message": "RSS"
+   },
+   "feat_script": {
+      "message": "Script"
+   },
+   "feat_scull": {
+      "message": "Scull"
+   },
+   "feat_sign": {
+      "message": "Sign"
+   },
+   "feat_siren": {
+      "message": "Siren"
+   },
+   "feat_star": {
+      "message": "Star"
+   },
+   "feat_support": {
+      "message": "Support"
+   },
+   "feat_tag": {
+      "message": "Tag"
+   },
+   "feat_tags": {
+      "message": "Tags"
+   },
+   "feat_thumb_down": {
+      "message": "Thumb Down"
+   },
+   "feat_thumb_up": {
+      "message": "Thumb Up"
+   },
+   "feat_tools": {
+      "message": "Tools"
    },
    "help_bitlyApiKey": {
       "message": "$O_PARA$The API key allows $O_BOLD$URL Copy$C_BOLD$ to shorten links via $O_BOLD$bit.ly$C_BOLD$ on your behalf.$C_PARA$$O_PARA$$O_LINK_1$Get your API key$C_LINK$$C_PARA$",
