@@ -1,7 +1,7 @@
-# [URL Copy](https://chrome.google.com/webstore/detail/dcjnfaoifoefmnbhhlbppaebgnccfddf) - Google Chrome Extension
+# [Template](https://chrome.google.com/webstore/detail/dcjnfaoifoefmnbhhlbppaebgnccfddf) - Google Chrome Extension
 
 ## Build Requirements
-In order to build URL Copy, you need to have the following:
+In order to build Template, you need to have the following:
 
 * GNU make 3.8+
 * Node 0.2+
@@ -36,11 +36,11 @@ Either of the below options are aviable;
 Use your appropriate package managers to install *git*, *make*, and *Node*.
 
 ## Building
-Follow these steps to build URL Copy;
+Follow these steps to build Template;
 
-1. Clone a copy of the main URL Copy git repository by running `git clone git://github.com/neocotic/url-copy-chrome.git`
+1. Clone a copy of the main Template git repository by running `git clone git://github.com/neocotic/template.git`
 2. For the minified and validated version `cd` to the repository directory and enter `make`
-   * If you don't have *Node* installed and/or want the basic, uncompressed, unvalidated version of URL Copy, simply run the extension off of the `src` directory
+   * If you don't have *Node* installed and/or want the basic, uncompressed, unvalidated version of Template, simply run the extension off of the `src` directory
    * Outputs to `bin` directory
 3. For the distribution enter `make dist`
    * Outputs to `dist` directory

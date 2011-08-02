@@ -1,11 +1,11 @@
 // Injects listener for extension keyboard shortcuts in to page context
 (function () {
     // Only adds listener if previous injection isn't detected
-    if (document.body.hasAttribute('url_copy_injected')) {
+    if (document.body.hasAttribute('template_hotkeys_active')) {
         return;
     }
     var isMac = navigator.userAgent.toLowerCase().indexOf('mac') !== -1;
-    document.body.setAttribute('url_copy_injected', true);
+    document.body.setAttribute('template_hotkeys_active', true);
     window.addEventListener('keyup', function (e) {
         if ((!isMac && e.ctrlKey && e.altKey) ||
                 (isMac && e.shiftKey && e.altKey)) {

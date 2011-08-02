@@ -1,6 +1,6 @@
 {
    "app_name": {
-      "message": "URL-Copy"
+      "message": "Template Chrome Extension"
    },
    "confirm_delete": {
       "message": "$O_PARA$This action is $O_BOLD$permanent$C_BOLD$ and cannot be reversed.$C_PARA$$O_PARA$Do you want to continue anyway?$C_PARA$$BUTTONS$",
@@ -138,7 +138,7 @@
       "message": "URL"
    },
    "description": {
-      "message": "Copies URL to clipboard in many useful ways."
+      "message": "Quickly and easily copies info on the current page using a simple and unique template system"
    },
    "error_file_aborted": {
       "message": "Aborted!"
@@ -264,7 +264,7 @@
       "message": "Tools"
    },
    "help_bitlyApiKey": {
-      "message": "$O_PARA$The API key allows $O_BOLD$URL Copy$C_BOLD$ to shorten links via $O_BOLD$bit.ly$C_BOLD$ on your behalf.$C_PARA$$O_PARA$$O_LINK_1$Get your API key$C_LINK$$C_PARA$",
+      "message": "$O_PARA$The API key allows $O_BOLD$Template$C_BOLD$ to shorten links via $O_BOLD$bit.ly$C_BOLD$ on your behalf.$C_PARA$$O_PARA$$O_LINK_1$Get your API key$C_LINK$$C_PARA$",
       "placeholders": {
          "c_bold": {
             "content": "</strong>"
@@ -425,7 +425,7 @@
       }
    },
    "help_googlOAuth": {
-      "message": "$O_PARA$$O_LINK_1$OAuth$C_LINK$ is an open protocol that aims to standardize the way desktop and web applications access a user's private data. OAuth provides a mechanism for users to grant access to private data without sharing their private credentials (username/password).$C_PARA$$O_PARA$$O_BOLD$URL Copy$C_BOLD$ uses OAuth to shorten links via $O_BOLD$goo.gl$C_BOLD$ on your behalf.$C_PARA$",
+      "message": "$O_PARA$$O_LINK_1$OAuth$C_LINK$ is an open protocol that aims to standardize the way desktop and web applications access a user's private data. OAuth provides a mechanism for users to grant access to private data without sharing their private credentials (username/password).$C_PARA$$O_PARA$$O_BOLD$Template$C_BOLD$ uses OAuth to shorten links via $O_BOLD$goo.gl$C_BOLD$ on your behalf.$C_PARA$",
       "placeholders": {
          "c_bold": {
             "content": "</strong>"
@@ -538,7 +538,7 @@
       }
    },
    "name": {
-      "message": "URL Copy"
+      "message": "Template"
    },
    "oauth_redirect_body": {
       "message": "Redirecting..."

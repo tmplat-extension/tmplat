@@ -1,4 +1,4 @@
-dist_file = URL-Copy
+dist_file = Template
 
 js_engine ?= `which node`
 jsdoc_toolkit = /usr/local/jsdoc-toolkit
@@ -27,16 +27,16 @@ extra_bin_files = bin/js/chrome_ex_oauth.js\
 
 all: core
 
-core: urlcopy $(base_bin_files) $(extra_bin_files)
-	@@echo "URL-Copy build complete"
+core: template $(base_bin_files) $(extra_bin_files)
+	@@echo "Template build complete"
 
-urlcopy: $(base_dirs) $(base_locale_dirs)
-	@@echo "Building URL-Copy"
+template: $(base_dirs) $(base_locale_dirs)
+	@@echo "Building Template"
 	@@mkdir -p bin
 	@@cp -r src/* bin
 	@@find bin/ -name '.git*' -print0 | xargs -0 -IFILES rm FILES
 
-$(base_bin_files): urlcopy
+$(base_bin_files): template
 	@@if test ! -z $(js_engine); then \
 		echo "Validating:" $@; \
 		$(validator) $@; \
@@ -48,7 +48,7 @@ $(base_bin_files): urlcopy
 		echo "You must have NodeJS installed in order to validate and minify" $(notdir $@); \
 	fi
 
-$(extra_bin_files): urlcopy
+$(extra_bin_files): template
 	@@if test ! -z $(js_engine); then \
 		echo "Minifying: " $@; \
 		$(compiler) $@ > $@.tmp; \
@@ -74,7 +74,7 @@ dist:
 	@@echo "Generating distributable"
 	@@mkdir -p dist
 	@@cd bin && zip -r ../dist/$(dist_file) *
-	@@echo "URL-Copy distributable complete"
+	@@echo "Template distributable complete"
 
 distclean: docclean
 	@@echo "Removing distribution directory"
@@ -88,4 +88,4 @@ clean: distclean
 	@@echo "Removing binary directory"
 	@@rm -rf bin
 
-.PHONY: all urlcopy doc dist clean distclean docclean core
+.PHONY: all template doc dist clean distclean docclean core
