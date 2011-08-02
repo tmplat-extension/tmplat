@@ -2,6 +2,9 @@
  * <p>Main controller for the extension and manages all copy requests.</p>
  * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
  * @since 0.1.0.0 - Previously named <code>clipboard</code>.
+ * @requires jQuery
+ * @requires jQuery URL Parser Plugin
+ * @requires mustache.js
  * @namespace
  */
 var urlcopy = {
@@ -177,7 +180,7 @@ var urlcopy = {
      * @since 0.1.0.0
      * @type String
      */
-    shortcutMacModifiers: 'Shift-&#8997;-',
+    shortcutMacModifiers: '&#8679; &#8997; ',
 
     /**
      * <p>The URL shortener services supported by this extension.</p>
@@ -452,8 +455,6 @@ var urlcopy = {
      * functions.
      * @see urlcopy.buildStandardData
      * @since 0.1.0.0
-     * @requires jQuery
-     * @requires jQuery URL Parser Plugin
      * @private
      */
     buildDerivedData: function (tab, onClickData, shortCallback) {
@@ -481,7 +482,6 @@ var urlcopy = {
      * @param {Object} feature The information of the feature to be used.
      * @returns {jQuery} The generated <code>&lt;li/&gt;</code> jQuery object.
      * @since 0.1.0.0
-     * @requires jQuery
      * @private
      */
     buildFeature: function (feature) {
@@ -522,7 +522,6 @@ var urlcopy = {
      * <p>Builds the HTML to populate the popup with to optimize popup loading
      * times.</p>
      * @since 0.1.0.0
-     * @requires jQuery
      * @private
      */
     buildPopup: function () {
@@ -558,8 +557,6 @@ var urlcopy = {
      * provided and its URL. This can contain Strings, Arrays, Objects, and
      * functions.
      * @since 0.1.0.0
-     * @requires jQuery
-     * @requires jQuery URL Parser Plugin
      * @private
      */
     buildStandardData: function (tab, shortCallback) {
@@ -736,8 +733,6 @@ var urlcopy = {
      * @param {Boolean} [hidden] <code>true</code> to avoid updating
      * {@link urlcopy.status} and showing a notification; otherwise
      * <code>false</code>.
-     * @requires document.execCommand
-     * @requires jQuery
      */
     copy: function (str, hidden) {
         var result = false,
@@ -1275,8 +1270,6 @@ var urlcopy = {
      * @param {function} [sendResponse] Function to call when you have a
      * response. The argument should be any JSON-ifiable object, or undefined
      * if there is no response.
-     * @requires jQuery
-     * @requires Mustache
      * @private
      */
     onRequestHelper: function (request, sender, sendResponse) {

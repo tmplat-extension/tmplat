@@ -53,6 +53,63 @@
          }
       }
    },
+   "confirm_import_stage1": {
+      "message": "$O_PARA$Paste or upload the your exported data;$C_PARA$$TEXTAREA$$BUTTONS$",
+      "placeholders": {
+         "buttons": {
+            "content": "<table><tr><td colspan=\"2\"><input class=\"import_file_btn\" type=\"file\" /></td></tr><tr><td style=\"width: 50%\"><span class=\"import_error\"></span></td><td style=\"text-align: right\"><button class=\"import_yes_btn\">Continue</button><button class=\"import_no_btn\">Cancel</button></td></tr></table>"
+         },
+         "c_para": {
+            "content": "</p>"
+         },
+         "textarea": {
+            "content": "<textarea class=\"import_content\" cols=\"38\" rows=\"6\"></textarea>"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
+   "confirm_import_stage2": {
+      "message": "$O_SPAN$$COUNT$ valid template(s) were found.$C_SPAN$$O_PARA$Select those to be imported;$C_PARA$$LIST$$BUTTONS$",
+      "placeholders": {
+         "buttons": {
+            "content": "<table><tr><td style=\"width: 33%\"><button class=\"import_select_all_btn\">All</button><button class=\"import_deselect_all_btn\">None</button></td><td style=\"text-align: right\"><button class=\"import_final_btn\">Import</button><button class=\"import_back_btn\">Back</button><button class=\"import_close_btn\">Close</button></td></tr></table>"
+         },
+         "c_para": {
+            "content": "</p>"
+         },
+         "c_span": {
+            "content": "</span>"
+         },
+         "count": {
+            "content": "<span class=\"import_count\"></span>"
+         },
+         "list": {
+            "content": "<select class=\"import_con_list\" size=\"5\" multiple></select>"
+         },
+         "o_para": {
+            "content": "<p>"
+         },
+         "o_span": {
+            "content": "<span>"
+         }
+      }
+   },
+   "confirm_import_stage3": {
+      "message": "$O_SPAN$No valid templates were found.$C_SPAN$$BUTTONS$",
+      "placeholders": {
+         "buttons": {
+            "content": "<div style=\"text-align: right\"><button class=\"import_back_btn\">Back</button><button class=\"import_close_btn\">Close</button></div>"
+         },
+         "c_span": {
+            "content": "</span>"
+         },
+         "o_span": {
+            "content": "<span>"
+         }
+      }
+   },
    "copy_anchor": {
       "message": "Anchor"
    },

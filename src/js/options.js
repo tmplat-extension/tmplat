@@ -2,6 +2,7 @@
  * <p>Responsible for the options page.</p>
  * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
  * @since 0.0.2.1
+ * @requires jQuery
  * @namespace
  */
 var options = {
@@ -49,7 +50,20 @@ var options = {
      */
     webstoreUrl: 'https://chrome.google.com/webstore/detail/',
 
-    // TODO: Doc & test
+    /**
+     * <p>Creates a feature from the information from the provided feature.</p>
+     * <p>The feature provided is not altered in any way and the new feature is
+     * only created if the feature has a valid name.</p>
+     * <p>Other than the name, any invalid fields will not be copied to the new
+     * feature which will instead use the preferred default value for those
+     * fields.</p>
+     * @param {Object} feature The imported feature on which the newly created
+     * feature should be based on.
+     * @returns {Object} The newly created feature based on that provided or
+     * <code>undefined</code> if the feature's name is invalid.
+     * @since 0.2.0.0
+     * @private
+     */
     addImportedFeature: function (feature) {
         var bg = chrome.extension.getBackgroundPage(),
             newFeature;
@@ -112,7 +126,16 @@ var options = {
         return JSON.stringify(data);
     },
 
-    // TODO: Doc & test
+    /**
+     * <p>Creates a JSON object from the imported string specified.</p>
+     * @param {String} str The imported string to be parsed.
+     * @returns {Object} The object created from the parsed string.
+     * @throws {String} If a problem occurs while parsing the string.
+     * @throws {String} If the resulting object doesn't contain the required
+     * fields.
+     * @since 0.2.0.0
+     * @private
+     */
     createImport: function (str) {
         var data = {};
         try {
@@ -127,7 +150,16 @@ var options = {
         return data;
     },
 
-    // TODO: Docs
+    /**
+     * <p>Creates a feature with the information derived from the specified
+     * <code>&lt;option/&gt;</code> element.</p>
+     * @param {jQuery} option The <code>&lt;option/&gt;</code> element in a
+     * jQuery wrapper.
+     * @return {Object} The feature created from the jQuery object or
+     * <code>undefined</code> if the jQuery object contained no elements.
+     * @since 0.2.0.0
+     * @private
+     */
     deriveFeature: function (option) {
         var feature;
         if (option.length > 0) {
@@ -175,7 +207,6 @@ var options = {
      * returned message (where applicable).
      * @returns {jQuery} The modified element(s) wrapped in jQuery.
      * @since 0.1.0.0
-     * @requires jQuery
      * @private
      */
     i18nAttribute: function (selector, attribute, name, sub) {
@@ -195,7 +226,6 @@ var options = {
      * returned message (where applicable).
      * @returns {jQuery} The modified element(s) wrapped in jQuery.
      * @since 0.1.0.0 - Previously located in {@link utils}.
-     * @requires jQuery
      * @private
      */
     i18nReplace: function (selector, name, sub) {
@@ -210,7 +240,6 @@ var options = {
      * <p>This involves inserting and configuring the UI elements as well as
      * the insertion of localized Strings and most importantly loading the
      * current settings.</p>
-     * @requires jQuery
      */
     init: function () {
         // Inserts localized Strings
@@ -220,6 +249,9 @@ var options = {
         options.i18nReplace('#delete_btn', 'opt_delete_button');
         options.i18nReplace('#import_btn', 'opt_import_button');
         options.i18nReplace('#export_btn', 'opt_export_button');
+        options.i18nReplace('.import_con_stage1', 'confirm_import_stage1');
+        options.i18nReplace('.import_con_stage2', 'confirm_import_stage2');
+        options.i18nReplace('.import_con_stage3', 'confirm_import_stage3');
         options.i18nReplace('.export_con_stage1', 'confirm_export_stage1');
         options.i18nReplace('.export_con_stage2', 'confirm_export_stage2');
         options.i18nReplace('#features_hdr, #features_nav',
@@ -336,7 +368,6 @@ var options = {
      * checked.
      * @returns {Boolean} <code>true</code> if the name is not already in use;
      * otherwise <code>false</code>.
-     * @requires jQuery
      * @since 0.1.0.0
      * @private
      */
@@ -383,7 +414,6 @@ var options = {
 
     /**
      * <p>Updates the options page with the values of the current settings.</p>
-     * @requires jQuery
      */
     load: function () {
         options.loadImages();
@@ -420,7 +450,6 @@ var options = {
      * @param {Object} feature The information of the feature to be used.
      * @returns {jQuery} The <code>&lt;option/&gt;</code> element in a jQuery
      * wrapper.
-     * @requires jQuery
      * @since 0.1.0.0
      * @private
      */
@@ -438,26 +467,13 @@ var options = {
     },
 
     /**
-     * <p>Updates the feature section of the options page with the current
-     * settings.</p>
-     * @requires jQuery
+     * <p>Binds the event handlers required for controlling the features.</p>
+     * @since 0.2.0.0
      * @private
      */
-    loadFeatures: function () {
-        /*
-         * TODO: Tidy function by splitting it up.
-         * Ensure that each new function is still referencing correct variables
-         * (bg, features, lastSelectedFeature etc.)
-         */
-        var bg = chrome.extension.getBackgroundPage(),
-            features = $('#features'),
+    loadFeatureControlEvents: function () {
+        var features = $('#features'),
             lastSelectedFeature = {};
-        // Ensures clean slate
-        features.find('option').remove();
-        // Creates and inserts options representing features
-        for (var i = 0; i < bg.urlcopy.features.length; i++) {
-            features.append(options.loadFeature(bg.urlcopy.features[i]));
-        }
         /*
          * Whenever the selected option changes we want all the controls to
          * represent the current selection (where possible).
@@ -543,7 +559,7 @@ var options = {
             $('#moveUp_btn[disabled] img').attr('src',
                     '../images/move_up_disabled.gif');
         }).change();
-        // Adds a new feature to options based on input values
+        // Adds a new feature to options based on the input values
         $('#add_btn').click(function (event) {
             var opt = features.find('option:selected');
             if (opt.length) {
@@ -572,31 +588,142 @@ var options = {
                 }
             }
         });
-        // Removes selected unprotected feature
+        // Prompts user to confirm removal of selected feature
         $('#delete_btn').click(function (event) {
             $.facebox({div: '#delete_con'});
         });
+        // Cancels feature removal process
         $('.delete_no_btn').live('click', function (event) {
             $(document).trigger('close.facebox');
         });
+        // Finalizes feature removal
         $('.delete_yes_btn').live('click', function (event) {
-            var opt = $('#features option:selected');
+            var opt = features.find('option:selected');
             if (opt.data('readOnly') !== 'true') {
                 opt.remove();
                 features.change().focus();
             }
             $(document).trigger('close.facebox');
         });
-        // Supports import process
-        $('.import_con_list').live('change', function (event) {
+        /*
+         * Moves the selected option down one when the 'down' control is
+         * clicked.
+         */
+        $('#moveDown_btn').click(function (event) {
+            var opt = features.find('option:selected');
+            opt.insertAfter(opt.next());
+            features.change().focus();
+        });
+        // Moves the selected option up one when the 'up' control is clicked
+        $('#moveUp_btn').click(function (event) {
+            var opt = features.find('option:selected');
+            opt.insertBefore(opt.prev());
+            features.change().focus();
+        });
+    },
+
+    /**
+     * <p>Binds the event handlers required for exporting features.</p>
+     * @since 0.2.0.0
+     * @private
+     */
+    loadFeatureExportEvents: function () {
+        var features = $('#features');
+        // Prompts the user to selected the features to be imported
+        $('#export_btn').click(function (event) {
+            var list = $('.export_con_list');
+            list.find('option').remove();
+            options.updateFeature(features.find('option:selected'));
+            features.val([]).change();
+            $('.export_yes_btn').attr('disabled', 'disabled');
+            $('.export_con_stage1').show();
+            $('.export_con_stage2').hide();
+            $('.export_content').val('');
+            features.find('option').each(function () {
+                var opt = $(this);
+                $('<option/>', {
+                    text: opt.text(),
+                    value: opt.val()
+                }).appendTo(list);
+            });
+            $.facebox({div: '#export_con'});
+        });
+        /*
+         * Enables/disables the continue button depending on whether or not any
+         * features are selected.
+         */
+        $('.export_con_list').live('change', function (event) {
             if ($(this).find('option:selected').length > 0) {
-                $('.import_final_btn').removeAttr('disabled');
+                $('.export_yes_btn').removeAttr('disabled');
             } else {
-                $('.import_final_btn').attr('disabled', 'disabled');
+                $('.export_yes_btn').attr('disabled', 'disabled');
             }
         });
+        // Deselects all features in the list
+        $('.export_deselect_all_btn').live('click', function (event) {
+            $('.export_con_list option').removeAttr('selected').parent()
+                    .focus();
+            $('.export_yes_btn').attr('disabled', 'disabled');
+        });
+        // Cancels the export process
+        $('.export_no_btn, .export_close_btn').live('click', function (event) {
+            $(document).trigger('close.facebox');
+            event.preventDefault();
+        });
+        // Prompts the user to select a file location to save the exported data
+        $('.export_save_btn').live('click', function (event) {
+            var $this = $(this),
+                str = $this.parents('.export_con_stage2')
+                        .find('.export_content').val();
+            str = encodeURIComponent(str);
+            /*
+             * Attempts to download from server if online for "cleaner" export
+             * and will fall back on "simple" export if offline.
+             */
+            if (window.navigator.onLine) {
+                var form = $this.parents('.export_form');
+                form.find('input[name="content"]').val(str);
+            } else {
+                window.location = 'data:text/json;charset=utf8,' + str;
+                event.preventDefault();
+            }
+        });
+        // Selects all features in the list
+        $('.export_select_all_btn').live('click', function (event) {
+            $('.export_con_list option').attr('selected', 'selected').parent()
+                    .focus();
+            $('.export_yes_btn').removeAttr('disabled');
+        });
+        // Creates the exported data based on the selected features
+        $('.export_yes_btn').live('click', function (event) {
+            var $this = $(this).attr('disabled', 'disabled'),
+                items = $this.parents('.export_con_stage1')
+                        .find('.export_con_list option'),
+                names = [];
+            items.filter(':selected').each(function () {
+                names.push($(this).val());
+            });
+            $('.export_content').val(options.createExport(names));
+            $('.export_con_stage1').hide();
+            $('.export_con_stage2').show();
+        });
+    },
+
+    /**
+     * <p>Binds the event handlers required for importing features.</p>
+     * @since 0.2.0.0
+     * @private
+     */
+    loadFeatureImportEvents: function () {
+        var features = $('#features');
+        // Restores the previous view in the import process
+        $('.import_back_btn').live('click', function (event) {
+            $('.import_con_stage1').show();
+            $('.import_con_stage2, .import_con_stage3').hide();
+        });
+        // Prompts the user to input/load the data to be imported
         $('#import_btn').click(function (event) {
-            options.updateFeature($('#features option:selected'));
+            options.updateFeature(features.find('option:selected'));
             features.val([]).change();
             $('.import_con_stage1').show();
             $('.import_con_stage2, .import_con_stage3').hide();
@@ -604,6 +731,27 @@ var options = {
             $('.import_error').text('').hide();
             $.facebox({div: '#import_con'});
         });
+        /*
+         * Enables/disables the finalize button depending on whether or not any
+         * features are selected.
+         */
+        $('.import_con_list').live('change', function (event) {
+            if ($(this).find('option:selected').length > 0) {
+                $('.import_final_btn').removeAttr('disabled');
+            } else {
+                $('.import_final_btn').attr('disabled', 'disabled');
+            }
+        });
+        // Deselects all features in the list
+        $('.import_deselect_all_btn').live('click', function (event) {
+            $('.import_con_list option').removeAttr('selected').parent()
+                    .focus();
+            $('.import_final_btn').attr('disabled', 'disabled');
+        });
+        /*
+         * Reads the contents of the loaded file in to the text area and
+         * performs simple error handling.
+         */
         $('.import_file_btn').live('change', function (event) {
             var $this = $(this),
                 file = event.target.files[0],
@@ -628,13 +776,39 @@ var options = {
             };
             reader.readAsText(file);
         });
-        $('.import_back_btn').live('click', function (event) {
-            $('.import_con_stage1').show();
-            $('.import_con_stage2, .import_con_stage3').hide();
+        // Finalizes the import process
+        $('.import_final_btn').live('click', function (event) {
+            var $this = $(this),
+                list = $this.parents('.import_con_stage2')
+                        .find('.import_con_list');
+            list.find('option:selected').each(function () {
+                var opt = $(this),
+                    existingOpt = features.find('option[value="' + opt.val() +
+                            '"]');
+                opt.removeAttr('selected');
+                if (existingOpt.length === 0) {
+                    features.append(opt);
+                } else {
+                    existingOpt.replaceWith(opt);
+                }
+            });
+            $(document).trigger('close.facebox');
+            features.focus();
         });
+        // Cancels the import process
         $('.import_no_btn, .import_close_btn').live('click', function (event) {
             $(document).trigger('close.facebox');
         });
+        // Selects all features in the list
+        $('.import_select_all_btn').live('click', function (event) {
+            $('.import_con_list option').attr('selected', 'selected').parent()
+                    .focus();
+            $('.import_final_btn').removeAttr('disabled');
+        });
+        /*
+         * Reads the imported data and attempts to extract any valid features
+         * and list the changes to user for them to check and finalize.
+         */
         $('.import_yes_btn').live('click', function (event) {
             var $this = $(this).attr('disabled', 'disabled'),
                 data,
@@ -666,118 +840,26 @@ var options = {
             }
             $this.removeAttr('disabled');
         });
-        $('.import_deselect_all_btn').live('click', function (event) {
-            $('.import_con_list option').removeAttr('selected').parent()
-                    .focus();
-            $('.import_final_btn').attr('disabled', 'disabled');
-        });
-        $('.import_select_all_btn').live('click', function (event) {
-            $('.import_con_list option').attr('selected', 'selected').parent()
-                    .focus();
-            $('.import_final_btn').removeAttr('disabled');
-        });
-        $('.import_final_btn').live('click', function (event) {
-            var $this = $(this),
-                list = $this.parents('.import_con_stage2')
-                        .find('.import_con_list');
-            list.find('option:selected').each(function () {
-                var opt = $(this),
-                    existingOpt = features.find('option[value="' + opt.val() +
-                            '"]');
-                opt.removeAttr('selected');
-                if (existingOpt.length === 0) {
-                    features.append(opt);
-                } else {
-                    existingOpt.replaceWith(opt);
-                }
-            });
-            $(document).trigger('close.facebox');
-            features.focus();
-        });
-        // Supports export process
-        $('.export_con_list').live('change', function (event) {
-            if ($(this).find('option:selected').length > 0) {
-                $('.export_yes_btn').removeAttr('disabled');
-            } else {
-                $('.export_yes_btn').attr('disabled', 'disabled');
-            }
-        });
-        $('#export_btn').click(function (event) {
-            var list = $('.export_con_list');
-            list.find('option').remove();
-            options.updateFeature($('#features option:selected'));
-            features.val([]).change();
-            $('.export_yes_btn').attr('disabled', 'disabled');
-            $('.export_con_stage1').show();
-            $('.export_con_stage2').hide();
-            $('.export_content').val('');
-            features.find('option').each(function () {
-                var opt = $(this);
-                $('<option/>', {
-                    text: opt.text(),
-                    value: opt.val()
-                }).appendTo(list);
-            });
-            $.facebox({div: '#export_con'});
-        });
-        $('.export_deselect_all_btn').live('click', function (event) {
-            $('.export_con_list option').removeAttr('selected').parent()
-                    .focus();
-            $('.export_yes_btn').attr('disabled', 'disabled');
-        });
-        $('.export_select_all_btn').live('click', function (event) {
-            $('.export_con_list option').attr('selected', 'selected').parent()
-                    .focus();
-            $('.export_yes_btn').removeAttr('disabled');
-        });
-        $('.export_no_btn, .export_close_btn').live('click', function (event) {
-            $(document).trigger('close.facebox');
-            event.preventDefault();
-        });
-        $('.export_yes_btn').live('click', function (event) {
-            var $this = $(this).attr('disabled', 'disabled'),
-                items = $this.parents('.export_con_stage1')
-                        .find('.export_con_list option'),
-                names = [];
-            items.filter(':selected').each(function () {
-                names.push($(this).val());
-            });
-            $('.export_content').val(options.createExport(names));
-            $('.export_con_stage1').hide();
-            $('.export_con_stage2').show();
-        });
-        $('.export_save_btn').live('click', function (event) {
-            var $this = $(this),
-                str = $this.parents('.export_con_stage2')
-                        .find('.export_content').val();
-            str = encodeURIComponent(str);
-            /*
-             * Attempts to download from server if online for "cleaner" export
-             * and will fall back on "simple" export if offline.
-             */
-            if (window.navigator.onLine) {
-                var form = $this.parents('.export_form');
-                form.find('input[name="content"]').val(str);
-            } else {
-                window.location = 'data:text/json;charset=utf8,' + str;
-                event.preventDefault();
-            }
-        });
-        /*
-         * Moves the selected option down one when the 'down' control is
-         * clicked.
-         */
-        $('#moveDown_btn').click(function (event) {
-            var opt = features.find('option:selected');
-            opt.insertAfter(opt.next());
-            features.change().focus();
-        });
-        // Moves the selected option up one when the 'up' control is clicked
-        $('#moveUp_btn').click(function (event) {
-            var opt = features.find('option:selected');
-            opt.insertBefore(opt.prev());
-            features.change().focus();
-        });
+    },
+
+    /**
+     * <p>Updates the feature section of the options page with the current
+     * settings.</p>
+     * @private
+     */
+    loadFeatures: function () {
+        var bg = chrome.extension.getBackgroundPage(),
+            features = $('#features');
+        // Ensures clean slate
+        features.find('option').remove();
+        // Creates and inserts options representing features
+        for (var i = 0; i < bg.urlcopy.features.length; i++) {
+            features.append(options.loadFeature(bg.urlcopy.features[i]));
+        }
+        // Loads all event handlers required for managing features
+        options.loadFeatureControlEvents();
+        options.loadFeatureImportEvents();
+        options.loadFeatureExportEvents();
     },
 
     /**
@@ -785,7 +867,6 @@ var options = {
      * features.</p>
      * <p>This is to be inserted in to the <code>&lt;select/&gt;</code>
      * containing feature images on the options page.</p>
-     * @requires jQuery
      * @since 0.1.0.0
      * @private
      */
@@ -819,7 +900,6 @@ var options = {
     /**
      * <p>Updates the notification section of the options page with the current
      * settings.</p>
-     * @requires jQuery
      * @private
      */
     loadNotifications: function () {
@@ -850,7 +930,6 @@ var options = {
     /**
      * <p>Updates the URL shorteners section of the options page with the
      * current settings.</p>
-     * @requires jQuery
      * @private
      */
     loadUrlShorteners: function () {
@@ -873,7 +952,24 @@ var options = {
         $('#yourlsUsername').val(utils.get('yourlsUsername'));
     },
 
-    // TODO: Doc & test
+    /**
+     * <p>Reads the imported data created by {@link options.createImport} and
+     * extracts all valid imported features.</p>
+     * <p>Where the feature will overwrite an existing feature, only fields
+     * with valid values will be accepted with exception to protected fields
+     * (i.e. on read-only features).</p>
+     * <p>Where the feature is new default values will replace any fields with
+     * invalid values assigned to them.</p>
+     * @param {Object} importData The data parsed from the imported string.
+     * @param {Object[]} importData.templates The features to be extracted and
+     * validated.
+     * @param {String} importData.version The version of this extension used to
+     * export the data currently being imported.
+     * @returns {Object} An object containing the list of features extracted
+     * from the imported data, if any.
+     * @since 0.2.0.0
+     * @private
+     */
     readImport: function (importData) {
         var data = {
                 features: []
@@ -923,7 +1019,6 @@ var options = {
 
     /**
      * <p>Updates the settings with the values from the options page.</p>
-     * @requires jQuery
      */
     save: function () {
         utils.set('contextMenu', $('#contextMenu').is(':checked'));
@@ -958,7 +1053,6 @@ var options = {
     /**
      * <p>Updates the settings with the values from the feature section of the
      * options page.</p>
-     * @requires jQuery
      * @private
      */
     saveFeatures: function () {
@@ -968,18 +1062,8 @@ var options = {
          * Updates each individual feature settings based on their
          * corresponding options.
          */
-        $('#features option').each(function (index) {
-            var opt = $(this);
-            features.push({
-                content: opt.data('content'),
-                enabled: opt.data('enabled') === 'true',
-                image: parseInt(opt.data('image')),
-                index: index,
-                name: opt.val(),
-                readOnly: opt.data('readOnly') === 'true',
-                shortcut: opt.data('shortcut'),
-                title: opt.text()
-            });
+        $('#features option').each(function () {
+            features.push(options.deriveFeature($(this)));
         });
         // Ensures features data reflects the updated settings
         bg.urlcopy.saveFeatures(features);
@@ -989,7 +1073,6 @@ var options = {
     /**
      * <p>Updates the settings with the values from the notification section of
      * the options page.</p>
-     * @requires jQuery
      * @private
      */
     saveNotifications: function () {
@@ -1002,7 +1085,6 @@ var options = {
     /**
      * <p>Updates the settings with the values from the URL shorteners section
      * of the options page.</p>
-     * @requires jQuery
      * @private
      */
     saveUrlShorteners: function () {
@@ -1025,7 +1107,6 @@ var options = {
      * @param {Event} [event] The event triggered.
      * @event
      * @since 0.1.0.0
-     * @requires jQuery
      * @private
      */
     toggleTemplateSection: function (event) {
@@ -1042,7 +1123,6 @@ var options = {
      * @param {jQuery} opt The jQuery wrapped &lt;option&gt; to be
      * updated.
      * @since 0.1.0.3
-     * @requires jQuery
      * @private
      */
     updateFeature: function (opt) {
@@ -1058,7 +1138,21 @@ var options = {
         }
     },
 
-    // TODO: Doc & test
+    /**
+     * <p>Updates the existing feature with information extracted from the
+     * imported feature provided.</p>
+     * <p>The feature provided is not altered in anyw way and the fields of the
+     * existing feature are only changed if the new values are valid.</p>
+     * <p>Protected fields are only updated if the existing feature is not
+     * read-only and the new value is valid.</p>
+     * @param {Object} feature The imported feature on which the existing
+     * feature should be modified to reflect.
+     * @param {Object} existing The existing feature which should be modified
+     * so that its fields reflect that of the import feature.
+     * @returns {Object} The existing feature with the modified fields.
+     * @since 0.2.0.0
+     * @private
+     */
     updateImportedFeature: function (feature, existing) {
         var bg = chrome.extension.getBackgroundPage();
         // Ensures read-only templates are protected
@@ -1101,7 +1195,6 @@ var options = {
      * in use.
      * @returns {Boolean} <code>true</code> if validation errors were
      * encountered; otherwise <code>false</code>.
-     * @requires jQuery
      * @since 0.1.0.0
      * @private
      */
@@ -1145,7 +1238,6 @@ var options = {
      * <code>true</code> is returned.</p>
      * @returns {Boolean} <code>true</code> if validation errors were
      * encountered; otherwise <code>false</code>.
-     * @requires jQuery
      * @since 0.1.0.0
      * @private
      */
@@ -1167,7 +1259,17 @@ var options = {
         return errors.find('li').length === 0;
     },
 
-    // TODO: Doc & test
+    /**
+     * <p>Returns whether or not the feature provided contains the required
+     * fields of the correct types.</p>
+     * <p>This is a soft validation and doesn't validate the values themselves,
+     * only that they exist.</p>
+     * @param {Object} feature The feature to be validated.
+     * @returns {Boolean} <code>true</code> if the feature is an object and it
+     * contains the required fields; otherwise <code>false</code>.
+     * @since 0.2.0.0
+     * @private
+     */
     validateImportedFeature: function (feature) {
         return (typeof feature === 'object' &&
                 typeof feature.content === 'string' &&
