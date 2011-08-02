@@ -314,7 +314,7 @@ var ext = {
      * @since 0.1.0.0
      * @type String
      */
-    shortcutMacModifiers: '&#8679; &#8997; ',
+    shortcutMacModifiers: '&#8679;&#8997;',
 
     /**
      * <p>The URL shortener services supported by this extension.</p>
