@@ -8,31 +8,32 @@ var notification = {
 
     /**
      * <p>Initializes the notification page.</p>
-     * <p>This involves inserting and configuring the UI elements as well as the
-     * insertion of localized Strings based on the result of the copy request.
-     * </p>
-     * @see urlcopy.showNotification
+     * <p>This involves inserting and configuring the UI elements as well as
+     * the insertion of localized Strings based on the result of the copy
+     * request.</p>
+     * @see ext.showNotification
      */
     init: function () {
         var bg = chrome.extension.getBackgroundPage(),
             div = document.getElementById('tip'),
-            result = (bg.urlcopy.status) ? 'copy_success' : 'copy_fail';
+            result = (bg.ext.status) ? 'copy_success' : 'copy_fail';
         /*
-         * Styles the tip and inserts relevant localized String depending on the
-         * result of the copy request or the existence of an override message.
+         * Styles the tip and inserts relevant localized String depending on
+         * the result of the copy request or the existence of an override
+         * message.
          */
         div.className = result;
-        if (bg.urlcopy.message) {
-            div.innerHTML = bg.urlcopy.message;
+        if (bg.ext.message) {
+            div.innerHTML = bg.ext.message;
         } else {
             div.innerHTML = chrome.i18n.getMessage(result);
         }
         /*
-         * Important: Resets urlcopy to avoid affecting copy requests. If user
+         * Important: Resets ext to avoid affecting copy requests. If user
          * disabled the notifications option this is still called in
-         * urlcopy.showNotification for safety.
+         * ext.showNotification for safety.
          */
-        bg.urlcopy.reset();
+        bg.ext.reset();
         /*
          * Sets a timer to close the notification after if user enabled option;
          * otherwise stays open until closed manually by user.

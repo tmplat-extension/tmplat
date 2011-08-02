@@ -1,13 +1,13 @@
 /**
  * <p>Main controller for the extension and manages all copy requests.</p>
  * @author <a href="http://github.com/neocotic">Alasdair Mercer</a>
- * @since 0.1.0.0 - Previously named <code>clipboard</code>.
+ * @since 0.2.0.0 - Previously named <code>urlcopy</code>.
  * @requires jQuery
  * @requires jQuery URL Parser Plugin
  * @requires mustache.js
  * @namespace
  */
-var urlcopy = {
+var ext = {
 
     /**
      * <p>A list of blacklisted extension IDs who should be prevented from
@@ -50,7 +50,10 @@ var urlcopy = {
      * @type Object[]
      */
     defaultFeatures: [{
-        content: '<a href="{{url}}"{#doAnchorTarget} target="_blank"{/doAnchorTarget}{#doAnchorTitle} title="{{title}}"{/doAnchorTitle}>{{title}}</a>',
+        content: '<a href="{{url}}"' +
+                '{#doAnchorTarget} target="_blank"{/doAnchorTarget}' +
+                '{#doAnchorTitle} title="{{title}}"{/doAnchorTitle}' +
+                '>{{title}}</a>',
         enabled: true,
         image: 11,
         index: 2,
@@ -99,7 +102,7 @@ var urlcopy = {
     /**
      * <p>The list of copy request features supported by the extension.</p>
      * <p>This list ordered to match that specified by the user.</p>
-     * @see urlcopy.updateFeatures
+     * @see ext.updateFeatures
      * @type Object[]
      */
     features: [],
@@ -255,7 +258,7 @@ var urlcopy = {
 
     /**
      * <p>Provides potential of displaying a message to the user other than the
-     * defaults that depend on the value of {@link urlcopy.status}.</p>
+     * defaults that depend on the value of {@link ext.status}.</p>
      * <p>This value is reset to an empty String after every copy request.</p>
      * @since 0.1.0.0
      * @type String
@@ -291,7 +294,7 @@ var urlcopy = {
     /**
      * <p>The HTML to populate the popup with.</p>
      * <p>This should be updated whenever changes are made to the features.</p>
-     * @see urlcopy.updateFeatures
+     * @see ext.updateFeatures
      * @since 0.1.0.0
      * @type String
      */
@@ -323,9 +326,9 @@ var urlcopy = {
         contentType: 'application/x-www-form-urlencoded',
         getParameters: function (url) {
             var params = {
-                apiKey: 'R_05858399e8a60369e1d1562817b77b39',
+                apiKey: 'R_2371fda46305d0ec3065972f5e72800e',
                 format: 'json',
-                login: 'urlcopy',
+                login: 'forchoon',
                 longUrl: url
             };
             if (utils.get('bitlyApiKey') && utils.get('bitlyUsername')) {
@@ -368,11 +371,13 @@ var urlcopy = {
         name: 'goo.gl',
         oauth: ChromeExOAuth.initBackgroundPage({
             access_url: 'https://www.google.com/accounts/OAuthGetAccessToken',
-            app_name: 'URL-Copy', // TODO: chrome.i18n.getMessage('name')
-            authorize_url: 'https://www.google.com/accounts/OAuthAuthorizeToken',
+            app_name: chrome.i18n.getMessage('app_name'),
+            authorize_url: 'https://www.google.com/accounts/' +
+                    'OAuthAuthorizeToken',
             consumer_key: 'anonymous',
             consumer_secret: 'anonymous',
-            request_url: 'https://www.google.com/accounts/OAuthGetRequestToken',
+            request_url: 'https://www.google.com/accounts/' +
+                    'OAuthGetRequestToken',
             scope: 'https://www.googleapis.com/auth/urlshortener'
         }),
         output: function (resp) {
@@ -584,7 +589,7 @@ var urlcopy = {
      * @returns {Object} The data based on information extracted from the tab
      * provided and its URL. This can contain Strings, Arrays, Objects, and
      * functions.
-     * @see urlcopy.buildStandardData
+     * @see ext.buildStandardData
      * @since 0.1.0.0
      * @private
      */
@@ -603,7 +608,7 @@ var urlcopy = {
         } else {
             data.url = onClickData.pageUrl;
         }
-        return urlcopy.buildStandardData(data, shortCallback);
+        return ext.buildStandardData(data, shortCallback);
     },
 
     /**
@@ -617,9 +622,9 @@ var urlcopy = {
      */
     buildFeature: function (feature) {
         var image = '';
-        for (var j = 0; j < urlcopy.images.length; j++) {
-            if (urlcopy.images[j].id === feature.image) {
-                image = '../images/' + urlcopy.images[j].file;
+        for (var j = 0; j < ext.images.length; j++) {
+            if (ext.images[j].id === feature.image) {
+                image = '../images/' + ext.images[j].file;
                 break;
             }
         }
@@ -637,9 +642,9 @@ var urlcopy = {
             text: feature.title
         }));
         if (utils.get('shortcuts')) {
-            var modifiers = urlcopy.shortcutModifiers;
-            if (urlcopy.isThisPlatform('mac')) {
-                modifiers = urlcopy.shortcutMacModifiers;
+            var modifiers = ext.shortcutModifiers;
+            if (ext.isThisPlatform('mac')) {
+                modifiers = ext.shortcutMacModifiers;
             }
             menu.append($('<span/>', {
                 'class': 'shortcut',
@@ -663,13 +668,13 @@ var urlcopy = {
             text: chrome.i18n.getMessage('shortening')
         }));
         // Generates the HTML for each feature
-        for (var i = 0; i < urlcopy.features.length; i++) {
-            if (urlcopy.features[i].enabled) {
-                itemList.append(urlcopy.buildFeature(urlcopy.features[i]));
+        for (var i = 0; i < ext.features.length; i++) {
+            if (ext.features[i].enabled) {
+                itemList.append(ext.buildFeature(ext.features[i]));
             }
         }
         item.append(itemList);
-        urlcopy.popupHTML = $('<div/>').append(loadDiv, item).html();
+        ext.popupHTML = $('<div/>').append(loadDiv, item).html();
     },
 
     /**
@@ -695,11 +700,11 @@ var urlcopy = {
             data = {},
             title = '',
             url = {};
-        for (var i = 0; i < urlcopy.support.length; i++) {
-            if (urlcopy.isExtensionActive(tab,
-                urlcopy.support[i].extensionId)) {
-                title = urlcopy.support[i].title(tab.title);
-                url = $.url(urlcopy.support[i].url(tab.url));
+        for (var i = 0; i < ext.support.length; i++) {
+            if (ext.isExtensionActive(tab,
+                ext.support[i].extensionId)) {
+                title = ext.support[i].title(tab.title);
+                url = $.url(ext.support[i].url(tab.url));
                 compatibility = true;
                 break;
             }
@@ -712,8 +717,8 @@ var urlcopy = {
             bitly: utils.get('bitly'),
             bitlyApiKey: utils.get('bitlyApiKey'),
             bitlyUsername: utils.get('bitlyUsername'),
-            browser: urlcopy.browser.title,
-            browserVersion: urlcopy.browser.version,
+            browser: ext.browser.title,
+            browserVersion: ext.browser.version,
             contextMenu: utils.get('contextMenu'),
             cookiesEnabled: window.navigator.cookieEnabled,
             doAnchorTarget: utils.get('doAnchorTarget'),
@@ -748,7 +753,7 @@ var urlcopy = {
             originalSource: tab.url,
             originalTitle: tab.title || url.attr('source'),
             originalUrl: tab.url,
-            os: urlcopy.operatingSystem,
+            os: ext.operatingSystem,
             param: function () {
                 return function (text, render) {
                     return url.param(render(text));
@@ -768,7 +773,7 @@ var urlcopy = {
             shortcuts: utils.get('shortcuts'),
             title: title || url.attr('source'),
             url: url.attr('source'),
-            version: urlcopy.version,
+            version: ext.version,
             yourls: utils.get('yourls'),
             yourlsPassword: utils.get('yourlsPassword'),
             yourlsSignature: utils.get('yourlsSignature'),
@@ -786,11 +791,11 @@ var urlcopy = {
      * @param {String} url The URL to be shortened and added to the clipboard.
      * @param {function} callback The function to be called once a response has
      * been received.
-     * @see urlcopy.shorteners
+     * @see ext.shorteners
      * @since 0.1.0.0 - Previously located in <code>helper</code>.
      */
     callUrlShortener: function (url, callback) {
-        urlcopy.callUrlShortenerHelper(url, function (url, service) {
+        ext.callUrlShortenerHelper(url, function (url, service) {
             var name = service.name;
             if (!service.url()) {
                 callback({
@@ -840,12 +845,12 @@ var urlcopy = {
      * @param {String} url The URL to be shortened and added to the clipboard.
      * @param {Function} callback The function that is called either
      * immediately or once autherized if OAuth is supported.
-     * @see urlcopy.callUrlShortener
+     * @see ext.callUrlShortener
      * @since 0.1.0.0 - Previously located in <code>helper</code>.
      * @private
      */
     callUrlShortenerHelper: function (url, callback) {
-        var service = urlcopy.getUrlShortener();
+        var service = ext.getUrlShortener();
         if (service.oauth && service.isOAuthEnabled()) {
             service.oauth.authorize(function () {
                 callback(url, service);
@@ -862,7 +867,7 @@ var urlcopy = {
      * function.</p>
      * @param {String} str The string to be added to the clipboard.
      * @param {Boolean} [hidden] <code>true</code> to avoid updating
-     * {@link urlcopy.status} and showing a notification; otherwise
+     * {@link ext.status} and showing a notification; otherwise
      * <code>false</code>.
      */
     copy: function (str, hidden) {
@@ -871,8 +876,8 @@ var urlcopy = {
         result = document.execCommand('copy', false, null);
         sandbox.val('');
         if (!hidden) {
-            urlcopy.status = result;
-            urlcopy.showNotification();
+            ext.status = result;
+            ext.showNotification();
         }
     },
 
@@ -921,7 +926,7 @@ var urlcopy = {
         chrome.windows.getAll(null, function (windows) {
             for (var i = 0; i < windows.length; i++) {
                 chrome.tabs.getAllInWindow(windows[i].id,
-                        urlcopy.executeScriptsInExistingTabs);
+                        ext.executeScriptsInExistingTabs);
             }
         });
     },
@@ -934,9 +939,9 @@ var urlcopy = {
      */
     getBrowserVersion: function () {
         var str = navigator.userAgent,
-            idx = str.indexOf(urlcopy.browser.title);
+            idx = str.indexOf(ext.browser.title);
         if (idx !== -1) {
-            str = str.substring(idx + urlcopy.browser.title.length + 1);
+            str = str.substring(idx + ext.browser.title.length + 1);
             idx = str.indexOf(' ');
             return (idx === -1) ? str : str.substring(0, idx);
         }
@@ -953,9 +958,9 @@ var urlcopy = {
      */
     getFeatureWithMenuId: function (menuId) {
         var feature;
-        for (var i = 0; i < urlcopy.features.length; i++) {
-            if (urlcopy.features[i].menuId === menuId) {
-                feature = urlcopy.features[i];
+        for (var i = 0; i < ext.features.length; i++) {
+            if (ext.features[i].menuId === menuId) {
+                feature = ext.features[i];
                 break;
             }
         }
@@ -971,9 +976,9 @@ var urlcopy = {
      */
     getFeatureWithShortcut: function (shortcut) {
         var feature;
-        for (var i = 0; i < urlcopy.features.length; i++) {
-            if (urlcopy.features[i].shortcut === shortcut) {
-                feature = urlcopy.features[i];
+        for (var i = 0; i < ext.features.length; i++) {
+            if (ext.features[i].shortcut === shortcut) {
+                feature = ext.features[i];
                 break;
             }
         }
@@ -989,8 +994,8 @@ var urlcopy = {
     getOperatingSystem: function () {
         var os = {},
             str = navigator.platform;
-        for (var i = 0; i < urlcopy.operatingSystems.length; i++) {
-            os = urlcopy.operatingSystems[i];
+        for (var i = 0; i < ext.operatingSystems.length; i++) {
+            os = ext.operatingSystems[i];
             if (str.indexOf(os.substring) !== -1) {
                 str = os.title;
                 break;
@@ -1002,13 +1007,13 @@ var urlcopy = {
     /**
      * <p>Returns the information for the active URL shortener service.</p>
      * @returns {Object} The active URL shortener.
-     * @see urlcopy.shorteners
+     * @see ext.shorteners
      */
     getUrlShortener: function () {
         // Attempts to lookup enabled URL shortener service
-        for (var i = 0; i < urlcopy.shorteners.length; i++) {
-            if (urlcopy.shorteners[i].isEnabled()) {
-                return urlcopy.shorteners[i];
+        for (var i = 0; i < ext.shorteners.length; i++) {
+            if (ext.shorteners[i].isEnabled()) {
+                return ext.shorteners[i];
             }
         }
         /*
@@ -1017,7 +1022,7 @@ var urlcopy = {
          * lookup.
          */
         utils.set('googl', true);
-        return urlcopy.shorteners[1];
+        return ext.shorteners[1];
     },
 
     /**
@@ -1031,32 +1036,30 @@ var urlcopy = {
             settings: [],
             shorteners: []
         });
-        urlcopy.init_update();
+        ext.init_update();
         utils.init('contextMenu', true);
         utils.init('notifications', true);
         utils.init('notificationDuration', 3000);
         utils.init('shortcuts', true);
         utils.init('doAnchorTarget', false);
         utils.init('doAnchorTitle', false);
-        urlcopy.initFeatures();
-        urlcopy.initUrlShorteners();
-        urlcopy.executeScriptsInExistingWindows();
-        chrome.extension.onRequest.addListener(urlcopy.onRequest);
-        chrome.extension.onRequestExternal.addListener(
-            urlcopy.onExternalRequest
-        );
+        ext.initFeatures();
+        ext.initUrlShorteners();
+        ext.executeScriptsInExistingWindows();
+        chrome.extension.onRequest.addListener(ext.onRequest);
+        chrome.extension.onRequestExternal.addListener(ext.onExternalRequest);
         // Derives static browser and OS information
-        urlcopy.browser.version = urlcopy.getBrowserVersion();
-        urlcopy.operatingSystem = urlcopy.getOperatingSystem();
+        ext.browser.version = ext.getBrowserVersion();
+        ext.operatingSystem = ext.getOperatingSystem();
         // Derives extension's version
         $.getJSON(chrome.extension.getURL('manifest.json'), function (data) {
-            urlcopy.version = data.version;
+            ext.version = data.version;
         });
     },
 
     /**
      * <p>Handles the conversion/removal of older version of settings that may
-     * have been stored previously by {@link urlcopy.init}.</p>
+     * have been stored previously by {@link ext.init}.</p>
      * @since 0.1.0.0
      * @private
      */
@@ -1115,7 +1118,7 @@ var urlcopy = {
         utils.set('feat_' + name + '_readonly', feature.readOnly);
         utils.init('feat_' + name + '_shortcut', feature.shortcut);
         utils.set('feat_' + name + '_title', feature.title);
-        urlcopy.addFeatureName(name);
+        ext.addFeatureName(name);
         return feature;
     },
 
@@ -1126,16 +1129,16 @@ var urlcopy = {
      */
     initFeatures: function () {
         utils.init('features', []);
-        urlcopy.initFeatures_update();
-        for (var i = 0; i < urlcopy.defaultFeatures.length; i++) {
-            urlcopy.initFeature(urlcopy.defaultFeatures[i]);
+        ext.initFeatures_update();
+        for (var i = 0; i < ext.defaultFeatures.length; i++) {
+            ext.initFeature(ext.defaultFeatures[i]);
         }
-        urlcopy.updateFeatures();
+        ext.updateFeatures();
     },
 
     /**
      * <p>Handles the conversion/removal of older version of settings that may
-     * have been stored previously by {@link urlcopy.initFeatures}.</p>
+     * have been stored previously by {@link ext.initFeatures}.</p>
      * @since 0.1.0.0
      * @private
      */
@@ -1168,10 +1171,10 @@ var urlcopy = {
                         names[i] + '_content');
                 image = utils.get('feat_' + names[i] + '_image');
                 if (typeof image === 'string') {
-                    for (var j = 0; j < urlcopy.images.length; j++) {
-                        if (urlcopy.images[j].file === image) {
+                    for (var j = 0; j < ext.images.length; j++) {
+                        if (ext.images[j].file === image) {
                             utils.set('feat_' + names[i] + '_image',
-                                    urlcopy.images[j].id);
+                                    ext.images[j].id);
                             break;
                         }
                     }
@@ -1191,7 +1194,7 @@ var urlcopy = {
      * @private
      */
     initUrlShorteners: function () {
-        urlcopy.initUrlShorteners_update();
+        ext.initUrlShorteners_update();
         utils.init('bitly', false);
         utils.init('bitlyApiKey', '');
         utils.init('bitlyUsername', '');
@@ -1206,7 +1209,7 @@ var urlcopy = {
 
     /**
      * <p>Handles the conversion/removal of older version of settings that may
-     * have been stored previously by {@link urlcopy.initUrlShorteners}.</p>
+     * have been stored previously by {@link ext.initUrlShorteners}.</p>
      * @since 0.1.0.0
      * @private
      */
@@ -1235,8 +1238,8 @@ var urlcopy = {
      * @private
      */
     isBlacklisted: function (sender) {
-        for (var i = 0; i < urlcopy.blacklistedExtensions.length; i++) {
-            if (urlcopy.blacklistedExtensions[i] === sender.id) {
+        for (var i = 0; i < ext.blacklistedExtensions.length; i++) {
+            if (ext.blacklistedExtensions[i] === sender.id) {
                 return true;
             }
         }
@@ -1255,8 +1258,7 @@ var urlcopy = {
      * @private
      */
     isExtensionActive: function (tab, extensionId) {
-        return (urlcopy.isSpecialPage(tab) &&
-                tab.url.indexOf(extensionId) !== -1);
+        return (ext.isSpecialPage(tab) && tab.url.indexOf(extensionId) !== -1);
     },
 
     /**
@@ -1313,7 +1315,7 @@ var urlcopy = {
         var features = [],
             names = utils.get('features');
         for (var i = 0; i < names.length; i++) {
-            features.push(urlcopy.loadFeature(names[i]));
+            features.push(ext.loadFeature(names[i]));
         }
         features.sort(function (a, b) {
             return a.index - b.index;
@@ -1345,8 +1347,8 @@ var urlcopy = {
      * @private
      */
     onExternalRequest: function (request, sender, sendResponse) {
-        if (!urlcopy.isBlacklisted(sender)) {
-            urlcopy.onRequest(request, sender, sendResponse);
+        if (!ext.isBlacklisted(sender)) {
+            ext.onRequest(request, sender, sendResponse);
         }
     },
 
@@ -1376,7 +1378,7 @@ var urlcopy = {
      */
     onRequest: function (request, sender, sendResponse) {
         if (request.type !== 'shortcut' || utils.get('shortcuts')) {
-            urlcopy.onRequestHelper(request, sender, sendResponse);
+            ext.onRequestHelper(request, sender, sendResponse);
         }
     },
 
@@ -1421,55 +1423,51 @@ var urlcopy = {
             }
             switch (request.type) {
             case 'menu':
-                data = urlcopy.buildDerivedData(tab, request.data,
-                        shortCallback);
-                feature = urlcopy.getFeatureWithMenuId(
-                        request.data.menuItemId);
+                data = ext.buildDerivedData(tab, request.data, shortCallback);
+                feature = ext.getFeatureWithMenuId(request.data.menuItemId);
                 break;
             case 'popup':
-                // Should be cheaper than searching urlcopy.features...
-                data = urlcopy.buildStandardData(tab, shortCallback);
-                feature = urlcopy.loadFeature(request.data.name);
+                // Should be cheaper than searching ext.features...
+                data = ext.buildStandardData(tab, shortCallback);
+                feature = ext.loadFeature(request.data.name);
                 break;
             case 'shortcut':
-                data = urlcopy.buildStandardData(tab, shortCallback);
-                feature = urlcopy.getFeatureWithShortcut(request.data.key);
+                data = ext.buildStandardData(tab, shortCallback);
+                feature = ext.getFeatureWithShortcut(request.data.key);
                 break;
             }
             if (feature) {
                 chrome.cookies.getAll({url: data.url}, function (cookies) {
-                    urlcopy.addAdditionalData(data, {
+                    ext.addAdditionalData(data, {
                         cookies: cookies || []
                     });
                     if (!feature.content) {
-                        urlcopy.message = chrome.i18n.getMessage(
+                        ext.message = chrome.i18n.getMessage(
                                 'copy_template_fail', feature.title);
-                        urlcopy.status = false;
-                        urlcopy.showNotification();
+                        ext.status = false;
+                        ext.showNotification();
                         return;
                     }
                     var output = Mustache.to_html(feature.content, data);
                     if (shortCalled) {
-                        urlcopy.callUrlShortener(data.source,
-                                function (response) {
+                        ext.callUrlShortener(data.source, function (response) {
                             if (response.success && response.shortUrl) {
                                 var newData = {};
                                 newData[shortPlaceholder] = response.shortUrl;
-                                urlcopy.copy(Mustache.to_html(output,
-                                        newData));
+                                ext.copy(Mustache.to_html(output, newData));
                             } else {
                                 if (!response.message) {
                                     response.message = chrome.i18n.getMessage(
                                             'shortener_error',
                                             response.shortener);
                                 }
-                                urlcopy.message = response.message;
-                                urlcopy.status = false;
-                                urlcopy.showNotification();
+                                ext.message = response.message;
+                                ext.status = false;
+                                ext.showNotification();
                             }
                         });
                     } else {
-                        urlcopy.copy(output);
+                        ext.copy(output);
                     }
                 });
             } else {
@@ -1503,8 +1501,8 @@ var urlcopy = {
      * regardless of its outcome.</p>
      */
     reset: function () {
-        urlcopy.message = '';
-        urlcopy.status = false;
+        ext.message = '';
+        ext.status = false;
     },
 
     /**
@@ -1554,12 +1552,12 @@ var urlcopy = {
             oldNames = utils.get('features');
         for (var i = 0; i < features.length; i++) {
             names.push(features[i].name);
-            urlcopy.saveFeature(features[i]);
+            ext.saveFeature(features[i]);
         }
         // Ensures any features no longer used are removed from localStorage
         for (var j = 0; j < oldNames.length; j++) {
             if (names.indexOf(oldNames[j]) === -1) {
-                urlcopy.deleteFeature(oldNames[j]);
+                ext.deleteFeature(oldNames[j]);
             }
         }
         utils.set('features', names);
@@ -1569,10 +1567,10 @@ var urlcopy = {
     /**
      * <p>Displays a Chrome notification to inform the user on whether or not
      * the copy request was successful.</p>
-     * <p>This function ensures that urlcopy is reset and that
+     * <p>This function ensures that {@link ext} is reset and that
      * notifications are only displayed if specified by the user (or by
      * default).</p>
-     * @see urlcopy.reset
+     * @see ext.reset
      */
     showNotification: function () {
         var popup = chrome.extension.getViews({type: 'popup'})[0];
@@ -1581,7 +1579,7 @@ var urlcopy = {
                 chrome.extension.getURL('pages/notification.html')
             ).show();
         } else {
-            urlcopy.reset();
+            ext.reset();
         }
         if (popup) {
             popup.close();
@@ -1597,7 +1595,7 @@ var urlcopy = {
         // Ensures any previously added context menu items are removed
         chrome.contextMenus.removeAll(function () {
             function onMenuClick(info, tab) {
-                urlcopy.onRequestHelper({
+                ext.onRequestHelper({
                     data: info,
                     type: 'menu'
                 });
@@ -1608,15 +1606,15 @@ var urlcopy = {
                         contexts: ['all'],
                         title: chrome.i18n.getMessage('name')
                     });
-                for (var i = 0; i < urlcopy.features.length; i++) {
-                    if (urlcopy.features[i].enabled) {
+                for (var i = 0; i < ext.features.length; i++) {
+                    if (ext.features[i].enabled) {
                         menuId = chrome.contextMenus.create({
                             contexts: ['all'],
                             onclick: onMenuClick,
                             parentId: parentId,
-                            title: urlcopy.features[i].title
+                            title: ext.features[i].title
                         });
-                        urlcopy.features[i].menuId = menuId;
+                        ext.features[i].menuId = menuId;
                     }
                 }
             }
@@ -1630,9 +1628,9 @@ var urlcopy = {
      * of changed as this also updates the prepared popup HTML.</p>
      */
     updateFeatures: function () {
-        urlcopy.features = urlcopy.loadFeatures();
-        urlcopy.buildPopup();
-        urlcopy.updateContextMenu();
+        ext.features = ext.loadFeatures();
+        ext.buildPopup();
+        ext.updateContextMenu();
     }
 
 };

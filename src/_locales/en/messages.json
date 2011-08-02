@@ -1,4 +1,7 @@
 {
+   "app_name": {
+      "message": "URL-Copy"
+   },
    "confirm_delete": {
       "message": "$O_PARA$This action is $O_BOLD$permanent$C_BOLD$ and cannot be reversed.$C_PARA$$O_PARA$Do you want to continue anyway?$C_PARA$$BUTTONS$",
       "placeholders": {

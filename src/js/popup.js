@@ -15,7 +15,7 @@ var popup = {
     init: function () {
         var bg = chrome.extension.getBackgroundPage();
         // Inserts prepared HTML in to body element
-        document.body.innerHTML = bg.urlcopy.popupHTML;
+        document.body.innerHTML = bg.ext.popupHTML;
         // Fix dimensions of feature text
         popup.resizePopupText();
         // Fix dimensions if shortcuts are enabled
@@ -36,7 +36,6 @@ var popup = {
             textItems = document.getElementsByClassName('text'),
             scrollWidth = 0,
             width = 0;
-        // var textItems = itemList.find('li .text');
         for (var i = 0; i < textItems.length; i++) {
             scrollWidth = textItems[i].scrollWidth;
             if (scrollWidth > width) {

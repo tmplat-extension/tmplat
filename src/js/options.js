@@ -78,8 +78,8 @@ var options = {
                 title: chrome.i18n.getMessage('untitled')
             };
             // Only uses image if identifier exists
-            for (var i = 0; i < bg.urlcopy.images.length; i++) {
-                if (bg.urlcopy.images[i].id === feature.image) {
+            for (var i = 0; i < bg.ext.images.length; i++) {
+                if (bg.ext.images[i].id === feature.image) {
                     newFeature.image = feature.image;
                     break;
                 }
@@ -109,7 +109,7 @@ var options = {
         var bg = chrome.extension.getBackgroundPage(),
             data = {
                 templates: [],
-                version: bg.urlcopy.version
+                version: bg.ext.version
             },
             opt = {};
         for (var i = 0; i < names.length; i++) {
@@ -287,7 +287,8 @@ var options = {
         options.i18nReplace('#yourls_or_txt', 'opt_or_text');
         options.i18nReplace('#yourlsSignature_txt',
                 'opt_url_shortener_signature_text');
-        options.i18nReplace('#general_hdr, #general_nav', 'opt_general_header');
+        options.i18nReplace('#general_hdr, #general_nav',
+                'opt_general_header');
         options.i18nReplace('#contextMenu_txt', 'opt_context_menu_text');
         options.i18nReplace('#shortcuts_txt', 'opt_shortcut_text');
         options.i18nReplace('#anchors_hdr', 'opt_anchor_header');
@@ -350,10 +351,10 @@ var options = {
         options.load();
         var bg = chrome.extension.getBackgroundPage(),
             keyMods = '';
-        if (bg.urlcopy.isThisPlatform('mac')) {
-            keyMods = bg.urlcopy.shortcutMacModifiers;
+        if (bg.ext.isThisPlatform('mac')) {
+            keyMods = bg.ext.shortcutMacModifiers;
         } else {
-            keyMods = bg.urlcopy.shortcutModifiers;
+            keyMods = bg.ext.shortcutModifiers;
         }
         $('#feature_shortcut_txt').html(keyMods);
         // Initialize facebox
@@ -853,8 +854,8 @@ var options = {
         // Ensures clean slate
         features.find('option').remove();
         // Creates and inserts options representing features
-        for (var i = 0; i < bg.urlcopy.features.length; i++) {
-            features.append(options.loadFeature(bg.urlcopy.features[i]));
+        for (var i = 0; i < bg.ext.features.length; i++) {
+            features.append(options.loadFeature(bg.ext.features[i]));
         }
         // Loads all event handlers required for managing features
         options.loadFeatureControlEvents();
@@ -874,12 +875,12 @@ var options = {
         var bg = chrome.extension.getBackgroundPage(),
             imagePreview = $('#feature_image_preview'),
             images = $('#feature_image');
-        for (var i = 0; i < bg.urlcopy.images.length; i++) {
+        for (var i = 0; i < bg.ext.images.length; i++) {
             opt = $('<option/>', {
-                text: bg.urlcopy.images[i].name,
-                value: bg.urlcopy.images[i].id
-            }).appendTo(images).data('file', bg.urlcopy.images[i].file);
-            if (bg.urlcopy.images[i].separate) {
+                text: bg.ext.images[i].name,
+                value: bg.ext.images[i].id
+            }).appendTo(images).data('file', bg.ext.images[i].file);
+            if (bg.ext.images[i].separate) {
                 images.append(
                     $('<option/>', {
                         disabled: 'disabled',
@@ -1066,8 +1067,8 @@ var options = {
             features.push(options.deriveFeature($(this)));
         });
         // Ensures features data reflects the updated settings
-        bg.urlcopy.saveFeatures(features);
-        bg.urlcopy.updateFeatures();
+        bg.ext.saveFeatures(features);
+        bg.ext.updateFeatures();
     },
 
     /**
@@ -1165,8 +1166,8 @@ var options = {
         }
         existing.enabled = feature.enabled;
         // Only updates image if identifier exists
-        for (var i = 0; i < bg.urlcopy.images.length; i++) {
-            if (bg.urlcopy.images[i].id === feature.image) {
+        for (var i = 0; i < bg.ext.images.length; i++) {
+            if (bg.ext.images[i].id === feature.image) {
                 existing.image = feature.image;
                 break;
             }
