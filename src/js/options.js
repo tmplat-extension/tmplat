@@ -117,7 +117,7 @@ var options = {
             data.templates.push({
                 content: opt.data('content'),
                 enabled: opt.data('enabled') === 'true',
-                image: parseInt(opt.data('image')),
+                image: parseInt(opt.data('image'), 10),
                 name: opt.val(),
                 shortcut: opt.data('shortcut'),
                 title: opt.text()
@@ -166,7 +166,7 @@ var options = {
             feature = {
                 content: option.data('content'),
                 enabled: option.data('enabled') === 'true',
-                image: parseInt(option.data('image')),
+                image: parseInt(option.data('image'), 10),
                 index: option.parent().find('option').index(option),
                 name: option.val(),
                 readOnly: option.data('readOnly') === 'true',
@@ -573,7 +573,8 @@ var options = {
                 opt = options.loadFeature({
                     content: $('#feature_template').val(),
                     enabled: String($('#feature_enabled').is(':checked')),
-                    image: parseInt($('#feature_image option:selected').val()),
+                    image: parseInt($('#feature_image option:selected').val(),
+                            10),
                     name: name,
                     readOnly: false,
                     shortcut: $('#feature_shortcut').val().trim()
@@ -768,7 +769,7 @@ var options = {
                     break;
                 default:
                     message = chrome.i18n.getMessage('error_file_default');
-                };
+                }
                 $('.import_error').text(message).show();
             };
             reader.onload = function (evt) {
