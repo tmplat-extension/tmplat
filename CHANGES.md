@@ -1,3 +1,13 @@
+2011.08.01, Version 0.2.0.0
+
+* Change extension name to *"Template"* to do it better justice
+* Add import/export functionality for templates
+* Add many more images to be used with your custom templates
+* Clean up options page further using tabs
+* Remove supported extensions section on the options page
+ * Includes removal of *"management"* permission
+* Minor bug fixes and tweaks
+
 2011.07.28, Version 0.1.1.1
 
 * Fix error caused by using extension on a page where [IE Tab](https://chrome.google.com/webstore/detail/hehijbfgiekmjfkfjpbkbammjbdenadd) is active
