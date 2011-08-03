@@ -1,4 +1,4 @@
-2011.08.01, Version 0.2.0.0
+2011.08.03, Version 0.2.0.0
 
 * Change extension name to *"Template"* to do it better justice
 * Add import/export functionality for templates
