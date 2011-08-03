@@ -1,4 +1,5 @@
-Template, Quickly and easily copies info on the current page using a simple and unique template system  
+Template, Google Chrome extension that quickly and easily copies info  
+on the current page using a simple and unique template system  
 Copyright (C) 2011 Alasdair Mercer
 
 This program is free software: you can redistribute it and/or modify  
