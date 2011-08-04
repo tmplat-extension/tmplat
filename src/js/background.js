@@ -873,7 +873,7 @@ var ext = {
     copy: function (str, hidden) {
         var result = false,
             sandbox = $('#sandbox').val(str).select();
-        result = document.execCommand('copy', false, null);
+        result = document.execCommand('copy');
         sandbox.val('');
         if (!hidden) {
             ext.status = result;
@@ -1476,6 +1476,21 @@ var ext = {
                 }
             }
         });
+    },
+
+    /**
+     * <p>Attempts to retrieve the contents of the system clipboard.</p>
+     * @returns {String} The string taken from the clipboard.
+     * @since 0.2.0.1
+     */
+    paste: function () {
+        var result = '',
+            sandbox = $('#sandbox').val('').select();
+        if (document.execCommand('paste')) {
+            result = sandbox.val();
+        }
+        sandbox.val('');
+        return result;
     },
 
     /**

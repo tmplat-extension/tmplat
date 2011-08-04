@@ -31,11 +31,13 @@
     "name": "__MSG_name__",
     "options_page": "pages/options.html",
     "permissions": [
+        "clipboardRead",
+        "clipboardWrite",
         "contextMenus",
         "cookies",
         "notifications",
         "tabs",
         "<all_urls>"
     ],
-    "version": "0.2.0.0"
+    "version": "0.2.0.1"
 }
