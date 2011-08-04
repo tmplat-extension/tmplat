@@ -1,3 +1,9 @@
+2011.08.04, Version 0.2.0.1
+
+* Add new permissions required by [Chrome 13](http://code.google.com/chrome/extensions/whats_new.html#13) to use copy/paste functionality
+* Add copy and paste buttons to the template import and export views
+* Minor bug fixes and tweaks
+
 2011.08.03, Version 0.2.0.0
 
 * Change extension name to *"Template"* to do it better justice
