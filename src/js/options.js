@@ -630,7 +630,8 @@ var options = {
      * @private
      */
     loadFeatureExportEvents: function () {
-        var features = $('#features');
+        var bg = chrome.extension.getBackgroundPage(),
+            features = $('#features');
         // Prompts the user to selected the features to be imported
         $('#export_btn').click(function (event) {
             var list = $('.export_con_list');
@@ -660,6 +661,14 @@ var options = {
             } else {
                 $('.export_yes_btn').attr('disabled', 'disabled');
             }
+        });
+        // Copies the text area contents to the system clipboard
+        $('.export_copy_btn').live('click', function (event) {
+            bg.ext.copy($('.export_content').val());
+            $(this).text(chrome.i18n.getMessage('copied'));
+            event.preventDefault();
+        }).live('mouseover', function (event) {
+            $(this).text(chrome.i18n.getMessage('copy'));
         });
         // Deselects all features in the list
         $('.export_deselect_all_btn').live('click', function (event) {
@@ -717,7 +726,8 @@ var options = {
      * @private
      */
     loadFeatureImportEvents: function () {
-        var features = $('#features');
+        var bg = chrome.extension.getBackgroundPage(),
+            features = $('#features');
         // Restores the previous view in the import process
         $('.import_back_btn').live('click', function (event) {
             $('.import_con_stage1').show();
@@ -730,7 +740,7 @@ var options = {
             $('.import_con_stage1').show();
             $('.import_con_stage2, .import_con_stage3').hide();
             $('.import_content').val('');
-            $('.import_error').text('').hide();
+            $('.import_error').html('&nbsp;');
             $.facebox({div: '#import_con'});
         });
         /*
@@ -770,11 +780,11 @@ var options = {
                 default:
                     message = chrome.i18n.getMessage('error_file_default');
                 }
-                $('.import_error').text(message).show();
+                $('.import_error').text(message);
             };
             reader.onload = function (evt) {
                 $('.import_content').val(evt.target.result);
-                $('.import_error').text('').hide();
+                $('.import_error').html('&nbsp;');
             };
             reader.readAsText(file);
         });
@@ -801,6 +811,14 @@ var options = {
         $('.import_no_btn, .import_close_btn').live('click', function (event) {
             $(document).trigger('close.facebox');
         });
+        // Pastes the system clipboard contents in to the text area
+        $('.import_paste_btn').live('click', function (event) {
+            $('.import_file_btn').val('');
+            $('.import_content').val(bg.ext.paste());
+            $(this).text(chrome.i18n.getMessage('pasted'));
+        }).live('mouseover', function (event) {
+            $(this).text(chrome.i18n.getMessage('paste'));
+        });
         // Selects all features in the list
         $('.import_select_all_btn').live('click', function (event) {
             $('.import_con_list option').attr('selected', 'selected').parent()
@@ -818,11 +836,11 @@ var options = {
                 list = $('.import_con_list'),
                 str = $this.parents('.import_con_stage1')
                         .find('.import_content').val();
-            $('.import_error').text('').hide();
+            $('.import_error').html('&nbsp;');
             try {
                 importData = options.createImport(str);
             } catch (e) {
-                $('.import_error').text(e).show();
+                $('.import_error').text(e);
             }
             if (importData) {
                 data = options.readImport(importData);

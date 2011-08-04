@@ -43,7 +43,7 @@
       "message": "$O_PARA$Copy or save the following locally;$C_PARA$$TEXTAREA$$BUTTONS$",
       "placeholders": {
          "buttons": {
-            "content": "<form action=\"http://api.forchoon.com/export\" class=\"export_form\" method=\"POST\"><input name=\"category\" type=\"hidden\" value=\"json\" /><input name=\"content\" type=\"hidden\" value=\"\" /><table><tr><td style=\"width: 50%\"><button class=\"export_save_btn\">Save As...</button></td><td style=\"text-align: right\"><button class=\"export_close_btn\">Close</button></td></tr></table></form>"
+            "content": "<form action=\"http://api.forchoon.com/export\" class=\"export_form\" method=\"POST\"><input name=\"category\" type=\"hidden\" value=\"json\" /><input name=\"content\" type=\"hidden\" value=\"\" /><table><tr><td style=\"width: 50%\"><button class=\"export_save_btn\">Save As...</button><button class=\"export_copy_btn\">Copy</button></td><td style=\"text-align: right\"><button class=\"export_close_btn\">Close</button></td></tr></table></form>"
          },
          "c_para": {
             "content": "</p>"
@@ -52,7 +52,7 @@
             "content": "<p>"
          },
          "textarea": {
-            "content": "<textarea class=\"export_content\" cols=\"38\" rows=\"6\"></textarea>"
+            "content": "<textarea class=\"export_content\" cols=\"38\" rows=\"6\" readonly></textarea>"
          }
       }
    },
@@ -60,13 +60,13 @@
       "message": "$O_PARA$Paste or upload the your exported data;$C_PARA$$TEXTAREA$$BUTTONS$",
       "placeholders": {
          "buttons": {
-            "content": "<table><tr><td colspan=\"2\"><input class=\"import_file_btn\" type=\"file\" /></td></tr><tr><td style=\"width: 50%\"><span class=\"import_error\"></span></td><td style=\"text-align: right\"><button class=\"import_yes_btn\">Continue</button><button class=\"import_no_btn\">Cancel</button></td></tr></table>"
+            "content": "<table><tr><td colspan=\"2\"><span class=\"import_error\">&nbsp;</span></td></tr><tr><td colspan=\"2\"><input class=\"import_file_btn\" type=\"file\" /></td></tr><tr><td style=\"width: 50%\"><button class=\"import_paste_btn\">Paste</button></td><td style=\"text-align: right\"><button class=\"import_yes_btn\">Continue</button><button class=\"import_no_btn\">Cancel</button></td></tr></table>"
          },
          "c_para": {
             "content": "</p>"
          },
          "textarea": {
-            "content": "<textarea class=\"import_content\" cols=\"38\" rows=\"6\"></textarea>"
+            "content": "<textarea class=\"import_content\" cols=\"38\" rows=\"6\" readonly></textarea>"
          },
          "o_para": {
             "content": "<p>"
@@ -112,6 +112,12 @@
             "content": "<span>"
          }
       }
+   },
+   "copied": {
+      "message": "Copied!"
+   },
+   "copy": {
+      "message": "Copy"
    },
    "copy_anchor": {
       "message": "Anchor"
@@ -691,6 +697,12 @@
    },
    "opt_shortcut_text": {
       "message": "Enable keyboard shortcuts"
+   },
+   "paste": {
+      "message": "Paste"
+   },
+   "pasted": {
+      "message": "Pasted!"
    },
    "shortener_config_error": {
       "message": "Configuration problem found with $1"
