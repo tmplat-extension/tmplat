@@ -1440,20 +1440,33 @@ var ext = {
                 $('#item', popup.document).hide();
                 $('#loadDiv', popup.document).show();
             }
-            switch (request.type) {
-            case 'menu':
-                data = ext.buildDerivedData(tab, request.data, shortCallback);
-                feature = ext.getFeatureWithMenuId(request.data.menuItemId);
-                break;
-            case 'popup':
-                // Should be cheaper than searching ext.features...
-                data = ext.buildStandardData(tab, shortCallback);
-                feature = ext.loadFeature(request.data.name);
-                break;
-            case 'shortcut':
-                data = ext.buildStandardData(tab, shortCallback);
-                feature = ext.getFeatureWithShortcut(request.data.key);
-                break;
+            try {
+                switch (request.type) {
+                case 'menu':
+                    data = ext.buildDerivedData(tab, request.data,
+                            shortCallback);
+                    feature = ext.getFeatureWithMenuId(
+                            request.data.menuItemId);
+                    break;
+                case 'popup':
+                    // Should be cheaper than searching ext.features...
+                    data = ext.buildStandardData(tab, shortCallback);
+                    feature = ext.loadFeature(request.data.name);
+                    break;
+                case 'shortcut':
+                    data = ext.buildStandardData(tab, shortCallback);
+                    feature = ext.getFeatureWithShortcut(request.data.key);
+                    break;
+                }
+            } catch (e) {
+                if (e instanceof URIError) {
+                    ext.message = chrome.i18n.getMessage('copy_fail_uri');
+                } else {
+                    ext.message = chrome.i18n.getMessage('copy_fail_error');
+                }
+                ext.status = false;
+                ext.showNotification();
+                return;
             }
             if (feature) {
                 ext.addAdditionalData(tab, data, function () {
