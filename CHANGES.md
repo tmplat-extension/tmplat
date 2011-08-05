@@ -1,3 +1,10 @@
+2011.08.05, Version 0.2.1.0
+
+* Add new *"selectionLinks"* complex tag to allow iteration over links within in current selection
+* Change *"selection"* simple tag to allow access using popup/shortcuts and not just right-click menu
+* Fix minor UI defects in popup
+* Minor bug fixes
+
 2011.08.04, Version 0.2.0.1
 
 * Add new permissions required by [Chrome 13](http://code.google.com/chrome/extensions/whats_new.html#13) to use copy/paste functionality
