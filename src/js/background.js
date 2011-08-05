@@ -558,14 +558,22 @@ var ext = {
                 },
                 cookies: cookieNames
             });
-            chrome.tabs.sendRequest(tab.id, {}, function (response) {
+            // Prevents hanging on pages where content script wasn't executed
+            if (ext.isProtectedPage(tab)) {
                 $.extend(data, {
-                    selection: response.text || '',
-                    selectionLinks: response.urls || []
+                    selection: '',
+                    selectionLinks: []
                 });
-                // Continues with copy request
                 callback();
-            });
+            } else {
+                chrome.tabs.sendRequest(tab.id, {}, function (response) {
+                    $.extend(data, {
+                        selection: response.text || '',
+                        selectionLinks: response.urls || []
+                    });
+                    callback();
+                });
+            }
         });
     },
 
@@ -932,10 +940,8 @@ var ext = {
      */
     executeScriptsInExistingTabs: function (tabs) {
         for (var i = 0; i < tabs.length; i++) {
-            try {
+            if (!ext.isProtectedPage(tabs[i])) {
                 chrome.tabs.executeScript(tabs[i].id, {file: 'js/content.js'});
-            } catch (e) {
-                console.log(e.message || e);
             }
         }
     },
@@ -1282,6 +1288,31 @@ var ext = {
      */
     isExtensionActive: function (tab, extensionId) {
         return (ext.isSpecialPage(tab) && tab.url.indexOf(extensionId) !== -1);
+    },
+
+    /**
+     * <p>Determines whether or not the tab provided is currently displaying a
+     * page on the Chrome Extension Gallery (i.e. Web Store).</p>
+     * @param {Tab} tab The tab to be tested.
+     * @returns {Boolean} <code>true</code> if displaying a page on the Chrome
+     * Extension Gallery; otherwise <code>false</code>.
+     * @since 0.2.1.0
+     */
+    isExtensionGallery: function (tab) {
+        return tab.url.indexOf('https://chrome.google.com/webstore') === 0;
+    },
+
+    /**
+     * <p>Determines whether or not the tab provided is currently display a
+     * <em>protected</em> page (i.e. a page that content scripts cannot be
+     * executed on).</p>
+     * @param {Tab} tab The tab to be tested.
+     * @returns {Boolean} <code>true</code> if displaying a <em>protected</em>
+     * page; otherwise <code>false</code>.
+     * @since 0.2.1.0
+     */
+    isProtectedPage: function (tab) {
+        return ext.isSpecialPage(tab) || ext.isExtensionGallery(tab);
     },
 
     /**
