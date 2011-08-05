@@ -664,7 +664,7 @@ var options = {
         });
         // Copies the text area contents to the system clipboard
         $('.export_copy_btn').live('click', function (event) {
-            bg.ext.copy($('.export_content').val());
+            bg.ext.copy($('.export_content').val(), true);
             $(this).text(chrome.i18n.getMessage('copied'));
             event.preventDefault();
         }).live('mouseover', function (event) {

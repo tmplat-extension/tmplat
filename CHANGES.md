@@ -1,3 +1,7 @@
+2011.08.05, Version 0.2.1.1
+
+* Fix bug where notification is displayed when user clicks *"Copy"* button when exporting templates
+
 2011.08.05, Version 0.2.1.0
 
 * Add new predefined Markdown template (disabled by default)
