@@ -18,10 +18,6 @@ var popup = {
         document.body.innerHTML = bg.ext.popupHTML;
         // Fix dimensions of feature text
         popup.resizePopupText();
-        // Fix dimensions if shortcuts are enabled
-        if (utils.get('shortcuts')) {
-            document.body.style.minWidth = '190px';
-        }
     },
 
     

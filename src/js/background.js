@@ -682,6 +682,21 @@ var ext = {
                 itemList.append(ext.buildFeature(ext.features[i]));
             }
         }
+        // Adds generic message to state the obvious... list is empty
+        if (itemList.find('li').length === 0) {
+            $('<li/>').append(
+                $('<div/>', {
+                    'class': 'menu',
+                    style: 'background-image: url(\'../images/spacer.png\');'
+                }).append(
+                    $('<span/>', {
+                        'class': 'text',
+                        style: 'margin-left: 0',
+                        text: chrome.i18n.getMessage('empty')
+                    })
+                )
+            ).appendTo(itemList);
+        }
         item.append(itemList);
         ext.popupHTML = $('<div/>').append(loadDiv, item).html();
     },
@@ -918,9 +933,7 @@ var ext = {
     executeScriptsInExistingTabs: function (tabs) {
         for (var i = 0; i < tabs.length; i++) {
             try {
-                chrome.tabs.executeScript(tabs[i].id, {
-                    file: 'js/content.js'
-                });
+                chrome.tabs.executeScript(tabs[i].id, {file: 'js/content.js'});
             } catch (e) {
                 console.log(e.message || e);
             }
