@@ -65,7 +65,7 @@ var ext = {
         content: '[url={url}]{title}[/url]',
         enabled: false,
         image: 7,
-        index: 4,
+        index: 5,
         name: '_bbcode',
         readOnly: true,
         shortcut: 'B',
@@ -79,6 +79,15 @@ var ext = {
         readOnly: true,
         shortcut: 'E',
         title: chrome.i18n.getMessage('copy_encoded')
+    }, {
+        content: '[{title}]({url})',
+        enabled: false,
+        image: 7,
+        index: 4,
+        name: '_markdown',
+        readOnly: true,
+        shortcut: 'M',
+        title: chrome.i18n.getMessage('copy_markdown')
     }, {
         content: '{short}',
         enabled: true,

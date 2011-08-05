@@ -140,6 +140,9 @@
    "copy_fail_uri": {
       "message": "URL is not properly encoded"
    },
+   "copy_markdown": {
+      "message": "Markdown"
+   },
    "copy_short": {
       "message": "Short"
    },
