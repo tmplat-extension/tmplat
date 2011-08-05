@@ -8,7 +8,7 @@
     "content_scripts": [
         {
             "js": [
-                "js/shortcuts.js"
+                "js/content.js"
             ],
             "matches": [
                 "file:///*/*",

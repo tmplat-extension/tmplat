@@ -7,10 +7,10 @@ post_compiler = $(js_engine) build/post-compile.js
 validator = $(js_engine) build/jslint-check.js
 
 base_files = src/js/background.js\
+    src/js/content.js\
     src/js/notification.js\
 	src/js/options.js\
 	src/js/popup.js\
-	src/js/shortcuts.js\
 	src/js/utils.js
 
 base_bin_files = $(subst src/,bin/,$(base_files))

@@ -524,39 +524,49 @@ var ext = {
     version: '',
 
     /**
-     * <p>Adds extra data to the specified object.</p>
+     * <p>Extracts additional data with the provided information and adds it to
+     * the specified object.</p>
+     * @param {Tab} tab The tab whose information is to be extracted.
      * @param {Object} data The data to receive the additional data.
-     * @param {Object} extraData The object containing the additional data.
-     * @param {Object[]} extraData.cookies The array of cookies to be
-     * extracted.
-     * @returns {Object} The updated data object.
+     * @param {function} callback The function to be called once the
+     * information has been extracted.
      * @since 0.1.1.0
      * @private
      */
-    addAdditionalData: function (data, extraData) {
-        // Extracts the names of every cookie
-        var cookies = [];
-        for (var i = 0; i < extraData.cookies.length; i++) {
-            cookies.push(extraData.cookies[i].name);
-        }
-        $.extend(data, {
-            cookie: function () {
-                return function (text, render) {
-                    var name = render(text),
-                        value = '';
-                    // Attempts to find the value for the cookie name
-                    for (var j = 0; j < extraData.cookies.length; j++) {
-                        if (extraData.cookies[j].name === name) {
-                            value = extraData.cookies[j].value;
-                            break;
+    addAdditionalData: function (tab, data, callback) {
+        chrome.cookies.getAll({url: data.url}, function (cookies) {
+            var cookieNames = [];
+            cookies = cookies || [];
+            // Extracts the names of every cookie
+            for (var i = 0; i < cookies.length; i++) {
+                cookieNames.push(cookies[i].name);
+            }
+            $.extend(data, {
+                cookie: function () {
+                    return function (text, render) {
+                        var name = render(text),
+                            value = '';
+                        // Attempts to find the value for the cookie name
+                        for (var j = 0; j < cookies.length; j++) {
+                            if (cookies[j].name === name) {
+                                value = cookies[j].value;
+                                break;
+                            }
                         }
-                    }
-                    return value;
-                };
-            },
-            cookies: cookies
+                        return value;
+                    };
+                },
+                cookies: cookieNames
+            });
+            chrome.tabs.sendRequest(tab.id, {}, function (response) {
+                $.extend(data, {
+                    selection: response.text || '',
+                    selectionLinks: response.urls || []
+                });
+                // Continues with copy request
+                callback();
+            });
         });
-        return data;
     },
 
     /**
@@ -595,7 +605,6 @@ var ext = {
      */
     buildDerivedData: function (tab, onClickData, shortCallback) {
         var data = {
-            selectionText: onClickData.selectionText,
             title: tab.title,
             url: ''
         };
@@ -769,7 +778,6 @@ var ext = {
             'short': function () {
                 return shortCallback();
             },
-            selection: tab.selectionText || '',
             shortcuts: utils.get('shortcuts'),
             title: title || url.attr('source'),
             url: url.attr('source'),
@@ -865,6 +873,8 @@ var ext = {
      * <p>This is the core function for copying to the clipboard by the
      * extension. All supported copy requests should, at some point, call this
      * function.</p>
+     * <p>If the string provided is empty a single space will be copied
+     * instead.</p>
      * @param {String} str The string to be added to the clipboard.
      * @param {Boolean} [hidden] <code>true</code> to avoid updating
      * {@link ext.status} and showing a notification; otherwise
@@ -900,7 +910,7 @@ var ext = {
     },
 
     /**
-     * <p>Injects and executes the <code>shortcuts.js</code> script within each
+     * <p>Injects and executes the <code>content.js</code> script within each
      * of the tabs provided (where valid).</p>
      * @param {Object[]} tabs The tabs to execute the script in.
      * @private
@@ -909,7 +919,7 @@ var ext = {
         for (var i = 0; i < tabs.length; i++) {
             try {
                 chrome.tabs.executeScript(tabs[i].id, {
-                    file: 'js/shortcuts.js'
+                    file: 'js/content.js'
                 });
             } catch (e) {
                 console.log(e.message || e);
@@ -918,7 +928,7 @@ var ext = {
     },
 
     /**
-     * <p>Injects and executes the <code>shortcuts.js</code> script within all
+     * <p>Injects and executes the <code>content.js</code> script within all
      * the tabs (where valid) of each Chrome window.</p>
      * @private
      */
@@ -1413,6 +1423,15 @@ var ext = {
                 shortCalled = false,
                 shortPlaceholder = 'short' +
                         (Math.floor(Math.random() * 99999 + 1000));
+            function copyOutput(str) {
+                if (str) {
+                    ext.copy(str);
+                } else {
+                    ext.message = chrome.i18n.getMessage('copy_fail_empty');
+                    ext.status = false;
+                    ext.showNotification();
+                }
+            }
             function shortCallback() {
                 shortCalled = true;
                 return '{' + shortPlaceholder + '}';
@@ -1437,15 +1456,10 @@ var ext = {
                 break;
             }
             if (feature) {
-                chrome.cookies.getAll({url: data.url}, function (cookies) {
-                    ext.addAdditionalData(data, {
-                        cookies: cookies || []
-                    });
+                ext.addAdditionalData(tab, data, function () {
                     if (!feature.content) {
-                        ext.message = chrome.i18n.getMessage(
-                                'copy_template_fail', feature.title);
-                        ext.status = false;
-                        ext.showNotification();
+                        // Displays empty template error message
+                        copyOutput();
                         return;
                     }
                     var output = Mustache.to_html(feature.content, data);
@@ -1454,7 +1468,7 @@ var ext = {
                             if (response.success && response.shortUrl) {
                                 var newData = {};
                                 newData[shortPlaceholder] = response.shortUrl;
-                                ext.copy(Mustache.to_html(output, newData));
+                                copyOutput(Mustache.to_html(output, newData));
                             } else {
                                 if (!response.message) {
                                     response.message = chrome.i18n.getMessage(
@@ -1467,7 +1481,7 @@ var ext = {
                             }
                         });
                     } else {
-                        ext.copy(output);
+                        copyOutput(output);
                     }
                 });
             } else {

@@ -129,16 +129,16 @@
       "message": "Encoded"
    },
    "copy_fail": {
-      "message": "Template could not be added to the clipboard"
+      "message": "Template could not be copied"
+   },
+   "copy_fail_empty": {
+      "message": "Empty templates cannot be copied"
    },
    "copy_short": {
       "message": "Short"
    },
    "copy_success": {
-      "message": "Template has been added to the clipboard"
-   },
-   "copy_template_fail": {
-      "message": "&quot;$1&quot; is using invalid template content"
+      "message": "Template has been successfully copied"
    },
    "copy_url": {
       "message": "URL"
