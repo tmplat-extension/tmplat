@@ -1,5 +1,6 @@
 2011.08.05, Version 0.2.1.0
 
+* Add new predefined Markdown template (disabled by default)
 * Add new *"selectionLinks"* complex tag to allow iteration over links within in current selection
 * Change *"selection"* simple tag to allow access using popup/shortcuts and not just right-click menu
 * Fix minor UI defects in popup
