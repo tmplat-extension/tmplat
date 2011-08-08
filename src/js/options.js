@@ -1219,7 +1219,8 @@ var options = {
      * @private
      */
     validateFeature: function (feature, isNew, usedShortcuts) {
-        var errors = $('#errors'),
+        var enabled = feature.data('enabled') === 'true',
+            errors = $('#errors'),
             name = feature.val().trim(),
             shortcut = feature.data('shortcut').trim(),
             title = feature.text().trim();
@@ -1243,7 +1244,7 @@ var options = {
         if (shortcut && typeof usedShortcuts !== 'undefined') {
             if (!options.isShortcutValid(shortcut)) {
                 createError('opt_feature_shortcut_invalid');
-            } else if (usedShortcuts.indexOf(shortcut) !== -1) {
+            } else if (enabled && usedShortcuts.indexOf(shortcut) !== -1) {
                 createError('opt_feature_shortcut_unavailable');
             }
         }
