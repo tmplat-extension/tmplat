@@ -1,3 +1,8 @@
+2011.08.08, Version 0.2.2.0
+
+* Ignore keyboard shortcuts for disabled templates for validation and lookup
+* Minor spelling correction
+
 2011.08.05, Version 0.2.1.1
 
 * Fix bug where notification is displayed when user clicks *"Copy"* button when exporting templates
