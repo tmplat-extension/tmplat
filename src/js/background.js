@@ -1008,6 +1008,7 @@ var ext = {
     /**
      * <p>Attempts to return the information for the any feature with the
      * specified shortcut assigned to it.</p>
+     * <p>Disabled features are not included in this search.</p>
      * @param {String} shortcut The shortcut to be queried.
      * @returns {Object} The feature using the shortcut provided, if possible.
      * @since 0.1.0.0
@@ -1015,7 +1016,8 @@ var ext = {
     getFeatureWithShortcut: function (shortcut) {
         var feature;
         for (var i = 0; i < ext.features.length; i++) {
-            if (ext.features[i].shortcut === shortcut) {
+            if (ext.features[i].enabled &&
+                    ext.features[i].shortcut === shortcut) {
                 feature = ext.features[i];
                 break;
             }

@@ -1264,12 +1264,17 @@ var options = {
     validateFeatures: function () {
         var errors = $('#errors'),
             features = $('#features option'),
+            shortcut = '',
             usedShortcuts = [];
         errors.find('li').remove();
         features.each(function () {
             var $this = $(this);
             if (options.validateFeature($this, false, usedShortcuts)) {
-                usedShortcuts.push($this.data('shortcut').trim());
+                shortcut = $this.data('shortcut').trim();
+                // Only stores shortcut if used and feature is enabled
+                if ($this.data('enabled') === 'true' && shortcut) {
+                    usedShortcuts.push(shortcut);
+                }
             } else {
                 $this.attr('selected', 'selected');
                 $('#features').change().focus();
