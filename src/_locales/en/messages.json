@@ -135,7 +135,7 @@
       "message": "Empty templates cannot be copied"
    },
    "copy_fail_error": {
-      "message": "An error occurred when collection page information"
+      "message": "An error occurred when collecting page information"
    },
    "copy_fail_uri": {
       "message": "URL is not properly encoded"
