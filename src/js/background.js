@@ -625,12 +625,12 @@ var ext = {
             title: tab.title,
             url: ''
         };
-        if (onClickData.frameUrl) {
-            data.url = onClickData.frameUrl;
-        } else if (onClickData.linkUrl) {
+        if (onClickData.linkUrl) {
             data.url = onClickData.linkUrl;
         } else if (onClickData.srcUrl) {
             data.url = onClickData.srcUrl;
+        } else if (onClickData.frameUrl) {
+            data.url = onClickData.frameUrl;
         } else {
             data.url = onClickData.pageUrl;
         }
