@@ -50,7 +50,7 @@
                                 </tr>
                                 <tr>
                                     <td>favicon</td>
-                                    <td>The whole URL of the page's favicon</td>
+                                    <td>The whole <abbr title="Uniform Resource Locator">URL</abbr> of the page's favicon</td>
                                 </tr>
                                 <tr>
                                     <td>file</td>
@@ -70,7 +70,7 @@
                                 </tr>
                                 <tr>
                                     <td>originalUrl</td>
-                                    <td>The original whole URL being parsed (may be different than <span class="template-definition">url</span> if a supported extension was detected and the value of <span class="template-definition">url</span> was extracted from this)</td>
+                                    <td>The original whole <abbr title="Uniform Resource Locator">URL</abbr> being parsed (may be different than <span class="template-definition">url</span> if a supported extension was detected and the value of <span class="template-definition">url</span> was extracted from this)</td>
                                 </tr>
                                 <tr>
                                     <td>path</td>
@@ -98,7 +98,7 @@
                                 </tr>
                                 <tr>
                                     <td>short</td>
-                                    <td>The whole URL being parsed (shortened via the active URL shortener)</td>
+                                    <td>The whole <abbr title="Uniform Resource Locator">URL</abbr> being parsed (shortened via the active <abbr title="Uniform Resource Locator">URL</abbr> shortener)</td>
                                 </tr>
                                 <tr>
                                     <td>title</td>
@@ -106,7 +106,7 @@
                                 </tr>
                                 <tr>
                                     <td>url</td>
-                                    <td>The whole URL being parsed</td>
+                                    <td>The whole <abbr title="Uniform Resource Locator">URL</abbr> being parsed</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -147,17 +147,17 @@
                                 <tr>
                                     <td>segments</td>
                                     <td>Array</td>
-                                    <td>The segments from the URL's path</td>
+                                    <td>The segments from the <abbr title="Uniform Resource Locator">URL's</abbr> path</td>
                                 </tr>
                                 <tr>
                                     <td>selectionLinks</td>
                                     <td>Array</td>
-                                    <td>The URL's of any links within the currently selected text (not available on Chrome's protected pages)</td>
+                                    <td>The <abbr title="Uniform Resource Locator">URL's</abbr> of any links within the currently selected text (not available on Chrome's protected pages)</td>
                                 </tr>
                             </tbody>
                         </table>
                         <h3>Examples</h3>
-                        <p>These examples will be using the following URL;<pre>http://example.com/test/index.html?foo=bar&amp;fu=baz</pre></p>
+                        <p>These examples will be using the following <abbr title="Uniform Resource Locator">URL</abbr>;<pre>http://example.com/test/index.html?foo=bar&amp;fu=baz</pre></p>
                         <p>Using an array, you can do the following to iterate over all the <span class="template-definition">segments</span>;
 <pre>
 {#segments}
@@ -218,11 +218,11 @@
                             <tbody>
                                 <tr>
                                     <td>bitly</td>
-                                    <td>Whether or not <a href="http://bit.ly" target="_blank">bit.ly</a> is the enabled URL shortener</td>
+                                    <td>Whether or not <a href="http://bit.ly" target="_blank">bit.ly</a> is the enabled <abbr title="Uniform Resource Locator">URL</abbr> shortener</td>
                                 </tr>
                                 <tr>
                                     <td>bitlyApiKey</td>
-                                    <td>The API Key associated with your <a href="http://bit.ly/a/account" target="_blank">bit.ly account</a></td>
+                                    <td>The <abbr title="Application Programming Interface">API</abbr> Key associated with your <a href="http://bit.ly/a/account" target="_blank">bit.ly account</a></td>
                                 </tr>
                                 <tr>
                                     <td>bitlyUsername</td>
@@ -254,7 +254,7 @@
                                 </tr>
                                 <tr>
                                     <td>googl</td>
-                                    <td>Whether or not <a href="http://goo.gl" target="_blank">goo.gl</a> is the enabled URL shortener</td>
+                                    <td>Whether or not <a href="http://goo.gl" target="_blank">goo.gl</a> is the enabled <abbr title="Uniform Resource Locator">URL</abbr> shortener</td>
                                 </tr>
                                 <tr>
                                     <td>googlOAuth</td>
@@ -290,7 +290,7 @@
                                 </tr>
                                 <tr>
                                     <td>yourls</td>
-                                    <td>Whether or not <a href="http://yourls.org" target="_blank">YOURLS</a> is the enabled URL shortener</td>
+                                    <td>Whether or not <a href="http://yourls.org" target="_blank">YOURLS</a> is the enabled <abbr title="Uniform Resource Locator">URL</abbr> shortener</td>
                                 </tr>
                                 <tr>
                                     <td>yourlsPassword</td>
@@ -302,7 +302,7 @@
                                 </tr>
                                 <tr>
                                     <td>yourlsUrl</td>
-                                    <td>The URL of your <a href="http://yourls.org" target="_blank">YOURLS</a> installation (e.g. <code>http://example.com/yourls-api.php</code>)</td>
+                                    <td>The <abbr title="Uniform Resource Locator">URL</abbr> of your <a href="http://yourls.org" target="_blank">YOURLS</a> installation (e.g. <code>http://example.com/yourls-api.php</code>)</td>
                                 </tr>
                                 <tr>
                                     <td>yourlsUsername</td>
@@ -311,7 +311,7 @@
                             </tbody>
                         </table>
                         <h3>Examples</h3>
-                        <p>These examples will be using the following URL;<pre>http://example.com/test/index.html</pre></p>
+                        <p>These examples will be using the following <abbr title="Uniform Resource Locator">URL</abbr>;<pre>http://example.com/test/index.html</pre></p>
                         <p>To include the <code>title</code> attribute in an anchor tag only if the user wants it;
 <pre>&lt;a href=&quot;{{url}}&quot;{#doAnchorTitle} title=&quot;{{title}}&quot;{/doAnchorTitle}&gt;This is a test!&lt;/a&gt;</pre>
                         Would output the following if this option was enabled by the user;
@@ -371,10 +371,10 @@
                             <li>The argument can be negative values, in which case it will count back from the end of the path rather than forwards from the start</li>
                         </ul>
                         <h3>Examples</h3>
-                        <p>These examples will be using the following URL;<pre>http://example.com/test/index.html?foo=bar&amp;fu=baz</pre></p>
-                        <p>If you wanted to pass the whole URL as parameter;</p>
+                        <p>These examples will be using the following <abbr title="Uniform Resource Locator">URL</abbr>;<pre>http://example.com/test/index.html?foo=bar&amp;fu=baz</pre></p>
+                        <p>If you wanted to pass the whole <abbr title="Uniform Resource Locator">URL</abbr> as parameter;</p>
 <pre>{#encode}{url}{/encode}</pre>
-                        <p>Would escape all the characters of the URL and output the following;</p>
+                        <p>Would escape all the characters of the <abbr title="Uniform Resource Locator">URL</abbr> and output the following;</p>
 <pre>http%3A%2F%2Fexample.com%2Ftest%2Findex.html%3Ffoo%3Dbar%26fu%3Dbaz</pre>
                         <p>To access the 2nd <span class="template-definition">segment</span>;
 <pre>&lt;p&gt;{#segment}2{/segment}&lt;/p&gt;</pre>
