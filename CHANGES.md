@@ -1,3 +1,9 @@
+2011.10.07, Version 0.2.3.0
+
+* Rebrand logo and create new promotional images
+* Improve URL derivation when using the context menu
+* Update [jQuery](http://jquery.com) to v1.6.4
+
 2011.08.08, Version 0.2.2.0
 
 * Ignore keyboard shortcuts for disabled templates for validation and lookup

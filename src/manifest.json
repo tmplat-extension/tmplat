@@ -24,8 +24,12 @@
     "icons": {
         "16": "images/icon_16.png",
         "19": "images/icon_19.png",
+        "24": "images/icon_24.png",
         "32": "images/icon_32.png",
         "48": "images/icon_48.png",
+        "64": "images/icon_64.png",
+        "72": "images/icon_72.png",
+        "96": "images/icon_96.png",
         "128": "images/icon_128.png"
     },
     "name": "__MSG_name__",
@@ -39,5 +43,5 @@
         "tabs",
         "<all_urls>"
     ],
-    "version": "0.2.2.0"
+    "version": "0.2.3.0"
 }
