@@ -1,3 +1,8 @@
+2011.10.10, Version 0.2.3.1
+
+* Rebrand logo, again...
+* Prevent content script conflicts between version updates
+
 2011.10.07, Version 0.2.3.0
 
 * Rebrand logo and create new promotional images
