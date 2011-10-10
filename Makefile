@@ -50,7 +50,7 @@ $(base_bin_files): template
 
 $(extra_bin_files): template
 	@@if test ! -z $(js_engine); then \
-		echo "Minifying: " $@; \
+		echo "Minifying:" $@; \
 		$(compiler) $@ > $@.tmp; \
 		$(post_compiler) $@.tmp > $@; \
 		rm -f $@.tmp; \
