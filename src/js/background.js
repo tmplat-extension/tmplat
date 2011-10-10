@@ -1471,6 +1471,10 @@ var ext = {
      * @private
      */
     onRequestHelper: function (request, sender, sendResponse) {
+        if (request.type === 'version') {
+            sendResponse({version: ext.version});
+            return;
+        }
         chrome.tabs.getSelected(null, function (tab) {
             var data = {},
                 feature,
