@@ -43,7 +43,7 @@
       "message": "$O_PARA$Copy or save the following locally;$C_PARA$$TEXTAREA$$BUTTONS$",
       "placeholders": {
          "buttons": {
-            "content": "<form action=\"http://api.forchoon.com/export\" class=\"export_form\" method=\"POST\"><input name=\"category\" type=\"hidden\" value=\"json\" /><input name=\"content\" type=\"hidden\" value=\"\" /><table><tr><td style=\"width: 50%\"><button class=\"export_save_btn\">Save As...</button><button class=\"export_copy_btn\">Copy</button></td><td style=\"text-align: right\"><button class=\"export_close_btn\">Close</button></td></tr></table></form>"
+            "content": "<table><tr><td style=\"width: 50%\"><button class=\"export_save_btn\">Save As...</button><button class=\"export_copy_btn\">Copy</button></td><td style=\"text-align: right\"><button class=\"export_close_btn\">Close</button></td></tr></table>"
          },
          "c_para": {
             "content": "</p>"

@@ -704,18 +704,29 @@ var options = {
             var $this = $(this),
                 str = $this.parents('.export_con_stage2')
                         .find('.export_content').val();
-            str = encodeURIComponent(str);
             /*
-             * Attempts to download from server if online for "cleaner" export
-             * and will fall back on "simple" export if offline.
+             * Writes the contents of the text area in to a file and before
+             * allowing the user to download it.
              */
-            if (window.navigator.onLine) {
-                var form = $this.parents('.export_form');
-                form.find('input[name="content"]').val(str);
-            } else {
-                window.location = 'data:text/json;charset=utf8,' + str;
-                event.preventDefault();
-            }
+            window.webkitRequestFileSystem(window.TEMPORARY, 1024 * 1024,
+                function (fs) {
+                    fs.root.getFile('export.json', {create: true},
+                        function (fileEntry) {
+                            fileEntry.createWriter(function (fileWriter) {
+                                var builder = new WebKitBlobBuilder();
+                                fileWriter.onerror = function (e) {
+                                    console.log(e);
+                                };
+                                fileWriter.onwriteend  = function () {
+                                    window.location.href = fileEntry.toURL();
+                                };
+                                builder.append(str);
+                                fileWriter.write(
+                                    builder.getBlob('application/json')
+                                );
+                            });
+                        });
+                });
         });
         // Selects all features in the list
         $('.export_select_all_btn').live('click', function (event) {
