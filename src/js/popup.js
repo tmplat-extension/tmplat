@@ -34,7 +34,7 @@ var popup = {
         var bg = chrome.extension.getBackgroundPage();
         // Inserts prepared HTML in to body element
         document.body.innerHTML = bg.ext.popupHTML;
-        // Fix dimensions of template text
+        // Fix dimensions of feature text
         popup.resizePopupText();
     },
 
@@ -62,10 +62,10 @@ var popup = {
     },
 
     /**
-     * <p>Sends the request to the background page for the clicked template
+     * <p>Sends the request to the background page for the clicked feature
      * item.</p>
      * @event
-     * @param {Element} item The calling template item clicked.
+     * @param {Element} item The calling feature item clicked.
      * @since 0.1.0.0
      */
     sendRequest: function (item) {
