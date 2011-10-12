@@ -282,8 +282,11 @@
       "message": "Tools"
    },
    "help_bitlyApiKey": {
-      "message": "$O_PARA$The API key allows $O_BOLD$Template$C_BOLD$ to shorten links via $O_BOLD$bit.ly$C_BOLD$ on your behalf.$C_PARA$$O_PARA$$O_LINK_1$Get your API key$C_LINK$$C_PARA$",
+      "message": "$O_PARA$The $API_ABBR$ key allows $O_BOLD$Template$C_BOLD$ to shorten links via $O_BOLD$bit.ly$C_BOLD$ on your behalf.$C_PARA$$O_PARA$$O_LINK_1$Get your API key$C_LINK$$C_PARA$",
       "placeholders": {
+         "api_abbr": {
+            "content": "<abbr title=\"Application Programming Interface\">API</abbr>"
+         },
          "c_bold": {
             "content": "</strong>"
          },
@@ -324,6 +327,51 @@
          },
          "o_link_2": {
             "content": "<a href=\"http://bit.ly/a/sign_up\" target=\"_blank\">"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
+   "help_contextMenu": {
+      "message": "$O_PARA$This indicates whether or not your templates will be accessible from the right-click menu.$C_PARA$",
+      "placeholders": {
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
+   "help_doAnchorTarget": {
+      "message": "$O_PARA$This indicates whether or not a $O_CODE$target$C_CODE$ attribute should be included in the anchor tag when building an Anchor template.$C_PARA$$O_PARA$If included, this attribute will be populated with $O_CODE$blank$C_CODE$.$C_PARA$",
+      "placeholders": {
+         "c_code": {
+            "content": "</code>"
+         },
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_code": {
+            "content": "<code>"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
+   "help_doAnchorTitle": {
+      "message": "$O_PARA$This indicates whether or not a $O_CODE$title$C_CODE$ attribute should be included in the anchor tag when building an Anchor template.$C_PARA$$O_PARA$If included, this attribute will be populated with the contextual title (e.g page, frame).$C_PARA$",
+      "placeholders": {
+         "c_code": {
+            "content": "</code>"
+         },
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_code": {
+            "content": "<code>"
          },
          "o_para": {
             "content": "<p>"
@@ -465,6 +513,45 @@
          }
       }
    },
+   "help_notificationDuration": {
+      "message": "$O_PARA$The time (in seconds) to display the desktop notification before automatically hiding it again.$C_PARA$$O_PARA$Enter $O_BOLD$0$C_BOLD$ to disable auto-hide functionality.$C_PARA$",
+      "placeholders": {
+         "c_bold": {
+            "content": "</strong>"
+         },
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_bold": {
+            "content": "<strong>"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
+   "help_notifications": {
+      "message": "$O_PARA$This indicates whether or not desktop notifications will appear whenever you use a template to inform you of the outcome (e.g. success, failure).$C_PARA$",
+      "placeholders": {
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
+   "help_shortcuts": {
+      "message": "$O_PARA$This indicates whether or not keyboard shortcuts will be recognised.$C_PARA$",
+      "placeholders": {
+         "c_para": {
+            "content": "</p>"
+         },
+         "o_para": {
+            "content": "<p>"
+         }
+      }
+   },
    "help_yourlsCredentials": {
       "message": "$O_PARA$Both the username and password are only required if the $O_BOLD$YOURLS$C_BOLD$ installation is private $O_EMPH$and$C_EMPH$ you are $O_EMPH$not$C_EMPH$ using the $O_LINK_1$passwordless API$C_LINK$.$C_PARA$$O_PARA$$O_LINK_2$See documentation$C_LINK$$C_PARA$",
       "placeholders": {
@@ -527,8 +614,11 @@
       }
    },
    "help_yourlsUrl": {
-      "message": "$O_PARA$The URL to the API of the $O_BOLD$YOURLS$C_BOLD$ installation (e.g. $O_CODE$http://example.com/yourls-api.php$C_CODE$).$C_PARA$$O_PARA$$O_LINK_1$See documentation$C_LINK$$C_PARA$",
+      "message": "$O_PARA$The $URL_ABBR$ to the $API_ABBR$ of the $O_BOLD$YOURLS$C_BOLD$ installation (e.g. $O_CODE$http://exam.pl/yourls-api.php$C_CODE$).$C_PARA$$O_PARA$$O_LINK_1$See documentation$C_LINK$$C_PARA$",
       "placeholders": {
+         "api_abbr": {
+            "content": "<abbr title=\"Application Programming Interface\">API</abbr>"
+         },
          "c_bold": {
             "content": "</strong>"
          },
@@ -552,6 +642,9 @@
          },
          "o_para": {
             "content": "<p>"
+         },
+         "url_abbr": {
+            "content": "<abbr title=\"Uniform Resource Locator\">URL</abbr>"
          }
       }
    },
@@ -658,24 +751,24 @@
       "message": "Notifications"
    },
    "opt_notification_text": {
-      "message": "Enable notifications (i.e. success, failure)"
+      "message": "Enable notifications"
    },
    "opt_notification_timer_text1": {
       "message": "Auto-hide notifications after"
    },
    "opt_notification_timer_text2": {
-      "message": "seconds (Disable auto-hide: $AUTO_HIDE$)",
-      "placeholders": {
-         "auto_hide": {
-            "content": "<em>0</em>"
-         }
-      }
+      "message": "seconds"
    },
    "opt_or_text": {
       "message": "OR"
    },
    "opt_url_shortener_api_key_text": {
-      "message": "API Key"
+      "message": "$API_ABBR$ Key",
+      "placeholders": {
+         "api_abbr": {
+            "content": "<abbr title=\"Application Programming Interface\">API</abbr>"
+         }
+      }
    },
    "opt_url_shortener_config_header": {
       "message": "Configuration"
@@ -699,7 +792,12 @@
       "message": "Signature"
    },
    "opt_url_shortener_url_text": {
-      "message": "URL"
+      "message": "$URL_ABBR$",
+      "placeholders": {
+         "url_abbr": {
+            "content": "<abbr title=\"Uniform Resource Locator\">URL</abbr>"
+         }
+      }
    },
    "opt_url_shortener_username_text": {
       "message": "Username"

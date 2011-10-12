@@ -322,6 +322,13 @@ var options = {
         options.i18nReplace('#footer', 'opt_footer',
                 String(new Date().getFullYear()));
         // Inserts localized help/confirmation sections
+        options.i18nReplace('#contextMenu_help', 'help_contextMenu');
+        options.i18nReplace('#shortcuts_help', 'help_shortcuts');
+        options.i18nReplace('#notifications_help', 'help_notifications');
+        options.i18nReplace('#notificationDuration_help',
+                'help_notificationDuration');
+        options.i18nReplace('#doAnchorTitle_help', 'help_doAnchorTitle');
+        options.i18nReplace('#doAnchorTarget_help', 'help_doAnchorTarget');
         options.i18nReplace('#feature_enabled_help', 'help_feature_enabled');
         options.i18nReplace('#feature_image_help', 'help_feature_image');
         options.i18nReplace('#feature_name_help', 'help_feature_name');
@@ -961,19 +968,7 @@ var options = {
         if (utils.get('notificationDuration') > timeInSecs) {
             timeInSecs = utils.get('notificationDuration') / 1000;
         }
-        // Ensures clean slate
-        $('#notificationDuration option').remove();
-        // Creates and inserts options for available auto-hide time in seconds
-        for (var i = 0; i <= 30; i++) {
-            var opt = $('<option/>', {
-                text: i,
-                value: i
-            });
-            if (i === timeInSecs) {
-                opt.attr('selected', 'selected');
-            }
-            opt.appendTo('#notificationDuration');
-        }
+        $('#notificationDuration').val(timeInSecs);
     },
 
     /**
