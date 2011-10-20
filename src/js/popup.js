@@ -38,7 +38,6 @@ var popup = {
         popup.resizePopupText();
     },
 
-    
     /**
      * <p>Calculates the widest text <code>&lt;div/&gt;</code> in the popup
      * and assigns that width to all others.</p>
