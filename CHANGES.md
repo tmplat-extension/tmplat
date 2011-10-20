@@ -1,3 +1,9 @@
+2011.10.20, Version 0.2.4.0
+
+* [#38](https://github.com/neocotic/template/issues/38): Add help documentation for general settings on options page
+* [#40](https://github.com/neocotic/template/issues/40): Make template export process no longer require external resource
+* [#44](https://github.com/neocotic/template/issues/44): Many minor UI changes in options page
+
 2011.10.10, Version 0.2.3.1
 
 * [#41](https://github.com/neocotic/template/issues/41): Rebrand logo, again...
