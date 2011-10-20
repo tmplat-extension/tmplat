@@ -1,61 +1,61 @@
 2011.10.10, Version 0.2.3.1
 
-* Rebrand logo, again...
-* Prevent content script conflicts between version updates
+* [#41](https://github.com/neocotic/template/issues/41): Rebrand logo, again...
+* [#42](https://github.com/neocotic/template/issues/42): Prevent content script conflicts between version updates
 
 2011.10.07, Version 0.2.3.0
 
 * Rebrand logo and create new promotional images
-* Improve URL derivation when using the context menu
+* [#36](https://github.com/neocotic/template/issues/36): Improve URL derivation when using the context menu
 * Update [jQuery](http://jquery.com) to v1.6.4
 
 2011.08.08, Version 0.2.2.0
 
-* Ignore keyboard shortcuts for disabled templates for validation and lookup
+* [#33](https://github.com/neocotic/template/issues/33): Ignore keyboard shortcuts for disabled templates for validation and lookup
 * Minor spelling correction
 
 2011.08.05, Version 0.2.1.1
 
-* Fix bug where notification is displayed when user clicks *"Copy"* button when exporting templates
+* [#34](https://github.com/neocotic/template/issues/34): Fix bug where notification is displayed when user clicks *"Copy"* button when exporting templates
 
 2011.08.05, Version 0.2.1.0
 
 * Add new predefined Markdown template (disabled by default)
-* Add new *"selectionLinks"* complex tag to allow iteration over links within in current selection
-* Change *"selection"* simple tag to allow access using popup/shortcuts and not just right-click menu
-* Fix minor UI defects in popup
+* [#29](https://github.com/neocotic/template/issues/29): Add new *"selectionLinks"* complex tag to allow iteration over links within in current selection
+* [#29](https://github.com/neocotic/template/issues/29): Change *"selection"* simple tag to allow access using popup/shortcuts and not just right-click menu
+* [#26](https://github.com/neocotic/template/issues/26): Fix minor UI defects in popup
 * Minor bug fixes
 
 2011.08.04, Version 0.2.0.1
 
-* Add new permissions required by [Chrome 13](http://code.google.com/chrome/extensions/whats_new.html#13) to use copy/paste functionality
-* Add copy and paste buttons to the template import and export views
+* [#27](https://github.com/neocotic/template/issues/27): Add new permissions required by [Chrome 13](http://code.google.com/chrome/extensions/whats_new.html#13) to use copy/paste functionality
+* [#28](https://github.com/neocotic/template/issues/28): Add copy and paste buttons to the template import and export views
 * Minor bug fixes and tweaks
 
 2011.08.03, Version 0.2.0.0
 
-* Change extension name to *"Template"* to do it better justice
-* Add import/export functionality for templates
-* Add many more images to be used with your custom templates
-* Clean up options page further using tabs
-* Remove supported extensions section on the options page
+* [#14](https://github.com/neocotic/template/issues/14): Change extension name to *"Template"* to do it better justice
+* [#11](https://github.com/neocotic/template/issues/11): Add import/export functionality for templates
+* [#17](https://github.com/neocotic/template/issues/17): Add many more images to be used with your custom templates
+* [#10](https://github.com/neocotic/template/issues/10): Clean up options page further using tabs
+* [#23](https://github.com/neocotic/template/issues/23): Remove supported extensions section on the options page
  * Includes removal of *"management"* permission
 * Minor bug fixes and tweaks
 
 2011.07.28, Version 0.1.1.1
 
-* Fix error caused by using extension on a page where [IE Tab](https://chrome.google.com/webstore/detail/hehijbfgiekmjfkfjpbkbammjbdenadd) is active
-* Redesign compatibility structure to support multiple extensions
-* Add compatibility support for [IE Tab Classic](https://chrome.google.com/webstore/detail/miedgcmlgpmdagojnnbemlkgidepfjfi), [IE Tab Multi (Enhance)](https://chrome.google.com/webstore/detail/fnfnbeppfinmnjnjhedifcfllpcfgeea) and [Mozilla Gecko Tab](https://chrome.google.com/webstore/detail/icoloanbecehinobmflpeglknkplbfbm) extensions
+* [#21](https://github.com/neocotic/template/issues/21): Fix error caused by using extension on a page where [IE Tab](https://chrome.google.com/webstore/detail/hehijbfgiekmjfkfjpbkbammjbdenadd) is active
+* [#21](https://github.com/neocotic/template/issues/21): Redesign compatibility structure to support multiple extensions
+* [#21](https://github.com/neocotic/template/issues/21): Add compatibility support for [IE Tab Classic](https://chrome.google.com/webstore/detail/miedgcmlgpmdagojnnbemlkgidepfjfi), [IE Tab Multi (Enhance)](https://chrome.google.com/webstore/detail/fnfnbeppfinmnjnjhedifcfllpcfgeea) and [Mozilla Gecko Tab](https://chrome.google.com/webstore/detail/icoloanbecehinobmflpeglknkplbfbm) extensions
 
 2011.07.27, Version 0.1.1.0
 
-* Rename the *"cookies"* template simple tag to *"cookiesEnabled"*
-* Add new *"cookies"* template complex tag to allow iteration over cookie names
-* Add new *"cookie"* template function tag to allow access to cookie values
-* Add new *"selection"* template simple tag to allow access to the currently selected text on the page (only available when accessed via the context menu)
-* Update the notification messages to be more generic
-* Add option to disable the context (right-click) menu (available in templates via the new *"contextMenu"* option tag)
+* [#16](https://github.com/neocotic/template/issues/16): Rename the *"cookies"* template simple tag to *"cookiesEnabled"*
+* [#16](https://github.com/neocotic/template/issues/16): Add new *"cookies"* template complex tag to allow iteration over cookie names
+* [#16](https://github.com/neocotic/template/issues/16): Add new *"cookie"* template function tag to allow access to cookie values
+* [#13](https://github.com/neocotic/template/issues/13): Add new *"selection"* template simple tag to allow access to the currently selected text on the page (only available when accessed via the context menu)
+* [#18](https://github.com/neocotic/template/issues/18): Update the notification messages to be more generic
+* [#15](https://github.com/neocotic/template/issues/15): Add option to disable the context (right-click) menu (available in templates via the new *"contextMenu"* option tag)
 * Slightly rearrange the options page
 
 2011.07.26, Version 0.1.0.3
@@ -70,7 +70,7 @@
 2011.07.21, Version 0.1.0.2
 
 * Fix error generated by *"param"*, *"segment"*, *"fparam"* and *"fsegment"* template functions
-* Fix bug where valid keyboard shortcut inputs were being rejected
+* [#2](https://github.com/neocotic/template/issues/2): Fix bug where valid keyboard shortcut inputs were being rejected
 * Deprecate the *"originalSource"* template simple tag and replace with the *"originalUrl"* simple tag
 * Deprecate the *"source"* template simple tag and replace with the *"url"* simple tag
 * Deprecate the *"encoded"* template simple tag and replace with the *"encode"* function which encodes its rendered contents
@@ -78,22 +78,22 @@
 
 2011.07.20, Version 0.1.0.1
 
-* Fix problem where URL shortener options were being forgotten when browser was closed
-* Add some feedback messages if/when any errors occur when copying a shortened URL (i.e. could not reach URL shortener service)
-* Attempt to make keyboard shortcuts work more consistently
+* [#8](https://github.com/neocotic/template/issues/8): Fix problem where URL shortener options were being forgotten when browser was closed
+* [#8](https://github.com/neocotic/template/issues/8): Add some feedback messages if/when any errors occur when copying a shortened URL (i.e. could not reach URL shortener service)
+* [#2](https://github.com/neocotic/template/issues/2): Attempt to make keyboard shortcuts work more consistently
 
 2011.07.19, Version 0.1.0.0
 
-* Add feature customization including a template system
-* Convert default features to use the new template system
-* Completely rewrite code to dynamically copy parsed templates
-* Redesign Features section of options page to support feature customization
-* Add new help system to options page including documentation on the new template system
-* Add support for context (right-click) menus
-* Add support for [YOURLS](http://yourls.org) URL shortener installations
-* Fix [bit.ly](http://bit.ly) URL shortener service
-* Allow keyboard shortcuts to be customized
-* Fix OS X keyboard shortcuts
+* [#4](https://github.com/neocotic/template/issues/4): Add feature customization including a template system
+* [#4](https://github.com/neocotic/template/issues/4): Convert default features to use the new template system
+* [#4](https://github.com/neocotic/template/issues/4): Completely rewrite code to dynamically copy parsed templates
+* [#4](https://github.com/neocotic/template/issues/4): Redesign Features section of options page to support feature customization
+* [#4](https://github.com/neocotic/template/issues/4): Add new help system to options page including documentation on the new template system
+* [#7](https://github.com/neocotic/template/issues/7): Add support for context (right-click) menus
+* [#6](https://github.com/neocotic/template/issues/6): Add support for [YOURLS](http://yourls.org) URL shortener installations
+* [#1](https://github.com/neocotic/template/issues/1): Fix [bit.ly](http://bit.ly) URL shortener service
+* [#5](https://github.com/neocotic/template/issues/5): Allow keyboard shortcuts to be customized
+* [#3](https://github.com/neocotic/template/issues/3): Fix OS X keyboard shortcuts
 * Major rewrite of code including huge optimization work and performance improvements
 * Update [jQuery](http://jquery.com) to v1.6.2
 * Remove [jQuery](http://jquery.com) dependencies from all but the background and options pages to optimize page loads
