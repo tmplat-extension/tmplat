@@ -1,832 +1,832 @@
 {
-   "app_name": {
-      "message": "Template Chrome Extension"
-   },
-   "confirm_delete": {
-      "message": "$O_PARA$This action is $O_BOLD$permanent$C_BOLD$ and cannot be reversed.$C_PARA$$O_PARA$Do you want to continue anyway?$C_PARA$$BUTTONS$",
-      "placeholders": {
-         "buttons": {
-            "content": "<div style=\"text-align: right\"><button class=\"delete_yes_btn\">Yes</button><button class=\"delete_no_btn\">No</button></div>"
-         },
-         "c_bold": {
-            "content": "</strong>"
-         },
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_bold": {
-            "content": "<strong>"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "confirm_export_stage1": {
-      "message": "$O_PARA$Select the template(s) you want to export;$C_PARA$$LIST$$BUTTONS$",
-      "placeholders": {
-         "buttons": {
-            "content": "<table><tr><td style=\"width: 50%\"><button class=\"export_select_all_btn\">All</button><button class=\"export_deselect_all_btn\">None</button></td><td style=\"text-align: right\"><button class=\"export_yes_btn\" disabled=\"disabled\">Continue</button><button class=\"export_no_btn\">Cancel</button></td></tr></table>"
-         },
-         "c_para": {
-            "content": "</p>"
-         },
-         "list": {
-            "content": "<select class=\"export_con_list\" size=\"5\" multiple></select>"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "confirm_export_stage2": {
-      "message": "$O_PARA$Copy or save the following locally;$C_PARA$$TEXTAREA$$BUTTONS$",
-      "placeholders": {
-         "buttons": {
-            "content": "<table><tr><td style=\"width: 50%\"><button class=\"export_save_btn\">Save As...</button><button class=\"export_copy_btn\">Copy</button></td><td style=\"text-align: right\"><button class=\"export_close_btn\">Close</button></td></tr></table>"
-         },
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_para": {
-            "content": "<p>"
-         },
-         "textarea": {
-            "content": "<textarea class=\"export_content\" cols=\"38\" rows=\"6\" readonly></textarea>"
-         }
-      }
-   },
-   "confirm_import_stage1": {
-      "message": "$O_PARA$Paste or upload the your exported data;$C_PARA$$TEXTAREA$$BUTTONS$",
-      "placeholders": {
-         "buttons": {
-            "content": "<table><tr><td colspan=\"2\"><span class=\"import_error\">&nbsp;</span></td></tr><tr><td colspan=\"2\"><input class=\"import_file_btn\" type=\"file\" /></td></tr><tr><td style=\"width: 50%\"><button class=\"import_paste_btn\">Paste</button></td><td style=\"text-align: right\"><button class=\"import_yes_btn\">Continue</button><button class=\"import_no_btn\">Cancel</button></td></tr></table>"
-         },
-         "c_para": {
-            "content": "</p>"
-         },
-         "textarea": {
-            "content": "<textarea class=\"import_content\" cols=\"38\" rows=\"6\" readonly></textarea>"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "confirm_import_stage2": {
-      "message": "$O_SPAN$$COUNT$ valid template(s) were found.$C_SPAN$$O_PARA$Select those to be imported;$C_PARA$$LIST$$BUTTONS$",
-      "placeholders": {
-         "buttons": {
-            "content": "<table><tr><td style=\"width: 33%\"><button class=\"import_select_all_btn\">All</button><button class=\"import_deselect_all_btn\">None</button></td><td style=\"text-align: right\"><button class=\"import_final_btn\">Import</button><button class=\"import_back_btn\">Back</button><button class=\"import_close_btn\">Close</button></td></tr></table>"
-         },
-         "c_para": {
-            "content": "</p>"
-         },
-         "c_span": {
-            "content": "</span>"
-         },
-         "count": {
-            "content": "<span class=\"import_count\"></span>"
-         },
-         "list": {
-            "content": "<select class=\"import_con_list\" size=\"5\" multiple></select>"
-         },
-         "o_para": {
-            "content": "<p>"
-         },
-         "o_span": {
-            "content": "<span>"
-         }
-      }
-   },
-   "confirm_import_stage3": {
-      "message": "$O_SPAN$No valid templates were found.$C_SPAN$$BUTTONS$",
-      "placeholders": {
-         "buttons": {
-            "content": "<div style=\"text-align: right\"><button class=\"import_back_btn\">Back</button><button class=\"import_close_btn\">Close</button></div>"
-         },
-         "c_span": {
-            "content": "</span>"
-         },
-         "o_span": {
-            "content": "<span>"
-         }
-      }
-   },
-   "copied": {
-      "message": "Copied!"
-   },
-   "copy": {
-      "message": "Copy"
-   },
-   "copy_anchor": {
-      "message": "Anchor"
-   },
-   "copy_bbcode": {
-      "message": "BBCode"
-   },
-   "copy_encoded": {
-      "message": "Encoded"
-   },
-   "copy_fail": {
-      "message": "Template could not be copied"
-   },
-   "copy_fail_empty": {
-      "message": "Empty templates cannot be copied"
-   },
-   "copy_fail_error": {
-      "message": "An error occurred when collecting page information"
-   },
-   "copy_fail_uri": {
-      "message": "URL is not properly encoded"
-   },
-   "copy_markdown": {
-      "message": "Markdown"
-   },
-   "copy_short": {
-      "message": "Short"
-   },
-   "copy_success": {
-      "message": "Template has been successfully copied"
-   },
-   "copy_url": {
-      "message": "URL"
-   },
-   "description": {
-      "message": "Quickly and easily copies info on the current page using a simple and unique template system"
-   },
-   "empty": {
-      "message": "Empty"
-   },
-   "error_file_aborted": {
-      "message": "Aborted!"
-   },
-   "error_file_default": {
-      "message": "Could not read file!"
-   },
-   "error_file_not_found": {
-      "message": "File not found!"
-   },
-   "error_import_data": {
-      "message": "Unable to parse data!"
-   },
-   "error_import_invalid": {
-      "message": "Some values are missing or corrupt!"
-   },
-   "extension": {
-      "message": "Extension"
-   },
-   "feat_auction": {
-      "message": "Auction"
-   },
-   "feat_bug": {
-      "message": "Bug"
-   },
-   "feat_clipboard": {
-      "message": "Clipboard"
-   },
-   "feat_clipboard_empty": {
-      "message": "Clipboard (Empty)"
-   },
-   "feat_component": {
-      "message": "Component"
-   },
-   "feat_cookies": {
-      "message": "Cookies"
-   },
-   "feat_discussion": {
-      "message": "Discussion"
-   },
-   "feat_globe": {
-      "message": "Globe"
-   },
-   "feat_google": {
-      "message": "Google"
-   },
-   "feat_heart": {
-      "message": "Heart"
-   },
-   "feat_html": {
-      "message": "HTML"
-   },
-   "feat_key": {
-      "message": "Key"
-   },
-   "feat_lightbulb": {
-      "message": "Lightbulb"
-   },
-   "feat_lighthouse": {
-      "message": "Lighthouse"
-   },
-   "feat_lightning": {
-      "message": "Lightning"
-   },
-   "feat_link": {
-      "message": "Link"
-   },
-   "feat_linux": {
-      "message": "Linux"
-   },
-   "feat_mail": {
-      "message": "Mail"
-   },
-   "feat_newspaper": {
-      "message": "Newspaper"
-   },
-   "feat_none": {
-      "message": "None"
-   },
-   "feat_note": {
-      "message": "Note"
-   },
-   "feat_page": {
-      "message": "Page"
-   },
-   "feat_plugin": {
-      "message": "Plugin"
-   },
-   "feat_rss": {
-      "message": "RSS"
-   },
-   "feat_script": {
-      "message": "Script"
-   },
-   "feat_scull": {
-      "message": "Scull"
-   },
-   "feat_sign": {
-      "message": "Sign"
-   },
-   "feat_siren": {
-      "message": "Siren"
-   },
-   "feat_star": {
-      "message": "Star"
-   },
-   "feat_support": {
-      "message": "Support"
-   },
-   "feat_tag": {
-      "message": "Tag"
-   },
-   "feat_tags": {
-      "message": "Tags"
-   },
-   "feat_thumb_down": {
-      "message": "Thumb Down"
-   },
-   "feat_thumb_up": {
-      "message": "Thumb Up"
-   },
-   "feat_tools": {
-      "message": "Tools"
-   },
-   "help_bitlyApiKey": {
-      "message": "$O_PARA$The $API_ABBR$ key allows $O_BOLD$Template$C_BOLD$ to shorten links via $O_BOLD$bit.ly$C_BOLD$ on your behalf.$C_PARA$$O_PARA$$O_LINK_1$Get your API key$C_LINK$$C_PARA$",
-      "placeholders": {
-         "api_abbr": {
-            "content": "<abbr title=\"Application Programming Interface\">API</abbr>"
-         },
-         "c_bold": {
-            "content": "</strong>"
-         },
-         "c_link": {
-            "content": "</a>"
-         },
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_bold": {
-            "content": "<strong>"
-         },
-         "o_link_1": {
-            "content": "<a href=\"http://bit.ly/a/your_api_key\" target=\"_blank\">"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "help_bitlyUsername": {
-      "message": "$O_PARA$This is the username provided to you when you registered your $O_LINK_1$bit.ly account$C_LINK$.$C_PARA$$O_PARA$Haven't registered with $O_BOLD$bit.ly$C_BOLD$?$C_PARA$$O_PARA$$O_LINK_2$Sign up now$C_LINK$$C_PARA$",
-      "placeholders": {
-         "c_bold": {
-            "content": "</strong>"
-         },
-         "c_link": {
-            "content": "</a>"
-         },
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_bold": {
-            "content": "<strong>"
-         },
-         "o_link_1": {
-            "content": "<a href=\"http://bit.ly/a/account\" target=\"_blank\">"
-         },
-         "o_link_2": {
-            "content": "<a href=\"http://bit.ly/a/sign_up\" target=\"_blank\">"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "help_contextMenu": {
-      "message": "$O_PARA$This indicates whether or not your templates will be accessible from the right-click menu.$C_PARA$",
-      "placeholders": {
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "help_doAnchorTarget": {
-      "message": "$O_PARA$This indicates whether or not a $O_CODE$target$C_CODE$ attribute should be included in the anchor tag when building an Anchor template.$C_PARA$$O_PARA$If included, this attribute will be populated with $O_CODE$blank$C_CODE$.$C_PARA$",
-      "placeholders": {
-         "c_code": {
-            "content": "</code>"
-         },
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_code": {
-            "content": "<code>"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "help_doAnchorTitle": {
-      "message": "$O_PARA$This indicates whether or not a $O_CODE$title$C_CODE$ attribute should be included in the anchor tag when building an Anchor template.$C_PARA$$O_PARA$If included, this attribute will be populated with the contextual title (e.g page, frame).$C_PARA$",
-      "placeholders": {
-         "c_code": {
-            "content": "</code>"
-         },
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_code": {
-            "content": "<code>"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "help_feature_enabled": {
-      "message": "$O_PARA$This indicates whether or not it will appear in the context menu and the drop-down.$C_PARA$",
-      "placeholders": {
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "help_feature_image": {
-      "message": "$O_PARA$This image is displayed next to the template in the drop-down.$C_PARA$",
-      "placeholders": {
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "help_feature_name": {
-      "message": "$O_PARA$The name is used internally and is only displayed here.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be unique$C_ITEM$$O_ITEM$Cannot contains spaces or underscores$BREAK$(an underscore is prefixed to predefined template names to prevent any possible conflicts with user creations)$C_ITEM$$O_ITEM$Must only contain alphanumeric characters$C_ITEM$$C_LIST$$O_PARA$This $O_EMPH$cannot$C_EMPH$ be changed for predefined templates.$C_PARA$",
-      "placeholders": {
-         "break": {
-            "content": "<br />"
-         },
-         "c_emph": {
-            "content": "</em>"
-         },
-         "c_item": {
-            "content": "</li>"
-         },
-         "c_list": {
-            "content": "</ul>"
-         },
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_emph": {
-            "content": "<em>"
-         },
-         "o_item": {
-            "content": "<li>"
-         },
-         "o_list": {
-            "content": "<ul>"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "help_feature_shortcut": {
-      "message": "$O_PARA$The assigned keyboard shortcut which will trigger this template if/when used.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be unique$C_ITEM$$O_ITEM$Must be an alphanumeric key$BREAK$(may change in the future)$C_ITEM$$C_LIST$",
-      "placeholders": {
-         "break": {
-            "content": "<br />"
-         },
-         "c_item": {
-            "content": "</li>"
-         },
-         "c_list": {
-            "content": "</ul>"
-         },
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_item": {
-            "content": "<li>"
-         },
-         "o_list": {
-            "content": "<ul>"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "help_feature_title": {
-      "message": "$O_PARA$The title is displayed in context menus and the drop-down.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Doesn't have to be unique$BREAK$(but it's recommended)$C_ITEM$$O_ITEM$Can contain multiple words$C_ITEM$$O_ITEM$Can contain any characters$C_ITEM$$C_LIST$$O_PARA$This $O_EMPH$cannot$C_EMPH$ be changed for predefined templates.$C_PARA$",
-      "placeholders": {
-         "break": {
-            "content": "<br />"
-         },
-         "c_emph": {
-            "content": "</em>"
-         },
-         "c_item": {
-            "content": "</li>"
-         },
-         "c_list": {
-            "content": "</ul>"
-         },
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_emph": {
-            "content": "<em>"
-         },
-         "o_item": {
-            "content": "<li>"
-         },
-         "o_list": {
-            "content": "<ul>"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "help_googlOAuth": {
-      "message": "$O_PARA$$O_LINK_1$OAuth$C_LINK$ is an open protocol that aims to standardize the way desktop and web applications access a user's private data. OAuth provides a mechanism for users to grant access to private data without sharing their private credentials (username/password).$C_PARA$$O_PARA$$O_BOLD$Template$C_BOLD$ uses OAuth to shorten links via $O_BOLD$goo.gl$C_BOLD$ on your behalf.$C_PARA$",
-      "placeholders": {
-         "c_bold": {
-            "content": "</strong>"
-         },
-         "c_link": {
-            "content": "</a>"
-         },
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_bold": {
-            "content": "<strong>"
-         },
-         "o_link_1": {
-            "content": "<a href=\"http://oauth.net\" target=\"_blank\">"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "help_notificationDuration": {
-      "message": "$O_PARA$The time (in seconds) to display the desktop notification before automatically hiding it again.$C_PARA$$O_PARA$Enter $O_BOLD$0$C_BOLD$ to disable auto-hide functionality.$C_PARA$",
-      "placeholders": {
-         "c_bold": {
-            "content": "</strong>"
-         },
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_bold": {
-            "content": "<strong>"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "help_notifications": {
-      "message": "$O_PARA$This indicates whether or not desktop notifications will appear whenever you use a template to inform you of the outcome (e.g. success, failure).$C_PARA$",
-      "placeholders": {
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "help_shortcuts": {
-      "message": "$O_PARA$This indicates whether or not keyboard shortcuts will be recognised.$C_PARA$",
-      "placeholders": {
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "help_yourlsCredentials": {
-      "message": "$O_PARA$Both the username and password are only required if the $O_BOLD$YOURLS$C_BOLD$ installation is private $O_EMPH$and$C_EMPH$ you are $O_EMPH$not$C_EMPH$ using the $O_LINK_1$passwordless API$C_LINK$.$C_PARA$$O_PARA$$O_LINK_2$See documentation$C_LINK$$C_PARA$",
-      "placeholders": {
-         "c_bold": {
-            "content": "</strong>"
-         },
-         "c_emph": {
-            "content": "</em>"
-         },
-         "c_link": {
-            "content": "</a>"
-         },
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_bold": {
-            "content": "<strong>"
-         },
-         "o_emph": {
-            "content": "<em>"
-         },
-         "o_link_1": {
-            "content": "<a href=\"http://code.google.com/p/yourls/wiki/PasswordlessAPI\" target=\"_blank\">"
-         },
-         "o_link_2": {
-            "content": "<a href=\"http://yourls.org/#Config\" target=\"_blank\">"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "help_yourlsSignature": {
-      "message": "$O_PARA$This is required if only if the $O_BOLD$YOURLS$C_BOLD$ installation is private $O_EMPH$and$C_EMPH$ you $O_EMPH$are$C_EMPH$ using the $O_LINK_1$passwordless API$C_LINK$.$C_PARA$",
-      "placeholders": {
-         "c_bold": {
-            "content": "</strong>"
-         },
-         "c_emph": {
-            "content": "</em>"
-         },
-         "c_link": {
-            "content": "</a>"
-         },
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_bold": {
-            "content": "<strong>"
-         },
-         "o_emph": {
-            "content": "<em>"
-         },
-         "o_link_1": {
-            "content": "<a href=\"http://code.google.com/p/yourls/wiki/PasswordlessAPI\" target=\"_blank\">"
-         },
-         "o_para": {
-            "content": "<p>"
-         }
-      }
-   },
-   "help_yourlsUrl": {
-      "message": "$O_PARA$The $URL_ABBR$ to the $API_ABBR$ of the $O_BOLD$YOURLS$C_BOLD$ installation (e.g. $O_CODE$http://exam.pl/yourls-api.php$C_CODE$).$C_PARA$$O_PARA$$O_LINK_1$See documentation$C_LINK$$C_PARA$",
-      "placeholders": {
-         "api_abbr": {
-            "content": "<abbr title=\"Application Programming Interface\">API</abbr>"
-         },
-         "c_bold": {
-            "content": "</strong>"
-         },
-         "c_code": {
-            "content": "</code>"
-         },
-         "c_link": {
-            "content": "</a>"
-         },
-         "c_para": {
-            "content": "</p>"
-         },
-         "o_bold": {
-            "content": "<strong>"
-         },
-         "o_code": {
-            "content": "<code>"
-         },
-         "o_link_1": {
-            "content": "<a href=\"http://yourls.org/#Config\" target=\"_blank\">"
-         },
-         "o_para": {
-            "content": "<p>"
-         },
-         "url_abbr": {
-            "content": "<abbr title=\"Uniform Resource Locator\">URL</abbr>"
-         }
-      }
-   },
-   "name": {
-      "message": "Template"
-   },
-   "oauth_redirect_body": {
-      "message": "Redirecting..."
-   },
-   "oauth_redirect_title": {
-      "message": "OAuth Redirect Page"
-   },
-   "opt_add_button": {
-      "message": "Add"
-   },
-   "opt_add_new_button": {
-      "message": "Add New"
-   },
-   "opt_anchor_header": {
-      "message": "Anchors"
-   },
-   "opt_anchor_target_text": {
-      "message": "Include $ATTRIBUTE$ attribute to open link in new window",
-      "placeholders": {
-         "attribute": {
-            "content": "<code>target</code>"
-         }
-      }
-   },
-   "opt_anchor_title_text": {
-      "message": "Include $ATTRIBUTE$ attribute",
-      "placeholders": {
-         "attribute": {
-            "content": "<code>title</code>"
-         }
-      }
-   },
-   "opt_context_menu_text": {
-      "message": "Enable the context menu"
-   },
-   "opt_delete_button": {
-      "message": "Delete"
-   },
-   "opt_errors_header": {
-      "message": "The following problem(s) need to be corrected;"
-   },
-   "opt_export_button": {
-      "message": "Export"
-   },
-   "opt_feature_enabled_text": {
-      "message": "Enabled"
-   },
-   "opt_feature_header": {
-      "message": "Templates"
-   },
-   "opt_feature_image_text": {
-      "message": "Image"
-   },
-   "opt_feature_name_invalid": {
-      "message": "Name is missing or contains invalid characters"
-   },
-   "opt_feature_name_text": {
-      "message": "Name"
-   },
-   "opt_feature_name_unavailable": {
-      "message": "Name is already in use"
-   },
-   "opt_feature_shortcut_invalid": {
-      "message": "Keyboard shortcut uses invalid key"
-   },
-   "opt_feature_shortcut_unavailable": {
-      "message": "Keyboard shortcut is already in use"
-   },
-   "opt_feature_template_help": {
-      "message": "Need help writing templates?"
-   },
-   "opt_feature_template_text": {
-      "message": "Content"
-   },
-   "opt_feature_title_invalid": {
-      "message": "Title is missing"
-   },
-   "opt_feature_title_text": {
-      "message": "Title"
-   },
-   "opt_footer": {
-      "message": "&copy;$1 $AUTHOR_LINK$",
-      "placeholders": {
-         "author_link": {
-            "content": "<a href=\"http://forchoon.com\" target=\"_blank\" title=\"Visit land of the forchoon cookies\">Alasdair Mercer</a>"
-         }
-      }
-   },
-   "opt_general_header": {
-      "message": "General"
-   },
-   "opt_help_text": {
-      "message": "Read help documentation"
-   },
-   "opt_import_button": {
-      "message": "Import"
-   },
-   "opt_notification_header": {
-      "message": "Notifications"
-   },
-   "opt_notification_text": {
-      "message": "Enable notifications"
-   },
-   "opt_notification_timer_text1": {
-      "message": "Auto-hide notifications after"
-   },
-   "opt_notification_timer_text2": {
-      "message": "seconds"
-   },
-   "opt_or_text": {
-      "message": "OR"
-   },
-   "opt_url_shortener_api_key_text": {
-      "message": "$API_ABBR$ Key",
-      "placeholders": {
-         "api_abbr": {
-            "content": "<abbr title=\"Application Programming Interface\">API</abbr>"
-         }
-      }
-   },
-   "opt_url_shortener_config_header": {
-      "message": "Configuration"
-   },
-   "opt_url_shortener_enabled_header": {
-      "message": "Enabled"
-   },
-   "opt_url_shortener_header": {
-      "message": "URL Shorteners"
-   },
-   "opt_url_shortener_name_header": {
-      "message": "Name"
-   },
-   "opt_url_shortener_oauth_enable_text": {
-      "message": "Enable OAuth"
-   },
-   "opt_url_shortener_password_text": {
-      "message": "Password"
-   },
-   "opt_url_shortener_signature_text": {
-      "message": "Signature"
-   },
-   "opt_url_shortener_url_text": {
-      "message": "$URL_ABBR$",
-      "placeholders": {
-         "url_abbr": {
-            "content": "<abbr title=\"Uniform Resource Locator\">URL</abbr>"
-         }
-      }
-   },
-   "opt_url_shortener_username_text": {
-      "message": "Username"
-   },
-   "opt_save_button": {
-      "message": "Save &amp; Close"
-   },
-   "opt_shortcut_text": {
-      "message": "Enable keyboard shortcuts"
-   },
-   "paste": {
-      "message": "Paste"
-   },
-   "pasted": {
-      "message": "Pasted!"
-   },
-   "shortener_config_error": {
-      "message": "Configuration problem found with $1"
-   },
-   "shortener_error": {
-      "message": "Could not get a successful response from $1"
-   },
-   "shortening": {
-      "message": "Please wait..."
-   },
-   "untitled": {
-      "message": "Untitled"
-   },
-   "website": {
-      "message": "Website"
-   }
+    "app_name": {
+        "message": "Template Chrome Extension"
+    },
+    "confirm_delete": {
+        "message": "$O_PARA$This action is $O_BOLD$permanent$C_BOLD$ and cannot be reversed.$C_PARA$$O_PARA$Do you want to continue anyway?$C_PARA$$BUTTONS$",
+        "placeholders": {
+            "buttons": {
+                "content": "<div style=\"text-align: right\"><button class=\"delete_yes_btn\">Yes</button><button class=\"delete_no_btn\">No</button></div>"
+            },
+            "c_bold": {
+                "content": "</strong>"
+            },
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_bold": {
+                "content": "<strong>"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "confirm_export_stage1": {
+        "message": "$O_PARA$Select the template(s) you want to export;$C_PARA$$LIST$$BUTTONS$",
+        "placeholders": {
+            "buttons": {
+                "content": "<table><tr><td style=\"width: 50%\"><button class=\"export_select_all_btn\">All</button><button class=\"export_deselect_all_btn\">None</button></td><td style=\"text-align: right\"><button class=\"export_yes_btn\" disabled=\"disabled\">Continue</button><button class=\"export_no_btn\">Cancel</button></td></tr></table>"
+            },
+            "c_para": {
+                "content": "</p>"
+            },
+            "list": {
+                "content": "<select class=\"export_con_list\" size=\"5\" multiple></select>"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "confirm_export_stage2": {
+        "message": "$O_PARA$Copy or save the following locally;$C_PARA$$TEXTAREA$$BUTTONS$",
+        "placeholders": {
+            "buttons": {
+                "content": "<table><tr><td style=\"width: 50%\"><button class=\"export_save_btn\">Save As...</button><button class=\"export_copy_btn\">Copy</button></td><td style=\"text-align: right\"><button class=\"export_close_btn\">Close</button></td></tr></table>"
+            },
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_para": {
+                "content": "<p>"
+            },
+            "textarea": {
+                "content": "<textarea class=\"export_content\" cols=\"38\" rows=\"6\" readonly></textarea>"
+            }
+        }
+    },
+    "confirm_import_stage1": {
+        "message": "$O_PARA$Paste or upload the your exported data;$C_PARA$$TEXTAREA$$BUTTONS$",
+        "placeholders": {
+            "buttons": {
+                "content": "<table><tr><td colspan=\"2\"><span class=\"import_error\">&nbsp;</span></td></tr><tr><td colspan=\"2\"><input class=\"import_file_btn\" type=\"file\" /></td></tr><tr><td style=\"width: 50%\"><button class=\"import_paste_btn\">Paste</button></td><td style=\"text-align: right\"><button class=\"import_yes_btn\">Continue</button><button class=\"import_no_btn\">Cancel</button></td></tr></table>"
+            },
+            "c_para": {
+                "content": "</p>"
+            },
+            "textarea": {
+                "content": "<textarea class=\"import_content\" cols=\"38\" rows=\"6\" readonly></textarea>"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "confirm_import_stage2": {
+        "message": "$O_SPAN$$COUNT$ valid template(s) were found.$C_SPAN$$O_PARA$Select those to be imported;$C_PARA$$LIST$$BUTTONS$",
+        "placeholders": {
+            "buttons": {
+                "content": "<table><tr><td style=\"width: 33%\"><button class=\"import_select_all_btn\">All</button><button class=\"import_deselect_all_btn\">None</button></td><td style=\"text-align: right\"><button class=\"import_final_btn\">Import</button><button class=\"import_back_btn\">Back</button><button class=\"import_close_btn\">Close</button></td></tr></table>"
+            },
+            "c_para": {
+                "content": "</p>"
+            },
+            "c_span": {
+                "content": "</span>"
+            },
+            "count": {
+                "content": "<span class=\"import_count\"></span>"
+            },
+            "list": {
+                "content": "<select class=\"import_con_list\" size=\"5\" multiple></select>"
+            },
+            "o_para": {
+                "content": "<p>"
+            },
+            "o_span": {
+                "content": "<span>"
+            }
+        }
+    },
+    "confirm_import_stage3": {
+        "message": "$O_SPAN$No valid templates were found.$C_SPAN$$BUTTONS$",
+        "placeholders": {
+            "buttons": {
+                "content": "<div style=\"text-align: right\"><button class=\"import_back_btn\">Back</button><button class=\"import_close_btn\">Close</button></div>"
+            },
+            "c_span": {
+                "content": "</span>"
+            },
+            "o_span": {
+                "content": "<span>"
+            }
+        }
+    },
+    "copied": {
+        "message": "Copied!"
+    },
+    "copy": {
+        "message": "Copy"
+    },
+    "copy_anchor": {
+        "message": "Anchor"
+    },
+    "copy_bbcode": {
+        "message": "BBCode"
+    },
+    "copy_encoded": {
+        "message": "Encoded"
+    },
+    "copy_fail": {
+        "message": "Template could not be copied"
+    },
+    "copy_fail_empty": {
+        "message": "Empty templates cannot be copied"
+    },
+    "copy_fail_error": {
+        "message": "An error occurred when collecting page information"
+    },
+    "copy_fail_uri": {
+        "message": "URL is not properly encoded"
+    },
+    "copy_markdown": {
+        "message": "Markdown"
+    },
+    "copy_short": {
+        "message": "Short"
+    },
+    "copy_success": {
+        "message": "Template has been successfully copied"
+    },
+    "copy_url": {
+        "message": "URL"
+    },
+    "description": {
+        "message": "Quickly and easily copies info on the current page using a simple and unique template system"
+    },
+    "empty": {
+        "message": "Empty"
+    },
+    "error_file_aborted": {
+        "message": "Aborted!"
+    },
+    "error_file_default": {
+        "message": "Could not read file!"
+    },
+    "error_file_not_found": {
+        "message": "File not found!"
+    },
+    "error_import_data": {
+        "message": "Unable to parse data!"
+    },
+    "error_import_invalid": {
+        "message": "Some values are missing or corrupt!"
+    },
+    "extension": {
+        "message": "Extension"
+    },
+    "feat_auction": {
+        "message": "Auction"
+    },
+    "feat_bug": {
+        "message": "Bug"
+    },
+    "feat_clipboard": {
+        "message": "Clipboard"
+    },
+    "feat_clipboard_empty": {
+        "message": "Clipboard (Empty)"
+    },
+    "feat_component": {
+        "message": "Component"
+    },
+    "feat_cookies": {
+        "message": "Cookies"
+    },
+    "feat_discussion": {
+        "message": "Discussion"
+    },
+    "feat_globe": {
+        "message": "Globe"
+    },
+    "feat_google": {
+        "message": "Google"
+    },
+    "feat_heart": {
+        "message": "Heart"
+    },
+    "feat_html": {
+        "message": "HTML"
+    },
+    "feat_key": {
+        "message": "Key"
+    },
+    "feat_lightbulb": {
+        "message": "Lightbulb"
+    },
+    "feat_lighthouse": {
+        "message": "Lighthouse"
+    },
+    "feat_lightning": {
+        "message": "Lightning"
+    },
+    "feat_link": {
+        "message": "Link"
+    },
+    "feat_linux": {
+        "message": "Linux"
+    },
+    "feat_mail": {
+        "message": "Mail"
+    },
+    "feat_newspaper": {
+        "message": "Newspaper"
+    },
+    "feat_none": {
+        "message": "None"
+    },
+    "feat_note": {
+        "message": "Note"
+    },
+    "feat_page": {
+        "message": "Page"
+    },
+    "feat_plugin": {
+        "message": "Plugin"
+    },
+    "feat_rss": {
+        "message": "RSS"
+    },
+    "feat_script": {
+        "message": "Script"
+    },
+    "feat_scull": {
+        "message": "Scull"
+    },
+    "feat_sign": {
+        "message": "Sign"
+    },
+    "feat_siren": {
+        "message": "Siren"
+    },
+    "feat_star": {
+        "message": "Star"
+    },
+    "feat_support": {
+        "message": "Support"
+    },
+    "feat_tag": {
+        "message": "Tag"
+    },
+    "feat_tags": {
+        "message": "Tags"
+    },
+    "feat_thumb_down": {
+        "message": "Thumb Down"
+    },
+    "feat_thumb_up": {
+        "message": "Thumb Up"
+    },
+    "feat_tools": {
+        "message": "Tools"
+    },
+    "help_bitlyApiKey": {
+        "message": "$O_PARA$The $API_ABBR$ key allows $O_BOLD$Template$C_BOLD$ to shorten links via $O_BOLD$bit.ly$C_BOLD$ on your behalf.$C_PARA$$O_PARA$$O_LINK_1$Get your API key$C_LINK$$C_PARA$",
+        "placeholders": {
+            "api_abbr": {
+                "content": "<abbr title=\"Application Programming Interface\">API</abbr>"
+            },
+            "c_bold": {
+                "content": "</strong>"
+            },
+            "c_link": {
+                "content": "</a>"
+            },
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_bold": {
+                "content": "<strong>"
+            },
+            "o_link_1": {
+                "content": "<a href=\"http://bit.ly/a/your_api_key\" target=\"_blank\">"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "help_bitlyUsername": {
+        "message": "$O_PARA$This is the username provided to you when you registered your $O_LINK_1$bit.ly account$C_LINK$.$C_PARA$$O_PARA$Haven't registered with $O_BOLD$bit.ly$C_BOLD$?$C_PARA$$O_PARA$$O_LINK_2$Sign up now$C_LINK$$C_PARA$",
+        "placeholders": {
+            "c_bold": {
+                "content": "</strong>"
+            },
+            "c_link": {
+                "content": "</a>"
+            },
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_bold": {
+                "content": "<strong>"
+            },
+            "o_link_1": {
+                "content": "<a href=\"http://bit.ly/a/account\" target=\"_blank\">"
+            },
+            "o_link_2": {
+                "content": "<a href=\"http://bit.ly/a/sign_up\" target=\"_blank\">"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "help_contextMenu": {
+        "message": "$O_PARA$This indicates whether or not your templates will be accessible from the right-click menu.$C_PARA$",
+        "placeholders": {
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "help_doAnchorTarget": {
+        "message": "$O_PARA$This indicates whether or not a $O_CODE$target$C_CODE$ attribute should be included in the anchor tag when building an Anchor template.$C_PARA$$O_PARA$If included, this attribute will be populated with $O_CODE$blank$C_CODE$.$C_PARA$",
+        "placeholders": {
+            "c_code": {
+                "content": "</code>"
+            },
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_code": {
+                "content": "<code>"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "help_doAnchorTitle": {
+        "message": "$O_PARA$This indicates whether or not a $O_CODE$title$C_CODE$ attribute should be included in the anchor tag when building an Anchor template.$C_PARA$$O_PARA$If included, this attribute will be populated with the contextual title (e.g page, frame).$C_PARA$",
+        "placeholders": {
+            "c_code": {
+                "content": "</code>"
+            },
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_code": {
+                "content": "<code>"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "help_feature_enabled": {
+        "message": "$O_PARA$This indicates whether or not it will appear in the context menu and the drop-down.$C_PARA$",
+        "placeholders": {
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "help_feature_image": {
+        "message": "$O_PARA$This image is displayed next to the template in the drop-down.$C_PARA$",
+        "placeholders": {
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "help_feature_name": {
+        "message": "$O_PARA$The name is used internally and is only displayed here.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be unique$C_ITEM$$O_ITEM$Cannot contains spaces or underscores$BREAK$(an underscore is prefixed to predefined template names to prevent any possible conflicts with user creations)$C_ITEM$$O_ITEM$Must only contain alphanumeric characters$C_ITEM$$C_LIST$$O_PARA$This $O_EMPH$cannot$C_EMPH$ be changed for predefined templates.$C_PARA$",
+        "placeholders": {
+            "break": {
+                "content": "<br />"
+            },
+            "c_emph": {
+                "content": "</em>"
+            },
+            "c_item": {
+                "content": "</li>"
+            },
+            "c_list": {
+                "content": "</ul>"
+            },
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_emph": {
+                "content": "<em>"
+            },
+            "o_item": {
+                "content": "<li>"
+            },
+            "o_list": {
+                "content": "<ul>"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "help_feature_shortcut": {
+        "message": "$O_PARA$The assigned keyboard shortcut which will trigger this template if/when used.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be unique$C_ITEM$$O_ITEM$Must be an alphanumeric key$BREAK$(may change in the future)$C_ITEM$$C_LIST$",
+        "placeholders": {
+            "break": {
+                "content": "<br />"
+            },
+            "c_item": {
+                "content": "</li>"
+            },
+            "c_list": {
+                "content": "</ul>"
+            },
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_item": {
+                "content": "<li>"
+            },
+            "o_list": {
+                "content": "<ul>"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "help_feature_title": {
+        "message": "$O_PARA$The title is displayed in context menus and the drop-down.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Doesn't have to be unique$BREAK$(but it's recommended)$C_ITEM$$O_ITEM$Can contain multiple words$C_ITEM$$O_ITEM$Can contain any characters$C_ITEM$$C_LIST$$O_PARA$This $O_EMPH$cannot$C_EMPH$ be changed for predefined templates.$C_PARA$",
+        "placeholders": {
+            "break": {
+                "content": "<br />"
+            },
+            "c_emph": {
+                "content": "</em>"
+            },
+            "c_item": {
+                "content": "</li>"
+            },
+            "c_list": {
+                "content": "</ul>"
+            },
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_emph": {
+                "content": "<em>"
+            },
+            "o_item": {
+                "content": "<li>"
+            },
+            "o_list": {
+                "content": "<ul>"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "help_googlOAuth": {
+        "message": "$O_PARA$$O_LINK_1$OAuth$C_LINK$ is an open protocol that aims to standardize the way desktop and web applications access a user's private data. OAuth provides a mechanism for users to grant access to private data without sharing their private credentials (username/password).$C_PARA$$O_PARA$$O_BOLD$Template$C_BOLD$ uses OAuth to shorten links via $O_BOLD$goo.gl$C_BOLD$ on your behalf.$C_PARA$",
+        "placeholders": {
+            "c_bold": {
+                "content": "</strong>"
+            },
+            "c_link": {
+                "content": "</a>"
+            },
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_bold": {
+                "content": "<strong>"
+            },
+            "o_link_1": {
+                "content": "<a href=\"http://oauth.net\" target=\"_blank\">"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "help_notificationDuration": {
+        "message": "$O_PARA$The time (in seconds) to display the desktop notification before automatically hiding it again.$C_PARA$$O_PARA$Enter $O_BOLD$0$C_BOLD$ to disable auto-hide functionality.$C_PARA$",
+        "placeholders": {
+            "c_bold": {
+                "content": "</strong>"
+            },
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_bold": {
+                "content": "<strong>"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "help_notifications": {
+        "message": "$O_PARA$This indicates whether or not desktop notifications will appear whenever you use a template to inform you of the outcome (e.g. success, failure).$C_PARA$",
+        "placeholders": {
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "help_shortcuts": {
+        "message": "$O_PARA$This indicates whether or not keyboard shortcuts will be recognised.$C_PARA$",
+        "placeholders": {
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "help_yourlsCredentials": {
+        "message": "$O_PARA$Both the username and password are only required if the $O_BOLD$YOURLS$C_BOLD$ installation is private $O_EMPH$and$C_EMPH$ you are $O_EMPH$not$C_EMPH$ using the $O_LINK_1$passwordless API$C_LINK$.$C_PARA$$O_PARA$$O_LINK_2$See documentation$C_LINK$$C_PARA$",
+        "placeholders": {
+            "c_bold": {
+                "content": "</strong>"
+            },
+            "c_emph": {
+                "content": "</em>"
+            },
+            "c_link": {
+                "content": "</a>"
+            },
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_bold": {
+                "content": "<strong>"
+            },
+            "o_emph": {
+                "content": "<em>"
+            },
+            "o_link_1": {
+                "content": "<a href=\"http://code.google.com/p/yourls/wiki/PasswordlessAPI\" target=\"_blank\">"
+            },
+            "o_link_2": {
+                "content": "<a href=\"http://yourls.org/#Config\" target=\"_blank\">"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "help_yourlsSignature": {
+        "message": "$O_PARA$This is required if only if the $O_BOLD$YOURLS$C_BOLD$ installation is private $O_EMPH$and$C_EMPH$ you $O_EMPH$are$C_EMPH$ using the $O_LINK_1$passwordless API$C_LINK$.$C_PARA$",
+        "placeholders": {
+            "c_bold": {
+                "content": "</strong>"
+            },
+            "c_emph": {
+                "content": "</em>"
+            },
+            "c_link": {
+                "content": "</a>"
+            },
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_bold": {
+                "content": "<strong>"
+            },
+            "o_emph": {
+                "content": "<em>"
+            },
+            "o_link_1": {
+                "content": "<a href=\"http://code.google.com/p/yourls/wiki/PasswordlessAPI\" target=\"_blank\">"
+            },
+            "o_para": {
+                "content": "<p>"
+            }
+        }
+    },
+    "help_yourlsUrl": {
+        "message": "$O_PARA$The $URL_ABBR$ to the $API_ABBR$ of the $O_BOLD$YOURLS$C_BOLD$ installation (e.g. $O_CODE$http://exam.pl/yourls-api.php$C_CODE$).$C_PARA$$O_PARA$$O_LINK_1$See documentation$C_LINK$$C_PARA$",
+        "placeholders": {
+            "api_abbr": {
+                "content": "<abbr title=\"Application Programming Interface\">API</abbr>"
+            },
+            "c_bold": {
+                "content": "</strong>"
+            },
+            "c_code": {
+                "content": "</code>"
+            },
+            "c_link": {
+                "content": "</a>"
+            },
+            "c_para": {
+                "content": "</p>"
+            },
+            "o_bold": {
+                "content": "<strong>"
+            },
+            "o_code": {
+                "content": "<code>"
+            },
+            "o_link_1": {
+                "content": "<a href=\"http://yourls.org/#Config\" target=\"_blank\">"
+            },
+            "o_para": {
+                "content": "<p>"
+            },
+            "url_abbr": {
+                "content": "<abbr title=\"Uniform Resource Locator\">URL</abbr>"
+            }
+        }
+    },
+    "name": {
+        "message": "Template"
+    },
+    "oauth_redirect_body": {
+        "message": "Redirecting..."
+    },
+    "oauth_redirect_title": {
+        "message": "OAuth Redirect Page"
+    },
+    "opt_add_button": {
+        "message": "Add"
+    },
+    "opt_add_new_button": {
+        "message": "Add New"
+    },
+    "opt_anchor_header": {
+        "message": "Anchors"
+    },
+    "opt_anchor_target_text": {
+        "message": "Include $ATTRIBUTE$ attribute to open link in new window",
+        "placeholders": {
+            "attribute": {
+                "content": "<code>target</code>"
+            }
+        }
+    },
+    "opt_anchor_title_text": {
+        "message": "Include $ATTRIBUTE$ attribute",
+        "placeholders": {
+            "attribute": {
+                "content": "<code>title</code>"
+            }
+        }
+    },
+    "opt_context_menu_text": {
+        "message": "Enable the context menu"
+    },
+    "opt_delete_button": {
+        "message": "Delete"
+    },
+    "opt_errors_header": {
+        "message": "The following problem(s) need to be corrected;"
+    },
+    "opt_export_button": {
+        "message": "Export"
+    },
+    "opt_feature_enabled_text": {
+        "message": "Enabled"
+    },
+    "opt_feature_header": {
+        "message": "Templates"
+    },
+    "opt_feature_image_text": {
+        "message": "Image"
+    },
+    "opt_feature_name_invalid": {
+        "message": "Name is missing or contains invalid characters"
+    },
+    "opt_feature_name_text": {
+        "message": "Name"
+    },
+    "opt_feature_name_unavailable": {
+        "message": "Name is already in use"
+    },
+    "opt_feature_shortcut_invalid": {
+        "message": "Keyboard shortcut uses invalid key"
+    },
+    "opt_feature_shortcut_unavailable": {
+        "message": "Keyboard shortcut is already in use"
+    },
+    "opt_feature_template_help": {
+        "message": "Need help writing templates?"
+    },
+    "opt_feature_template_text": {
+        "message": "Content"
+    },
+    "opt_feature_title_invalid": {
+        "message": "Title is missing"
+    },
+    "opt_feature_title_text": {
+        "message": "Title"
+    },
+    "opt_footer": {
+        "message": "&copy;$1 $AUTHOR_LINK$",
+        "placeholders": {
+            "author_link": {
+                "content": "<a href=\"http://forchoon.com\" target=\"_blank\" title=\"Visit land of the forchoon cookies\">Alasdair Mercer</a>"
+            }
+        }
+    },
+    "opt_general_header": {
+        "message": "General"
+    },
+    "opt_help_text": {
+        "message": "Read help documentation"
+    },
+    "opt_import_button": {
+        "message": "Import"
+    },
+    "opt_notification_header": {
+        "message": "Notifications"
+    },
+    "opt_notification_text": {
+        "message": "Enable notifications"
+    },
+    "opt_notification_timer_text1": {
+        "message": "Auto-hide notifications after"
+    },
+    "opt_notification_timer_text2": {
+        "message": "seconds"
+    },
+    "opt_or_text": {
+        "message": "OR"
+    },
+    "opt_url_shortener_api_key_text": {
+        "message": "$API_ABBR$ Key",
+        "placeholders": {
+            "api_abbr": {
+                "content": "<abbr title=\"Application Programming Interface\">API</abbr>"
+            }
+        }
+    },
+    "opt_url_shortener_config_header": {
+        "message": "Configuration"
+    },
+    "opt_url_shortener_enabled_header": {
+        "message": "Enabled"
+    },
+    "opt_url_shortener_header": {
+        "message": "URL Shorteners"
+    },
+    "opt_url_shortener_name_header": {
+        "message": "Name"
+    },
+    "opt_url_shortener_oauth_enable_text": {
+        "message": "Enable OAuth"
+    },
+    "opt_url_shortener_password_text": {
+        "message": "Password"
+    },
+    "opt_url_shortener_signature_text": {
+        "message": "Signature"
+    },
+    "opt_url_shortener_url_text": {
+        "message": "$URL_ABBR$",
+        "placeholders": {
+            "url_abbr": {
+                "content": "<abbr title=\"Uniform Resource Locator\">URL</abbr>"
+            }
+        }
+    },
+    "opt_url_shortener_username_text": {
+        "message": "Username"
+    },
+    "opt_save_button": {
+        "message": "Save &amp; Close"
+    },
+    "opt_shortcut_text": {
+        "message": "Enable keyboard shortcuts"
+    },
+    "paste": {
+        "message": "Paste"
+    },
+    "pasted": {
+        "message": "Pasted!"
+    },
+    "shortener_config_error": {
+        "message": "Configuration problem found with $1"
+    },
+    "shortener_error": {
+        "message": "Could not get a successful response from $1"
+    },
+    "shortening": {
+        "message": "Please wait..."
+    },
+    "untitled": {
+        "message": "Untitled"
+    },
+    "website": {
+        "message": "Website"
+    }
 }
