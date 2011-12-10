@@ -734,7 +734,7 @@
         "message": "&copy;$1 $AUTHOR_LINK$",
         "placeholders": {
             "author_link": {
-                "content": "<a href=\"http://forchoon.com\" target=\"_blank\" title=\"Visit land of the forchoon cookies\">Alasdair Mercer</a>"
+                "content": "<a href=\"http://neocotic.com\" target=\"_blank\">Alasdair Mercer</a>"
             }
         }
     },
