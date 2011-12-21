@@ -30,4 +30,5 @@ please visit the project's homepage;
 
 http://neocotic.com/template
 
+[@neocotic]: https://twitter.com/#!/neocotic
 [Template]: https://chrome.google.com/webstore/detail/dcjnfaoifoefmnbhhlbppaebgnccfddf
