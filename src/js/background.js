@@ -989,7 +989,7 @@ var ext = {
     executeScriptsInExistingWindows: function () {
         chrome.windows.getAll(null, function (windows) {
             for (var i = 0; i < windows.length; i++) {
-                chrome.tabs.getAllInWindow(windows[i].id,
+                chrome.tabs.query({windowId: windows[i].id},
                         ext.executeScriptsInExistingTabs);
             }
         });
@@ -1501,7 +1501,7 @@ var ext = {
             sendResponse({version: ext.version});
             return;
         }
-        chrome.tabs.getSelected(null, function (tab) {
+        chrome.tabs.query({active: true}, function (tab) {
             var data = {},
                 feature,
                 popup = chrome.extension.getViews({type: 'popup'})[0],
