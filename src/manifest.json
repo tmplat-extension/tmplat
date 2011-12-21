@@ -24,7 +24,7 @@
             "matches": [
               "http://*.neocotic.com/*"
             ],
-            "run_at": "document_idle"
+            "run_at": "document_end"
         }
     ],
     "default_locale": "en",
