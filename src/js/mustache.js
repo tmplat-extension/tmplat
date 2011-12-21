@@ -212,7 +212,7 @@ var Mustache = function() {
       from the view object
     */
     find: function(name, context) {
-      name = this.trim(name);
+      name = this.trim(name).toLowerCase();
 
       // Checks whether a value is thruthy or false or 0
       function is_kinda_truthy(bool) {
