@@ -17,6 +17,14 @@
                 "https://*/*"
             ],
             "run_at": "document_end"
+        }, {
+            "js": [
+                "js/install.js"
+            ],
+            "matches": [
+              "http://*.neocotic.com/*"
+            ],
+            "run_at": "document_idle"
         }
     ],
     "default_locale": "en",
