@@ -109,7 +109,7 @@ var Mustache = function() {
       var that = this;
       // CSW - Added "+?" so it finds the tighest bound, not the widest
       var regex = new RegExp(this.otag + "(\\^|\\#)\\s*(.+)\\s*" + this.ctag +
-              "\n*([\\s\\S]+?)" + this.otag + "\\/\\s*\\2\\s*" + this.ctag +
+              "\n*([\\s\\S]*?)" + this.otag + "\\/\\s*\\2\\s*" + this.ctag +
               "\\s*", "mg");
 
       // for each {#foo}{/foo} section do...
@@ -157,6 +157,18 @@ var Mustache = function() {
           that.ctag + "+", "g");
       };
 
+      function callOrReturn(value) {
+        if (typeof value === 'function') {
+          // higher order section
+          value = value.call(context, '', function (text) {
+            return that.render(text, context, partials, true);
+          });
+        } else if (that.is_array(value)) {
+          value = (value.length) ? value.join(',') : '';
+        }
+        return (typeof value === 'undefined') ? '' : String(value);
+      }
+
       var regex = new_regex();
       var tag_replace_callback = function(match, operator, name) {
         switch(operator) {
@@ -169,9 +181,9 @@ var Mustache = function() {
         case ">": // render partial
           return that.render_partial(name, context, partials);
         case "{": // the double mustache is escaped
-          return that.escape(that.find(name, context));
+          return that.escape(callOrReturn(that.find(name, context)));
         default: // standard is unescaped
-          return that.find(name, context);
+          return callOrReturn(that.find(name, context));
         }
       };
       var lines = template.split("\n");

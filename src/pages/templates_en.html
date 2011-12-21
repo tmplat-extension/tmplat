@@ -47,6 +47,10 @@
                                     <td>The base domain (e.g. <code>https://www.example.com:443</code>)</td>
                                 </tr>
                                 <tr>
+                                    <td>dateTime</td>
+                                    <td>The current date/time in <a href="http://www.faqs.org/rfcs/rfc2822.html" target="_blank">RFC 2822</a> format</td>
+                                </tr>
+                                <tr>
                                     <td>directory</td>
                                     <td>The directory part of the path (e.g. <code>/folder/dir/</code>)</td>
                                 </tr>
@@ -340,6 +344,11 @@
                                     <td>Access the value of the cookie provided</td>
                                 </tr>
                                 <tr>
+                                    <td>dateTime</td>
+                                    <td>String</td>
+                                    <td>Formats the current date/time using the string provided<br>(see <a href="http://php.net/manual/en/function.date.php#refsect1-function.date-parameters" target="_blank"><abbr title="Hypertext Preprocessor">PHP</abbr>'s date</a> for more details)</td>
+                                </tr>
+                                <tr>
                                     <td>decode</td>
                                     <td>String</td>
                                     <td>Decodes the previously encoded text provided</td>
@@ -379,6 +388,9 @@
                         </ul>
                         <h3>Examples</h3>
                         <p>These examples will be using the following <abbr title="Uniform Resource Locator">URL</abbr>;<pre>http://example.com/test/index.html?foo=bar&amp;fu=baz</pre></p>
+                        <p>To output the current date/time in <a href="http://en.wikipedia.org/wiki/ISO_8601" target="_blank">ISO 8601</a> format you would use;</p>
+<pre>{#dateTime}Y-m-d\TH:i:sP{/dateTime}</pre>
+                        <p>Also, the <code>c</code> parameter would also have the same outcome.</p>
                         <p>If you wanted to pass the whole <abbr title="Uniform Resource Locator">URL</abbr> as parameter;</p>
 <pre>{#encode}{url}{/encode}</pre>
                         <p>Would escape all the characters of the <abbr title="Uniform Resource Locator">URL</abbr> and output the following;</p>

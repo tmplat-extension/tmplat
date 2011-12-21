@@ -783,6 +783,15 @@ var ext = {
             browserversion: ext.browser.version,
             contextmenu: utils.get('contextMenu'),
             cookiesenabled: window.navigator.cookieEnabled,
+            datetime: function () {
+                return function (text, render) {
+                    text = render(text);
+                    if (text) {
+                        return (new Date()).format(text);
+                    }
+                    return (new Date()).format();
+                };
+            },
             decode: function () {
                 return function (text, render) {
                     return decodeURIComponent(render(text));
@@ -1501,92 +1510,98 @@ var ext = {
             sendResponse({version: ext.version});
             return;
         }
-        chrome.tabs.query({active: true}, function (tab) {
-            var data = {},
-                feature,
-                popup = chrome.extension.getViews({type: 'popup'})[0],
-                shortCalled = false,
-                shortPlaceholder = 'short' +
-                        (Math.floor(Math.random() * 99999 + 1000));
-            function copyOutput(str) {
-                if (str) {
-                    ext.copy(str);
-                } else {
-                    ext.message = chrome.i18n.getMessage('copy_fail_empty');
+        chrome.windows.getCurrent(function (win) {
+            chrome.tabs.query({
+                active: true,
+                windowId: win.id
+            }, function (tabs) {
+                var data = {},
+                    feature,
+                    popup = chrome.extension.getViews({type: 'popup'})[0],
+                    shortCalled = false,
+                    shortPlaceholder = 'short' +
+                            (Math.floor(Math.random() * 99999 + 1000)),
+                    tab = tabs[0];
+                function copyOutput(str) {
+                    if (str) {
+                        ext.copy(str);
+                    } else {
+                        ext.message = chrome.i18n.getMessage('copy_fail_empty');
+                        ext.status = false;
+                        ext.showNotification();
+                    }
+                }
+                function shortCallback() {
+                    shortCalled = true;
+                    return '{' + shortPlaceholder + '}';
+                }
+                if (popup) {
+                    $('#item', popup.document).hide();
+                    $('#loadDiv', popup.document).show();
+                }
+                try {
+                    switch (request.type) {
+                    case 'menu':
+                        data = ext.buildDerivedData(tab, request.data,
+                                shortCallback);
+                        feature = ext.getFeatureWithMenuId(
+                                request.data.menuItemId);
+                        break;
+                    case 'popup':
+                        // Should be cheaper than searching ext.features...
+                        data = ext.buildStandardData(tab, shortCallback);
+                        feature = ext.loadFeature(request.data.name);
+                        break;
+                    case 'shortcut':
+                        data = ext.buildStandardData(tab, shortCallback);
+                        feature = ext.getFeatureWithShortcut(request.data.key);
+                        break;
+                    }
+                } catch (e) {
+                    if (e instanceof URIError) {
+                        ext.message = chrome.i18n.getMessage('copy_fail_uri');
+                    } else {
+                        ext.message = chrome.i18n.getMessage('copy_fail_error');
+                    }
                     ext.status = false;
                     ext.showNotification();
+                    return;
                 }
-            }
-            function shortCallback() {
-                shortCalled = true;
-                return '{' + shortPlaceholder + '}';
-            }
-            if (popup) {
-                $('#item', popup.document).hide();
-                $('#loadDiv', popup.document).show();
-            }
-            try {
-                switch (request.type) {
-                case 'menu':
-                    data = ext.buildDerivedData(tab, request.data,
-                            shortCallback);
-                    feature = ext.getFeatureWithMenuId(
-                            request.data.menuItemId);
-                    break;
-                case 'popup':
-                    // Should be cheaper than searching ext.features...
-                    data = ext.buildStandardData(tab, shortCallback);
-                    feature = ext.loadFeature(request.data.name);
-                    break;
-                case 'shortcut':
-                    data = ext.buildStandardData(tab, shortCallback);
-                    feature = ext.getFeatureWithShortcut(request.data.key);
-                    break;
-                }
-            } catch (e) {
-                if (e instanceof URIError) {
-                    ext.message = chrome.i18n.getMessage('copy_fail_uri');
-                } else {
-                    ext.message = chrome.i18n.getMessage('copy_fail_error');
-                }
-                ext.status = false;
-                ext.showNotification();
-                return;
-            }
-            if (feature) {
-                ext.addAdditionalData(tab, data, function () {
-                    if (!feature.content) {
-                        // Displays empty template error message
-                        copyOutput();
-                        return;
-                    }
-                    var output = Mustache.to_html(feature.content, data);
-                    if (shortCalled) {
-                        ext.callUrlShortener(data.source, function (response) {
-                            if (response.success && response.shortUrl) {
-                                var newData = {};
-                                newData[shortPlaceholder] = response.shortUrl;
-                                copyOutput(Mustache.to_html(output, newData));
-                            } else {
-                                if (!response.message) {
-                                    response.message = chrome.i18n.getMessage(
-                                            'shortener_error',
-                                            response.shortener);
+                if (feature) {
+                    ext.addAdditionalData(tab, data, function () {
+                        if (!feature.content) {
+                            // Displays empty template error message
+                            copyOutput();
+                            return;
+                        }
+                        var output = Mustache.to_html(feature.content, data);
+                        if (shortCalled) {
+                            ext.callUrlShortener(data.source, function (response) {
+                                if (response.success && response.shortUrl) {
+                                    var newData = {};
+                                    newData[shortPlaceholder] = response.shortUrl;
+                                    copyOutput(Mustache.to_html(output, newData));
+                                } else {
+                                    if (!response.message) {
+                                        response.message = chrome.i18n.getMessage(
+                                                'shortener_error',
+                                                response.shortener);
+                                    }
+                                    ext.message = response.message;
+                                    ext.status = false;
+                                    ext.showNotification();
                                 }
-                                ext.message = response.message;
-                                ext.status = false;
-                                ext.showNotification();
-                            }
-                        });
-                    } else {
-                        copyOutput(output);
+                            });
+                        } else {
+                            copyOutput(output);
+                        }
+                    });
+                } else {
+                    if (popup) {
+                        popup.close();
                     }
-                });
-            } else {
-                if (popup) {
-                    popup.close();
                 }
-            }
+            });
         });
     },
 
