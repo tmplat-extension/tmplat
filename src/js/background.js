@@ -783,6 +783,11 @@ var ext = {
             browserversion: ext.browser.version,
             contextmenu: utils.get('contextMenu'),
             cookiesenabled: window.navigator.cookieEnabled,
+            decode: function () {
+                return function (text, render) {
+                    return decodeURIComponent(render(text));
+                };
+            },
             doanchortarget: utils.get('doAnchorTarget'),
             doanchortitle: utils.get('doAnchorTitle'),
             encode: function () {
