@@ -1,3 +1,16 @@
+YYYY.MM.DD, Version 0.3.0.0
+
+* [#48](https://github.com/neocotic/template/issues/48): Allow user to change behaviour of toolbar icon
+* [#50](https://github.com/neocotic/template/issues/50): Make tags case-insensitive
+* [#51](https://github.com/neocotic/template/issues/51): Add new *"dateTime"* simple tag and function to allow formatted date/time
+* [#53](https://github.com/neocotic/template/issues/53): Add support for [inline installation](http://code.google.com/chrome/webstore/docs/inline_installation.html)
+* [#54](https://github.com/neocotic/template/issues/54): Replace API calls deprecated by [Chrome 16](http://code.google.com/chrome/extensions/whats_new.html#16)
+* [#56](https://github.com/neocotic/template/issues/56): Add new *"decode"* function to decode its previously encoded contents
+* Change to [MIT license](http://www.opensource.org/licenses/mit-license.php)
+* Update homepage links
+* Patch underlying template technology
+* Minor bug fixes
+
 2011.10.20, Version 0.2.4.0
 
 * [#38](https://github.com/neocotic/template/issues/38): Add help documentation for general settings on options page
