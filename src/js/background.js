@@ -138,6 +138,14 @@ var ext = {
     features: [],
 
     /**
+     * <p>The domain of this extension's homepage.</p>
+     * @since 0.3.0.0
+     * @private
+     * @type String
+     */
+    homepage: 'neocotic.com',
+
+    /**
      * <p>The details of the images available as feature icons.</p>
      * @since 0.2.0.0
      * @private
@@ -977,8 +985,9 @@ var ext = {
     },
 
     /**
-     * <p>Injects and executes the <code>content.js</code> script within each
-     * of the tabs provided (where valid).</p>
+     * <p>Injects and executes the <code>content.js</code> and
+     * <code>install.js</code> scripts within each of the tabs provided (where
+     * valid).</p>
      * @param {Object[]} tabs The tabs to execute the script in.
      * @private
      */
@@ -986,13 +995,19 @@ var ext = {
         for (var i = 0; i < tabs.length; i++) {
             if (!ext.isProtectedPage(tabs[i])) {
                 chrome.tabs.executeScript(tabs[i].id, {file: 'js/content.js'});
+                if (tabs[i].url.indexOf(ext.homepage) !== -1) {
+                    chrome.tabs.executeScript(tabs[i].id, {
+                        file: 'js/install.js'
+                    });
+                }
             }
         }
     },
 
     /**
-     * <p>Injects and executes the <code>content.js</code> script within all
-     * the tabs (where valid) of each Chrome window.</p>
+     * <p>Injects and executes the <code>content.js</code> and
+     * <code>install.js</code> scripts within all the tabs (where valid) of each
+     * Chrome window.</p>
      * @private
      */
     executeScriptsInExistingWindows: function () {
