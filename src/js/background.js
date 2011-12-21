@@ -592,14 +592,14 @@ var ext = {
             if (ext.isProtectedPage(tab)) {
                 $.extend(data, {
                     selection: '',
-                    selectionLinks: []
+                    selectionlinks: []
                 });
                 callback();
             } else {
                 chrome.tabs.sendRequest(tab.id, {}, function (response) {
                     $.extend(data, {
                         selection: response.text || '',
-                        selectionLinks: response.urls || []
+                        selectionlinks: response.urls || []
                     });
                     callback();
                 });
@@ -777,14 +777,14 @@ var ext = {
         }
         $.extend(data, url.attr(), {
             bitly: utils.get('bitly'),
-            bitlyApiKey: utils.get('bitlyApiKey'),
-            bitlyUsername: utils.get('bitlyUsername'),
+            bitlyapikey: utils.get('bitlyApiKey'),
+            bitlyusername: utils.get('bitlyUsername'),
             browser: ext.browser.title,
-            browserVersion: ext.browser.version,
-            contextMenu: utils.get('contextMenu'),
-            cookiesEnabled: window.navigator.cookieEnabled,
-            doAnchorTarget: utils.get('doAnchorTarget'),
-            doAnchorTitle: utils.get('doAnchorTitle'),
+            browserversion: ext.browser.version,
+            contextmenu: utils.get('contextMenu'),
+            cookiesenabled: window.navigator.cookieEnabled,
+            doanchortarget: utils.get('doAnchorTarget'),
+            doanchortitle: utils.get('doAnchorTitle'),
             encode: function () {
                 return function (text, render) {
                     return encodeURIComponent(render(text));
@@ -806,15 +806,15 @@ var ext = {
             },
             fsegments: url.fsegment(),
             googl: utils.get('googl'),
-            googlOAuth: utils.get('googlOAuth'),
+            googloauth: utils.get('googlOAuth'),
             java: window.navigator.javaEnabled(),
-            notificationDuration: utils.get('notificationDuration') / 1000,
+            notificationduration: utils.get('notificationDuration') / 1000,
             notifications: utils.get('notifications'),
             offline: !window.navigator.onLine,
             // Deprecated since 0.1.0.2, use originalUrl instead
-            originalSource: tab.url,
-            originalTitle: tab.title || url.attr('source'),
-            originalUrl: tab.url,
+            originalsource: tab.url,
+            originaltitle: tab.title || url.attr('source'),
+            originalurl: tab.url,
             os: ext.operatingSystem,
             param: function () {
                 return function (text, render) {
@@ -836,10 +836,10 @@ var ext = {
             url: url.attr('source'),
             version: ext.version,
             yourls: utils.get('yourls'),
-            yourlsPassword: utils.get('yourlsPassword'),
-            yourlsSignature: utils.get('yourlsSignature'),
-            yourlsUrl: utils.get('yourlsUrl'),
-            yourlsUsername: utils.get('yourlsUsername')
+            yourlspassword: utils.get('yourlsPassword'),
+            yourlssignature: utils.get('yourlsSignature'),
+            yourlsurl: utils.get('yourlsUrl'),
+            yourlsusername: utils.get('yourlsUsername')
         });
         return data;
     },
