@@ -676,13 +676,7 @@ var ext = {
      * @private
      */
     buildFeature: function (feature) {
-        var image = '';
-        for (var j = 0; j < ext.images.length; j++) {
-            if (ext.images[j].id === feature.image) {
-                image = '../images/' + ext.images[j].file;
-                break;
-            }
-        }
+        var image = ext.getImagePathForFeature(feature, true);
         image = image || '../images/spacer.png';
         var item = $('<li/>', {
                 name: feature.name,
@@ -855,6 +849,10 @@ var ext = {
             },
             shortcuts: utils.get('shortcuts'),
             title: title || url.attr('source'),
+            toolbarfeature: utils.get('toolbarFeature'),
+            toolbarfeaturedetails: utils.get('toolbarFeatureDetails'),
+            toolbarfeaturename: utils.get('toolbarFeatureName'),
+            toolbarpopup: utils.get('toolbarPopup'),
             url: url.attr('source'),
             version: ext.version,
             yourls: utils.get('yourls'),
@@ -1057,6 +1055,25 @@ var ext = {
 
     /**
      * <p>Attempts to return the information for the any feature with the
+     * specified name assigned to it.</p>
+     * @param {String} name The name to be queried.
+     * @returns {Object} The feature with the name provided, if possible.
+     * @since 0.3.0.0
+     * @private
+     */
+    getFeatureWithName: function (name) {
+        var feature;
+        for (var i = 0; i < ext.features.length; i++) {
+            if (ext.features[i].name === name) {
+                feature = ext.features[i];
+                break;
+            }
+        }
+        return feature;
+    },
+
+    /**
+     * <p>Attempts to return the information for the any feature with the
      * specified shortcut assigned to it.</p>
      * <p>Disabled features are not included in this search.</p>
      * @param {String} shortcut The shortcut to be queried.
@@ -1073,6 +1090,29 @@ var ext = {
             }
         }
         return feature;
+    },
+
+    /**
+     * <p>Returns the path of the image assigned to the feature provided.</p>
+     * @param {Object} feature The feature whose image path is desired.
+     * @param {Boolean} [relative] <code>true</code> if the path should be
+     * relative; otherwise <code>false</code>.
+     * @returns {String} The path of the image.
+     * @since 0.3.0.0
+     * @private
+     */
+    getImagePathForFeature: function (feature, relative) {
+        var path = '';
+        for (var i = 0; i < ext.images.length; i++) {
+            if (ext.images[i].id === feature.image) {
+                if (relative) {
+                    path += '../';
+                }
+                path += 'images/' + ext.images[i].file;
+                break;
+            }
+        }
+        return path;
     },
 
     /**
@@ -1134,8 +1174,10 @@ var ext = {
         utils.init('doAnchorTarget', false);
         utils.init('doAnchorTitle', false);
         ext.initFeatures();
+        ext.initToolbar();
         ext.initUrlShorteners();
         ext.executeScriptsInExistingWindows();
+        chrome.browserAction.onClicked.addListener(ext.onClick);
         chrome.extension.onRequest.addListener(ext.onRequest);
         chrome.extension.onRequestExternal.addListener(ext.onExternalRequest);
         // Derives static browser and OS information
@@ -1276,6 +1318,19 @@ var ext = {
             update.features.push('0.2.0.0');
             utils.set('update_progress', update);
         }
+    },
+
+    /**
+     * <p>Initializes the settings related to the toolbar/browser action.</p>
+     * @since 0.3.0.0
+     * @private
+     */
+    initToolbar: function () {
+        utils.init('toolbarPopup', true);
+        utils.init('toolbarFeature', false);
+        utils.init('toolbarFeatureDetails', false);
+        utils.init('toolbarFeatureName', '');
+        ext.updateToolbar();
     },
 
     /**
@@ -1439,6 +1494,21 @@ var ext = {
     },
 
     /**
+     * <p>Listener for toolbar/browser action clicks.</p>
+     * @param {Tab} tab The tab active when clicked.
+     * @since 0.3.0.0
+     * @private
+     */
+    onClick: function (tab) {
+        ext.onRequest({
+            data: {
+                name: utils.get('toolbarFeatureName')
+            },
+            type: 'popup'
+        });
+    },
+
+    /**
      * <p>Listener for external requests to the extension.</p>
      * <p>This function only serves the request if the originating extension is
      * not blacklisted.</p>
@@ -1522,7 +1592,9 @@ var ext = {
      */
     onRequestHelper: function (request, sender, sendResponse) {
         if (request.type === 'version') {
-            sendResponse({version: ext.version});
+            if (typeof sendResponse === 'function') {
+                sendResponse({version: ext.version});
+            }
             return;
         }
         chrome.windows.getCurrent(function (win) {
@@ -1788,6 +1860,40 @@ var ext = {
         ext.features = ext.loadFeatures();
         ext.buildPopup();
         ext.updateContextMenu();
+    },
+
+    /**
+     * <p>Updates the toolbar/browser action depending on the current
+     * settings.</p>
+     * @since 0.3.0.0
+     */
+    updateToolbar: function () {
+        var feature,
+            featureName = utils.get('toolbarFeatureName'),
+            image = 'images/icon_19.png',
+            title = chrome.i18n.getMessage('name');
+        if (featureName) {
+            feature = ext.getFeatureWithName(featureName);
+        }
+        if (utils.get('toolbarPopup') || !feature) {
+            chrome.browserAction.setIcon({
+                path: chrome.extension.getURL(image)
+            });
+            chrome.browserAction.setTitle({title: title});
+            chrome.browserAction.setPopup({popup: 'pages/popup.html'});
+        } else {
+            if (utils.get('toolbarFeatureDetails')) {
+                if (feature.image !== 0) {
+                    image = ext.getImagePathForFeature(feature);
+                }
+                title = feature.title;
+            }
+            chrome.browserAction.setIcon({
+                path: chrome.extension.getURL(image)
+            });
+            chrome.browserAction.setTitle({title: title});
+            chrome.browserAction.setPopup({popup: ''});
+        }
     }
 
 };

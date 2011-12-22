@@ -308,6 +308,14 @@ var options = {
         options.i18nReplace('#yourls_or_txt', 'opt_or_text');
         options.i18nReplace('#yourlsSignature_txt',
                 'opt_url_shortener_signature_text');
+        options.i18nReplace('#toolbar_hdr', 'opt_toolbar_behaviour_header');
+        options.i18nReplace('#toolbar_nav', 'opt_toolbar_header');
+        options.i18nReplace('#toolbarFeature_txt', 'opt_toolbar_feature_text');
+        options.i18nReplace('#toolbarFeatureDetails_txt',
+                'opt_toolbar_feature_details_text');
+        options.i18nReplace('#toolbarFeatureName_txt',
+                'opt_toolbar_feature_name_text');
+        options.i18nReplace('#toolbarPopup_txt', 'opt_toolbar_popup_text');
         options.i18nReplace('#general_hdr, #general_nav',
                 'opt_general_header');
         options.i18nReplace('#contextMenu_txt', 'opt_context_menu_text');
@@ -332,6 +340,12 @@ var options = {
                 'help_notificationDuration');
         options.i18nReplace('#doAnchorTitle_help', 'help_doAnchorTitle');
         options.i18nReplace('#doAnchorTarget_help', 'help_doAnchorTarget');
+        options.i18nReplace('#toolbarFeature_help', 'help_toolbarFeature');
+        options.i18nReplace('#toolbarFeatureDetails_help',
+                'help_toolbarFeatureDetails');
+        options.i18nReplace('#toolbarFeatureName_help',
+                'help_toolbarFeatureName');
+        options.i18nReplace('#toolbarPopup_help', 'help_toolbarPopup');
         options.i18nReplace('#feature_enabled_help', 'help_feature_enabled');
         options.i18nReplace('#feature_image_help', 'help_feature_image');
         options.i18nReplace('#feature_name_help', 'help_feature_name');
@@ -371,14 +385,15 @@ var options = {
                 break;
             }
         }
+        var bg = chrome.extension.getBackgroundPage();
         $('#template_help').load(chrome.extension.getURL('pages/templates_' +
                 locale + '.html'), function () {
             $('.template-section:first-child').click();
+            $('.version-replace').text(bg.ext.version);
         });
         // Loads current option values
         options.load();
-        var bg = chrome.extension.getBackgroundPage(),
-            keyMods = '';
+        var keyMods = '';
         if (bg.ext.isThisPlatform('mac')) {
             keyMods = bg.ext.shortcutMacModifiers;
         } else {
@@ -448,6 +463,7 @@ var options = {
         options.loadImages();
         options.loadFeatures();
         options.loadNotifications();
+        options.loadToolbar();
         options.loadUrlShorteners();
         if (utils.get('contextMenu')) {
             $('#contextMenu').attr('checked', 'checked');
@@ -612,6 +628,7 @@ var options = {
                 if (options.validateFeature(opt, true)) {
                     features.append(opt);
                     opt.attr('selected', 'selected');
+                    options.updateToolbarFeatures();
                     features.change().focus();
                 } else {
                     $.facebox({div: '#message'});
@@ -634,6 +651,7 @@ var options = {
                 features.change().focus();
             }
             $(document).trigger('close.facebox');
+            options.updateToolbarFeatures();
         });
         /*
          * Moves the selected option down one when the 'down' control is
@@ -804,8 +822,7 @@ var options = {
          * performs simple error handling.
          */
         $('.import_file_btn').live('change', function (event) {
-            var $this = $(this),
-                file = event.target.files[0],
+            var file = event.target.files[0],
                 reader = new FileReader();
             reader.onerror = function (evt) {
                 var message = '';
@@ -844,6 +861,7 @@ var options = {
                 }
             });
             $(document).trigger('close.facebox');
+            options.updateToolbarFeatures();
             features.focus();
         });
         // Cancels the import process
@@ -934,7 +952,7 @@ var options = {
             imagePreview = $('#feature_image_preview'),
             images = $('#feature_image');
         for (var i = 0; i < bg.ext.images.length; i++) {
-            opt = $('<option/>', {
+            $('<option/>', {
                 text: bg.ext.images[i].name,
                 value: bg.ext.images[i].id
             }).appendTo(images).data('file', bg.ext.images[i].file);
@@ -972,6 +990,59 @@ var options = {
             timeInSecs = utils.get('notificationDuration') / 1000;
         }
         $('#notificationDuration').val(timeInSecs);
+    },
+
+    /**
+     * <p>Updates the toolbar behaviour section of the options page with the
+     * current settings.</p>
+     * @since 0.3.0.0
+     * @private
+     */
+    loadToolbar: function () {
+        if (utils.get('toolbarPopup')) {
+            $('#toolbarFeature').removeAttr('checked');
+            $('#toolbarPopup').attr('checked', 'checked');
+        } else {
+            $('#toolbarFeature').attr('checked', 'checked');
+            $('#toolbarPopup').removeAttr('checked');
+        }
+        if (utils.get('toolbarFeatureDetails')) {
+            $('#toolbarFeatureDetails').attr('checked', 'checked');
+        } else {
+            $('#toolbarFeatureDetails').removeAttr('checked');
+        }
+        options.updateToolbarFeatures();
+        options.toggleToolbarFeature();
+        options.loadToolbarControlEvents();
+    },
+
+    /**
+     * <p>Binds the event handlers required for controlling toolbar behaviour
+     * changes.</p>
+     * @since 0.3.0.0
+     * @private
+     */
+    loadToolbarControlEvents: function () {
+        $('#toolbarFeature').click(function (event) {
+            var $this = $(this);
+            if ($this.is('checked')) {
+                $('#toolbarPopup').attr('checked', 'checked');
+            } else {
+                $this.attr('checked', 'checked');
+                $('#toolbarPopup').removeAttr('checked');
+            }
+            options.toggleToolbarFeature();
+        });
+        $('#toolbarPopup').click(function (event) {
+            var $this = $(this);
+            if ($this.is('checked')) {
+                $('#toolbarFeature').attr('checked', 'checked');
+            } else {
+                $this.attr('checked', 'checked');
+                $('#toolbarFeature').removeAttr('checked');
+            }
+            options.toggleToolbarFeature();
+        });
     },
 
     /**
@@ -1074,6 +1145,7 @@ var options = {
         utils.set('doAnchorTitle', $('#doAnchorTitle').is(':checked'));
         options.saveFeatures();
         options.saveNotifications();
+        options.saveToolbar();
         options.saveUrlShorteners();
     },
 
@@ -1130,6 +1202,32 @@ var options = {
     },
 
     /**
+     * <p>Updates the settings with the values from the toolbar section of the
+     * options page.</p>
+     * @since 0.3.0.0
+     * @private
+     */
+    saveToolbar: function () {
+        var bg = chrome.extension.getBackgroundPage(),
+            toolbarFeature = $('#toolbarFeatureName option:selected'),
+            toolbarFeatureName = '';
+        if (toolbarFeature.length) {
+            toolbarFeatureName = toolbarFeature.val();
+        }
+        if ($('#toolbarPopup').is(':checked') || !toolbarFeatureName) {
+            utils.set('toolbarFeature', false);
+            utils.set('toolbarPopup', true);
+        } else {
+            utils.set('toolbarFeature', true);
+            utils.set('toolbarPopup', false);
+        }
+        utils.set('toolbarFeatureDetails',
+                $('#toolbarFeatureDetails').is(':checked'));
+        utils.set('toolbarFeatureName', toolbarFeatureName);
+        bg.ext.updateToolbar();
+    },
+
+    /**
      * <p>Updates the settings with the values from the URL shorteners section
      * of the options page.</p>
      * @private
@@ -1146,6 +1244,25 @@ var options = {
         utils.set('yourlsSignature', $('#yourlsSignature').val().trim());
         utils.set('yourlsUrl', $('#yourlsUrl').val().trim());
         utils.set('yourlsUsername', $('#yourlsUsername').val().trim());
+    },
+
+    /**
+     * <p>Toggles the acccessibility of the toolbar feature details.</p>
+     * @since 0.3.0.0
+     * @private
+     */
+    toggleToolbarFeature: function () {
+        if ($('#toolbarPopup').is(':checked')) {
+            $('#toolbarFeatureName_txt, ' +
+                    '#toolbarFeatureDetails_txt').addClass('disabled');
+            $('#toolbarFeatureName, #toolbarFeatureDetails').attr('disabled',
+                    'disabled');
+        } else {
+            $('#toolbarFeatureName_txt, ' +
+                    '#toolbarFeatureDetails_txt').removeClass('disabled');
+            $('#toolbarFeatureName, ' +
+                    '#toolbarFeatureDetails').removeAttr('disabled');
+        }
     },
 
     /**
@@ -1223,6 +1340,54 @@ var options = {
             existing.shortcut = feature.shortcut;
         }
         return existing;
+    },
+
+    /**
+     * <p>Updates the selection of features in the toolbar behaviour section
+     * to reflect that available in the templates section.</p>
+     * @since 0.3.0.0
+     * @private
+     */
+    updateToolbarFeatures: function () {
+        var features = [],
+            toolbarFeatures = $('#toolbarFeatureName'),
+            toolbarFeatureName = utils.get('toolbarFeatureName'),
+            lastSelectedFeature = toolbarFeatures.find('option:selected'),
+            lastSelectedFeatureName = '';
+        if (lastSelectedFeature.length) {
+            lastSelectedFeatureName = lastSelectedFeature.val();
+        }
+        toolbarFeatures.find('option').remove();
+        $('#features option').each(function () {
+            var $this = $(this),
+                feature = {
+                    name: $this.val(),
+                    selected: false,
+                    title: $this.text()
+                };
+            if (lastSelectedFeatureName) {
+                if (feature.name === lastSelectedFeatureName) {
+                    feature.selected = true;
+                }
+            } else if (feature.name === toolbarFeatureName) {
+                feature.selected = true;
+            }
+            features.push(feature);
+        });
+        features.sort(function (a, b) {
+            return a.title > b.title;
+        });
+        var option;
+        for (var i = 0; i < features.length; i++) {
+            option = $('<option/>', {
+                text: features[i].title + ' (' + features[i].name + ')',
+                value: features[i].name
+            });
+            if (features[i].selected) {
+                option.attr('selected', 'selected');
+            }
+            toolbarFeatures.append(option);
+        }
     },
 
     /**

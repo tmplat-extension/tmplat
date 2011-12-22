@@ -41,6 +41,7 @@
             .import_content, .export_content {width: 100%;}
             .import_error {color: #C00; font-style: italic;}
             input {cursor: pointer;}
+            .disabled {color: #888;}
             button, input[type="button"], input[type="file"]::-webkit-file-upload-button, input[type="reset"], input[type="submit"] {background-image: -webkit-gradient(linear, left top, left bottom, from(whiteSmoke), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, whiteSmoke, #F1F1F1); -webkit-border-radius: 2px; -webkit-user-select: none; background-color: whiteSmoke; background-image: linear-gradient(top, whiteSmoke, #F1F1F1); background-image: -o-linear-gradient(top, whiteSmoke, #F1F1F1); border: 1px solid gainsboro; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 2px; color: #666; cursor: pointer; font-size: 11px; font-weight: bold; height: 22px; line-height: 1em; margin: auto 6px auto auto; padding: 0 8px; text-align: center;}
             button:disabled, input[type="button"]:disabled, input[type="file"]:disabled::-webkit-file-upload-button, input[type="reset"]:disabled, input[type="submit"]:disabled {background-image: -webkit-gradient(linear,left top,left bottom, from(#EBEBE4), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, #EBEBE4, #F1F1F1); background-color: #EBEBE4; background-image: linear-gradient(top, #EBEBE4, #F1F1F1); background-image: -o-linear-gradient(top, #EBEBE4, #F1F1F1); border: 1px solid #C6C6C6; color: #AAA; cursor: default;}
             button:hover:not(:disabled), input[type="button"]:hover:not(:disabled), input[type="file"]::-webkit-file-upload-button:hover:not(:disabled), input[type="reset"]:hover:not(:disabled), input[type="submit"]:hover:not(:disabled) {background-image: -webkit-gradient(linear,left top,left bottom, from(#F8F8F8), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, #F8F8F8, #F1F1F1); -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.1); background-color: #F8F8F8; background-image: linear-gradient(top, #F8F8F8, #F1F1F1); background-image: -o-linear-gradient(top, #F8F8F8, #F1F1F1); border: 1px solid #C6C6C6; box-shadow: 0 1px 1px rgba(0,0,0,0.1); color: #333;}
@@ -60,7 +61,7 @@
             /* Facebox */
             #facebox {left: 0; position: absolute; text-align: left; top: 0; z-index: 100;}
             #facebox .popup {border: 3px solid rgba(0,0,0,0); border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; box-shadow:0 0 18px rgba(0,0,0,0.4); -moz-box-shadow: 0 0 18px rgba(0,0,0,0.4); -webkit-box-shadow: 0 0 18px rgba(0,0,0,0.4); position: relative;}
-            #facebox .content {display: table; width: 370px; padding: 10px 18px 10px 10px; background: white; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px;}
+            #facebox .content {display: table; width: 370px; padding: 10px 18px 10px 10px; background: white; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px; margin-right: 20px;}
             #facebox .content > p:first-child {margin-top: 0;}
             #facebox .content > p:last-child {margin-bottom: 0;}
             #facebox .close {background: white; padding: 2px; position: absolute; right: 5px; top: 5px;}
@@ -86,6 +87,7 @@
     <body>
         <ul id="navigation">
             <li id="general_nav" data-href="#general_tab"></li>
+            <li id="toolbar_nav" data-href="#toolbar_tab"></li>
             <li id="features_nav" data-href="#features_tab"></li>
             <li id="shorteners_nav" data-href="#shorteners_tab"></li>
         </ul>
@@ -157,6 +159,46 @@
                             </label>
                             <a href="#doAnchorTarget_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
                             <div id="doAnchorTarget_help" class="help"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="toolbar_tab" class="tab">
+                <div id="toolbar_sct" class="section">
+                    <h4 id="toolbar_hdr"></h4>
+                    <div class="contents">
+                        <div>
+                            <label>
+                                <input type="checkbox" id="toolbarPopup" />
+                                <span id="toolbarPopup_txt"></span>
+                            </label>
+                            <a href="#toolbarPopup_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                            <div id="toolbarPopup_help" class="help"></div>
+                        </div>
+                        <div>
+                            <label>
+                                <input type="checkbox" id="toolbarFeature" />
+                                <span id="toolbarFeature_txt"></span>
+                            </label>
+                            <a href="#toolbarFeature_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                            <div id="toolbarFeature_help" class="help"></div>
+                        </div>
+                        <div style="margin: 0 0 0 40px">
+                            <label for="toolbarFeatureName">
+                                <span id="toolbarFeatureName_txt"></span>
+                            </label>
+                            <a href="#toolbarFeatureName_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                            <div id="toolbarFeatureName_help" class="help"></div>
+                            <br>
+                            <select id="toolbarFeatureName" size="1"></select>
+                        </div>
+                        <div style="margin: 4px 0 0 36px">
+                            <label>
+                                <input type="checkbox" id="toolbarFeatureDetails" />
+                                <span id="toolbarFeatureDetails_txt"></span>
+                            </label>
+                            <a href="#toolbarFeatureDetails_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                            <div id="toolbarFeatureDetails_help" class="help"></div>
                         </div>
                     </div>
                 </div>
