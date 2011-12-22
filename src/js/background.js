@@ -1176,7 +1176,6 @@ var ext = {
         ext.initFeatures();
         ext.initToolbar();
         ext.initUrlShorteners();
-        ext.executeScriptsInExistingWindows();
         chrome.browserAction.onClicked.addListener(ext.onClick);
         chrome.extension.onRequest.addListener(ext.onRequest);
         chrome.extension.onRequestExternal.addListener(ext.onExternalRequest);
@@ -1186,6 +1185,8 @@ var ext = {
         // Derives extension's version
         $.getJSON(chrome.extension.getURL('manifest.json'), function (data) {
             ext.version = data.version;
+            // Execute content scripts now that we know the version
+            ext.executeScriptsInExistingWindows();
         });
     },
 
