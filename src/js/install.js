@@ -21,10 +21,17 @@
 
 // Disables all "Install" buttons on the homepage for this extension.
 (function () {
-    var links = document.querySelectorAll('a.chrome_install_button[href$=' +
+    var classNames = [
+            'chrome_install_button',
+            'primary'
+        ],
+        links = document.querySelectorAll('a.' + classNames[0] + '[href$=' +
             'dcjnfaoifoefmnbhhlbppaebgnccfddf]');
     for (var i = 0; i < links.length; i++) {
-        links[i].className = 'btn disabled';
+        links[i].className += ' disabled';
         links[i].innerText = 'Installed';
+        for (var j = 0; j < classNames.length; j++) {
+            links[i].className = links[i].className.replace(classNames[j], '');
+        }
     }
 })();
