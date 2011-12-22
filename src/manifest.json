@@ -22,7 +22,7 @@
                 "js/install.js"
             ],
             "matches": [
-              "http://*.neocotic.com/*"
+                "http://*.neocotic.com/*"
             ],
             "run_at": "document_end"
         }
@@ -51,5 +51,5 @@
         "tabs",
         "<all_urls>"
     ],
-    "version": "0.2.4.0"
+    "version": "0.3.0.0"
 }
