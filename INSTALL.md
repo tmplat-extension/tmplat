@@ -1,59 +1,31 @@
 # Build Requirements
-In order to build Template, you need to have the following:
+In order to build [Template][], you need to have the following:
 
-* GNU make 3.8+
-* Node 0.2+
-* git 1.7+
-
-If you want to generate documentation the following are also required;
-
-* [Java Runtime Environment](http://www.java.com/en) 1.5+
-* [JsDoc Toolkit](http://code.google.com/p/jsdoc-toolkit) 2.4+
+* [CoffeeScript][] 1.1+
+* [docco][] 0.3+
+* [UglifyJS][] 1.2+
+* [git][] 1.7+
 
 *Earlier versions might work, but have not been tested.*
 
-The following options are available depending on your operating system;
-
-## Microsoft Windows
-Either of the below options are aviable;
-
-1. Install [msysgit](https://code.google.com/p/msysgit) (full installer for official Git), [GNU make for Windows](http://gnuwin32.sourceforge.net/packages/make.htm), and a [binary version of Node](http://node-js.prcn.co.cc)
-   * Make sure all three packages are installed to the same location (by default, this is `C:\Program Files\Git`)
-2. Install [cygwin](http://cygwin.com) (make sure you install the *git*, *make*, and *which* packages) and then one of the following;
-   * Follow the [Node build instructions](https://github.com/ry/node/wiki/Building-node.js-on-Cygwin-%28Windows%29)
-   * Install the [binary version of Node](http://node-js.prcn.co.cc)
-
-## Apple Mac OS X
-
-* Install [Xcode](http://developer.apple.com/technologies/xcode.html) (also available on your Mac OS installation DVD)
-* Install [Homebrew](http://mxcl.github.com/homebrew) and then both of the following;
-   * Run `brew install git`
-   * Run `brew install node`
-
-## Linux/BSD
-Use your appropriate package managers to install *git*, *make*, and *Node*.
+1. Install [git][]
+2. Install [Node](http://nodejs.org/#download)
+3. Using [npm][] install [CoffeeScript][], [docco][], [UglifyJS][], and all their dependencies
 
 # Building
-Follow these steps to build Template;
+Follow these steps to build [Template][];
 
-1. Clone a copy of the main Template git repository by running `git clone git://github.com/neocotic/template.git`
-2. For the minified and validated version `cd` to the repository directory and enter `make`
-   * If you don't have *Node* installed and/or want the basic, uncompressed, unvalidated version of Template, simply run the extension off of the `src` directory
-   * Outputs to `bin` directory
-3. For the distribution enter `make dist`
-   * Outputs to `dist` directory
+1. Clone a copy of the main [Template git repository](https://github.com/neocotic/template) by running `git clone git://github.com/neocotic/template.git`
+2. For the compiled and runnable version `cd` to the repository directory and enter `cake build`
+   * Outputs to the `bin` directory
+3. For the optimized distributable file enter `cake dist`
+   * Outputs to the `dist` directory
+4. To update the documentation enter `cake docs`
 
-If you want to generate documentation as well you can do the following after step 1 of the above;
-
-1. `cd` to the repository directory and enter `make doc`
-   * Outputs to `docs` directory
-   * If JsDoc Toolkit has not be unpacked at `/usr/local/jsdoc-toolkit` you can specify it's path at runtime by doing the following;
-      * Enter `make "jsdoc_toolkit=C:/jsdoc-toolkit-2.4.0/jsdoc-toolkit" doc`
-
-To remove all built files, run `make clean`.
+To remove all built files and/or directories, run `cake clean`.
 
 # Debugging
-To run the locally built extension in [Google Chrome](http://www.google.com/chrome) you can follow these steps;
+To run the locally built extension in [Google Chrome][] you can follow these steps;
 
 1. Launch Google Chrome
 2. Bring up the extensions management page by clicking the wrench icon ![wrench](http://code.google.com/chrome/extensions/images/toolsmenu.gif) and choosing **Tools > Extensions**
@@ -61,3 +33,12 @@ To run the locally built extension in [Google Chrome](http://www.google.com/chro
 4. If any other installations of the extension exist either **Disable** or **Uninstall** them
 4. Click the **Load unpacked extension** button (a file dialog appears)
 5. In the file dialog, navigate to the extension's `bin` or `src` folder and click **OK**
+
+[coffeescript]: http://coffeescript.org
+[docco]: https://github.com/jashkenas/docco
+[git]: http://git-scm.com
+[google chrome]: http://www.google.com/chrome
+[node]: http://nodejs.org
+[npm]: http://npmjs.org
+[template]: http://neocotic.com/template
+[uglifyjs]: https://github.com/mishoo/UglifyJS

@@ -992,10 +992,10 @@ var ext = {
     executeScriptsInExistingTabs: function (tabs) {
         for (var i = 0; i < tabs.length; i++) {
             if (!ext.isProtectedPage(tabs[i])) {
-                chrome.tabs.executeScript(tabs[i].id, {file: 'js/content.js'});
+                chrome.tabs.executeScript(tabs[i].id, {file: 'lib/content.js'});
                 if (tabs[i].url.indexOf(ext.homepage) !== -1) {
                     chrome.tabs.executeScript(tabs[i].id, {
-                        file: 'js/install.js'
+                        file: 'lib/install.js'
                     });
                 }
             }

@@ -1,476 +1,476 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-    <head>
-        <title></title>
-        <style type="text/css">
-            body {background-color: #EBEFF9; font-family: Arial, sans-serif; font-size: 13px; margin: 10px;}
-            a, a:active, a:link, a:visited {color: #3D5D6A; cursor: pointer; font-weight: bold; text-decoration: none;}
-            a:hover {text-decoration: underline;}
-            a[rel="facebox"] {outline: 0;}
-            code, pre {font: 12px 'Bitstream Vera Sans Mono','Courier',monospace;}
-            code {background-color: #F8F8F8; border: 1px solid #DEDEDE; font-size: 13px; padding: 0 2px; border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
-            pre {background-color: #F8F8F8; border: 1px solid #CCC; font-size: 13px; line-height: 19px; margin: 20px 0; overflow: auto; padding: 6px 10px; order-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
-            table {border: 0; border-collapse; collapse; width: 100%;}
-            .features tr td:first-child {padding-top: 6px; text-align: right; vertical-align: top;}
-            .feature td {text-align: left;}
-            .feature.first .expanded, .feature.collapsed.first .collapsed {display: block;}
-            .feature.first .collapsed, .feature.collapsed.first .expanded {display: none;}
-            .feature.collapsed.second, .feature.collapsed.third {display: none;}
-            .featureShortcut {text-transform: uppercase;}
-            .features tr:last-child td:first-child {padding-top: 8px !important;}
-            .styled thead th {border-bottom: 1px solid #EEE;}
-            .styled thead th:hover {border-bottom-color: #AAA;}
-            .styled tbody tr:hover {background-color: #F3F3F3;}
-            #navigation {background-color: #BEC9CE; border: 3px solid #BEC9CE; border-bottom: 0; border-radius: 20px 20px 0 0; list-style-type: none; margin: 50px auto 0 auto; padding: 0 30px; width: 600px;}
-            #navigation li {background-color: white; border-radius: 8px 8px 0 0; color: #333; cursor: pointer; display: inline-block; font-size: 15px; font-weight: bold; opacity: 0.5; padding: 5px 10px;}
-            #navigation li:hover {opacity: 1.0;}
-            #navigation li.selected {cursor: default; opacity: 1.0;}
-            #navigation-footer {background-color: #BEC9CE; margin: 0 auto 0 auto; padding: 0 3px; width: 660px;}
-            #navigation-footer div {background-color: white; border-radius: 20px 20px 0 0; height: 20px;}
-            .content-box {background-color: white; border: 3px solid #BEC9CE; border-radius: 0 0 20px 20px; border-top: 0; height: auto;  margin: 0 auto 20px auto; padding: 10px 30px 30px; text-align: left; width: 600px;}
-            h4 {border-bottom: 2px dotted #C3C3C3; color: #333; font-size: 15px; line-height: 28px; padding-left: 0.5em;}
-            .tab {display: none;}
-            .controls {margin: 25px 0 0 0;}
-            .section .contents {line-height: 25px; padding-left: 55px;}
-            .sections .section .contents {padding-left: 5px;}
-            .help {display: none;}
-            #add_btn, #delete_btn, #export_btn, #import_btn {margin-left: 10px;}
-            #moveDown_btn, #moveUp_btn {padding-top: 2px; margin: 5px 10px;}
-            .import_con_list, .export_con_list {width: 100%;}
-            .import_count {font-weight: bold;}
-            .import_content, .export_content {width: 100%;}
-            .import_error {color: #C00; font-style: italic;}
-            input {cursor: pointer;}
-            .disabled {color: #888;}
-            button, input[type="button"], input[type="file"]::-webkit-file-upload-button, input[type="reset"], input[type="submit"] {background-image: -webkit-gradient(linear, left top, left bottom, from(whiteSmoke), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, whiteSmoke, #F1F1F1); -webkit-border-radius: 2px; -webkit-user-select: none; background-color: whiteSmoke; background-image: linear-gradient(top, whiteSmoke, #F1F1F1); background-image: -o-linear-gradient(top, whiteSmoke, #F1F1F1); border: 1px solid gainsboro; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 2px; color: #666; cursor: pointer; font-size: 11px; font-weight: bold; height: 22px; line-height: 1em; margin: auto 6px auto auto; padding: 0 8px; text-align: center;}
-            button:disabled, input[type="button"]:disabled, input[type="file"]:disabled::-webkit-file-upload-button, input[type="reset"]:disabled, input[type="submit"]:disabled {background-image: -webkit-gradient(linear,left top,left bottom, from(#EBEBE4), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, #EBEBE4, #F1F1F1); background-color: #EBEBE4; background-image: linear-gradient(top, #EBEBE4, #F1F1F1); background-image: -o-linear-gradient(top, #EBEBE4, #F1F1F1); border: 1px solid #C6C6C6; color: #AAA; cursor: default;}
-            button:hover:not(:disabled), input[type="button"]:hover:not(:disabled), input[type="file"]::-webkit-file-upload-button:hover:not(:disabled), input[type="reset"]:hover:not(:disabled), input[type="submit"]:hover:not(:disabled) {background-image: -webkit-gradient(linear,left top,left bottom, from(#F8F8F8), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, #F8F8F8, #F1F1F1); -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.1); background-color: #F8F8F8; background-image: linear-gradient(top, #F8F8F8, #F1F1F1); background-image: -o-linear-gradient(top, #F8F8F8, #F1F1F1); border: 1px solid #C6C6C6; box-shadow: 0 1px 1px rgba(0,0,0,0.1); color: #333;}
-            #footer {font-size: 13px; text-align: center;}
-            .template {height: 300px; padding-right: 5px; width: 500px;}
-            .template-display {height: 300px; overflow: auto; padding-right: 5px; width: 395px;}
-            .template-table {height: 100%;}
-            .template-table > tbody > tr > td {vertical-align: top;}
-            .template-table > tbody > tr > td:first-child {border-right: 2px dotted #C3C3C3; padding-right: 10px;}
-            .template-sections {list-style-type: none; margin: 0; padding: 0;}
-            .template-section {cursor: pointer; display: inline-block; font-weight: bold; padding: 5px; width: 100%;}
-            .template-section:hover {background-color: #F3F3F3 !important; color: black !important;}
-            .template-section.selected {background-color: #C3C3C3; color: white;}
-            .template-content {display: none;}
-            .template-definitions tbody tr td {vertical-align: top;}
-            .template-definitions tbody tr td:first-child, .template-definition {color: #666;}
-            /* Facebox */
-            #facebox {left: 0; position: absolute; text-align: left; top: 0; z-index: 100;}
-            #facebox .popup {border: 3px solid rgba(0,0,0,0); border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; box-shadow:0 0 18px rgba(0,0,0,0.4); -moz-box-shadow: 0 0 18px rgba(0,0,0,0.4); -webkit-box-shadow: 0 0 18px rgba(0,0,0,0.4); position: relative;}
-            #facebox .content {display: table; width: 370px; padding: 10px 18px 10px 10px; background: white; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px; margin-right: 20px;}
-            #facebox .content > p:first-child {margin-top: 0;}
-            #facebox .content > p:last-child {margin-bottom: 0;}
-            #facebox .close {background: white; padding: 2px; position: absolute; right: 5px; top: 5px;}
-            #facebox .close img {opacity: 0.3;}
-            #facebox .close:hover img {opacity: 1.0;}
-            #facebox .loading {text-align: center;}
-            #facebox .image {text-align: center;}
-            #facebox img {border: 0; margin: 0;}
-            #facebox_overlay {height: 100%; left: 0; position: fixed; top: 0; width: 100%;}
-            .facebox_hide {z-index: -100;}
-            .facebox_overlayBG {background-color: black; z-index: 99;}
-        </style>
-        <script type="text/javascript" src="../js/jquery.min.js"></script>
-        <script type="text/javascript" src="../js/facebox.min.js"></script>
-        <script type="text/javascript" src="../js/utils.js"></script>
-        <script type="text/javascript" src="../js/options.js"></script>
-        <script type="text/javascript">
-            $(function () {
-                options.init();
-            });
-        </script>
-    </head>
-    <body>
-        <ul id="navigation">
-            <li id="general_nav" data-href="#general_tab"></li>
-            <li id="toolbar_nav" data-href="#toolbar_tab"></li>
-            <li id="features_nav" data-href="#features_tab"></li>
-            <li id="shorteners_nav" data-href="#shorteners_tab"></li>
-        </ul>
-        <div id="navigation-footer"><div></div></div>
-        <div class="content-box">
-            <div id="message" style="display: none">
-                <p id="errors_hdr"></p>
-                <ul id="errors"></ul>
+  <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+      body {background-color: #EBEFF9; font-family: Arial, sans-serif; font-size: 13px; margin: 10px;}
+      a, a:active, a:link, a:visited {color: #3D5D6A; cursor: pointer; font-weight: bold; text-decoration: none;}
+      a:hover {text-decoration: underline;}
+      a[rel="facebox"] {outline: 0;}
+      code, pre {font: 12px 'Bitstream Vera Sans Mono','Courier',monospace;}
+      code {background-color: #F8F8F8; border: 1px solid #DEDEDE; font-size: 13px; padding: 0 2px; border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
+      pre {background-color: #F8F8F8; border: 1px solid #CCC; font-size: 13px; line-height: 19px; margin: 20px 0; overflow: auto; padding: 6px 10px; order-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
+      table {border: 0; border-collapse; collapse; width: 100%;}
+      .features tr td:first-child {padding-top: 6px; text-align: right; vertical-align: top;}
+      .feature td {text-align: left;}
+      .feature.first .expanded, .feature.collapsed.first .collapsed {display: block;}
+      .feature.first .collapsed, .feature.collapsed.first .expanded {display: none;}
+      .feature.collapsed.second, .feature.collapsed.third {display: none;}
+      .featureShortcut {text-transform: uppercase;}
+      .features tr:last-child td:first-child {padding-top: 8px !important;}
+      .styled thead th {border-bottom: 1px solid #EEE;}
+      .styled thead th:hover {border-bottom-color: #AAA;}
+      .styled tbody tr:hover {background-color: #F3F3F3;}
+      #navigation {background-color: #BEC9CE; border: 3px solid #BEC9CE; border-bottom: 0; border-radius: 20px 20px 0 0; list-style-type: none; margin: 50px auto 0 auto; padding: 0 30px; width: 600px;}
+      #navigation li {background-color: white; border-radius: 8px 8px 0 0; color: #333; cursor: pointer; display: inline-block; font-size: 15px; font-weight: bold; opacity: 0.5; padding: 5px 10px;}
+      #navigation li:hover {opacity: 1.0;}
+      #navigation li.selected {cursor: default; opacity: 1.0;}
+      #navigation-footer {background-color: #BEC9CE; margin: 0 auto 0 auto; padding: 0 3px; width: 660px;}
+      #navigation-footer div {background-color: white; border-radius: 20px 20px 0 0; height: 20px;}
+      .content-box {background-color: white; border: 3px solid #BEC9CE; border-radius: 0 0 20px 20px; border-top: 0; height: auto;  margin: 0 auto 20px auto; padding: 10px 30px 30px; text-align: left; width: 600px;}
+      h4 {border-bottom: 2px dotted #C3C3C3; color: #333; font-size: 15px; line-height: 28px; padding-left: 0.5em;}
+      .tab {display: none;}
+      .controls {margin: 25px 0 0 0;}
+      .section .contents {line-height: 25px; padding-left: 55px;}
+      .sections .section .contents {padding-left: 5px;}
+      .help {display: none;}
+      #add_btn, #delete_btn, #export_btn, #import_btn {margin-left: 10px;}
+      #moveDown_btn, #moveUp_btn {padding-top: 2px; margin: 5px 10px;}
+      .import_con_list, .export_con_list {width: 100%;}
+      .import_count {font-weight: bold;}
+      .import_content, .export_content {width: 100%;}
+      .import_error {color: #C00; font-style: italic;}
+      input {cursor: pointer;}
+      .disabled {color: #888;}
+      button, input[type="button"], input[type="file"]::-webkit-file-upload-button, input[type="reset"], input[type="submit"] {background-image: -webkit-gradient(linear, left top, left bottom, from(whiteSmoke), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, whiteSmoke, #F1F1F1); -webkit-border-radius: 2px; -webkit-user-select: none; background-color: whiteSmoke; background-image: linear-gradient(top, whiteSmoke, #F1F1F1); background-image: -o-linear-gradient(top, whiteSmoke, #F1F1F1); border: 1px solid gainsboro; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 2px; color: #666; cursor: pointer; font-size: 11px; font-weight: bold; height: 22px; line-height: 1em; margin: auto 6px auto auto; padding: 0 8px; text-align: center;}
+      button:disabled, input[type="button"]:disabled, input[type="file"]:disabled::-webkit-file-upload-button, input[type="reset"]:disabled, input[type="submit"]:disabled {background-image: -webkit-gradient(linear,left top,left bottom, from(#EBEBE4), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, #EBEBE4, #F1F1F1); background-color: #EBEBE4; background-image: linear-gradient(top, #EBEBE4, #F1F1F1); background-image: -o-linear-gradient(top, #EBEBE4, #F1F1F1); border: 1px solid #C6C6C6; color: #AAA; cursor: default;}
+      button:hover:not(:disabled), input[type="button"]:hover:not(:disabled), input[type="file"]::-webkit-file-upload-button:hover:not(:disabled), input[type="reset"]:hover:not(:disabled), input[type="submit"]:hover:not(:disabled) {background-image: -webkit-gradient(linear,left top,left bottom, from(#F8F8F8), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, #F8F8F8, #F1F1F1); -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.1); background-color: #F8F8F8; background-image: linear-gradient(top, #F8F8F8, #F1F1F1); background-image: -o-linear-gradient(top, #F8F8F8, #F1F1F1); border: 1px solid #C6C6C6; box-shadow: 0 1px 1px rgba(0,0,0,0.1); color: #333;}
+      #footer {font-size: 13px; text-align: center;}
+      .template {height: 300px; padding-right: 5px; width: 500px;}
+      .template-display {height: 300px; overflow: auto; padding-right: 5px; width: 395px;}
+      .template-table {height: 100%;}
+      .template-table > tbody > tr > td {vertical-align: top;}
+      .template-table > tbody > tr > td:first-child {border-right: 2px dotted #C3C3C3; padding-right: 10px;}
+      .template-sections {list-style-type: none; margin: 0; padding: 0;}
+      .template-section {cursor: pointer; display: inline-block; font-weight: bold; padding: 5px; width: 100%;}
+      .template-section:hover {background-color: #F3F3F3 !important; color: black !important;}
+      .template-section.selected {background-color: #C3C3C3; color: white;}
+      .template-content {display: none;}
+      .template-definitions tbody tr td {vertical-align: top;}
+      .template-definitions tbody tr td:first-child, .template-definition {color: #666;}
+      /* Facebox */
+      #facebox {left: 0; position: absolute; text-align: left; top: 0; z-index: 100;}
+      #facebox .popup {border: 3px solid rgba(0,0,0,0); border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; box-shadow:0 0 18px rgba(0,0,0,0.4); -moz-box-shadow: 0 0 18px rgba(0,0,0,0.4); -webkit-box-shadow: 0 0 18px rgba(0,0,0,0.4); position: relative;}
+      #facebox .content {display: table; width: 370px; padding: 10px 18px 10px 10px; background: white; border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px; margin-right: 20px;}
+      #facebox .content > p:first-child {margin-top: 0;}
+      #facebox .content > p:last-child {margin-bottom: 0;}
+      #facebox .close {background: white; padding: 2px; position: absolute; right: 5px; top: 5px;}
+      #facebox .close img {opacity: 0.3;}
+      #facebox .close:hover img {opacity: 1.0;}
+      #facebox .loading {text-align: center;}
+      #facebox .image {text-align: center;}
+      #facebox img {border: 0; margin: 0;}
+      #facebox_overlay {height: 100%; left: 0; position: fixed; top: 0; width: 100%;}
+      .facebox_hide {z-index: -100;}
+      .facebox_overlayBG {background-color: black; z-index: 99;}
+    </style>
+    <script src="../vendor/jquery.min.js"></script>
+    <script src="../vendor/facebox.min.js"></script>
+    <script src="../lib/utils.js"></script>
+    <script src="../lib/options.js"></script>
+    <script type="application/javascript">
+      $(function () {
+        options.init();
+      });
+    </script>
+  </head>
+  <body>
+    <ul id="navigation">
+      <li id="general_nav" data-href="#general_tab"></li>
+      <li id="toolbar_nav" data-href="#toolbar_tab"></li>
+      <li id="features_nav" data-href="#features_tab"></li>
+      <li id="shorteners_nav" data-href="#shorteners_tab"></li>
+    </ul>
+    <div id="navigation-footer">
+      <div></div>
+    </div>
+    <div class="content-box">
+      <div id="message" style="display: none">
+        <p id="errors_hdr"></p>
+        <ul id="errors"></ul>
+      </div>
+      <div id="general_tab" class="tab">
+        <div id="general_sct" class="section">
+          <h4 id="general_hdr"></h4>
+          <div class="contents">
+            <div>
+              <label>
+                <input type="checkbox" id="contextMenu" />
+                <span id="contextMenu_txt"></span>
+              </label>
+              <a href="#contextMenu_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="contextMenu_help" class="help"></div>
             </div>
-            <div id="general_tab" class="tab">
-                <div id="general_sct" class="section">
-                    <h4 id="general_hdr"></h4>
-                    <div class="contents">
-                        <div>
-                            <label>
-                                <input type="checkbox" id="contextMenu" />
-                                <span id="contextMenu_txt"></span>
-                            </label>
-                            <a href="#contextMenu_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                            <div id="contextMenu_help" class="help"></div>
-                        </div>
-                        <div>
-                            <label>
-                                <input type="checkbox" id="shortcuts" />
-                                <span id="shortcuts_txt"></span>
-                            </label>
-                            <a href="#shortcuts_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                            <div id="shortcuts_help" class="help"></div>
-                        </div>
-                    </div>
-                </div>
-                <div id="notifications_sct" class="section">
-                    <h4 id="notifications_hdr"></h4>
-                    <div class="contents">
-                        <div>
-                            <label>
-                                <input type="checkbox" id="notifications" />
-                                <span id="notifications_txt"></span>
-                            </label>
-                            <a href="#notifications_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                            <div id="notifications_help" class="help"></div>
-                        </div>
-                        <div style="margin: 0 0 0 4px">
-                            <label>
-                                <span id="notificationDuration_txt1"></span>
-                                <input id="notificationDuration" max="60" min="0" size="1" step="1" type="number" />
-                                <span id="notificationDuration_txt2"></span>
-                            </label>
-                            <a href="#notificationDuration_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                            <div id="notificationDuration_help" class="help"></div>
-                        </div>
-                    </div>
-                </div>
-                <div id="anchors_sct" class="section">
-                    <h4 id="anchors_hdr"></h4>
-                    <div class="contents">
-                        <div>
-                            <label>
-                                <input type="checkbox" id="doAnchorTitle" />
-                                <span id="doAnchorTitle_txt"></span>
-                            </label>
-                            <a href="#doAnchorTitle_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                            <div id="doAnchorTitle_help" class="help"></div>
-                        </div>
-                        <div>
-                            <label>
-                                <input type="checkbox" id="doAnchorTarget" />
-                                <span id="doAnchorTarget_txt"></span>
-                            </label>
-                            <a href="#doAnchorTarget_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                            <div id="doAnchorTarget_help" class="help"></div>
-                        </div>
-                    </div>
-                </div>
+            <div>
+              <label>
+                <input type="checkbox" id="shortcuts" />
+                <span id="shortcuts_txt"></span>
+              </label>
+              <a href="#shortcuts_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="shortcuts_help" class="help"></div>
             </div>
-            <div id="toolbar_tab" class="tab">
-                <div id="toolbar_sct" class="section">
-                    <h4 id="toolbar_hdr"></h4>
-                    <div class="contents">
-                        <div>
-                            <label>
-                                <input type="checkbox" id="toolbarPopup" />
-                                <span id="toolbarPopup_txt"></span>
-                            </label>
-                            <a href="#toolbarPopup_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                            <div id="toolbarPopup_help" class="help"></div>
-                        </div>
-                        <div>
-                            <label>
-                                <input type="checkbox" id="toolbarFeature" />
-                                <span id="toolbarFeature_txt"></span>
-                            </label>
-                            <a href="#toolbarFeature_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                            <div id="toolbarFeature_help" class="help"></div>
-                        </div>
-                        <div style="margin: 0 0 0 40px">
-                            <label for="toolbarFeatureName">
-                                <span id="toolbarFeatureName_txt"></span>
-                            </label>
-                            <a href="#toolbarFeatureName_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                            <div id="toolbarFeatureName_help" class="help"></div>
-                            <br>
-                            <select id="toolbarFeatureName" size="1"></select>
-                        </div>
-                        <div style="margin: 4px 0 0 36px">
-                            <label>
-                                <input type="checkbox" id="toolbarFeatureDetails" />
-                                <span id="toolbarFeatureDetails_txt"></span>
-                            </label>
-                            <a href="#toolbarFeatureDetails_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                            <div id="toolbarFeatureDetails_help" class="help"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="features_tab" class="tab">
-                <div id="features_sct" class="section">
-                    <h4 id="features_hdr"></h4>
-                    <div class="contents">
-                        <div>
-                            <table>
-                                <tr>
-                                    <td colspan="2" rowspan="2" style="min-width: 354px">
-                                        <select id="features" size="5" style="width: 100%"></select>
-                                    </td>
-                                    <td style="padding-top: 10px; width: 50%">
-                                        <button id="moveUp_btn"><img src="../images/move_up_disabled.gif" /></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <button id="moveDown_btn"><img src="../images/move_down_disabled.gif" /></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            <table style="border-spacing: 0">
-                                                <tr>
-                                                    <td style="width: 75px">
-                                                        <label for="feature_name">
-                                                            <span id="feature_name_txt"></span>
-                                                        </label>
-                                                        <a href="#feature_name_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                        <div id="feature_name_help" class="help"></div>
-                                                    </td>
-                                                    <td>
-                                                        <input id="feature_name" class="read-only-always" type="text" maxlength="16" size="32" />
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td>
-                                            <button id="add_btn"></button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            <table style="border-spacing: 0">
-                                                <tr>
-                                                    <td style="width: 75px">
-                                                        <label for="feature_title">
-                                                            <span id="feature_title_txt"></span>
-                                                        </label>
-                                                        <a href="#feature_title_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                        <div id="feature_title_help" class="help"></div>
-                                                    </td>
-                                                    <td>
-                                                        <input id="feature_title" class="read-only" type="text" maxlength="32" size="32" />
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                        <td>
-                                            <button id="delete_btn" class="read-only"></button>
-                                            <div id="delete_con" class="help"></div>
-                                        </td>
-                                    </tr>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <table style="border-spacing: 0">
-                                            <tr>
-                                                <td style="width: 75px">
-                                                    <label for="feature_image">
-                                                        <span id="feature_image_txt"></span>
-                                                    </label>
-                                                    <a href="#feature_image_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                    <div id="feature_image_help" class="help"></div>
-                                                </td>
-                                                <td>
-                                                    <select id="feature_image"></select>
-                                                    <img id="feature_image_preview" width="16" height="16" style="margin-bottom: -3px" />
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                    <td>
-                                        <button id="import_btn"></button>
-                                        <div id="import_con" class="help">
-                                            <div class="import_con_stage1"></div>
-                                            <div class="import_con_stage2"></div>
-                                            <div class="import_con_stage3"></div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label>
-                                            <input id="feature_enabled" type="checkbox" checked />
-                                            <span id="feature_enabled_txt"></span>
-                                        </label>
-                                        <a href="#feature_enabled_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                        <div id="feature_enabled_help" class="help"></div>
-                                    </td>
-                                    <td style="text-align: right">
-                                        <label>
-                                            <span id="feature_shortcut_txt"></span><input id="feature_shortcut" type="text" maxlength="1" size="1" style="text-transform: uppercase" />
-                                        </label>
-                                        <a href="#feature_shortcut_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                        <div id="feature_shortcut_help" class="help"></div>
-                                    </td>
-                                    <td>
-                                        <button id="export_btn"></button>
-                                        <div id="export_con" class="help">
-                                            <div class="export_con_stage1"></div>
-                                            <div class="export_con_stage2"></div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="3">
-                                        <label>
-                                            <textarea id="feature_template" class="read-only" rows="5" cols="50" spellcheck="false" style="resize: vertical"></textarea>
-                                        </label>
-                                        <div>
-                                            <a id="template_help_lnk" href="#template_help" rel="facebox"></a>
-                                            <div id="template_help" class="help"></div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="shorteners_tab" class="tab">
-                <div id="shorteners_sct" class="section">
-                    <h4 id="shorteners_hdr"></h4>
-                    <div class="contents">
-                        <div>
-                            <table class="styled">
-                                <thead>
-                                    <tr>
-                                        <th id="shorteners_enabled_hdr" style="text-align: center; width: 12%"></th>
-                                        <th id="shorteners_name_hdr" style="width: 23%"></th>
-                                        <th id="shorteners_config_hdr" style="width: 65%"></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr style="vertical-align: top">
-                                        <td style="text-align: center"><input type="radio" name="enabled_shortener" id="bitly" /></td>
-                                        <td><a href="http://bit.ly" target="_blank">bit.ly</a></td>
-                                        <td>
-                                            <table>
-                                                <tr>
-                                                    <td style="width: 40%">
-                                                        <label for="bitlyUsername">
-                                                            <span id="bitlyUsername_txt"></span>
-                                                        </label>
-                                                        <a href="#bitlyUsername_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                        <div id="bitlyUsername_help" class="help"></div>
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" id="bitlyUsername" size="28" />
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <label for="bitlyApiKey">
-                                                            <span id="bitlyApiKey_txt"></span>
-                                                        </label>
-                                                        <a href="#bitlyApiKey_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                        <div id="bitlyApiKey_help" class="help"></div>
-                                                    </td>
-                                                    <td>
-                                                        <input type="password" id="bitlyApiKey" size="28" />
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                    <tr style="vertical-align: top">
-                                        <td style="text-align: center"><input type="radio" name="enabled_shortener" id="googl" /></td>
-                                        <td><a href="http://goo.gl" target="_blank">goo.gl</a></td>
-                                        <td>
-                                            <div>
-                                                <label>
-                                                    <input type="checkbox" id="googlOAuth" />
-                                                    <span id="googlOAuth_txt"></span>
-                                                </label>
-                                            <a href="#googlOAuth_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                            <div id="googlOAuth_help" class="help"></div>
-                                        </td>
-                                    </tr>
-                                    <tr style="vertical-align: top">
-                                        <td style="text-align: center"><input type="radio" name="enabled_shortener" id="yourls" /></td>
-                                        <td><a href="http://yourls.org" target="_blank">YOURLS</a></td>
-                                        <td>
-                                            <table>
-                                                <tr>
-                                                    <td style="width: 40%">
-                                                        <label for="yourlsUrl">
-                                                            <span id="yourlsUrl_txt"></span>
-                                                        </label>
-                                                        <a href="#yourlsUrl_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                        <div id="yourlsUrl_help" class="help"></div>
-                                                    </td>
-                                                    <td>
-                                                        <input type="url" id="yourlsUrl" size="28" />
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="2" style="border-bottom: 1px dashed #AAA"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <label for="yourlsUsername">
-                                                            <span id="yourlsUsername_txt"></span>
-                                                        </label>
-                                                        <a href="#yourlsCredentials_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                        <div id="yourlsCredentials_help" class="help"></div>
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" id="yourlsUsername" size="28" />
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <label for="yourlsPassword">
-                                                            <span id="yourlsPassword_txt"></span>
-                                                        </label>
-                                                        <a href="#yourlsCredentials_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                    </td>
-                                                    <td>
-                                                        <input type="password" id="yourlsPassword" size="28" />
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td id="yourls_or_txt" colspan="2" style="font-weight: bold; text-align: center"></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <label for="yourlsSignature">
-                                                            <span id="yourlsSignature_txt"></span>
-                                                        </label>
-                                                        <a href="#yourlsSignature_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                                                        <div id="yourlsSignature_help" class="help"></div>
-                                                    </td>
-                                                    <td>
-                                                        <input type="password" id="yourlsSignature" size="28" />
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="controls">
-                <table>
-                    <tr>
-                        <td style="width: 50%">
-                            <button class="save-btn"></button>
-                        </td>
-                        <td style="text-align: right">&nbsp;</td>
-                    </tr>
-                </table>
-            </div>
+          </div>
         </div>
-        <div id="footer"></div>
-    </body>
+        <div id="notifications_sct" class="section">
+          <h4 id="notifications_hdr"></h4>
+          <div class="contents">
+            <div>
+              <label>
+                <input type="checkbox" id="notifications" />
+                <span id="notifications_txt"></span>
+              </label>
+              <a href="#notifications_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="notifications_help" class="help"></div>
+            </div>
+            <div style="margin: 0 0 0 4px">
+              <label>
+                <span id="notificationDuration_txt1"></span>
+                <input id="notificationDuration" max="60" min="0" size="1" step="1" type="number" />
+                <span id="notificationDuration_txt2"></span>
+              </label>
+              <a href="#notificationDuration_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="notificationDuration_help" class="help"></div>
+            </div>
+          </div>
+        </div>
+        <div id="anchors_sct" class="section">
+          <h4 id="anchors_hdr"></h4>
+          <div class="contents">
+            <div>
+              <label>
+                <input type="checkbox" id="doAnchorTitle" />
+                <span id="doAnchorTitle_txt"></span>
+              </label>
+              <a href="#doAnchorTitle_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="doAnchorTitle_help" class="help"></div>
+            </div>
+            <div>
+              <label>
+                <input type="checkbox" id="doAnchorTarget" />
+                <span id="doAnchorTarget_txt"></span>
+              </label>
+              <a href="#doAnchorTarget_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="doAnchorTarget_help" class="help"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="toolbar_tab" class="tab">
+        <div id="toolbar_sct" class="section">
+          <h4 id="toolbar_hdr"></h4>
+          <div class="contents">
+            <div>
+              <label>
+                <input type="checkbox" id="toolbarPopup" />
+                <span id="toolbarPopup_txt"></span>
+              </label>
+              <a href="#toolbarPopup_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="toolbarPopup_help" class="help"></div>
+            </div>
+            <div>
+              <label>
+                <input type="checkbox" id="toolbarFeature" />
+                <span id="toolbarFeature_txt"></span>
+              </label>
+              <a href="#toolbarFeature_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="toolbarFeature_help" class="help"></div>
+            </div>
+            <div style="margin: 0 0 0 40px">
+              <label for="toolbarFeatureName">
+                <span id="toolbarFeatureName_txt"></span>
+              </label>
+              <a href="#toolbarFeatureName_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="toolbarFeatureName_help" class="help"></div>
+              <br>
+              <select id="toolbarFeatureName" size="1"></select>
+            </div>
+            <div style="margin: 4px 0 0 36px">
+              <label>
+                <input type="checkbox" id="toolbarFeatureDetails" />
+                <span id="toolbarFeatureDetails_txt"></span>
+              </label>
+              <a href="#toolbarFeatureDetails_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="toolbarFeatureDetails_help" class="help"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="features_tab" class="tab">
+        <div id="features_sct" class="section">
+          <h4 id="features_hdr"></h4>
+          <div class="contents">
+            <div>
+              <table>
+                <tr>
+                  <td colspan="2" rowspan="2" style="min-width: 354px">
+                    <select id="features" size="5" style="width: 100%"></select>
+                  </td>
+                  <td style="padding-top: 10px; width: 50%">
+                    <button id="moveUp_btn"><img src="../images/move_up_disabled.gif" /></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <button id="moveDown_btn"><img src="../images/move_down_disabled.gif" /></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <table style="border-spacing: 0">
+                      <tr>
+                        <td style="width: 75px">
+                          <label for="feature_name">
+                            <span id="feature_name_txt"></span>
+                          </label>
+                          <a href="#feature_name_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                          <div id="feature_name_help" class="help"></div>
+                        </td>
+                        <td>
+                          <input id="feature_name" class="read-only-always" type="text" maxlength="16" size="32" />
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td>
+                    <button id="add_btn"></button>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <table style="border-spacing: 0">
+                      <tr>
+                        <td style="width: 75px">
+                          <label for="feature_title">
+                            <span id="feature_title_txt"></span>
+                          </label>
+                          <a href="#feature_title_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                          <div id="feature_title_help" class="help"></div>
+                        </td>
+                        <td>
+                          <input id="feature_title" class="read-only" type="text" maxlength="32" size="32" />
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td>
+                    <button id="delete_btn" class="read-only"></button>
+                    <div id="delete_con" class="help"></div>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2">
+                    <table style="border-spacing: 0">
+                      <tr>
+                        <td style="width: 75px">
+                          <label for="feature_image">
+                            <span id="feature_image_txt"></span>
+                          </label>
+                          <a href="#feature_image_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                          <div id="feature_image_help" class="help"></div>
+                        </td>
+                        <td>
+                          <select id="feature_image"></select>
+                          <img id="feature_image_preview" width="16" height="16" style="margin-bottom: -3px" />
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td>
+                    <button id="import_btn"></button>
+                    <div id="import_con" class="help">
+                      <div class="import_con_stage1"></div>
+                      <div class="import_con_stage2"></div>
+                      <div class="import_con_stage3"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <label>
+                      <input id="feature_enabled" type="checkbox" checked />
+                      <span id="feature_enabled_txt"></span>
+                    </label>
+                    <a href="#feature_enabled_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                    <div id="feature_enabled_help" class="help"></div>
+                  </td>
+                  <td style="text-align: right">
+                    <label>
+                      <span id="feature_shortcut_txt"></span><input id="feature_shortcut" type="text" maxlength="1" size="1" style="text-transform: uppercase" />
+                    </label>
+                    <a href="#feature_shortcut_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                    <div id="feature_shortcut_help" class="help"></div>
+                  </td>
+                  <td>
+                    <button id="export_btn"></button>
+                    <div id="export_con" class="help">
+                      <div class="export_con_stage1"></div>
+                      <div class="export_con_stage2"></div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="3">
+                    <label>
+                      <textarea id="feature_template" class="read-only" rows="5" cols="50" spellcheck="false" style="resize: vertical"></textarea>
+                    </label>
+                    <div>
+                      <a id="template_help_lnk" href="#template_help" rel="facebox"></a>
+                      <div id="template_help" class="help"></div>
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="shorteners_tab" class="tab">
+        <div id="shorteners_sct" class="section">
+          <h4 id="shorteners_hdr"></h4>
+          <div class="contents">
+            <div>
+              <table class="styled">
+                <thead>
+                  <tr>
+                    <th id="shorteners_enabled_hdr" style="text-align: center; width: 12%"></th>
+                    <th id="shorteners_name_hdr" style="width: 23%"></th>
+                    <th id="shorteners_config_hdr" style="width: 65%"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="vertical-align: top">
+                    <td style="text-align: center"><input type="radio" name="enabled_shortener" id="bitly" /></td>
+                    <td><a href="http://bit.ly" target="_blank">bit.ly</a></td>
+                    <td>
+                      <table>
+                        <tr>
+                          <td style="width: 40%">
+                            <label for="bitlyUsername">
+                              <span id="bitlyUsername_txt"></span>
+                            </label>
+                            <a href="#bitlyUsername_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                            <div id="bitlyUsername_help" class="help"></div>
+                          </td>
+                          <td>
+                            <input type="text" id="bitlyUsername" size="28" />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label for="bitlyApiKey">
+                              <span id="bitlyApiKey_txt"></span>
+                            </label>
+                            <a href="#bitlyApiKey_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                            <div id="bitlyApiKey_help" class="help"></div>
+                          </td>
+                          <td>
+                            <input type="password" id="bitlyApiKey" size="28" />
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr style="vertical-align: top">
+                    <td style="text-align: center"><input type="radio" name="enabled_shortener" id="googl" /></td>
+                    <td><a href="http://goo.gl" target="_blank">goo.gl</a></td>
+                    <td>
+                      <label>
+                        <input type="checkbox" id="googlOAuth" />
+                        <span id="googlOAuth_txt"></span>
+                      </label>
+                      <a href="#googlOAuth_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                      <div id="googlOAuth_help" class="help"></div>
+                    </td>
+                  </tr>
+                  <tr style="vertical-align: top">
+                    <td style="text-align: center"><input type="radio" name="enabled_shortener" id="yourls" /></td>
+                    <td><a href="http://yourls.org" target="_blank">YOURLS</a></td>
+                    <td>
+                      <table>
+                        <tr>
+                          <td style="width: 40%">
+                            <label for="yourlsUrl">
+                              <span id="yourlsUrl_txt"></span>
+                            </label>
+                            <a href="#yourlsUrl_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                            <div id="yourlsUrl_help" class="help"></div>
+                          </td>
+                          <td>
+                            <input type="url" id="yourlsUrl" size="28" />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td colspan="2" style="border-bottom: 1px dashed #AAA"></td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label for="yourlsUsername">
+                              <span id="yourlsUsername_txt"></span>
+                            </label>
+                            <a href="#yourlsCredentials_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                            <div id="yourlsCredentials_help" class="help"></div>
+                          </td>
+                          <td>
+                            <input type="text" id="yourlsUsername" size="28" />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label for="yourlsPassword">
+                              <span id="yourlsPassword_txt"></span>
+                            </label>
+                            <a href="#yourlsCredentials_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                          </td>
+                          <td>
+                            <input type="password" id="yourlsPassword" size="28" />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td id="yourls_or_txt" colspan="2" style="font-weight: bold; text-align: center"></td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label for="yourlsSignature">
+                              <span id="yourlsSignature_txt"></span>
+                            </label>
+                            <a href="#yourlsSignature_help" rel="facebox" tabindex="-1"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                            <div id="yourlsSignature_help" class="help"></div>
+                          </td>
+                          <td>
+                            <input type="password" id="yourlsSignature" size="28" />
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <table>
+          <tr>
+            <td style="width: 50%">
+              <button class="save-btn"></button>
+            </td>
+            <td style="text-align: right">&nbsp;</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div id="footer"></div>
+  </body>
 </html>

@@ -1,55 +1,55 @@
 {
-    "background_page": "pages/background.html",
-    "browser_action": {
-        "default_icon": "images/icon_19.png",
-        "default_popup": "pages/popup.html",
-        "default_title": "__MSG_name__"
-    },
-    "content_scripts": [
-        {
-            "js": [
-                "js/content.js"
-            ],
-            "matches": [
-                "file:///*/*",
-                "ftp://*/*",
-                "http://*/*",
-                "https://*/*"
-            ],
-            "run_at": "document_end"
-        }, {
-            "js": [
-                "js/install.js"
-            ],
-            "matches": [
-                "http://*.neocotic.com/*"
-            ],
-            "run_at": "document_end"
-        }
-    ],
-    "default_locale": "en",
-    "description": "__MSG_description__",
-    "icons": {
-        "16": "images/icon_16.png",
-        "19": "images/icon_19.png",
-        "24": "images/icon_24.png",
-        "32": "images/icon_32.png",
-        "48": "images/icon_48.png",
-        "64": "images/icon_64.png",
-        "72": "images/icon_72.png",
-        "96": "images/icon_96.png",
-        "128": "images/icon_128.png"
-    },
-    "name": "__MSG_name__",
-    "options_page": "pages/options.html",
-    "permissions": [
-        "clipboardRead",
-        "clipboardWrite",
-        "contextMenus",
-        "cookies",
-        "notifications",
-        "tabs",
-        "<all_urls>"
-    ],
-    "version": "0.3.0.0"
+  "background_page" : "pages/background.html",
+  "browser_action"  : {
+    "default_icon"  : "images/icon_19.png",
+    "default_popup" : "pages/popup.html",
+    "default_title" : "__MSG_name__"
+  },
+  "content_scripts" : [
+    {
+      "js"      : [
+        "lib/content.js"
+      ],
+      "matches" : [
+        "file:///*/*",
+        "ftp://*/*",
+        "http://*/*",
+        "https://*/*"
+      ],
+      "run_at"  : "document_end"
+    }, {
+      "js"      : [
+        "lib/install.js"
+      ],
+      "matches" : [
+        "http://*.neocotic.com/*"
+      ],
+      "run_at"  : "document_end"
+    }
+  ],
+  "default_locale"  : "en",
+  "description"     : "__MSG_description__",
+  "icons"           : {
+    "16"  : "images/icon_16.png",
+    "19"  : "images/icon_19.png",
+    "24"  : "images/icon_24.png",
+    "32"  : "images/icon_32.png",
+    "48"  : "images/icon_48.png",
+    "64"  : "images/icon_64.png",
+    "72"  : "images/icon_72.png",
+    "96"  : "images/icon_96.png",
+    "128" : "images/icon_128.png"
+  },
+  "name"            : "__MSG_name__",
+  "options_page"    : "pages/options.html",
+  "permissions"     : [
+    "clipboardRead",
+    "clipboardWrite",
+    "contextMenus",
+    "cookies",
+    "notifications",
+    "tabs",
+    "<all_urls>"
+  ],
+  "version"         : "0.3.0.0"
 }

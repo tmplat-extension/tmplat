@@ -20,8 +20,8 @@ https://github.com/neocotic/template/issues
 
 ## Questions?
 
-Take a look at the documentation to get a better understanding of what the code
-is doing.
+Take a look at `docs/*.html` to get a better understanding of what the code is
+doing.
 
 If that doesn't help, feel free to follow me on Twitter, [@neocotic][].
 

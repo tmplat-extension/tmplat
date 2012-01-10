@@ -1,31 +1,31 @@
 <!DOCTYPE html>
 <!--
- * Copyright (c) 2010 The Chromium Authors. All rights reserved.  Use of this
- * source code is governed by a BSD-style license that can be found in the
- * LICENSE file.
- *
- * Author: Eric Bidelman <ericbidelman@chromium.org>
+  Copyright (c) 2010 The Chromium Authors. All rights reserved.  Use of this
+  source code is governed by a BSD-style license that can be found in the
+  LICENSE file.
+  
+  Author: Eric Bidelman <ericbidelman@chromium.org>
 -->
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title></title>
-        <style type="text/css">
-            body {
-                font-family: Arial, sans-serif;
-                font-size: 13px;
-                font-style: italic;
-            }
-        </style>
-        <script type="text/javascript" src="../js/chrome_ex_oauthsimple.js"></script>
-        <script type="text/javascript" src="../js/chrome_ex_oauth.js"></script>
-        <script type="text/javascript">
-            function onLoad() {
-                document.body.innerHTML = chrome.i18n.getMessage('oauth_redirect_body');
-                document.title.innerHTML = chrome.i18n.getMessage('oauth_redirect_title');
-                ChromeExOAuth.initCallbackPage();
-            }
-        </script>
-    </head>
-    <body onload="onLoad();"></body>
+  <head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 13px;
+        font-style: italic;
+      }
+    </style>
+    <script src="../vendor/chrome_ex_oauthsimple.js"></script>
+    <script src="../vendor/chrome_ex_oauth.js"></script>
+    <script type="application/javascript">
+      function onLoad() {
+        document.body.innerHTML  = chrome.i18n.getMessage('oauth_redirect_body');
+        document.title.innerHTML = chrome.i18n.getMessage('oauth_redirect_title');
+        ChromeExOAuth.initCallbackPage();
+      }
+    </script>
+  </head>
+  <body onload="onLoad()"></body>
 </html>
