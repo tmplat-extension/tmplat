@@ -59,9 +59,11 @@ task 'dist', 'creates distributable file', ->
     "mkdir -p #{distDir}"
     "mkdir -p #{distDir}/#{tempDir}"
     "cp -r #{binDir}/* #{distDir}/#{tempDir}"
-    "for file in #{distDir}/#{tempDir}/lib/*.js; do #{minify} $file > $file.tmp"
-    'mv -f $file.tmp $file; done'
     "cd #{distDir}/#{tempDir}"
+    "for file in lib/*.js; do #{minify} $file > $file.tmp"
+    'mv -f $file.tmp $file; done'
+    "#{minify} vendor/mustache.js > vendor/mustache.js.tmp"
+    'mv -f vendor/mustache.js.tmp vendor/mustache.js'
     "zip -r ../#{distFile} *"
     'cd ../'
     "rm -rf #{tempDir}"
