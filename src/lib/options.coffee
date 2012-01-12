@@ -4,7 +4,8 @@
 # For all details and documentation:  
 # <http://neocotic.com/template>
 
-#### Private constants
+# Private constants
+# -----------------
 
 # Default locale to use if no matching locales were found in `locales`.
 DEFAULT_LOCALE   = 'en'
@@ -15,12 +16,14 @@ R_VALID_NAME     = /^[A-Za-z0-9]+$/
 # Regular expression used to validate keyboard shortcut inputs.
 R_VALID_SHORTCUT = /[A-Z0-9]/
 
-#### Private variables
+# Private variables
+# -----------------
 
 # Easily accessible reference to the extension controller.
 {ext} = chrome.extension.getBackgroundPage()
 
-#### Load functions
+# Load functions
+# --------------
 
 # Update the options page with the values from the current settings.
 load = ->
@@ -102,7 +105,7 @@ loadFeatureControlEvents = ->
         $('#moveUp_btn').removeAttr 'disabled'
       # Disable the *Down* control since the selected option is at the bottom
       # of the list.
-      if  opt.is ':last-child'
+      if opt.is ':last-child'
         $('#moveDown_btn').attr 'disabled', 'disabled'
       else
         $('#moveDown_btn').removeAttr 'disabled'
@@ -383,7 +386,7 @@ loadImages = ->
   images       = $ '#feature_image'
   for image in ext.images
     $('<option/>',
-      text:  image.name,
+      text:  image.name
       value: image.id
     ).appendTo(images).data 'file', image.file
     if image.separate
@@ -406,7 +409,7 @@ loadNotifications = ->
     $('#notifications').removeAttr 'checked'
   notificationDuration = utils.get 'notificationDuration'
   timeInSecs = 0
-  timeInSecs = notificationDuration / 1000 if notificationDuration > timeInSecs
+  timeInSecs = notificationDuration * .001 if notificationDuration > timeInSecs
   $('#notificationDuration').val timeInSecs
 
 # Update the toolbar behaviour section of the options page with the current
@@ -462,7 +465,8 @@ loadUrlShorteners = ->
   $('#yourlsUrl').val utils.get 'yourlsUrl'
   $('#yourlsUsername').val utils.get 'yourlsUsername'
 
-#### Save functions
+# Save functions
+# --------------
 
 # Update the settings with the values from the options page.
 save = ->
@@ -481,7 +485,7 @@ saveFeatures = ->
   features = []
   # Update the settings for each feature based on their corresponding options.
   $('#features option').each ->
-    features.push options.deriveFeature $ this
+    features.push deriveFeature $ this
   # Ensure the data for all features reflects the updated settings.
   ext.saveFeatures features
   ext.updateFeatures()
@@ -524,7 +528,73 @@ saveUrlShorteners = ->
   utils.set 'yourlsUrl',       $('#yourlsUrl').val().trim()
   utils.set 'yourlsUsername',  $('#yourlsUsername').val().trim()
 
-#### Validation functions
+# Update the specified `option` element that represents a feature with the
+# values taken from the available input fields.
+updateFeature = (opt) ->
+  if opt.length
+    opt.data 'content',  $('#feature_template').val()
+    opt.data 'enabled',  String $('#feature_enabled').is ':checked'
+    opt.data 'image',    $('#feature_image option:selected').val()
+    opt.data 'shortcut', $('#feature_shortcut').val().trim().toUpperCase()
+    opt.text $('#feature_title').val().trim()
+    opt.val  $('#feature_name').val().trim()
+    return opt
+
+# Update the existing feature with information extracted from the imported
+# feature provided.  
+# `feature` should not be altered in any way and the properties of `existing`
+# should only be changed if the replacement values are valid.  
+# Protected properties will only be updated if `existing` is not read-only and
+# the replacement value is valid.
+updateImportedFeature = (feature, existing) ->
+  # Ensure read-only features are protected.
+  unless existing.readOnly
+    existing.content = feature.content
+    # Only allow valid titles.
+    if feature.title.length > 0 and feature.title.length <= 32
+      existing.title = feature.title
+  existing.enabled = feature.enabled
+  # Only only existing images.
+  for image in ext.images when image.id is feature.image
+    existing.image = feature.image
+    break
+  # Only allow valid keyboard shortcuts.
+  existing.shortcut = feature.shortcut if isShortcutValid feature.shortcut
+  return existing
+
+# Update the selection of features in the toolbar behaviour section to reflect
+# those available in the features section.
+updateToolbarFeatures = ->
+  features                = []
+  toolbarFeatures         = $ '#toolbarFeatureName'
+  toolbarFeatureName      = utils.get 'toolbarFeatureName'
+  lastSelectedFeature     = toolbarFeatures.find 'option:selected'
+  lastSelectedFeatureName = ''
+  if lastSelectedFeature.length
+    lastSelectedFeatureName = lastSelectedFeature.val()
+  toolbarFeatures.find('option').remove()
+  $('#features option').each ->
+    $this = $ this
+    feature =
+      name:     $this.val()
+      selected: no
+      title:    $this.text()
+    if lastSelectedFeatureName
+      feature.selected = yes if feature.name is lastSelectedFeatureName
+    else if feature.name is toolbarFeatureName
+      feature.selected = yes
+    features.push feature
+  features.sort (a, b) ->
+    return a.title > b.title
+  for feature in features
+    option = $ '<option/>',
+      text:  "#{feature.title} (#{feature.name})"
+      value: feature.name
+    option.attr 'selected', 'selected' if feature.selected
+    toolbarFeatures.append option
+
+# Validation functions
+# --------------------
 
 # Indicate whether or not the specified `name` is available for use as a
 # feature.
@@ -595,7 +665,7 @@ validateFeatures = ->
     $this = $ this
     if validateFeature $this, no, usedShortcuts
       shortcut = $this.data('shortcut').trim()
-      # Only stores shortcut if used and feature is enabled
+      # Only stores shortcut if used and feature is enabled.
       if $this.data('enabled') is 'true' and shortcut
         usedShortcuts.push shortcut
     else
@@ -619,7 +689,8 @@ validateImportedFeature = (feature) ->
   'string'  is typeof feature.shortcut and
   'string'  is typeof feature.title
 
-#### Miscellaneous functions
+# Miscellaneous functions
+# -----------------------
 
 # Create a feature from the information from the imported `feature` provided.  
 # `feature` is not altered in any way and the new feature is only created if
@@ -697,208 +768,61 @@ getSmallestIcon = (icons) ->
   icon = ico for ico in icons when not icon or ico.size < icon.size
   return icon
 
-#### TODO: START: Convert to CoffeeScript
+# Read the imported data created by `createImport` and extract all of the
+# imported features that appear to be valid.  
+# When overwriting an existing feature, only the properties with valid values
+# will be transferred with the exception of protected properties (i.e. on
+# read-only features).  
+# When creating a new feature, any invalid properties will be replaced with
+# their default values.
+readImport = (importData) ->
+  data     = features: []
+  names    = []
+  for feature in importData.templates
+    existing = {}
+    if validateImportedFeature feature
+      if isNameAvailable feature.name, names
+        # Attempt to create and add the new feature.
+        feature = addImportedFeature feature
+        if feature
+          data.features.push feature
+          names.push feature.name
+      else
+        # Attempt to update the previously imported feature.
+        for imported, i in data.features
+          if imported.name is feature.name
+            existing         = updateImportedFeature feature, imported
+            data.features[i] = existing
+            break
+        unless existing.name
+          # Attempt to derive the existing feature from the available options.
+          existing = deriveFeature $ "#features
+            option[value='#{feature.name}']"
+          # Attempt to update the derived feature.
+          if existing
+            existing = updateImportedFeature feature, existing
+            data.features.push existing
+            names.push existing.name
+  return data
 
-/**
- * <p>Reads the imported data created by {@link options.createImport} and
- * extracts all valid imported features.</p>
- * <p>Where the feature will overwrite an existing feature, only fields
- * with valid values will be accepted with exception to protected fields
- * (i.e. on read-only features).</p>
- * <p>Where the feature is new default values will replace any fields with
- * invalid values assigned to them.</p>
- * @param {Object} importData The data parsed from the imported string.
- * @param {Object[]} importData.templates The features to be extracted and
- * validated.
- * @param {String} importData.version The version of this extension used to
- * export the data currently being imported.
- * @returns {Object} An object containing the list of features extracted
- * from the imported data, if any.
- * @since 0.2.0.0
- * @private
- */
-readImport: function (importData) {
-    var data = {
-            features: []
-        },
-        existing = {},
-        feature = {},
-        names = [];
-    for (var i = 0; i < importData.templates.length; i++) {
-        existing = {};
-        feature = importData.templates[i];
-        if (options.validateImportedFeature(feature)) {
-            if (options.isNameAvailable(feature.name, names)) {
-                // Attempts to create and add new feature
-                feature = options.addImportedFeature(feature);
-                if (feature) {
-                    data.features.push(feature);
-                    names.push(feature.name);
-                }
-            } else {
-                // Attempts to update previously imported feature
-                for (var j = 0; j < data.features.length; j++) {
-                    if (data.features[j].name === feature.name) {
-                        existing = options.updateImportedFeature(feature,
-                                data.features[j]);
-                        data.features[j] = existing;
-                        break;
-                    }
-                }
-                if (!existing.name) {
-                    // Attempts to derive existing feature from options
-                    existing = options.deriveFeature(
-                            $('#features option[value="' + feature.name +
-                            '"]'));
-                    // Attempts to update derived feature
-                    if (existing) {
-                        existing = options.updateImportedFeature(feature,
-                                existing);
-                        data.features.push(existing);
-                        names.push(existing.name);
-                    }
-                }
-            }
-        }
-    }
-    return data;
-},
+# Toggle the acccessibility of the toolbar feature details.
+toggleToolbarFeature = ->
+  fields = $ '#toolbarFeatureName, #toolbarFeatureDetails'
+  spans  = $ '#toolbarFeatureName_txt, #toolbarFeatureDetails_txt'
+  if $('#toolbarPopup').is ':checked'
+    spans.addClass 'disabled'
+    fields.attr 'disabled', 'disabled'
+  else
+    spans.removeClass 'disabled'
+    fields.removeAttr 'disabled'
 
-/**
- * <p>Toggles the acccessibility of the toolbar feature details.</p>
- * @since 0.3.0.0
- * @private
- */
-toggleToolbarFeature: function () {
-    if ($('#toolbarPopup').is(':checked')) {
-        $('#toolbarFeatureName_txt, ' +
-                '#toolbarFeatureDetails_txt').addClass('disabled');
-        $('#toolbarFeatureName, #toolbarFeatureDetails').attr('disabled',
-                'disabled');
-    } else {
-        $('#toolbarFeatureName_txt, ' +
-                '#toolbarFeatureDetails_txt').removeClass('disabled');
-        $('#toolbarFeatureName, ' +
-                '#toolbarFeatureDetails').removeAttr('disabled');
-    }
-},
-
-/**
- * <p>Updates the specified &lt;option&gt; element that represents a
- * feature with values taken from the available fields.</p>
- * @param {jQuery} opt The jQuery wrapped &lt;option&gt; to be
- * updated.
- * @since 0.1.0.3
- * @private
- */
-updateFeature: function (opt) {
-    if (opt.length) {
-        opt.data('content', $('#feature_template').val());
-        opt.data('enabled', String($('#feature_enabled').is(':checked')));
-        opt.data('image', $('#feature_image option:selected').val());
-        opt.data('shortcut',
-                $('#feature_shortcut').val().trim().toUpperCase());
-        opt.text($('#feature_title').val().trim());
-        opt.val($('#feature_name').val().trim());
-        return opt;
-    }
-},
-
-/**
- * <p>Updates the existing feature with information extracted from the
- * imported feature provided.</p>
- * <p>The feature provided is not altered in anyw way and the fields of the
- * existing feature are only changed if the new values are valid.</p>
- * <p>Protected fields are only updated if the existing feature is not
- * read-only and the new value is valid.</p>
- * @param {Object} feature The imported feature on which the existing
- * feature should be modified to reflect.
- * @param {Object} existing The existing feature which should be modified
- * so that its fields reflect that of the import feature.
- * @returns {Object} The existing feature with the modified fields.
- * @since 0.2.0.0
- * @private
- */
-updateImportedFeature: function (feature, existing) {
-    var bg = chrome.extension.getBackgroundPage();
-    // Ensures read-only templates are protected
-    if (!existing.readOnly) {
-        existing.content = feature.content;
-        // Only updates valid titles
-        if (feature.title.length > 0 && feature.title.length <= 32) {
-            existing.title = feature.title;
-        }
-    }
-    existing.enabled = feature.enabled;
-    // Only updates image if identifier exists
-    for (var i = 0; i < bg.ext.images.length; i++) {
-        if (bg.ext.images[i].id === feature.image) {
-            existing.image = feature.image;
-            break;
-        }
-    }
-    // Only updates valid shortcuts
-    if (options.isShortcutValid(feature.shortcut)) {
-        existing.shortcut = feature.shortcut;
-    }
-    return existing;
-},
-
-/**
- * <p>Updates the selection of features in the toolbar behaviour section
- * to reflect that available in the templates section.</p>
- * @since 0.3.0.0
- * @private
- */
-updateToolbarFeatures: function () {
-    var features = [],
-        toolbarFeatures = $('#toolbarFeatureName'),
-        toolbarFeatureName = utils.get('toolbarFeatureName'),
-        lastSelectedFeature = toolbarFeatures.find('option:selected'),
-        lastSelectedFeatureName = '';
-    if (lastSelectedFeature.length) {
-        lastSelectedFeatureName = lastSelectedFeature.val();
-    }
-    toolbarFeatures.find('option').remove();
-    $('#features option').each(function () {
-        var $this = $(this),
-            feature = {
-                name: $this.val(),
-                selected: false,
-                title: $this.text()
-            };
-        if (lastSelectedFeatureName) {
-            if (feature.name === lastSelectedFeatureName) {
-                feature.selected = true;
-            }
-        } else if (feature.name === toolbarFeatureName) {
-            feature.selected = true;
-        }
-        features.push(feature);
-    });
-    features.sort(function (a, b) {
-        return a.title > b.title;
-    });
-    var option;
-    for (var i = 0; i < features.length; i++) {
-        option = $('<option/>', {
-            text: features[i].title + ' (' + features[i].name + ')',
-            value: features[i].name
-        });
-        if (features[i].selected) {
-            option.attr('selected', 'selected');
-        }
-        toolbarFeatures.append(option);
-    }
-},
-
-#### TODO: END: Convert to CoffeeScript
-
-#### Options page setup
+# Options page setup
+# ------------------
 
 options = window.options =
 
-  #### Public functions
+  # Public functions
+  # ----------------
 
   # Initialize the options page.  
   # This will involve inserting and configuring the UI elements as well as
