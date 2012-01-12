@@ -4,36 +4,31 @@
 # For all details and documentation:  
 # <http://neocotic.com/template>
 
-#### Private variables
+# Private variables
+# -----------------
 
 # Easily accessible reference to the extension controller.
 {ext} = chrome.extension.getBackgroundPage()
 
-#### Private functions
-
- # Calculate the widest text used by the `div` elements in the popup and assign
- # it to all the others.
-resizePopupText = ->
-  textItems   = document.getElementsByClassName 'text'
-  width       = 0
-
-  for textItem in textItems
-    width = textItem.scrollWidth if textItem.scrollWidth > width
-  for textItem in textItems
-    textItem.style.width = "#{width}px"
-
-#### Popup page setup
+# Popup page setup
+# ----------------
 
 popup = window.popup =
 
-  #### Public functions
+  # Public functions
+  # ----------------
 
   # Initialize the popup page.
   init: ->
     # Insert the prepared HTML in to the popup's body.
     document.body.innerHTML = ext.popupHTML
-    # Fix dimensions of feature text
-    resizePopupText()
+    # Calculate the widest text used by the `div` elements in the popup and
+    # assign it to all of the others.
+    textItems   = document.getElementsByClassName 'text'
+    width       = 0
+    for textItem in textItems when textItem.scrollWidth > width
+      width = textItem.scrollWidth
+    textItem.style.width = "#{width}px" for textItem in textItems
 
   # Send a request to the background page using the information provided.
   sendRequest: (item) ->
