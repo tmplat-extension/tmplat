@@ -4,12 +4,14 @@
 # For all details and documentation:  
 # <http://neocotic.com/template>
 
-#### Private variables
+# Private variables
+# -----------------
 
 # Easily accessible reference to the extension controller.
 {ext} = chrome.extension.getBackgroundPage()
 
-#### Notification page setup
+# Notification page setup
+# -----------------------
 
 notification = window.notification =
 
