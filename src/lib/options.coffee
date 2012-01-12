@@ -384,7 +384,7 @@ loadFeatures = ->
 loadImages = ->
   imagePreview = $ '#feature_image_preview'
   images       = $ '#feature_image'
-  for image in ext.images
+  for image in ext.IMAGES
     $('<option/>',
       text:  image.name
       value: image.id
@@ -555,7 +555,7 @@ updateImportedFeature = (feature, existing) ->
       existing.title = feature.title
   existing.enabled = feature.enabled
   # Only only existing images.
-  for image in ext.images when image.id is feature.image
+  for image in ext.IMAGES when image.id is feature.image
     existing.image = feature.image
     break
   # Only allow valid keyboard shortcuts.
@@ -708,7 +708,7 @@ addImportedFeature = (feature) ->
         shortcut: ''
         title:    utils.i18n 'untitled'
       # Only allow existing images.
-      for image in ext.images when image.id is feature.image
+      for image in ext.IMAGES when image.id is feature.image
         newFeature.image = feature.image
         break
       # Only allow valid keyboard shortcuts.
@@ -877,9 +877,9 @@ options = window.options =
     # Load the current option values.
     load()
     if ext.isThisPlatform 'mac'
-      $('#feature_shortcut_txt').html ext.shortcutMacModifiers
+      $('#feature_shortcut_txt').html ext.SHORTCUT_MAC_MODIFIERS
     else
-      $('#feature_shortcut_txt').html ext.shortcutModifiers
+      $('#feature_shortcut_txt').html ext.SHORTCUT_MODIFIERS
     # Initialize all faceboxes.
     $('a[facebox]').click ->
       $.facebox div: $(this).attr 'facebox'
