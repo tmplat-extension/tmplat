@@ -4,7 +4,8 @@
 # For all details and documentation:  
 # <http://neocotic.com/template>
 
-#### Private variables
+# Private variables
+# -----------------
 
 # Mapping for internationalization handlers.  
 # Each handler represents an attribute (based on the property name) and is
@@ -43,7 +44,8 @@ i18nAttributes.push key for key of i18nHandlers
 # which is used by `i18nProcess` to query all elements.
 i18nSelector   = "[#{i18nAttributes.join '],['}]"
 
-#### Private functions
+# Private functions
+# -----------------
 
 # Find all elements to be internationalized and call their corresponding
 # handler(s).
@@ -65,19 +67,21 @@ i18nSubs = (element, value, subMap) ->
       break
   return subs
 
-#### Utilities setup
+# Utilities setup
+# ---------------
 
 utils = window.utils =
 
-  #### Data functions
+  # Data functions
+  # --------------
 
   # Determine whether or not the specified key exists in `localStorage`.
   exists: (key) ->
     return localStorage.hasOwnProperty key
 
   # Retrieve the value associated with the specified key from `localStorage`.  
-  # If the value is found, parse it as JSON before being returning it; otherwise
-  # return `undefined`.
+  # If the value is found, parse it as JSON before being returning it;
+  # otherwise return `undefined`.
   get: (key) ->
     value = localStorage[key]
     return if value? then JSON.parse value else value
@@ -97,8 +101,8 @@ utils = window.utils =
 
   # Copy the value of the existing key to that of the new key then remove the
   # old key from `localStorage`.  
-  # If the old key doesn't exist in `localStorage`, assign the specified default
-  # value to it instead.
+  # If the old key doesn't exist in `localStorage`, assign the specified
+  # default value to it instead.
   rename: (oldKey, newKey, defaultValue) ->
     if utils.exists oldKey
       utils.init newKey, utils.get oldKey
@@ -114,7 +118,8 @@ utils = window.utils =
     localStorage[key] = if value? then JSON.stringify value else value
     return oldValue
 
-  #### Internationalization functions
+  # Internationalization functions
+  # ------------------------------
 
   # Convenient shorthand for `chrome.i18n.getMessage`.
   i18n: ->
