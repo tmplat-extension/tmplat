@@ -4,7 +4,8 @@
 # For all details and documentation:  
 # <http://neocotic.com/template>
 
-#### Functionality
+# Functionality
+# -------------
 
 # Wrap the function functionality in a request for Template's current version
 # so that it can be used to detect previous injections.
