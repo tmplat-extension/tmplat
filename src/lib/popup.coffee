@@ -21,7 +21,7 @@ popup = window.popup =
   # Initialize the popup page.
   init: ->
     # Insert the prepared HTML in to the popup's body.
-    document.body.innerHTML = ext.popupHTML
+    document.body.innerHTML = ext.popupHtml
     # Calculate the widest text used by the `div` elements in the popup and
     # assign it to all of the others.
     textItems   = document.getElementsByClassName 'text'
