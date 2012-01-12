@@ -15,6 +15,9 @@
 
 notification = window.notification =
 
+  # Public functions
+  # ----------------
+
   # Initialize the notification page.
   init: ->
     div      = document.getElementById 'tip'
