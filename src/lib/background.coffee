@@ -95,28 +95,28 @@ SHORTENERS        = [
     if utils.get('bitlyApiKey') and utils.get 'bitlyUsername'
       params.x_apiKey = utils.get 'bitlyApiKey'
       params.x_login  = utils.get 'bitlyUsername'
-    return params
+    params
   input: ->
-    return null
+    null
   isEnabled: ->
-    return utils.get 'bitly'
+    utils.get 'bitly'
   method: 'GET'
   name: 'bit.ly'
   output: (resp) ->
-    return JSON.parse(resp).data.url
+    JSON.parse(resp).data.url
   url: ->
-    return 'http://api.bitly.com/v3/shorten'
+    'http://api.bitly.com/v3/shorten'
 ,
   # Setup [Google URL Shortener](http://goo.gl).
   contentType: 'application/json'
   getParameters: ->
-    return key: 'AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY'
+    key: 'AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY'
   input: (url) ->
-    return JSON.stringify longUrl: url
+    JSON.stringify longUrl: url
   isEnabled: ->
-    return utils.get 'googl'
+    utils.get 'googl'
   isOAuthEnabled: ->
-    return utils.get 'googlOAuth'
+    utils.get 'googlOAuth'
   method: 'POST'
   name: 'goo.gl'
   oauth: ChromeExOAuth.initBackgroundPage
@@ -128,9 +128,9 @@ SHORTENERS        = [
     request_url:     'https://www.google.com/accounts/OAuthGetRequestToken'
     scope:           'https://www.googleapis.com/auth/urlshortener'
   output: (resp) ->
-    return JSON.parse(resp).id
+    JSON.parse(resp).id
   url: ->
-    return 'https://www.googleapis.com/urlshortener/v1/url'
+    'https://www.googleapis.com/urlshortener/v1/url'
 ,
   # Setup [YOURLS](http://yourls.org).
   contentType: 'application/json'
@@ -144,17 +144,17 @@ SHORTENERS        = [
       params.username  = utils.get 'yourlsUsername'
     else if utils.get 'yourlsSignature'
       params.signature = utils.get 'yourlsSignature'
-    return params
+    params
   input: ->
-    return null
+    null
   isEnabled: ->
-    return utils.get 'yourls'
+    utils.get 'yourls'
   method: 'POST'
   name: 'YOURLS'
   output: (resp) ->
-    return JSON.parse(resp).shorturl
+    JSON.parse(resp).shorturl
   url: ->
-    return utils.get 'yourlsUrl'
+    utils.get 'yourlsUrl'
 ]
 # List of extensions supported by Template and used for compatibility purposes.
 SUPPORT           = [
@@ -176,7 +176,7 @@ SUPPORT           = [
   # Setup IE Tab Classic.
   id: 'miedgcmlgpmdagojnnbemlkgidepfjfi'
   title: (title) ->
-    return title
+    title
   url: (url) ->
     str = 'ie.html#'
     if url
@@ -187,7 +187,7 @@ SUPPORT           = [
   # Setup IE Tab Multi (Enhance).
   id: 'fnfnbeppfinmnjnjhedifcfllpcfgeea'
   title: (title) ->
-    return title
+    title
   url: (url) ->
     str = 'navigate.html?chromeurl='
     if url
@@ -203,7 +203,7 @@ SUPPORT           = [
   # Setup Mozilla Gecko Tab.
   id: 'icoloanbecehinobmflpeglknkplbfbm'
   title: (title) ->
-    return title
+    title
   url: (url) ->
     str = 'navigate.html?chromeurl='
     if url
@@ -229,6 +229,294 @@ operatingSystem = ''
 
 # Private functions
 
+# Add the feature `name` to the list stored in `localStorage`.  
+# `name` will only be added if it doesn't already exist.  
+addFeatureName = (name) ->
+  features = utils.get 'features'
+  if features.indexOf(name) is -1
+    features.push name
+    utils.set 'features', features
+    return yes
+  no
+
+# Delete the stored values for the feature with the specified `name`.
+deleteFeature = (name) ->
+  utils.remove "feat_#{name}_content"
+  utils.remove "feat_#{name}_enabled"
+  utils.remove "feat_#{name}_image"
+  utils.remove "feat_#{name}_index"
+  utils.remove "feat_#{name}_readonly"
+  utils.remove "feat_#{name}_shortcut"
+  utils.remove "feat_#{name}_title"
+
+# Inject and execute the `content.coffee` and `install.coffee` scripts within
+# all of the tabs (where valid) of each Chrome window.
+executeScriptsInExistingWindows = ->
+  chrome.windows.getAll null, (windows) ->
+    for win in windows
+      # Retrieve all tabs open in `win`.
+      chrome.tabs.query windowId: win.id, (tabs) ->
+        # Check tabs are not displaying a *protected* page (i.e. one that will
+        # cause an error if an attempt is made to execute content scripts).
+        for tab in tabs when not isProtectedPage tab
+          chrome.tabs.executeScript tab.id, file: 'lib/content.js'
+          # Only execute inline installation content script for tabs displaying
+          # a page on Template's homepage domain.
+          if tab.url.indexOf(HOMEPAGE_DOMAIN) isnt -1
+            chrome.tabs.executeScript tab.id, file: 'lib/install.js'
+
+# Attempt to derive the current version of the user's browser.
+getBrowserVersion = ->
+  str = navigator.userAgent
+  idx = str.indexOf browser.title
+  if idx isnt -1
+    str = str.substring idx + browser.title.length + 1
+    idx = str.indexOf ' '
+    return if idx is -1 then str else str.substring 0, idx
+
+# Attempt to retrieve the feature with the specified `menuId`.
+getFeatureWithMenuId = (menuId) ->
+  queryFeature (feature) ->
+    feature.menuId is menuId
+
+# Attempt to retrieve the feature with the specified `name`.
+getFeatureWithName = (name) ->
+  queryFeature (feature) ->
+    feature.name is name
+
+# Attempt to retrieve the feature with the specified keyboard `shortcut`.  
+# Exclude disabled features from this query.
+getFeatureWithShortcut = (shortcut) ->
+  queryFeature (feature) ->
+    feature.enabled and feature.shortcut is shortcut
+
+# Derive the path of the image used by `feature`.
+getImagePathForFeature = (feature, relative) ->
+  path = ''
+  for image in ext.IMAGES when image.id is feature.image
+    path += '../' if relative
+    path += "images/#{image.file}"
+    break
+  path
+
+# Derive the operating system being used by the user.
+getOperatingSystem = ->
+  str = navigator.platform
+  for os in OPERATING_SYSTEMS when str.indexOf(os.substring) isnt -1
+    str = os.title
+    break
+  str
+
+# Determine whether or not `sender` is a blacklisted extension.
+isBlacklisted = (sender) ->
+  return yes for extension in BLACKLIST when extension is sender.id
+  no
+
+# Determine whether or not the specified extension is active on `tab`.
+isExtensionActive = (tab, extensionId) ->
+  isSpecialPage(tab) and tab.url.indexOf(extensionId) isnt -1
+
+# Determine whether or not `tab` is currently displaying a page on the Chrome
+# Extension Gallery (i.e. Web Store).
+isExtensionGallery = (tab) ->
+  tab.url.indexOf('https://chrome.google.com/webstore') is 0
+
+# Determine whether or not `tab` is currently displaying a *protected* page
+# (i.e. a page that content scripts cannot be executed on).
+isProtectedPage = (tab) ->
+  isSpecialPage(tab) or isExtensionGallery tab
+
+# Determine whether or not `tab` is currently displaying a *special* page (i.e.
+# a page that is internal to the browser).
+isSpecialPage = (tab) ->
+  tab.url.indexOf('chrome') is 0
+
+# Load the settings for the derived feature.
+loadFeature = (name) ->
+  content:  utils.get "feat_#{name}_content"
+  enabled:  utils.get "feat_#{name}_enabled"
+  image:    utils.get "feat_#{name}_image"
+  index:    utils.get "feat_#{name}_index"
+  name:     name
+  readOnly: utils.get "feat_#{name}_readonly"
+  shortcut: utils.get "feat_#{name}_shortcut"
+  title:    utils.get "feat_#{name}_title"
+
+# Load the settings for all persisted features.  
+# Sort the features based on their index.
+loadFeatures = ->
+  features = []
+  names = utils.get 'features'
+  features.push loadFeature name for name in names
+  features.sort (a, b) ->
+    a.index - b.index
+  features
+
+# Listener for internal requests to the extension.  
+# External requests are also routed through here, but only after being checked
+# that they do not originate from a blacklisted extension.
+onRequest = (request, sender, sendResponse) ->
+  # Don't allow shortcut requests when shortcuts are disabled.
+  if request.type is 'shortcut' and not utils.get 'shortcuts'
+    return sendResponse?()
+  # Version requests are simple, just send the version back. Done!
+  if request.type is 'version'
+    return sendResponse? version: ext.version
+  chrome.windows.getCurrent (win) ->
+    chrome.tabs.query
+      active:   yes
+      windowId: win.id
+    , (tabs) ->
+      data             = {}
+      popup            = chrome.extension.getViews(type: 'popup')[0]
+      shortCalled      = no
+      shortPlaceholder = "short#{Math.floor Math.random() * 99999 + 1000}"
+      tab              = tabs[0]
+
+      # Attempt to copy `str` to the system clipboard while handling the
+      # potential for failure.
+      copyOutput = (str) ->
+        if str
+          ext.copy str
+        else
+          ext.message = utils.i18n 'copy_fail_empty'
+          ext.status  = no
+          showNotification()
+
+      # Called whenever the `short` tag is found to indicate that the URL
+      # needs shortened.  
+      # Replace the `short` tag with the unique placeholder so that it can be
+      # rendered again later with the short URL.
+      shortCallback = ->
+        shortCalled = yes
+        "{#{shortPlaceholder}}"
+
+      # If the popup is currently displayed, hide the feature list and show a
+      # loading animation.
+      if popup
+        $('#item', popup.document).hide()
+        $('#loadDiv', popup.document).show()
+      # Attempt to derive the contextual template data.
+      try
+        switch request.type
+          when 'menu'
+            data    = buildDerivedData tab, request.data, shortCallback
+            feature = getFeatureWithMenuId request.data.menuItemId
+          when 'popup'
+            data    = buildStandardData tab, shortCallback
+            # Should be cheaper than searching through `ext.features`...
+            feature = loadFeature request.data.name
+          when 'shortcut'
+            data    = buildStandardData tab, shortCallback
+            feature = getFeatureWithShortcut request.data.key
+      catch error
+        # Oops! Something went wrong so we should probably let the user know.
+        if error instanceof URIError
+          ext.message = utils.i18n 'copy_fail_uri'
+        else
+          ext.message = utils.i18n 'copy_fail_error'
+        ext.status = no
+        showNotification()
+        return
+      if feature
+        addAdditionalData tab, data, ->
+          unless feature.content
+            # Display the *empty template* error message.
+            copyOutput()
+            return
+          output = Mustache.to_html feature.content, data
+          if shortCalled
+            # At least one `short` tag was found and replaced, so now we need
+            # to call the URL shortener service and replace that with the
+            # actual short URL.
+            callUrlShortener data.source, (response) ->
+              if response.success and response.shortUrl
+                # Short URL was successfully returned, so get rendering.
+                newData = {}
+                newData[shortPlaceholder] = response.shortUrl
+                copyOutput Mustache.to_html output, newData
+              else
+                # Aw man, something went wrong. Let the user down gently.
+                unless response.message
+                  response.message = utils.i18n 'shortener_error',
+                    response.shortener
+                ext.message = response.message
+                ext.status  = no
+                showNotification()
+          else
+            copyOutput output
+      else
+        # Close the popup if it's still open.
+        popup?.close()
+
+# Retrieve the first feature that passes the specified `filter`.
+queryFeature = (filter) ->
+  if typeof filter is 'function'
+    return feature for feature in ext.features when filter feature
+
+# Remove the feature `name` from the persisted list.
+removeFeatureName = (name) ->
+  features = utils.get 'features'
+  idx      = features.indexOf name
+  if idx isnt -1
+    features.splice idx, 1
+    utils.set 'features', features
+
+# Persist the settings for `feature`.
+saveFeature = (feature) ->
+  utils.set "feat_#{feature.name}_content",  feature.content
+  utils.set "feat_#{feature.name}_enabled",  feature.enabled
+  utils.set "feat_#{feature.name}_image",    feature.image
+  utils.set "feat_#{feature.name}_index",    feature.index
+  utils.set "feat_#{feature.name}_readonly", feature.readOnly
+  utils.set "feat_#{feature.name}_shortcut", feature.shortcut
+  utils.set "feat_#{feature.name}_title",    feature.title
+  feature
+
+# Display a desktop notification informing the user on whether or not the copy
+# request was successful.  
+# Also ensure that `ext` is *reset* and that notifications are only displayed
+# if the user has enabled the corresponding option (enabled by default).
+showNotification = ->
+  if utils.get 'notifications'
+    webkitNotifications.createHTMLNotification(
+      chrome.extension.getURL 'pages/notification.html'
+    ).show()
+  else
+    ext.reset()
+  # Close the popup if it's still open.
+  chrome.extension.getViews(type: 'popup')[0]?.close()
+
+# Update the context menu items to reflect the current enabled features.  
+# If the context menu option has been disabled by the user, just remove all of
+# the existing menu items.
+updateContextMenu = ->
+  # Ensure that any previously added context menu items are removed.
+  chrome.contextMenus.removeAll = ->
+    # Called whenever a menu item is clicked.  
+    # Send a self request, passing along the available information.
+    onMenuClick = (info, tab) ->
+      onRequest
+        data: info
+        type: 'menu'
+
+    if utils.get 'contextMenu'
+      # Create and add the top-level Template menu.
+      parentId = chrome.contextMenus.create
+        contexts: ['all']
+        title:    utils.i18n 'name'
+      # Create and add a sub-menu item for each enabled feature.
+      for feature in ext.features when feature.enabled
+        menuId = chrome.contextMenus.create
+          contexts: ['all']
+          onclick:  onMenuClick
+          parentId: parentId
+          title:    feature.title
+        feature.menuId = menuId
+
+# Data functions
+# --------------
+
 # Extract additional information from `tab` and add it to `data`.
 addAdditionalData = (tab, data, callback) ->
   chrome.cookies.getAll url: data.url, (cookies) ->
@@ -245,7 +533,7 @@ addAdditionalData = (tab, data, callback) ->
           return ''
       cookies: names
     # Try to prevent pages hanging because content script wasn't executed.
-    if ext.isProtectedPage tab
+    if isProtectedPage tab
       $.extend data,
         selection:      ''
         selectionlinks: []
@@ -256,16 +544,6 @@ addAdditionalData = (tab, data, callback) ->
           selection:      response.text or ''
           selectionlinks: response.urls or []
         callback?()
-
-# Add the feature `name` to the list stored in `localStorage`.  
-# `name` will only be added if it doesn't already exist.  
-addFeatureName = (name) ->
-  features = utils.get 'features'
-  if features.indexOf(name) is -1
-    features.push name
-    utils.set 'features', features
-    return yes
-  return no
 
 # Creates an object containing data based on information derived from the
 # specified tab and menu item data.
@@ -281,54 +559,7 @@ buildDerivedData = (tab, onClickData, shortCallback) ->
     data.url = onClickData.frameUrl
   else
     data.url = onClickData.pageUrl
-  return buildStandardData data, shortCallback
-
-# Create an `li` element to represent `feature`.  
-# The element should then be inserted in to the `ul` element in the popup page
-# but is created here to optimize display times for the popup.
-buildFeature = (feature) ->
-  image   = getImagePathForFeature feature, yes
-  image or= '../images/spacer.png'
-  item    = $ '<li/>',
-    name:    feature.name
-    onclick: 'popup.sendRequest(this)'
-  menu    = $ '<div/>',
-    class: 'menu'
-    style: "background-image: url('#{image}')"
-  menu.append $ '<span/>',
-    class: 'text'
-    text:  feature.title
-  if utils.get 'shortcuts'
-    modifiers = ext.SHORTCUT_MODIFIERS
-    modifiers = ext.SHORTCUT_MAC_MODIFIERS if ext.isThisPlatform 'mac'
-    menu.append $ '<span/>',
-      class: 'shortcut',
-      html:  if feature.shortcut then modifiers + feature.shortcut else ''
-  return item.append menu
-
-# Build the HTML to populate the popup with to optimize popup loading times.
-buildPopup = ->
-  item     = $ '<div id="item"/>'
-  itemList = $ '<ul id="itemList"/>'
-  loadDiv  = $ '<div id="loadDiv"/>'
-  $.prototype.append.apply loadDiv [
-    $ '<img src="../images/loading.gif"/>'
-    $ '<div/>', text: utils.i18n 'shortening'
-  ]
-  # Generate the HTML for each feature.
-  for feature in ext.features when feature.enabled
-    itemList.append buildFeature feature
-  # Add a generic message to state the obvious... that the list is empty.
-  if itemList.find('li').length is 0
-    itemList.append $('<li/>').append $('<div/>',
-      class: 'menu'
-      style: "background-image: url('../images/spacer.png')"
-    ).append $ '<span/>',
-      class: 'text'
-      style: 'margin-left: 0'
-      text:  utils.i18n 'empty'
-  item.append itemList
-  ext.popupHtml = $('<div/>').append(loadDiv, item).html()
+  buildStandardData data, shortCallback
 
 # Construct a data object based on information extracted from `tab`.  
 # The tab information is then merged with additional information relating to
@@ -341,7 +572,7 @@ buildStandardData = (tab, shortCallback) ->
   data          = {}
   title         = ''
   url           = {}
-  for extension in SUPPORT when ext.isExtensionActive tab, extension.id
+  for extension in SUPPORT when isExtensionActive tab, extension.id
     title = extension.title tab.title
     url = $.url extension.url tab.url
     compatibility = yes
@@ -398,7 +629,7 @@ buildStandardData = (tab, shortCallback) ->
       (text, render) ->
         url.segment parseInt render(text), 10
     segments: url.segment()
-    'short': ->
+    short: ->
       shortCallback?()
     shortcuts: utils.get 'shortcuts'
     title: title or url.attr 'source'
@@ -413,134 +644,60 @@ buildStandardData = (tab, shortCallback) ->
     yourlssignature: utils.get 'yourlsSignature'
     yourlsurl: utils.get 'yourlsUrl'
     yourlsusername: utils.get 'yourlsUsername'
-  return data
+  data
 
-# Call the active URL shortener service for `url` in order to obtain the
-# relevant short URL.  
-# `callback` will be called with the result once it has been received from the
-# URL shortener service.
-callUrlShortener = (url, callback) ->
-  callUrlShortenerHelper url, (url, service) ->
-    name = service.name
-    sUrl = service.url()
-    unless sUrl
-      callback?(
-        message:   utils.i18n 'shortener_config_error', name
-        shortener: name
-        success:   no
-      )
-      return
-    try
-      params = service.getParameters(url) or {}
-      req = new XMLHttpRequest()
-      req.open service.method, "#{sUrl}?#{$.param params}", yes
-      req.setRequestHeader 'Content-Type', service.contentType
-      if service.oauth and service.isOAuthEnabled()
-        req.setRequestHeader 'Authorization',
-          service.oauth.getAuthorizationHeader sUrl, service.method, params
-      req.onreadystatechange = ->
-        if req.readyState is 4
-          callback?(
-            shortUrl:  service.output req.responseText
-            shortener: name
-            success:   yes
-          )
-      req.send service.input url
-    catch error
-      console.log error.message or error
-      callback?(
-        message:   utils.i18n 'shortener_error', name
-        shortener: name
-        success:   no
-      )
+# HTML building functions
+# -----------------------
 
-# Determine when `callback` is called depending on whether or not the active
-# URL Shortener supports [OAuth](http://oauth.net).
-callUrlShortenerHelper = (url, callback) ->
-  service = ext.getUrlShortener()
-  if service.oauth and service.isOAuthEnabled()
-    service.oauth.authorize ->
-      callback? url, service
-  else
-    callback? url, service
+# Create an `li` element to represent `feature`.  
+# The element should then be inserted in to the `ul` element in the popup page
+# but is created here to optimize display times for the popup.
+buildFeature = (feature) ->
+  image   = getImagePathForFeature feature, yes
+  image or= '../images/spacer.png'
+  item    = $ '<li/>',
+    name:    feature.name
+    onclick: 'popup.sendRequest(this)'
+  menu    = $ '<div/>',
+    class: 'menu'
+    style: "background-image: url('#{image}')"
+  menu.append $ '<span/>',
+    class: 'text'
+    text:  feature.title
+  if utils.get 'shortcuts'
+    modifiers = ext.SHORTCUT_MODIFIERS
+    modifiers = ext.SHORTCUT_MAC_MODIFIERS if ext.isThisPlatform 'mac'
+    menu.append $ '<span/>',
+      class: 'shortcut',
+      html:  if feature.shortcut then modifiers + feature.shortcut else ''
+  item.append menu
 
-# Delete the stored values for the feature with the specified `name`.
-deleteFeature = (name) ->
-  utils.remove "feat_#{name}_content"
-  utils.remove "feat_#{name}_enabled"
-  utils.remove "feat_#{name}_image"
-  utils.remove "feat_#{name}_index"
-  utils.remove "feat_#{name}_readonly"
-  utils.remove "feat_#{name}_shortcut"
-  utils.remove "feat_#{name}_title"
+# Build the HTML to populate the popup with to optimize popup loading times.
+buildPopup = ->
+  item     = $ '<div id="item"/>'
+  itemList = $ '<ul id="itemList"/>'
+  loadDiv  = $ '<div id="loadDiv"/>'
+  $.prototype.append.apply loadDiv [
+    $ '<img src="../images/loading.gif"/>'
+    $ '<div/>', text: utils.i18n 'shortening'
+  ]
+  # Generate the HTML for each feature.
+  for feature in ext.features when feature.enabled
+    itemList.append buildFeature feature
+  # Add a generic message to state the obvious... that the list is empty.
+  if itemList.find('li').length is 0
+    itemList.append $('<li/>').append $('<div/>',
+      class: 'menu'
+      style: "background-image: url('../images/spacer.png')"
+    ).append $ '<span/>',
+      class: 'text'
+      style: 'margin-left: 0'
+      text:  utils.i18n 'empty'
+  item.append itemList
+  ext.popupHtml = $('<div/>').append(loadDiv, item).html()
 
-# Inject and execute the `content.coffee` and `install.coffee` scripts within
-# all of the tabs (where valid) of each Chrome window.
-executeScriptsInExistingWindows = ->
-  chrome.windows.getAll null, (windows) ->
-    for win in windows
-      # Retrieve all tabs open in `win`.
-      chrome.tabs.query windowId: win.id, (tabs) ->
-        # Check tabs are not displaying a *protected* page (i.e. one that will
-        # cause an error if an attempt is made to execute content scripts).
-        for tab in tabs when not ext.isProtectedPage tab
-          chrome.tabs.executeScript tab.id, file: 'lib/content.js'
-          # Only execute inline installation content script for tabs displaying
-          # a page on Template's homepage domain.
-          if tab.url.indexOf(HOMEPAGE_DOMAIN) isnt -1
-            chrome.tabs.executeScript tab.id, file: 'lib/install.js'
-
-# Attempt to derive the current version of the user's browser.
-getBrowserVersion = ->
-  str = navigator.userAgent
-  idx = str.indexOf browser.title
-  if idx isnt -1
-    str = str.substring idx + browser.title.length + 1
-    idx = str.indexOf ' '
-    return if idx is -1 then str else str.substring 0, idx
-
-# Attempt to retrieve the feature with the specified `menuId`.
-getFeatureWithMenuId = (menuId) ->
-  queryFeature (feature) ->
-    feature.menuId is menuId
-
-# Attempt to retrieve the feature with the specified `name`.
-getFeatureWithName = (name) ->
-  queryFeature (feature) ->
-    feature.name is name
-
-# Attempt to retrieve the feature with the specified keyboard `shortcut`.  
-# Exclude disabled features from this query.
-getFeatureWithShortcut = (shortcut) ->
-  queryFeature (feature) ->
-    feature.enabled and feature.shortcut is shortcut
-
-# Derive the path of the image used by `feature`.
-getImagePathForFeature = (feature, relative) ->
-  path = ''
-  for image in ext.IMAGES when image.id is feature.image
-    path += '../' if relative
-    path += "images/#{image.file}"
-    break
-  return path
-
-# Derive the operating system being used by the user.
-getOperatingSystem = ->
-  str = navigator.platform
-  for os in OPERATING_SYSTEMS when str.indexOf(os.substring) isnt -1
-    str = os.title
-    break
-  return str
-
-# Retrieve the active URL shortener service.
-getUrlShortener = ->
-  # Attempt to lookup enabled URL shortener service.
-  return shortener for shortener in SHORTENERS when shortener.isEnabled()
-  # Should never reach here but we'll return goo.gl service by default after
-  # ensuring it's the active URL shortener service from now on to save some
-  # time.
-  utils.set 'googl', yes
-  return SHORTENERS[1]
+# Initialization functions
+# ------------------------
 
 # Handle the conversion/removal of older version of settings that may have
 # been stored previously by `ext.init`.
@@ -564,15 +721,15 @@ init_update = ->
 # Initilaize the settings for `feature`.  
 # Store the name of the `feature` in the persisted list of managed features.
 initFeature = (feature) ->
-  utils.set "feat_#{feature.name}_content", feature.content
-  utils.init "feat_#{feature.name}_enabled", feature.enabled
-  utils.init "feat_#{feature.name}_image", feature.image
-  utils.init "feat_#{feature.name}_index", feature.index
-  utils.set "feat_#{feature.name}_readonly", feature.readOnly
+  utils.set "feat_#{feature.name}_content",   feature.content
+  utils.init "feat_#{feature.name}_enabled",  feature.enabled
+  utils.init "feat_#{feature.name}_image",    feature.image
+  utils.init "feat_#{feature.name}_index",    feature.index
+  utils.set "feat_#{feature.name}_readonly",  feature.readOnly
   utils.init "feat_#{feature.name}_shortcut", feature.shortcut
-  utils.set "feat_#{feature.name}_title", feature.title
+  utils.set "feat_#{feature.name}_title",     feature.title
   addFeatureName feature.name
-  return feature
+  feature
 
 # Initialize the persisted managed features.
 initFeatures = ->
@@ -658,15 +815,67 @@ initUrlShorteners_update = ->
     update_progress.shorteners.push '0.1.0.0'
     utils.set 'update_progress', update_progress
 
-# Determine whether or not `sender` is a blacklisted extension.
-isBlacklisted = (sender) ->
-  return yes for extension in BLACKLIST when extension is sender.id
-  return no
+# URL shortener functions
+# -----------------------
 
-# Retrieve the first feature that passes the specified `filter`.
-queryFeature = (filter) ->
-  if typeof filter is 'function'
-    return feature for feature in ext.features when filter feature
+# Call the active URL shortener service for `url` in order to obtain the
+# relevant short URL.  
+# `callback` will be called with the result once it has been received from the
+# URL shortener service.
+callUrlShortener = (url, callback) ->
+  callUrlShortenerHelper url, (url, service) ->
+    name = service.name
+    sUrl = service.url()
+    unless sUrl
+      callback?(
+        message:   utils.i18n 'shortener_config_error', name
+        shortener: name
+        success:   no
+      )
+      return
+    try
+      params = service.getParameters(url) or {}
+      req = new XMLHttpRequest()
+      req.open service.method, "#{sUrl}?#{$.param params}", yes
+      req.setRequestHeader 'Content-Type', service.contentType
+      if service.oauth and service.isOAuthEnabled()
+        req.setRequestHeader 'Authorization',
+          service.oauth.getAuthorizationHeader sUrl, service.method, params
+      req.onreadystatechange = ->
+        if req.readyState is 4
+          callback?(
+            shortUrl:  service.output req.responseText
+            shortener: name
+            success:   yes
+          )
+      req.send service.input url
+    catch error
+      console.log error.message or error
+      callback?(
+        message:   utils.i18n 'shortener_error', name
+        shortener: name
+        success:   no
+      )
+
+# Determine when `callback` is called depending on whether or not the active
+# URL Shortener supports [OAuth](http://oauth.net).
+callUrlShortenerHelper = (url, callback) ->
+  service = getUrlShortener()
+  if service.oauth and service.isOAuthEnabled()
+    service.oauth.authorize ->
+      callback? url, service
+  else
+    callback? url, service
+
+# Retrieve the active URL shortener service.
+getUrlShortener = ->
+  # Attempt to lookup enabled URL shortener service.
+  return shortener for shortener in SHORTENERS when shortener.isEnabled()
+  # Should never reach here but we'll return goo.gl service by default after
+  # ensuring it's the active URL shortener service from now on to save some
+  # time.
+  utils.set 'googl', yes
+  SHORTENERS[1]
 
 # Background page setup
 # ---------------------
@@ -851,28 +1060,20 @@ ext = window.ext =
   # Current version of Template.
   version: ''
 
-  # Clipboard functions
-  # -------------------
+  # Public functions
+  # ----------------
 
   # Add `str` to the system clipboard.  
   # All successful copy requests should, at some point, call this function.  
   # If `str` is empty the contents of the system clipboard will not change.
   copy: (str, hidden) ->
-    result = no
+    result  = no
     sandbox = $('#sandbox').val(str).select()
     result  = document.execCommand 'copy'
     sandbox.val ''
     unless hidden
       ext.status = result
-      ext.showNotification()
-
-  # Attempt to retrieve the contents of the system clipboard as a string.
-  paste: ->
-    result  = ''
-    sandbox = $('#sandbox').val('').select()
-    result = sandbox.val() if document.execCommand 'paste'
-    sandbox.val ''
-    return result
+      showNotification()
 
   # Initialize the background page.  
   # This will involve initializing the settings and adding the request
@@ -889,9 +1090,17 @@ ext = window.ext =
     initFeatures()
     initToolbar()
     initUrlShorteners()
-    chrome.browserAction.onClicked.addListener ext.onClick
-    chrome.extension.onRequest.addListener ext.onRequest
-    chrome.extension.onRequestExternal.addListener ext.onExternalRequest
+    # Add listener for toolbar/browser action clicks.  
+    # This listener will be ignored whenever the popup is enabled.
+    chrome.browserAction.onClicked.addListener (tab) ->
+      onRequest
+        data: name: utils.get 'toolbarFeatureName'
+        type: 'popup'
+    # Add listeners for internal and external requests.
+    chrome.extension.onRequest.addListener onRequest
+    chrome.extension.onRequestExternal.addListener (req, sender, cb) ->
+      return cb?() if isBlacklisted sender
+      onRequest req, sender, cb
     # Derive the browser and OS information.
     browser.version = getBrowserVersion()
     operatingSystem = getOperatingSystem()
@@ -901,490 +1110,67 @@ ext = window.ext =
       # Execute content scripts now that we know the version.
       executeScriptsInExistingWindows()
 
-  /**
-   * <p>Returns whether or not the extension with the specified identifier is
-   * active on the tab provided.</p>
-   * @param {Tab} tab The tab to be tested.
-   * @param {String} extensionId The identifier of the extension to be
-   * tested.
-   * @returns {Boolean} <code>true</code> if the extension is active on the
-   * tab provided; otherwise <code>false</code>.
-   * @since 0.1.1.1
-   * @private
-   */
-  isExtensionActive: function (tab, extensionId) {
-      return (ext.isSpecialPage(tab) && tab.url.indexOf(extensionId) !== -1);
-  },
+  # Determine whether or not `os` matches the user's operating system.
+  isThisPlatform: (os) ->
+    navigator.userAgent.toLowerCase().indexOf(os) isnt -1
 
-  /**
-   * <p>Determines whether or not the tab provided is currently displaying a
-   * page on the Chrome Extension Gallery (i.e. Web Store).</p>
-   * @param {Tab} tab The tab to be tested.
-   * @returns {Boolean} <code>true</code> if displaying a page on the Chrome
-   * Extension Gallery; otherwise <code>false</code>.
-   * @since 0.2.1.0
-   */
-  isExtensionGallery: function (tab) {
-      return tab.url.indexOf('https://chrome.google.com/webstore') === 0;
-  },
+  # Attempt to retrieve the contents of the system clipboard as a string.
+  paste: ->
+    result  = ''
+    sandbox = $('#sandbox').val('').select()
+    result  = sandbox.val() if document.execCommand 'paste'
+    sandbox.val ''
+    result
 
-  /**
-   * <p>Determines whether or not the tab provided is currently display a
-   * <em>protected</em> page (i.e. a page that content scripts cannot be
-   * executed on).</p>
-   * @param {Tab} tab The tab to be tested.
-   * @returns {Boolean} <code>true</code> if displaying a <em>protected</em>
-   * page; otherwise <code>false</code>.
-   * @since 0.2.1.0
-   */
-  isProtectedPage: function (tab) {
-      return ext.isSpecialPage(tab) || ext.isExtensionGallery(tab);
-  },
+  # Reset the message and status associated with the current copy request.  
+  # This should be called when a copy request is completed regardless of its
+  # outcome.
+  reset: ->
+    ext.message = ''
+    ext.status  = no
 
-  /**
-   * <p>Determines whether or not the tab provided is currently displaying a
-   * <em>special</em> page (i.e. a page that is internal to the browser).</p>
-   * @param {Tab} tab The tab to be tested.
-   * @returns {Boolean} <code>true</code> if displaying a <em>special</em>
-   * page; otherwise <code>false</code>.
-   */
-  isSpecialPage: function (tab) {
-      return tab.url.indexOf('chrome') === 0;
-  },
+  # Persist the setting for each feature in `features`.  
+  # Remove the settings for any features that are no longer in use in an
+  # attempt to keep capacity under control.
+  saveFeatures: (features) ->
+    names    = []
+    oldNames = utils.get 'features'
+    for feature in features
+      names.push feature.name
+      saveFeature feature
+    # Ensure that any obsolete features are removed from `localStorage`.
+    deleteFeature name for name in oldNames when names.indexOf(name) is -1
+    utils.set 'features', names
+    features
 
-  /**
-   * <p>Determines whether or not the user's OS matches that provided.</p>
-   * @param {String} os The operating system to be tested.
-   * @returns {Boolean} <code>true</code> if the user's OS matches that
-   * specified; otherwise <code>false</code>.
-   */
-  isThisPlatform: function (os) {
-      return navigator.userAgent.toLowerCase().indexOf(os) !== -1;
-  },
+  # Update the local list of features to reflect that persisted.  
+  # It is very important that this is called whenever features may have changed
+  # in order to prepare the popup HTML and optimize performance.
+  updateFeatures: ->
+    ext.features = loadFeatures()
+    buildPopup()
+    updateContextMenu()
 
-  /**
-   * <p>Loads the values of the feature with the specified name from their
-   * respective locations.</p>
-   * @param {String} name The name of the feature whose values are to be
-   * fetched.
-   * @returns {Object} The feature for the name provided.
-   * @since 0.1.0.0
-   * @private
-   */
-  loadFeature: function (name) {
-      return {
-          content: utils.get('feat_' + name + '_content'),
-          enabled: utils.get('feat_' + name + '_enabled'),
-          image: utils.get('feat_' + name + '_image'),
-          index: utils.get('feat_' + name + '_index'),
-          name: name,
-          readOnly: utils.get('feat_' + name + '_readonly'),
-          shortcut: utils.get('feat_' + name + '_shortcut'),
-          title: utils.get('feat_' + name + '_title')
-      };
-  },
-
-  /**
-   * <p>Loads the values of each stored feature from their respective
-   * locations.</p>
-   * <p>The array returned is sorted based on the index of each feature.</p>
-   * @returns {Object[]} The array of the features loaded.
-   * @since 0.1.0.0
-   */
-  loadFeatures: function () {
-      var features = [],
-          names = utils.get('features');
-      for (var i = 0; i < names.length; i++) {
-          features.push(ext.loadFeature(names[i]));
-      }
-      features.sort(function (a, b) {
-          return a.index - b.index;
-      });
-      return features;
-  },
-
-  /**
-   * <p>Listener for toolbar/browser action clicks.</p>
-   * @param {Tab} tab The tab active when clicked.
-   * @since 0.3.0.0
-   * @private
-   */
-  onClick: function (tab) {
-      ext.onRequest({
-          data: {
-              name: utils.get('toolbarFeatureName')
-          },
-          type: 'popup'
-      });
-  },
-
-  /**
-   * <p>Listener for external requests to the extension.</p>
-   * <p>This function only serves the request if the originating extension is
-   * not blacklisted.</p>
-   * @param {Object} request The request sent by the calling script.
-   * @param {Object} request.data The data for the copy request feature to be
-   * served.
-   * @param {KeyEvent} [request.data.e] The DOM <code>KeyEvent</code>
-   * responsible for generating the copy request. Only used if type is
-   * "shortcut".
-   * @param {String} [request.data.feature] The name of the feature on which
-   * to execute the copy request.
-   * @param {String} [request.data.key] The character of the final key
-   * responsible for firing the <code>KeyEvent</code>. Only used if type is
-   * "shortcut".
-   * @param {String} request.type The type of request being made.
-   * @param {MessageSender} [sender] An object containing information about
-   * the script context that sent a message or request.
-   * @param {function} [sendResponse] Function to call when you have a
-   * response. The argument should be any JSON-ifiable object, or undefined
-   * if there is no response.
-   * @private
-   */
-  onExternalRequest: function (request, sender, sendResponse) {
-      if (!isBlacklisted(sender)) {
-          ext.onRequest(request, sender, sendResponse);
-      }
-  },
-
-  /**
-   * <p>Listener for internal requests to the extension.</p>
-   * <p>If the request originated from a keyboard shortcut this function only
-   * serves that request if the keyboard shortcuts have been enabled by the
-   * user (or by default).</p>
-   * @param {Object} request The request sent by the calling script.
-   * @param {Object} request.data The data for the copy request feature to be
-   * served.
-   * @param {KeyEvent} [request.data.e] The DOM <code>KeyEvent</code>
-   * responsible for generating the copy request. Only used if type is
-   * "shortcut".
-   * @param {String} [request.data.feature] The name of the feature on which
-   * to execute the copy request.
-   * @param {String} [request.data.key] The character of the final key
-   * responsible for firing the <code>KeyEvent</code>. Only used if type is
-   * "shortcut".
-   * @param {String} request.type The type of request being made.
-   * @param {MessageSender} [sender] An object containing information about
-   * the script context that sent a message or request.
-   * @param {function} [sendResponse] Function to call when you have a
-   * response. The argument should be any JSON-ifiable object, or undefined
-   * if there is no response.
-   * @private
-   */
-  onRequest: function (request, sender, sendResponse) {
-      if (request.type !== 'shortcut' || utils.get('shortcuts')) {
-          ext.onRequestHelper(request, sender, sendResponse);
-      }
-  },
-
-  /**
-   * <p>Helper function for the internal/external request listeners.</p>
-   * <p>This function will handle the request based on its type and the data
-   * provided.</p>
-   * @param {Object} request The request sent by the calling script.
-   * @param {Object} request.data The data for the copy request feature to be
-   * served.
-   * @param {KeyEvent} [request.data.e] The DOM <code>KeyEvent</code>
-   * responsible for generating the copy request. Only used if type is
-   * "shortcut".
-   * @param {String} [request.data.feature] The name of the feature on which
-   * to execute the copy request.
-   * @param {String} [request.data.key] The character of the final key
-   * responsible for firing the <code>KeyEvent</code>. Only used if type is
-   * "shortcut".
-   * @param {String} request.type The type of request being made.
-   * @param {MessageSender} [sender] An object containing information about
-   * the script context that sent a message or request.
-   * @param {function} [sendResponse] Function to call when you have a
-   * response. The argument should be any JSON-ifiable object, or undefined
-   * if there is no response.
-   * @private
-   */
-  onRequestHelper: function (request, sender, sendResponse) {
-      if (request.type === 'version') {
-          if (typeof sendResponse === 'function') {
-              sendResponse({version: ext.version});
-          }
-          return;
-      }
-      chrome.windows.getCurrent(function (win) {
-          chrome.tabs.query({
-              active: true,
-              windowId: win.id
-          }, function (tabs) {
-              var data = {},
-                  feature,
-                  popup = chrome.extension.getViews({type: 'popup'})[0],
-                  shortCalled = false,
-                  shortPlaceholder = 'short' +
-                          (Math.floor(Math.random() * 99999 + 1000)),
-                  tab = tabs[0];
-              function copyOutput(str) {
-                  if (str) {
-                      ext.copy(str);
-                  } else {
-                      ext.message = utils.i18n('copy_fail_empty');
-                      ext.status = false;
-                      ext.showNotification();
-                  }
-              }
-              function shortCallback() {
-                  shortCalled = true;
-                  return '{' + shortPlaceholder + '}';
-              }
-              if (popup) {
-                  $('#item', popup.document).hide();
-                  $('#loadDiv', popup.document).show();
-              }
-              try {
-                  switch (request.type) {
-                  case 'menu':
-                      data = buildDerivedData(tab, request.data, shortCallback);
-                      feature = getFeatureWithMenuId(request.data.menuItemId);
-                      break;
-                  case 'popup':
-                      // Should be cheaper than searching ext.features...
-                      data = buildStandardData(tab, shortCallback);
-                      feature = ext.loadFeature(request.data.name);
-                      break;
-                  case 'shortcut':
-                      data = buildStandardData(tab, shortCallback);
-                      feature = getFeatureWithShortcut(request.data.key);
-                      break;
-                  }
-              } catch (e) {
-                  if (e instanceof URIError) {
-                      ext.message = utils.i18n('copy_fail_uri');
-                  } else {
-                      ext.message = utils.i18n('copy_fail_error');
-                  }
-                  ext.status = false;
-                  ext.showNotification();
-                  return;
-              }
-              if (feature) {
-                  addAdditionalData(tab, data, function () {
-                      if (!feature.content) {
-                          // Displays empty template error message
-                          copyOutput();
-                          return;
-                      }
-                      var output = Mustache.to_html(feature.content, data);
-                      if (shortCalled) {
-                          callUrlShortener(data.source, function (response) {
-                              if (response.success && response.shortUrl) {
-                                  var newData = {};
-                                  newData[shortPlaceholder] = response.shortUrl;
-                                  copyOutput(Mustache.to_html(output, newData));
-                              } else {
-                                  if (!response.message) {
-                                      response.message = utils.i18n(
-                                              'shortener_error',
-                                              response.shortener);
-                                  }
-                                  ext.message = response.message;
-                                  ext.status = false;
-                                  ext.showNotification();
-                              }
-                          });
-                      } else {
-                          copyOutput(output);
-                      }
-                  });
-              } else {
-                  if (popup) {
-                      popup.close();
-                  }
-              }
-          });
-      });
-  },
-
-  /**
-   * <p>Removes the specified feature name from those stored in
-   * localStorage.</p>
-   * @param {String} name The feature name to be removed.
-   * @since 0.1.0.0
-   * @private
-   */
-  removeFeatureName: function (name) {
-      var features = utils.get('features'),
-          idx = features.indexOf(name);
-      if (idx !== -1) {
-          features.splice(idx, 1);
-          utils.set('features', features);
-      }
-  },
-
-  /**
-   * <p>Resets the message and status associated with the current copy
-   * request.</p>
-   * <p>This function should be called on the completion of a copy request
-   * regardless of its outcome.</p>
-   */
-  reset: function () {
-      ext.message = '';
-      ext.status = false;
-  },
-
-  /**
-   * <p>Stores the values of the specified feature in to their respective
-   * locations.</p>
-   * @param {Object} feature The feature whose values are to be saved.
-   * @param {String} feature.content The mustache template for the feature.
-   * @param {Boolean} feature.enabled <code>true</code> if the feature is
-   * enabled; otherwise <code>false</code>.
-   * @param {Integer} feature.image The identifier of the feature's image.
-   * @param {Integer} feature.index The index representing the feature's
-   * display order.
-   * @param {String} feature.name The unique name of the feature.
-   * @param {Boolean} feature.readOnly <code>true</code> if the feature is
-   * read-only and certain values cannot be editted by the user; otherwise
-   * <code>false</code>.
-   * @param {String} feature.shortcut The keyboard shortcut assigned to the
-   * feature.
-   * @param {String} feature.title The title of the feature.
-   * @returns {Object} The feature provided.
-   * @since 0.1.0.0
-   * @private
-   */
-  saveFeature: function (feature) {
-      var name = feature.name;
-      utils.set('feat_' + name + '_content', feature.content);
-      utils.set('feat_' + name + '_enabled', feature.enabled);
-      utils.set('feat_' + name + '_image', feature.image);
-      utils.set('feat_' + name + '_index', feature.index);
-      utils.set('feat_' + name + '_readonly', feature.readOnly);
-      utils.set('feat_' + name + '_shortcut', feature.shortcut);
-      utils.set('feat_' + name + '_title', feature.title);
-      return feature;
-  },
-
-  /**
-   * <p>Stores the values of each of the speciifed features in to their
-   * respective locations.</p>
-   * <p>Any features no longer in use are removed from localStorage in an
-   * attempt to keep capacity under control.</p>
-   * @param {Object[]} features The features whose values are to be saved.
-   * @returns {Object[]} The array of features provided.
-   * @since 0.1.0.0
-   */
-  saveFeatures: function (features) {
-      var names = [],
-          oldNames = utils.get('features');
-      for (var i = 0; i < features.length; i++) {
-          names.push(features[i].name);
-          ext.saveFeature(features[i]);
-      }
-      // Ensures any features no longer used are removed from localStorage
-      for (var j = 0; j < oldNames.length; j++) {
-          if (names.indexOf(oldNames[j]) === -1) {
-              deleteFeature(oldNames[j]);
-          }
-      }
-      utils.set('features', names);
-      return features;
-  },
-
-  /**
-   * <p>Displays a Chrome notification to inform the user on whether or not
-   * the copy request was successful.</p>
-   * <p>This function ensures that {@link ext} is reset and that
-   * notifications are only displayed if specified by the user (or by
-   * default).</p>
-   * @see ext.reset
-   */
-  showNotification: function () {
-      var popup = chrome.extension.getViews({type: 'popup'})[0];
-      if (utils.get('notifications')) {
-          webkitNotifications.createHTMLNotification(
-              chrome.extension.getURL('pages/notification.html')
-          ).show();
-      } else {
-          ext.reset();
-      }
-      if (popup) {
-          popup.close();
-      }
-  },
-
-  /**
-   * <p>Updates the context menu items to reflect respective features.</p>
-   * @since 0.1.0.0
-   * @private
-   */
-  updateContextMenu: function () {
-      // Ensures any previously added context menu items are removed
-      chrome.contextMenus.removeAll(function () {
-          function onMenuClick(info, tab) {
-              ext.onRequestHelper({
-                  data: info,
-                  type: 'menu'
-              });
-          }
-          if (utils.get('contextMenu')) {
-              var menuId,
-                  parentId = chrome.contextMenus.create({
-                      contexts: ['all'],
-                      title: utils.i18n('name')
-                  });
-              for (var i = 0; i < ext.features.length; i++) {
-                  if (ext.features[i].enabled) {
-                      menuId = chrome.contextMenus.create({
-                          contexts: ['all'],
-                          onclick: onMenuClick,
-                          parentId: parentId,
-                          title: ext.features[i].title
-                      });
-                      ext.features[i].menuId = menuId;
-                  }
-              }
-          }
-      });
-  },
-
-  /**
-   * <p>Updates the list of features stored locally to reflect that stored
-   * in localStorage.</p>
-   * <p>It is important that this function is called whenever features might
-   * of changed as this also updates the prepared popup HTML.</p>
-   */
-  updateFeatures: function () {
-      ext.features = ext.loadFeatures();
-      buildPopup();
-      ext.updateContextMenu();
-  },
-
-  /**
-   * <p>Updates the toolbar/browser action depending on the current
-   * settings.</p>
-   * @since 0.3.0.0
-   */
-  updateToolbar: function () {
-      var feature,
-          featureName = utils.get('toolbarFeatureName'),
-          image = 'images/icon_19.png',
-          title = utils.i18n('name');
-      if (featureName) {
-          feature = getFeatureWithName(featureName);
-      }
-      if (utils.get('toolbarPopup') || !feature) {
-          chrome.browserAction.setIcon({
-              path: chrome.extension.getURL(image)
-          });
-          chrome.browserAction.setTitle({title: title});
-          chrome.browserAction.setPopup({popup: 'pages/popup.html'});
-      } else {
-          if (utils.get('toolbarFeatureDetails')) {
-              if (feature.image !== 0) {
-                  image = getImagePathForFeature(feature);
-              }
-              title = feature.title;
-          }
-          chrome.browserAction.setIcon({
-              path: chrome.extension.getURL(image)
-          });
-          chrome.browserAction.setTitle({title: title});
-          chrome.browserAction.setPopup({popup: ''});
-      }
-  }
+  # Update the toolbar/browser action depending on the current settings.
+  updateToolbar: ->
+    featureName = utils.get 'toolbarFeatureName'
+    image       = 'images/icon_19.png'
+    title       = utils.i18n 'name'
+    feature = getFeatureWithName featureName if featureName
+    if utils.get('toolbarPopup') or not feature
+      # Use Template's details to style the browser action.
+      chrome.browserAction.setIcon  path:  chrome.extension.getURL image
+      chrome.browserAction.setTitle title: title
+      # Show the popup when the browser action is clicked.
+      chrome.browserAction.setPopup popup: 'pages/popup.html'
+    else
+      # Replace Template's details with that of the selected feature.
+      if utils.get 'toolbarFeatureDetails'
+        image = getImagePathForFeature feature if feature.image isnt 0
+        title = feature.title
+      # Potentially change the style of the browser action.
+      chrome.browserAction.setIcon  path:  chrome.extension.getURL image
+      chrome.browserAction.setTitle title: title
+      # Disable the popup, effectively enabling the listener for
+      # `chrome.browserAction.onClicked`.
+      chrome.browserAction.setPopup popup: ''
