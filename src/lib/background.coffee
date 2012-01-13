@@ -24,7 +24,7 @@ DEFAULT_FEATURES  = [
     title:    utils.i18n 'copy_anchor'
   ,
     content:  '[url={url}]{title}[/url]'
-    enabled:  yes
+    enabled:  no
     image:    7
     index:    5
     name:     '_bbcode'
@@ -42,7 +42,7 @@ DEFAULT_FEATURES  = [
     title:    utils.i18n 'copy_encoded'
   ,
     content:  '[{title}]({url})'
-    enabled:  yes
+    enabled:  no
     image:    7
     index:    4
     name:     '_markdown'
@@ -158,7 +158,7 @@ SHORTENERS        = [
 ]
 # List of extensions supported by Template and used for compatibility purposes.
 SUPPORT           = [
-  # Setup IE Tab.
+  # Setup [IE Tab](http://ietab.net).
   id: 'hehijbfgiekmjfkfjpbkbammjbdenadd'
   title: (title) ->
     str = 'IE: '
@@ -173,7 +173,7 @@ SUPPORT           = [
       return decodeURIComponent url.substring idx + str.length if idx isnt -1
     return url
 ,
-  # Setup IE Tab Classic.
+  # Setup [IE Tab Classic](http://goo.gl/u7Cau).
   id: 'miedgcmlgpmdagojnnbemlkgidepfjfi'
   title: (title) ->
     title
@@ -184,7 +184,7 @@ SUPPORT           = [
       return url.substring idx + str.length if idx isnt -1
     return url
 ,
-  # Setup IE Tab Multi (Enhance).
+  # Setup [IE Tab Multi (Enhance)](http://iblogbox.com/chrome/ietab).
   id: 'fnfnbeppfinmnjnjhedifcfllpcfgeea'
   title: (title) ->
     title
@@ -200,7 +200,7 @@ SUPPORT           = [
         return url
     return url
 ,
-  # Setup Mozilla Gecko Tab.
+  # Setup [Mozilla Gecko Tab](http://iblogbox.com/chrome/geckotab).
   id: 'icoloanbecehinobmflpeglknkplbfbm'
   title: (title) ->
     title
@@ -372,7 +372,6 @@ onRequest = (request, sender, sendResponse) ->
       shortCalled      = no
       shortPlaceholder = "short#{Math.floor Math.random() * 99999 + 1000}"
       tab              = tabs[0]
-
       # Attempt to copy `str` to the system clipboard while handling the
       # potential for failure.
       copyOutput = (str) ->
@@ -382,7 +381,6 @@ onRequest = (request, sender, sendResponse) ->
           ext.message = utils.i18n 'copy_fail_empty'
           ext.status  = no
           showNotification()
-
       # Called whenever the `short` tag is found to indicate that the URL
       # needs shortened.  
       # Replace the `short` tag with the unique placeholder so that it can be
@@ -390,7 +388,6 @@ onRequest = (request, sender, sendResponse) ->
       shortCallback = ->
         shortCalled = yes
         "{#{shortPlaceholder}}"
-
       # If the popup is currently displayed, hide the feature list and show a
       # loading animation.
       if popup
@@ -499,7 +496,6 @@ updateContextMenu = ->
       onRequest
         data: info
         type: 'menu'
-
     if utils.get 'contextMenu'
       # Create and add the top-level Template menu.
       parentId = chrome.contextMenus.create
@@ -572,14 +568,24 @@ buildStandardData = (tab, shortCallback) ->
   data          = {}
   title         = ''
   url           = {}
+  # Check for any support extensions running on the current tab by simply
+  # checking the tabs URL.
   for extension in SUPPORT when isExtensionActive tab, extension.id
     title = extension.title tab.title
-    url = $.url extension.url tab.url
+    url   = $.url extension.url tab.url
     compatibility = yes
     break
+  # Derive the initial data from the tab itself if no supported extensions were
+  # found to be active.
   unless compatibility
     title = tab.title
     url   = $.url tab.url
+  # Merge the initial data with the attributes of the [URL
+  # parser](https://github.com/allmarkedup/jQuery-URL-Parser) and all of the
+  # custom Template properties.  
+  # All properties should be in lower case so that they can be looked up
+  # ignoring case by our modified version of
+  # [mustache.js](https://github.com/janl/mustache.js).
   $.extend data, url.attr(),
     bitly: utils.get 'bitly'
     bitlyapikey: utils.get 'bitlyApiKey'
@@ -827,6 +833,7 @@ callUrlShortener = (url, callback) ->
     name = service.name
     sUrl = service.url()
     unless sUrl
+      # Should never happen... Really just a sanity check.
       callback?(
         message:   utils.i18n 'shortener_config_error', name
         shortener: name
@@ -835,12 +842,16 @@ callUrlShortener = (url, callback) ->
       return
     try
       params = service.getParameters(url) or {}
+      # Build the HTTP request for the URL shortener service.
       req = new XMLHttpRequest()
       req.open service.method, "#{sUrl}?#{$.param params}", yes
       req.setRequestHeader 'Content-Type', service.contentType
+      # Setup the OAuth header, if required.
       if service.oauth and service.isOAuthEnabled()
         req.setRequestHeader 'Authorization',
           service.oauth.getAuthorizationHeader sUrl, service.method, params
+      # Wait for the response and let the service handle it before passing the
+      # result to `callback`.
       req.onreadystatechange = ->
         if req.readyState is 4
           callback?(
@@ -848,8 +859,10 @@ callUrlShortener = (url, callback) ->
             shortener: name
             success:   yes
           )
+      # Finally, send the HTTP request.
       req.send service.input url
     catch error
+      # Aw snap! Notify the user via `callback`.
       console.log error.message or error
       callback?(
         message:   utils.i18n 'shortener_error', name
