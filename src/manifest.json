@@ -1,11 +1,11 @@
 {
-  "background_page" : "pages/background.html",
-  "browser_action"  : {
+  "background_page"        : "pages/background.html",
+  "browser_action"         : {
     "default_icon"  : "images/icon_19.png",
     "default_popup" : "pages/popup.html",
     "default_title" : "__MSG_name__"
   },
-  "content_scripts" : [
+  "content_scripts"        : [
     {
       "js"      : [
         "lib/content.js"
@@ -27,9 +27,9 @@
       "run_at"  : "document_end"
     }
   ],
-  "default_locale"  : "en",
-  "description"     : "__MSG_description__",
-  "icons"           : {
+  "default_locale"         : "en",
+  "description"            : "__MSG_description__",
+  "icons"                  : {
     "16"  : "images/icon_16.png",
     "19"  : "images/icon_19.png",
     "24"  : "images/icon_24.png",
@@ -40,9 +40,10 @@
     "96"  : "images/icon_96.png",
     "128" : "images/icon_128.png"
   },
-  "name"            : "__MSG_name__",
-  "options_page"    : "pages/options.html",
-  "permissions"     : [
+  "minimum_chrome_version" : "16",
+  "name"                   : "__MSG_name__",
+  "options_page"           : "pages/options.html",
+  "permissions"            : [
     "clipboardRead",
     "clipboardWrite",
     "contextMenus",
@@ -51,5 +52,5 @@
     "tabs",
     "<all_urls>"
   ],
-  "version"         : "0.3.0.0"
+  "version"                : "1.0.0"
 }
