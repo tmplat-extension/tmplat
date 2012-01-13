@@ -8,6 +8,7 @@
  * Licensed under the MIT license.
  * http://github.com/janl/mustache.js/blob/master/LICENSE
  */
+
 var Mustache = function() {
   var Renderer = function() {};
 
