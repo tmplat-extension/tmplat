@@ -86,11 +86,10 @@ SHORTENERS        = [
   # Setup [bitly](http://bit.ly).
   contentType: 'application/x-www-form-urlencoded'
   getParameters: (url) ->
-    # TODO: Create a new account and eliminate used of `forchoon`.
     params =
-      apiKey:  'R_2371fda46305d0ec3065972f5e72800e'
+      apiKey:  'R_91eabef2f32d88c07b197c9d69eed516'
       format:  'json'
-      login:   'forchoon'
+      login:   'templateextension'
       longUrl: url
     if utils.get('bitlyApiKey') and utils.get 'bitlyUsername'
       params.x_apiKey = utils.get 'bitlyApiKey'
