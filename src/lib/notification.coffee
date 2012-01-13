@@ -28,8 +28,7 @@ notification = window.notification =
     div.className = result;
     div.innerHTML = if ext.message then ext.message else utils.i18n result
     # Reset `ext` to avoid affecting copy other copy requests. If the user has
-    # disabled the notifications option this should still be called in
-    # `ext.showNotification` for safety.
+    # disabled the notifications option this should still be called for safety.
     ext.reset()
     # Set a timer to close the notification after a specified period of time,
     # if the user enabled the corresponding option; otherwise it should stay
