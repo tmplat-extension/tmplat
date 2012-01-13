@@ -682,7 +682,7 @@ buildPopup = ->
   item     = $ '<div id="item"/>'
   itemList = $ '<ul id="itemList"/>'
   loadDiv  = $ '<div id="loadDiv"/>'
-  $.prototype.append.apply loadDiv [
+  $.prototype.append.apply loadDiv, [
     $ '<img src="../images/loading.gif"/>'
     $ '<div/>', text: utils.i18n 'shortening'
   ]
