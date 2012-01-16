@@ -639,10 +639,10 @@ buildPopup = ->
   item     = $ '<div id="item"/>'
   itemList = $ '<ul id="itemList"/>'
   loadDiv  = $ '<div id="loadDiv"/>'
-  $.prototype.append.apply loadDiv, [
+  loadDiv.append [
     $ '<img src="../images/loading.gif"/>'
     $ '<div/>', text: utils.i18n 'shortening'
-  ]
+  ]...
   # Generate the HTML for each feature.
   for feature in ext.features when feature.enabled
     itemList.append buildFeature feature
