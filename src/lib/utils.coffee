@@ -72,6 +72,18 @@ i18nSubs = (element, value, subMap) ->
 
 utils = window.utils =
 
+  # Public functions
+  # ----------------
+
+  # Retrieve the first entity/all entities that pass the specified `filter`.
+  query: (entities, singular, filter) ->
+    if singular
+      return entity for entity in entities when filter entity
+    else
+      results = []
+      results.push entity for entity in entities when filter entity
+      return results
+
   # Data functions
   # --------------
 
@@ -95,9 +107,9 @@ utils = window.utils =
 
   # Remove the specified key from `localStorage`.
   remove: (key) ->
-    exists = utils.exists key
+    value = utils.get key
     delete localStorage[key]
-    return exists
+    return value
 
   # Copy the value of the existing key to that of the new key then remove the
   # old key from `localStorage`.  

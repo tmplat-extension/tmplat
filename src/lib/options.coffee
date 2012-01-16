@@ -61,6 +61,7 @@ loadFeature = (feature) ->
   opt.data 'image',    String feature.image
   opt.data 'readOnly', String feature.readOnly
   opt.data 'shortcut', feature.shortcut
+  opt.data 'usage',    String feature.usage
   return opt
 
 # Bind the event handlers required for controlling the features.
@@ -160,6 +161,7 @@ loadFeatureControlEvents = ->
         readOnly: no
         shortcut: $('#feature_shortcut').val().trim().toUpperCase()
         title:    title
+        usage:    0
       # Confirm the feature meets the criteria.
       if validateFeature opt, yes
         features.append opt
@@ -478,6 +480,7 @@ save = ->
   saveNotifications()
   saveToolbar()
   saveUrlShorteners()
+  ext.updateStatistics()
 
 # Update the settings with the values from the feature section of the options
 # page.
@@ -487,7 +490,7 @@ saveFeatures = ->
   $('#features option').each ->
     features.push deriveFeature $ this
   # Ensure the data for all features reflects the updated settings.
-  ext.saveFeatures features
+  utils.set 'features', features
   ext.updateFeatures()
 
 # Update the settings with the values from the notification section of the
@@ -560,6 +563,7 @@ updateImportedFeature = (feature, existing) ->
     break
   # Only allow valid keyboard shortcuts.
   existing.shortcut = feature.shortcut if isShortcutValid feature.shortcut
+  existing.usage = feature.usage
   return existing
 
 # Update the selection of features in the toolbar behaviour section to reflect
@@ -687,7 +691,8 @@ validateImportedFeature = (feature) ->
   'number'  is typeof feature.image and
   'string'  is typeof feature.name and
   'string'  is typeof feature.shortcut and
-  'string'  is typeof feature.title
+  'string'  is typeof feature.title and
+  'string'  is typeof feature.usage
 
 # Miscellaneous functions
 # -----------------------
@@ -707,6 +712,7 @@ addImportedFeature = (feature) ->
         readOnly: no
         shortcut: ''
         title:    utils.i18n 'untitled'
+        usage:    0
       # Only allow existing images.
       for image in ext.IMAGES when image.id is feature.image
         newFeature.image = feature.image
@@ -733,6 +739,7 @@ createExport = (names) ->
       name:     opt.val()
       shortcut: opt.data 'shortcut'
       title:    opt.text()
+      usage:    parseInt opt.data('usage'), 10
   return JSON.stringify data
 
 # Create a JSON object from the imported string specified.
@@ -760,6 +767,7 @@ deriveFeature = (option) ->
       readOnly: option.data('readOnly') is 'true'
       shortcut: option.data 'shortcut'
       title:    option.text()
+      usage:    parseInt option.data('usage'), 10
   return feature
 
 # Determine which icon within the `icons` specified has the smallest

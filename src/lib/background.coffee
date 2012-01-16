@@ -22,6 +22,7 @@ DEFAULT_FEATURES  = [
     readOnly: yes
     shortcut: 'A'
     title:    utils.i18n 'copy_anchor'
+    usage:    0
   ,
     content:  '[url={url}]{title}[/url]'
     enabled:  no
@@ -31,6 +32,7 @@ DEFAULT_FEATURES  = [
     readOnly: yes
     shortcut: 'B'
     title:    utils.i18n 'copy_bbcode'
+    usage:    0
   ,
     content:  '{#encode}{url}{/encode}'
     enabled:  yes
@@ -40,6 +42,7 @@ DEFAULT_FEATURES  = [
     readOnly: yes
     shortcut: 'E'
     title:    utils.i18n 'copy_encoded'
+    usage:    0
   ,
     content:  '[{title}]({url})'
     enabled:  no
@@ -49,6 +52,7 @@ DEFAULT_FEATURES  = [
     readOnly: yes
     shortcut: 'M'
     title:    utils.i18n 'copy_markdown'
+    usage:    0
   ,
     content:  '{short}'
     enabled:  yes
@@ -58,6 +62,7 @@ DEFAULT_FEATURES  = [
     readOnly: yes
     shortcut: 'S'
     title:    utils.i18n 'copy_short'
+    usage:    0
   ,
     content:  '{url}'
     enabled:  yes
@@ -67,6 +72,7 @@ DEFAULT_FEATURES  = [
     readOnly: yes
     shortcut: 'U'
     title:    utils.i18n 'copy_url'
+    usage:    0
 ]
 # Domain of this extension's homepage.
 HOMEPAGE_DOMAIN   = 'neocotic.com'
@@ -232,26 +238,6 @@ operatingSystem = ''
 
 # Private functions
 
-# Add the feature `name` to the list stored in `localStorage`.  
-# `name` will only be added if it doesn't already exist.  
-addFeatureName = (name) ->
-  features = utils.get 'features'
-  if features.indexOf(name) is -1
-    features.push name
-    utils.set 'features', features
-    return yes
-  no
-
-# Delete the stored values for the feature with the specified `name`.
-deleteFeature = (name) ->
-  utils.remove "feat_#{name}_content"
-  utils.remove "feat_#{name}_enabled"
-  utils.remove "feat_#{name}_image"
-  utils.remove "feat_#{name}_index"
-  utils.remove "feat_#{name}_readonly"
-  utils.remove "feat_#{name}_shortcut"
-  utils.remove "feat_#{name}_title"
-
 # Inject and execute the `content.coffee` and `install.coffee` scripts within
 # all of the tabs (where valid) of each Chrome window.
 executeScriptsInExistingWindows = ->
@@ -334,27 +320,6 @@ isProtectedPage = (tab) ->
 isSpecialPage = (tab) ->
   tab.url.indexOf('chrome') is 0
 
-# Load the settings for the derived feature.
-loadFeature = (name) ->
-  content:  utils.get "feat_#{name}_content"
-  enabled:  utils.get "feat_#{name}_enabled"
-  image:    utils.get "feat_#{name}_image"
-  index:    utils.get "feat_#{name}_index"
-  name:     name
-  readOnly: utils.get "feat_#{name}_readonly"
-  shortcut: utils.get "feat_#{name}_shortcut"
-  title:    utils.get "feat_#{name}_title"
-
-# Load the settings for all persisted features.  
-# Sort the features based on their index.
-loadFeatures = ->
-  features = []
-  names = utils.get 'features'
-  features.push loadFeature name for name in names
-  features.sort (a, b) ->
-    a.index - b.index
-  features
-
 # Listener for internal requests to the extension.  
 # External requests are also routed through here, but only after being checked
 # that they do not originate from a blacklisted extension.
@@ -376,14 +341,17 @@ onRequest = (request, sender, sendResponse) ->
       shortPlaceholder = "short#{Math.floor Math.random() * 99999 + 1000}"
       tab              = tabs[0]
       # Attempt to copy `str` to the system clipboard while handling the
-      # potential for failure.
-      copyOutput = (str) ->
+      # potential for failure.  
+      # Finally, increment the usage of `feature` and update the statistics.
+      copyOutput = (feature, str) ->
         if str
           ext.copy str
         else
           ext.message = utils.i18n 'copy_fail_empty'
           ext.status  = no
           showNotification()
+        updateFeatureUsage feature.name
+        ext.updateStatistics()
       # Called whenever the `short` tag is found to indicate that the URL
       # needs shortened.  
       # Replace the `short` tag with the unique placeholder so that it can be
@@ -404,8 +372,7 @@ onRequest = (request, sender, sendResponse) ->
             feature = getFeatureWithMenuId request.data.menuItemId
           when 'popup'
             data    = buildStandardData tab, shortCallback
-            # Should be cheaper than searching through `ext.features`...
-            feature = loadFeature request.data.name
+            feature = getFeatureWithName request.data.name
           when 'shortcut'
             data    = buildStandardData tab, shortCallback
             feature = getFeatureWithShortcut request.data.key
@@ -422,7 +389,7 @@ onRequest = (request, sender, sendResponse) ->
         addAdditionalData tab, data, ->
           unless feature.content
             # Display the *empty template* error message.
-            copyOutput()
+            copyOutput feature
             return
           output = Mustache.to_html feature.content, data
           if shortCalled
@@ -434,7 +401,7 @@ onRequest = (request, sender, sendResponse) ->
                 # Short URL was successfully returned, so get rendering.
                 newData = {}
                 newData[shortPlaceholder] = response.shortUrl
-                copyOutput Mustache.to_html output, newData
+                copyOutput feature, Mustache.to_html output, newData
               else
                 # Aw man, something went wrong. Let the user down gently.
                 unless response.message
@@ -444,29 +411,10 @@ onRequest = (request, sender, sendResponse) ->
                 ext.status  = no
                 showNotification()
           else
-            copyOutput output
+            copyOutput feature, output
       else
         # Close the popup if it's still open.
         popup?.close()
-
-# Remove the feature `name` from the persisted list.
-removeFeatureName = (name) ->
-  features = utils.get 'features'
-  idx      = features.indexOf name
-  if idx isnt -1
-    features.splice idx, 1
-    utils.set 'features', features
-
-# Persist the settings for `feature`.
-saveFeature = (feature) ->
-  utils.set "feat_#{feature.name}_content",  feature.content
-  utils.set "feat_#{feature.name}_enabled",  feature.enabled
-  utils.set "feat_#{feature.name}_image",    feature.image
-  utils.set "feat_#{feature.name}_index",    feature.index
-  utils.set "feat_#{feature.name}_readonly", feature.readOnly
-  utils.set "feat_#{feature.name}_shortcut", feature.shortcut
-  utils.set "feat_#{feature.name}_title",    feature.title
-  feature
 
 # Display a desktop notification informing the user on whether or not the copy
 # request was successful.  
@@ -507,6 +455,12 @@ updateContextMenu = ->
           parentId: parentId
           title:    feature.title
         feature.menuId = menuId
+
+# Increment the usage for the feature with the specified `name` and persist the
+# changes.
+updateFeatureUsage = (name) ->
+  feature.usage++ for feature in ext.features when feature.name is name
+  utils.set 'features', ext.features
 
 # Data functions
 # --------------
@@ -569,8 +523,8 @@ buildStandardData = (tab, shortCallback) ->
   # Check for any support extensions running on the current tab by simply
   # checking the tabs URL.
   for extension in SUPPORT when isExtensionActive tab, extension.id
-    title = extension.title tab.title
-    url   = $.url extension.url tab.url
+    title         = extension.title tab.title
+    url           = $.url extension.url tab.url
     compatibility = yes
     break
   # Derive the initial data from the tab itself if no supported extensions were
@@ -585,69 +539,73 @@ buildStandardData = (tab, shortCallback) ->
   # ignoring case by our modified version of
   # [mustache.js](https://github.com/janl/mustache.js).
   $.extend data, url.attr(),
-    bitly: utils.get 'bitly'
-    bitlyapikey: utils.get 'bitlyApiKey'
-    bitlyusername: utils.get 'bitlyUsername'
-    browser: browser.title
-    browserversion: browser.version
-    contextmenu: utils.get 'contextMenu'
-    cookiesenabled: window.navigator.cookieEnabled
-    datetime: ->
+    bitly:                 utils.get 'bitly'
+    bitlyapikey:           utils.get 'bitlyApiKey'
+    bitlyusername:         utils.get 'bitlyUsername'
+    browser:               browser.title
+    browserversion:        browser.version
+    contextmenu:           utils.get 'contextMenu'
+    cookiesenabled:        window.navigator.cookieEnabled
+    count:                 utils.get('stats').count
+    customcount:           utils.get('stats').customCount
+    datetime:              ->
       (text, render) ->
         new Date().format render(text) or undefined
-    decode: ->
+    decode:                ->
       (text, render) ->
         decodeURIComponent render text
-    doanchortarget: utils.get 'doAnchorTarget'
-    doanchortitle: utils.get 'doAnchorTitle'
-    encode: ->
+    doanchortarget:        utils.get 'doAnchorTarget'
+    doanchortitle:         utils.get 'doAnchorTitle'
+    encode:                ->
       (text, render) ->
         encodeURIComponent render text
     # Deprecated since 0.1.0.2, use `encode` instead.
-    encoded: encodeURIComponent url.attr 'source'
-    favicon: tab.favIconUrl
-    fparam: ->
+    encoded:               encodeURIComponent url.attr 'source'
+    favicon:               tab.favIconUrl
+    fparam:                ->
       (text, render) ->
         url.fparam render text
-    fparams: url.fparam()
-    fsegment: ->
+    fparams:               url.fparam()
+    fsegment:              ->
       (text, render) ->
         url.fsegment parseInt render(text), 10
-    fsegments: url.fsegment()
-    googl: utils.get 'googl'
-    googloauth: utils.get 'googlOAuth'
-    java: window.navigator.javaEnabled()
-    notificationduration: utils.get 'notificationDuration' * .001
-    notifications: utils.get 'notifications'
-    offline: not window.navigator.onLine
+    fsegments:             url.fsegment()
+    googl:                 utils.get 'googl'
+    googloauth:            utils.get 'googlOAuth'
+    java:                  window.navigator.javaEnabled()
+    notificationduration:  utils.get 'notificationDuration' * .001
+    notifications:         utils.get 'notifications'
+    offline:               not window.navigator.onLine
     # Deprecated since 0.1.0.2, use `originalUrl` instead.
-    originalsource: tab.url
-    originaltitle: tab.title or url.attr 'source'
-    originalurl: tab.url
-    os: operatingSystem
-    param: ->
+    originalsource:        tab.url
+    originaltitle:         tab.title or url.attr 'source'
+    originalurl:           tab.url
+    os:                    operatingSystem
+    param:                 ->
       (text, render) ->
         url.param render text
-    params: url.param()
-    segment: ->
+    params:                url.param()
+    popular:               ext.queryFeature (feature) ->
+      feature.name is utils.get('stats').popular
+    segment:               ->
       (text, render) ->
         url.segment parseInt render(text), 10
-    segments: url.segment()
-    short: ->
+    segments:              url.segment()
+    short:                 ->
       shortCallback?()
-    shortcuts: utils.get 'shortcuts'
-    title: title or url.attr 'source'
-    toolbarfeature: utils.get 'toolbarFeature'
+    shortcuts:             utils.get 'shortcuts'
+    title:                 title or url.attr 'source'
+    toolbarfeature:        utils.get 'toolbarFeature'
     toolbarfeaturedetails: utils.get 'toolbarFeatureDetails'
-    toolbarfeaturename: utils.get 'toolbarFeatureName'
-    toolbarpopup: utils.get 'toolbarPopup'
-    url: url.attr 'source'
-    version: ext.version
-    yourls: utils.get 'yourls'
-    yourlspassword: utils.get 'yourlsPassword'
-    yourlssignature: utils.get 'yourlsSignature'
-    yourlsurl: utils.get 'yourlsUrl'
-    yourlsusername: utils.get 'yourlsUsername'
+    toolbarfeaturename:    utils.get 'toolbarFeatureName'
+    toolbarpopup:          utils.get 'toolbarPopup'
+    url:                   url.attr 'source'
+    version:               ext.version
+    yourls:                utils.get 'yourls'
+    yourlspassword:        utils.get 'yourlsPassword'
+    yourlssignature:       utils.get 'yourlsSignature'
+    yourlsurl:             utils.get 'yourlsUrl'
+    yourlsusername:        utils.get 'yourlsUsername'
   data
 
 # HTML building functions
@@ -711,35 +669,66 @@ init_update = ->
   # Check if the settings need updated for 0.1.0.0.
   if update_progress.settings.indexOf('0.1.0.0') is -1
     # Update the settings for 0.1.0.0.
-    utils.rename 'settingNotification', 'notifications', on
+    utils.rename 'settingNotification',      'notifications',        on
     utils.rename 'settingNotificationTimer', 'notificationDuration', 3000
-    utils.rename 'settingShortcut', 'shortcuts', on
-    utils.rename 'settingTargetAttr', 'doAnchorTarget', off
-    utils.rename 'settingTitleAttr', 'doAnchorTitle', off
+    utils.rename 'settingShortcut',          'shortcuts',            on
+    utils.rename 'settingTargetAttr',        'doAnchorTarget',       off
+    utils.rename 'settingTitleAttr',         'doAnchorTitle',        off
     utils.remove 'settingIeTabExtract'
     utils.remove 'settingIeTabTitle'
     # Ensure that settings are not updated for 0.1.0.0 again.
     update_progress.settings.push '0.1.0.0'
     utils.set 'update_progress', update_progress
 
-# Initilaize the settings for `feature`.  
-# Store the name of the `feature` in the persisted list of managed features.
-initFeature = (feature) ->
-  utils.set "feat_#{feature.name}_content",   feature.content
-  utils.init "feat_#{feature.name}_enabled",  feature.enabled
-  utils.init "feat_#{feature.name}_image",    feature.image
-  utils.init "feat_#{feature.name}_index",    feature.index
-  utils.set "feat_#{feature.name}_readonly",  feature.readOnly
-  utils.init "feat_#{feature.name}_shortcut", feature.shortcut
-  utils.set "feat_#{feature.name}_title",     feature.title
-  addFeatureName feature.name
+# Initialize the feature, and it's properties, before adding it to `features`
+# to be persisted later.
+initFeature = (feature, features) ->
+  # Derive the index of the feature to determine whether or not it already
+  # exists.
+  idx = features.indexOf utils.query features, yes, (feat) ->
+    feat.name is feature.name
+  if idx is -1
+    # Feature doesn't already exist so add it now.
+    features.push feature
+  else
+    # Feature exists so modify the properties to ensure they are reliable.
+    if feature.readOnly
+      # Feature is read-only so certain properties should always be overriden
+      # and others only when they are not already available.
+      features[idx].content   = feature.content
+      features[idx].enabled  ?= feature.enabled
+      features[idx].image    ?= feature.image
+      features[idx].index    ?= feature.index
+      features[idx].name      = feature.name
+      features[idx].readOnly  = yes
+      features[idx].shortcut ?= feature.shortcut
+      features[idx].title     = feature.title
+      features[idx].usage    ?= feature.usage
+    else
+      # Feature is *not* read-only so set unavailable, but required, properties
+      # to their default value.
+      features[idx].content  ?= ''
+      features[idx].enabled  ?= yes
+      features[idx].image    ?= 0
+      features[idx].index    ?= 0
+      features[idx].name     ?= feature.name
+      features[idx].readOnly  = no
+      features[idx].shortcut ?= ''
+      features[idx].title    ?= feature.name
+      features[idx].usage    ?= 0
+    feature = features[idx]
   feature
 
 # Initialize the persisted managed features.
 initFeatures = ->
   utils.init 'features', []
   initFeatures_update()
-  initFeature feature for feature in DEFAULT_FEATURES
+  features = utils.get 'features'
+  # Initialize all default features to ensure their properties are as expected.
+  initFeature feature, features for feature in DEFAULT_FEATURES
+  # Now, initialize *all* features to ensure their properties are valid.
+  initFeature feature, features for feature in features
+  utils.set 'features', features
   ext.updateFeatures()
 
 # Handle the conversion/removal of older version of settings that may have
@@ -750,23 +739,22 @@ initFeatures_update = ->
   # Check if the features need updated for 0.1.0.0.
   if update_progress.features.indexOf('0.1.0.0') is -1
     # Update the features for 0.1.0.0.
-    utils.rename 'copyAnchorEnabled', 'feat__anchor_enabled', yes
-    utils.rename 'copyAnchorOrder', 'feat__anchor_index', 2
-    utils.rename 'copyBBCodeEnabled', 'feat__bbcode_enabled', no
-    utils.rename 'copyBBCodeOrder', 'feat__bbcode_index', 4
+    utils.rename 'copyAnchorEnabled',  'feat__anchor_enabled',  yes
+    utils.rename 'copyAnchorOrder',    'feat__anchor_index',    2
+    utils.rename 'copyBBCodeEnabled',  'feat__bbcode_enabled',  no
+    utils.rename 'copyBBCodeOrder',    'feat__bbcode_index',    4
     utils.rename 'copyEncodedEnabled', 'feat__encoded_enabled', yes
-    utils.rename 'copyEncodedOrder', 'feat__encoded_index', 3
-    utils.rename 'copyShortEnabled', 'feat__short_enabled', yes
-    utils.rename 'copyShortOrder', 'feat__short_index', 1
-    utils.rename 'copyUrlEnabled', 'feat__url_enabled', yes
-    utils.rename 'copyUrlOrder', 'feat__url_index', 0
+    utils.rename 'copyEncodedOrder',   'feat__encoded_index',   3
+    utils.rename 'copyShortEnabled',   'feat__short_enabled',   yes
+    utils.rename 'copyShortOrder',     'feat__short_index',     1
+    utils.rename 'copyUrlEnabled',     'feat__url_enabled',     yes
+    utils.rename 'copyUrlOrder',       'feat__url_index',       0
     # Ensure that features are not updated for 0.1.0.0 again.
     update_progress.features.push '0.1.0.0'
     utils.set 'update_progress', update_progress
   # Check if the features need updated for 0.2.0.0.
   if update_progress.features.indexOf('0.2.0.0') is -1
     # Update the features for 0.2.0.0.
-    names = utils.get 'features'
     for name in utils.get 'features'
       utils.rename "feat_#{name}_template", "feat_#{name}_content"
       image = utils.get "feat_#{name}_image"
@@ -779,28 +767,52 @@ initFeatures_update = ->
     # Ensure that features are not updated for 0.2.0.0 again.
     update_progress.features.push '0.2.0.0'
     utils.set 'update_progress', update_progress
+  # Check if the features need updated for 1.0.0.
+  if update_progress.features.indexOf('1.0.0') is -1
+    # Update the features for 1.0.0.
+    features = []
+    for name in utils.get 'features' when typeof name is 'string'
+      features.push
+        content:  utils.remove("feat_#{name}_content")  ? ''
+        enabled:  utils.remove("feat_#{name}_enabled")  ? yes
+        image:    utils.remove("feat_#{name}_image")    ? 0
+        index:    utils.remove("feat_#{name}_index")    ? 0
+        name:     name
+        readOnly: utils.remove("feat_#{name}_readonly") ? no
+        shortcut: utils.remove("feat_#{name}_shortcut") ? ''
+        title:    utils.remove("feat_#{name}_title")    ? name
+        usage:    0
+    utils.set 'features', features
+    # Ensure that features are not updated for 1.0.0 again.
+    update_progress.features.push '1.0.0'
+    utils.set 'update_progress', update_progress
+
+# Initialize the settings related to statistical information.
+initStatistics = ->
+  utils.init 'stats', {}
+  ext.updateStatistics()
 
 # Initialize the settings related to the toolbar/browser action.
 initToolbar = ->
-  utils.init 'toolbarPopup', on
-  utils.init 'toolbarFeature', off
+  utils.init 'toolbarPopup',          on
+  utils.init 'toolbarFeature',        off
   utils.init 'toolbarFeatureDetails', off
-  utils.init 'toolbarFeatureName', ''
+  utils.init 'toolbarFeatureName',    ''
   ext.updateToolbar()
 
 # Initialize the settings related to the supported URL Shortener services.
 initUrlShorteners = ->
   initUrlShorteners_update()
-  utils.init 'bitly', off
-  utils.init 'bitlyApiKey', ''
-  utils.init 'bitlyUsername', ''
-  utils.init 'googl', on
-  utils.init 'googlOAuth', on
-  utils.init 'yourls', off
-  utils.init 'yourlsPassword', ''
+  utils.init 'bitly',           off
+  utils.init 'bitlyApiKey',     ''
+  utils.init 'bitlyUsername',   ''
+  utils.init 'googl',           on
+  utils.init 'googlOAuth',      on
+  utils.init 'yourls',          off
+  utils.init 'yourlsPassword',  ''
   utils.init 'yourlsSignature', ''
-  utils.init 'yourlsUrl', ''
-  utils.init 'yourlsUsername', ''
+  utils.init 'yourlsUrl',       ''
+  utils.init 'yourlsUsername',  ''
 
 # Handle the conversion/removal of older version of settings that may have
 # been stored previously by `initUrlShorteners`.
@@ -810,11 +822,11 @@ initUrlShorteners_update = ->
   # Check if the URL shorteners need updated for 0.1.0.0.
   if update_progress.shorteners.indexOf('0.1.0.0') is -1
     # Update the URL shorteners for 0.1.0.0.
-    utils.rename 'bitlyEnabled', 'bitly', off
-    utils.rename 'bitlyXApiKey', 'bitlyApiKey', ''
-    utils.rename 'bitlyXLogin', 'bitlyUsername', ''
-    utils.rename 'googleEnabled', 'googl', on
-    utils.rename 'googleOAuthEnabled', 'googlOAuth', on
+    utils.rename 'bitlyEnabled',       'bitly',         off
+    utils.rename 'bitlyXApiKey',       'bitlyApiKey',   ''
+    utils.rename 'bitlyXLogin',        'bitlyUsername', ''
+    utils.rename 'googleEnabled',      'googl',         on
+    utils.rename 'googleOAuthEnabled', 'googlOAuth',    on
     # Ensure that URL shorteners are not updated for 0.1.0.0 again.
     update_progress.shorteners.push '0.1.0.0'
     utils.set 'update_progress', update_progress
@@ -1102,6 +1114,7 @@ ext = window.ext =
     utils.init 'doAnchorTitle', off
     initFeatures()
     initToolbar()
+    initStatistics()
     initUrlShorteners()
     # Add listener for toolbar/browser action clicks.  
     # This listener will be ignored whenever the popup is enabled.
@@ -1137,14 +1150,12 @@ ext = window.ext =
 
   # Retrieve the first feature that passes the specified `filter`.
   queryFeature: (filter) ->
-    if typeof filter is 'function'
-      return feature for feature in ext.features when filter feature
+    utils.query ext.features, yes, filter
 
   # Retrieve the first URL shortener service that passes the specified
   # `filter`.
   queryUrlShortener: (filter) ->
-    if typeof filter is 'function'
-      return shortener for shortener in SHORTENERS when filter shortener
+    utils.query SHORTENERS, yes, filter
 
   # Reset the message and status associated with the current copy request.  
   # This should be called when a copy request is completed regardless of its
@@ -1153,27 +1164,31 @@ ext = window.ext =
     ext.message = ''
     ext.status  = no
 
-  # Persist the setting for each feature in `features`.  
-  # Remove the settings for any features that are no longer in use in an
-  # attempt to keep capacity under control.
-  saveFeatures: (features) ->
-    names    = []
-    oldNames = utils.get 'features'
-    for feature in features
-      names.push feature.name
-      saveFeature feature
-    # Ensure that any obsolete features are removed from `localStorage`.
-    deleteFeature name for name in oldNames when names.indexOf(name) is -1
-    utils.set 'features', names
-    features
-
   # Update the local list of features to reflect that persisted.  
   # It is very important that this is called whenever features may have changed
   # in order to prepare the popup HTML and optimize performance.
   updateFeatures: ->
-    ext.features = loadFeatures()
+    ext.features = utils.get 'features'
+    ext.features.sort (a, b) ->
+      a.index - b.index
     buildPopup()
     updateContextMenu()
+
+  # Update the statistical information.
+  updateStatistics: ->
+    stats = utils.get 'stats'
+    # Determine which feature has the greatest usage.
+    maxUsage = 0
+    utils.query ext.features, no, (feature) ->
+      maxUsage = feature.usage if feature.usage > maxUsage
+      no
+    popFeature = ext.queryFeature (feature) ->
+      feature.usage is maxUsage
+    # Calculate the up-to-date statistical information.
+    stats.count       = ext.features.length
+    stats.customCount = stats.count - DEFAULT_FEATURES.length
+    stats.popular     = popFeature?.name
+    utils.set 'stats', stats
 
   # Update the toolbar/browser action depending on the current settings.
   updateToolbar: ->
