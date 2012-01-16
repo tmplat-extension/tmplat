@@ -883,7 +883,7 @@ options = window.options =
     # Initialize all faceboxes.
     $('a[facebox]').click ->
       $.facebox div: $(this).attr 'facebox'
-    facebox = $ '#facebox > .popup > .content'
     $(document).bind 'reveal.facebox', ->
+      facebox = $ '#facebox > .popup > .content'
       facebox.css 'margin-right',
         if facebox.find('> .template').length then '0' else ''
