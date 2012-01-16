@@ -135,7 +135,7 @@ utils = window.utils =
 
   # Convenient shorthand for `chrome.i18n.getMessage`.
   i18n: ->
-    chrome.i18n.getMessage.apply chrome.i18n, arguments
+    chrome.i18n.getMessage arguments...
 
   # Internationalize the specified attribute of all the selected elements.
   i18nAttribute: (selector, attribute, value, subs) ->
@@ -155,3 +155,54 @@ utils = window.utils =
   # Perform all internationalization setup required for the current page.
   i18nSetup: (subMap) ->
     i18nProcess document, subMap
+
+  # Log functions
+  # -------------
+
+  # Output all failed `assertions`.
+  assert: (assertions...) ->
+    console.assert assertion for assertion in assertions if utils.logging()
+
+  # Create/increment a counter and output its current count for all `names`.
+  count: (names...) ->
+    console.count name for name in names if utils.logging()
+
+  # Output all debug `entries`.
+  debug: (entries...) ->
+    console.debug entry for entry in entries if utils.logging()
+
+  # Display an interactive listing of the properties of all `entries`.
+  dir: (entries...) ->
+    console.dir entry for entry in entries if utils.logging()
+
+  # Output all error `entries`.
+  error: (entries...) ->
+    console.error entry for entry in entries if utils.logging()
+
+  # Output all informative `entries`.
+  info: (entries...) ->
+    console.info entry for entry in entries if utils.logging()
+
+  # Output all general `entries`.
+  log: (entries...) ->
+    console.log entry for entry in entries if utils.logging()
+
+  # Indicates whether or not logging is enabled.
+  logging: ->
+    utils.get 'log'
+
+  # Start a timer for all `names`.
+  time: (names...) ->
+    console.time name for name in names if utils.logging()
+
+  # Stop a timer and output its elapsed time in milliseconds for all `names`.
+  timeEnd: (names...) ->
+    console.timeEnd name for name in names if utils.logging()
+
+  # Output a stack trace.
+  trace: ->
+    console.trace() if utils.logging()
+
+  # Output all warning `entries`.
+  warn: (entries...) ->
+    console.warn entry for entry in entries if utils.logging()

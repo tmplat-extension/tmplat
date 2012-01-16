@@ -873,7 +873,7 @@ callUrlShortener = (url, callback) ->
       req.send service.input url
     catch error
       # Aw snap! Notify the user via `callback`.
-      console.log error.message or error
+      utils.error error
       callback?(
         message:   utils.i18n 'shortener_error', name
         shortener: name
@@ -1104,14 +1104,15 @@ ext = window.ext =
   # This will involve initializing the settings and adding the request
   # listeners.
   init: ->
-    utils.init 'update_progress', {}
+    utils.init 'log',                  off
+    utils.init 'update_progress',      {}
     init_update()
-    utils.init 'contextMenu', on
-    utils.init 'notifications', on
+    utils.init 'contextMenu',          on
+    utils.init 'notifications',        on
     utils.init 'notificationDuration', 3000
-    utils.init 'shortcuts', on
-    utils.init 'doAnchorTarget', off
-    utils.init 'doAnchorTitle', off
+    utils.init 'shortcuts',            on
+    utils.init 'doAnchorTarget',       off
+    utils.init 'doAnchorTitle',        off
     initFeatures()
     initToolbar()
     initStatistics()

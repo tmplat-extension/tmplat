@@ -248,7 +248,7 @@ loadFeatureExportEvents = ->
         fileEntry.createWriter (fileWriter) ->
           builder = new WebKitBlobBuilder()
           fileWriter.onerror = (error) ->
-            console.log error
+            utils.error error
           fileWriter.onwriteend = ->
             window.location.href = fileEntry.toURL()
           builder.append str
