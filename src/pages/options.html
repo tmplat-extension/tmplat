@@ -59,6 +59,7 @@
       .template-content {display: none;}
       .template-definitions tbody tr td {vertical-align: top;}
       .template-definitions tbody tr td:first-child, .template-definition {color: #666;}
+      #googlDeauthorize_btn {display: none;}
       /* Facebox */
       #facebox {left: 0; position: absolute; text-align: left; top: 0; z-index: 100;}
       #facebox .popup {border: 3px solid rgba(0,0,0,0); border-radius: 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; box-shadow:0 0 18px rgba(0,0,0,0.4); -moz-box-shadow: 0 0 18px rgba(0,0,0,0.4); -webkit-box-shadow: 0 0 18px rgba(0,0,0,0.4); position: relative;}
@@ -392,6 +393,9 @@
                       </label>
                       <a facebox="#googlOAuth_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
                       <div id="googlOAuth_help" class="help" i18n-content="help_googlOAuth"></div>
+                      <div>
+                        <button id="googlDeauthorize_btn" i18n-content="opt_deauthorize_button"></button>
+                      </div>
                     </td>
                   </tr>
                   <tr style="vertical-align: top">

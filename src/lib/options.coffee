@@ -854,6 +854,20 @@ options = window.options =
           chrome.tabs.remove tab.id
       else
         $.facebox div: '#message'
+    # Bind event to the "Revoke Access" button which will remove the persisted
+    # settings storing OAuth information for the [Google URL
+    # Shortener](http://goo.gl).
+    googl = ext.queryUrlShortener (shortener) ->
+      shortener.name is 'goo.gl'
+    $('#googlDeauthorize_btn').click ->
+      utils.remove key for key in googl.oauthKeys
+      $(this).hide()
+    # Only show the "Revoke Access" button if Template has previously been
+    # authorized by the [Google URL Shortener](http://goo.gl).
+    for key in googl.oauthKeys when utils.exists key
+      keyExists = yes
+      break
+    $('#googlDeauthorize_btn').show() if keyExists
     # Bind event to template section items which will toggle the visibility of
     # its contents.
     $('.template-section').live 'click', ->

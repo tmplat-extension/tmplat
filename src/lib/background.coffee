@@ -126,6 +126,10 @@ SHORTENERS        = [
     consumer_secret: 'anonymous'
     request_url:     'https://www.google.com/accounts/OAuthGetRequestToken'
     scope:           'https://www.googleapis.com/auth/urlshortener'
+  oauthKeys: [
+    'oauth_tokenhttps://www.googleapis.com/auth/urlshortener'
+    'oauth_token_secrethttps://www.googleapis.com/auth/urlshortener'
+  ]
   output: (resp) ->
     JSON.parse(resp).id
   url: ->
@@ -275,18 +279,18 @@ getBrowserVersion = ->
 
 # Attempt to retrieve the feature with the specified `menuId`.
 getFeatureWithMenuId = (menuId) ->
-  queryFeature (feature) ->
+  ext.queryFeature (feature) ->
     feature.menuId is menuId
 
 # Attempt to retrieve the feature with the specified `name`.
 getFeatureWithName = (name) ->
-  queryFeature (feature) ->
+  ext.queryFeature (feature) ->
     feature.name is name
 
 # Attempt to retrieve the feature with the specified keyboard `shortcut`.  
 # Exclude disabled features from this query.
 getFeatureWithShortcut = (shortcut) ->
-  queryFeature (feature) ->
+  ext.queryFeature (feature) ->
     feature.enabled and feature.shortcut is shortcut
 
 # Derive the path of the image used by `feature`.
@@ -444,11 +448,6 @@ onRequest = (request, sender, sendResponse) ->
       else
         # Close the popup if it's still open.
         popup?.close()
-
-# Retrieve the first feature that passes the specified `filter`.
-queryFeature = (filter) ->
-  if typeof filter is 'function'
-    return feature for feature in ext.features when filter feature
 
 # Remove the feature `name` from the persisted list.
 removeFeatureName = (name) ->
@@ -872,7 +871,7 @@ callUrlShortener = (url, callback) ->
 # Determine when `callback` is called depending on whether or not the active
 # URL Shortener supports [OAuth](http://oauth.net).
 callUrlShortenerHelper = (url, callback) ->
-  service = getUrlShortener()
+  service = getActiveUrlShortener()
   if service.oauth and service.isOAuthEnabled()
     service.oauth.authorize ->
       callback? url, service
@@ -880,14 +879,16 @@ callUrlShortenerHelper = (url, callback) ->
     callback? url, service
 
 # Retrieve the active URL shortener service.
-getUrlShortener = ->
+getActiveUrlShortener = ->
   # Attempt to lookup enabled URL shortener service.
-  return shortener for shortener in SHORTENERS when shortener.isEnabled()
+  shortener = ext.queryUrlShortener (shortener) ->
+    shortener.isEnabled()
+  return shortener if shortener?
   # Should never reach here but we'll return goo.gl service by default after
   # ensuring it's the active URL shortener service from now on to save some
   # time.
   utils.set 'googl', yes
-  SHORTENERS[1]
+  getActiveUrlShortener()
 
 # Background page setup
 # ---------------------
@@ -1133,6 +1134,17 @@ ext = window.ext =
     result  = sandbox.val() if document.execCommand 'paste'
     sandbox.val ''
     result
+
+  # Retrieve the first feature that passes the specified `filter`.
+  queryFeature: (filter) ->
+    if typeof filter is 'function'
+      return feature for feature in ext.features when filter feature
+
+  # Retrieve the first URL shortener service that passes the specified
+  # `filter`.
+  queryUrlShortener: (filter) ->
+    if typeof filter is 'function'
+      return shortener for shortener in SHORTENERS when filter shortener
 
   # Reset the message and status associated with the current copy request.  
   # This should be called when a copy request is completed regardless of its

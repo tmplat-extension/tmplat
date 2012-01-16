@@ -491,10 +491,13 @@
         }
     },
     "help_googlOAuth": {
-        "message": "$O_PARA$$O_LINK_1$OAuth$C_LINK$ is an open protocol that aims to standardize the way desktop and web applications access a user's private data. OAuth provides a mechanism for users to grant access to private data without sharing their private credentials (username/password).$C_PARA$$O_PARA$$O_BOLD$Template$C_BOLD$ uses OAuth to shorten links via $O_BOLD$goo.gl$C_BOLD$ on your behalf.$C_PARA$",
+        "message": "$O_PARA$$O_LINK_1$OAuth$C_LINK$ is an open protocol that aims to standardize the way desktop and web applications access a user's private data. OAuth provides a mechanism for users to grant access to private data without sharing their private credentials (username/password).$C_PARA$$O_PARA$$O_BOLD$Template$C_BOLD$ uses OAuth to shorten links via $O_BOLD$goo.gl$C_BOLD$ on your behalf.$C_PARA$$O_PARA$If you have previously attempted to authorize $O_BOLD$Template$C_BOLD$ you can undo this locally by clicking the $O_EMPH$Revoke Access$C_EMPH$ button.$C_PARA$",
         "placeholders": {
             "c_bold": {
                 "content": "</strong>"
+            },
+            "c_emph": {
+                "content": "</em>"
             },
             "c_link": {
                 "content": "</a>"
@@ -504,6 +507,9 @@
             },
             "o_bold": {
                 "content": "<strong>"
+            },
+            "o_emph": {
+                "content": "<em>"
             },
             "o_link_1": {
                 "content": "<a href=\"http://oauth.net\" target=\"_blank\">"
@@ -749,6 +755,9 @@
     },
     "opt_context_menu_text": {
         "message": "Enable the context menu"
+    },
+    "opt_deauthorize_button": {
+        "message": "Revoke Access"
     },
     "opt_delete_button": {
         "message": "Delete"
