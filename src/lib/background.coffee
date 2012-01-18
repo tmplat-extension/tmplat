@@ -237,6 +237,7 @@ browser         =
 operatingSystem = ''
 
 # Private functions
+# -----------------
 
 # Inject and execute the `content.coffee` and `install.coffee` scripts within
 # all of the tabs (where valid) of each Chrome window.
