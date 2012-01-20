@@ -26,7 +26,7 @@ notification = window.notification =
     # Style the tip and insert a relevant internationalized string depending on
     # the outcome of the copy request or the existence of an override message.
     div.className = result;
-    div.innerHTML = if ext.message then ext.message else utils.i18n result
+    div.innerHTML = ext.message or utils.i18n result
     # Reset `ext` to avoid affecting copy other copy requests. If the user has
     # disabled the notifications option this should still be called for safety.
     ext.reset()
