@@ -74,6 +74,8 @@ DEFAULT_FEATURES  = [
     title:    utils.i18n 'copy_url'
     usage:    0
 ]
+# Extension ID being used by Template.
+EXTENSION_ID      = utils.i18n '@@extension_id'
 # Domain of this extension's homepage.
 HOMEPAGE_DOMAIN   = 'neocotic.com'
 # List of known operating systems that could be used by the user.
@@ -328,9 +330,9 @@ onRequest = (request, sender, sendResponse) ->
   # Don't allow shortcut requests when shortcuts are disabled.
   if request.type is 'shortcut' and not utils.get 'shortcuts'
     return sendResponse?()
-  # Version requests are simple, just send the version back. Done!
-  if request.type is 'version'
-    return sendResponse? version: ext.version
+  # Info requests are simple, just send some useful information back. Done!
+  if request.type in ['info', 'version']
+    return sendResponse? id: EXTENSION_ID, version: ext.version
   chrome.windows.getCurrent (win) ->
     chrome.tabs.query
       active:   yes

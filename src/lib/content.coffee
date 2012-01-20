@@ -9,9 +9,9 @@
 
 # Wrap the function functionality in a request for Template's current version
 # so that it can be used to detect previous injections.
-chrome.extension.sendRequest type: 'version', (versionData) ->
+chrome.extension.sendRequest type: 'info', (data) ->
   isMac   = navigator.userAgent.toLowerCase().indexOf('mac') isnt -1
-  version = versionData.version.replace /\./g, ''
+  version = data.version.replace /\./g, ''
   # Only add the listeners if a previous injection isn't detected for running
   # version of Template.
   return if document.body.hasAttribute "template-v#{version}"
