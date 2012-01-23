@@ -1,3 +1,16 @@
+YYYY.MM.DD, Version 1.0.0
+
+* Full release!
+* [#20](https://github.com/neocotic/template/issues/20): Add *"Revoke Access"* button to [http://goo.gl][goo.gl]'s configuration on the Options page
+* [#47](https://github.com/neocotic/template/issues/47): Simplify internationalization code
+* [#49](https://github.com/neocotic/template/issues/49): Add new *"count"* simple tag to allow access to the total number of templates
+* [#49](https://github.com/neocotic/template/issues/49): Add new *"customCount"* simple tag to allow access to the total number of custom templates (i.e. excluding predefined)
+* [#49](https://github.com/neocotic/template/issues/49): Add new *"popular"* complex tag to allow access to the details of the most popular template
+* [#49](https://github.com/neocotic/template/issues/49): Restructure template data stored in `localStorage`
+* [#52](https://github.com/neocotic/template/issues/52): Completely rewrite code in [CoffeeScript](http://coffeescript.org)
+* [#52](https://github.com/neocotic/template/issues/52): Update build process
+* Bug fixes and UI tweaks
+
 2011.12.22, Version 0.3.0.0
 
 * [#48](https://github.com/neocotic/template/issues/48): Allow user to change behaviour of the toolbar icon
