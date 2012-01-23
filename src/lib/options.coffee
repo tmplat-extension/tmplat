@@ -472,10 +472,11 @@ loadUrlShorteners = ->
 
 # Update the settings with the values from the options page.
 save = ->
-  utils.set 'contextMenu', $('#contextMenu').is ':checked'
-  utils.set 'shortcuts', $('#shortcuts').is ':checked'
-  utils.set 'doAnchorTarget', $('#doAnchorTarget').is ':checked'
-  utils.set 'doAnchorTitle', $('#doAnchorTitle').is ':checked'
+  utils.set
+    contextMenu:    $('#contextMenu').is ':checked'
+    shortcuts:      $('#shortcuts').is ':checked'
+    doAnchorTarget: $('#doAnchorTarget').is ':checked'
+    doAnchorTitle:  $('#doAnchorTitle').is ':checked'
   saveFeatures()
   saveNotifications()
   saveToolbar()
@@ -496,10 +497,11 @@ saveFeatures = ->
 # Update the settings with the values from the notification section of the
 # options page.
 saveNotifications = ->
-  utils.set 'notifications', $('#notifications').is ':checked'
   timeInSecs = $('#notificationDuration').val()
   timeInSecs = if timeInSecs? then parseInt(timeInSecs, 10) * 1000 else 0
-  utils.set 'notificationDuration', timeInSecs
+  utils.set
+    notifications:        $('#notifications').is ':checked'
+    notificationDuration: timeInSecs
 
 # Updates the settings with the values from the toolbar section of the options
 # page.
@@ -508,13 +510,16 @@ saveToolbar = ->
   toolbarFeatureName = ''
   toolbarFeatureName = toolbarFeature.val() if toolbarFeature.length
   if $('#toolbarPopup').is(':checked') or not toolbarFeatureName
-    utils.set 'toolbarFeature', no
-    utils.set 'toolbarPopup', yes
+    utils.set
+      toolbarFeature: no
+      toolbarPopup:   yes
   else
-    utils.set 'toolbarFeature', yes
-    utils.set 'toolbarPopup', no
-  utils.set 'toolbarFeatureDetails', $('#toolbarFeatureDetails').is ':checked'
-  utils.set 'toolbarFeatureName', toolbarFeatureName
+    utils.set
+      toolbarFeature: yes
+      toolbarPopup:   no
+  utils.set
+    toolbarFeatureDetails: $('#toolbarFeatureDetails').is ':checked'
+    toolbarFeatureName:    toolbarFeatureName
   ext.updateToolbar()
 
 # Update the settings with the values from the URL shorteners section of the
@@ -523,13 +528,14 @@ saveUrlShorteners = ->
   $('input[name="enabled_shortener"]').each ->
     $this = $ this
     utils.set $this.attr('id'), $this.is ':checked'
-  utils.set 'bitlyApiKey',     $('#bitlyApiKey').val().trim()
-  utils.set 'bitlyUsername',   $('#bitlyUsername').val().trim()
-  utils.set 'googlOAuth',      $('#googlOAuth').is ':checked'
-  utils.set 'yourlsPassword',  $('#yourlsPassword').val()
-  utils.set 'yourlsSignature', $('#yourlsSignature').val().trim()
-  utils.set 'yourlsUrl',       $('#yourlsUrl').val().trim()
-  utils.set 'yourlsUsername',  $('#yourlsUsername').val().trim()
+  utils.set
+    bitlyApiKey:     $('#bitlyApiKey').val().trim()
+    bitlyUsername:   $('#bitlyUsername').val().trim()
+    googlOAuth:      $('#googlOAuth').is ':checked'
+    yourlsPassword:  $('#yourlsPassword').val()
+    yourlsSignature: $('#yourlsSignature').val().trim()
+    yourlsUrl:       $('#yourlsUrl').val().trim()
+    yourlsUsername:  $('#yourlsUsername').val().trim()
 
 # Update the specified `option` element that represents a feature with the
 # values taken from the available input fields.
