@@ -39,7 +39,7 @@ i18nHandlers   =
           element.setAttribute propName, utils.i18n propExpr, subs
 # List of internationalization attributes/handlers available.
 i18nAttributes = []
-i18nAttributes.push key for key of i18nHandlers
+i18nAttributes.push key for own key of i18nHandlers
 # Selector containing the available internationalization attributes/handlers
 # which is used by `i18nProcess` to query all elements.
 i18nSelector   = "[#{i18nAttributes.join '],['}]"
@@ -59,13 +59,12 @@ i18nProcess = (node, subMap) ->
 # key as the mapping.
 i18nSubs = (element, value, subMap) ->
   if subMap
-    for prop of subMap when subMap.hasOwnProperty(prop) and prop is element.id
-      for subProp of subMap[prop] when subMap[prop].hasOwnProperty subProp
-        if subProp is value
-          subs = subMap[prop][subProp]
-          break
+    for own prop, subMap2 of subMap when prop is element.id
+      for own prop2, target of subMap2 when prop2 is value
+        subs = target
+        break
       break
-  return subs
+  subs
 
 # Utilities setup
 # ---------------
@@ -77,58 +76,76 @@ utils = window.utils =
 
   # Retrieve the first entity/all entities that pass the specified `filter`.
   query: (entities, singular, filter) ->
-    if singular
-      return entity for entity in entities when filter entity
-    else
-      results = []
-      results.push entity for entity in entities when filter entity
-      return results
+    return entity for entity in entities when filter entity if singular
+    entity for entity in entities when filter entity
 
   # Data functions
   # --------------
 
-  # Determine whether or not the specified key exists in `localStorage`.
-  exists: (key) ->
-    return localStorage.hasOwnProperty key
+  # Determine whether or not the specified `keys` exist in `localStorage`.
+  exists: (keys...) ->
+    return no for key in keys when not localStorage.hasOwnProperty key
+    yes
 
   # Retrieve the value associated with the specified key from `localStorage`.  
   # If the value is found, parse it as JSON before being returning it;
   # otherwise return `undefined`.
   get: (key) ->
     value = localStorage[key]
-    return if value? then JSON.parse value else value
+    if value? then JSON.parse value else value
 
-  # Initialize the value of the specified key in `localStorage`.  
+  # Initialize the value of the specified key(s) in `localStorage`.  
+  # `keys` can either be a string for a single key (in which case
+  # `defaultValue` should also be specified) or a map of key/default value
+  # pairs.  
   # If the value is currently `undefined`, assign the specified default value;
   # otherwise reassign itself.
-  init: (key, defaultValue) ->
-    value = utils.get key
-    return utils.set key, value ? defaultValue
+  init: (keys = {}, defaultValue) ->
+    switch typeof keys
+      when 'object'
+        @set key, @get(key) ? defaultValue for own key, defaultValue of keys
+      when 'string' then @set keys, @get(keys) ? defaultValue
 
-  # Remove the specified key from `localStorage`.
-  remove: (key) ->
-    value = utils.get key
-    delete localStorage[key]
-    return value
+  # Remove the specified `keys` from `localStorage`.  
+  # If only one key is specified then the current value of that key is returned
+  # after it has been removed.
+  remove: (keys...) ->
+    if keys.length is 1
+      value = @get key
+      delete localStorage[key]
+      return value
+    delete localStorage[key] for key in keys
 
   # Copy the value of the existing key to that of the new key then remove the
   # old key from `localStorage`.  
   # If the old key doesn't exist in `localStorage`, assign the specified
   # default value to it instead.
   rename: (oldKey, newKey, defaultValue) ->
-    if utils.exists oldKey
-      utils.init newKey, utils.get oldKey
-      utils.remove oldKey
+    if @exists oldKey
+      @init newKey, @get oldKey
+      @remove oldKey
     else
-      utils.init newKey, defaultValue
+      @init newKey, defaultValue
 
-  # Set the value of the specified key in `localStorage`.  
+  # Search `localStorage` for all keys that match the specified regular
+  # expression.
+  search: (regex) ->
+    key for own key of localStorage when regex.test key
+
+  # Set the value of the specified key(s) in `localStorage`.  
+  # `keys` can either be a string for a single key (in which case `value`
+  # should also be specified) or a map of key/value pairs.  
   # If the specified value is `undefined`, assign that value directly to the
   # key; otherwise transform it to a JSON string beforehand.
-  set: (key, value) ->
-    oldValue = utils.get key
-    localStorage[key] = if value? then JSON.stringify value else value
-    return oldValue
+  set: (keys, value) ->
+    switch typeof keys
+      when 'object'
+        for own key, value of keys
+          localStorage[key] = if value? then JSON.stringify value else value
+      when 'string'
+        oldValue = @get keys
+        localStorage[keys] = if value? then JSON.stringify value else value
+        oldValue
 
   # Internationalization functions
   # ------------------------------
@@ -143,14 +160,14 @@ utils = window.utils =
     # Ensure the substitution string(s) are in an array.
     subs = [subs] if typeof subs is 'string'
     for element in elements
-      element.setAttribute attribute, utils.i18n value, subs
+      element.setAttribute attribute, @i18n value, subs
 
   # Internationalize the contents of all the selected elements.
   i18nContent: (selector, value, subs) ->
     elements = document.querySelectorAll selector
     # Ensure the substitution string(s) are in an array.
     subs = [subs] if typeof subs is 'string'
-    element.innerHTML = utils.i18n value, subs for element in elements
+    element.innerHTML = @i18n value, subs for element in elements
 
   # Perform all internationalization setup required for the current page.
   i18nSetup: (subMap) ->
@@ -161,48 +178,48 @@ utils = window.utils =
 
   # Output all failed `assertions`.
   assert: (assertions...) ->
-    console.assert assertion for assertion in assertions if utils.logging()
+    console.assert assertion for assertion in assertions if @logging()
 
   # Create/increment a counter and output its current count for all `names`.
   count: (names...) ->
-    console.count name for name in names if utils.logging()
+    console.count name for name in names if @logging()
 
   # Output all debug `entries`.
   debug: (entries...) ->
-    console.debug entry for entry in entries if utils.logging()
+    console.debug entry for entry in entries if @logging()
 
   # Display an interactive listing of the properties of all `entries`.
   dir: (entries...) ->
-    console.dir entry for entry in entries if utils.logging()
+    console.dir entry for entry in entries if @logging()
 
   # Output all error `entries`.
   error: (entries...) ->
-    console.error entry for entry in entries if utils.logging()
+    console.error entry for entry in entries if @logging()
 
   # Output all informative `entries`.
   info: (entries...) ->
-    console.info entry for entry in entries if utils.logging()
+    console.info entry for entry in entries if @logging()
 
   # Output all general `entries`.
   log: (entries...) ->
-    console.log entry for entry in entries if utils.logging()
+    console.log entry for entry in entries if @logging()
 
   # Indicates whether or not logging is enabled.
   logging: ->
-    utils.get 'log'
+    @get 'log'
 
   # Start a timer for all `names`.
   time: (names...) ->
-    console.time name for name in names if utils.logging()
+    console.time name for name in names if @logging()
 
   # Stop a timer and output its elapsed time in milliseconds for all `names`.
   timeEnd: (names...) ->
-    console.timeEnd name for name in names if utils.logging()
+    console.timeEnd name for name in names if @logging()
 
   # Output a stack trace.
   trace: ->
-    console.trace() if utils.logging()
+    console.trace() if @logging()
 
   # Output all warning `entries`.
   warn: (entries...) ->
-    console.warn entry for entry in entries if utils.logging()
+    console.warn entry for entry in entries if @logging()
