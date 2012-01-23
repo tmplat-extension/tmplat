@@ -1,7 +1,7 @@
 YYYY.MM.DD, Version 1.0.0
 
 * Full release!
-* [#20](https://github.com/neocotic/template/issues/20): Add *"Revoke Access"* button to [http://goo.gl][goo.gl]'s configuration on the Options page
+* [#20](https://github.com/neocotic/template/issues/20): Add *"Revoke Access"* button to [goo.gl](http://goo.gl)'s configuration on the Options page
 * [#47](https://github.com/neocotic/template/issues/47): Simplify internationalization code
 * [#49](https://github.com/neocotic/template/issues/49): Add new *"count"* simple tag to allow access to the total number of templates
 * [#49](https://github.com/neocotic/template/issues/49): Add new *"customCount"* simple tag to allow access to the total number of custom templates (i.e. excluding predefined)
