@@ -758,15 +758,15 @@ initFeatures_update = ->
   # Check if the features need updated for 0.2.0.0.
   if update_progress.features.indexOf('0.2.0.0') is -1
     # Update the features for 0.2.0.0.
-    for name in utils.get 'features'
+    for name in utils.get 'features' when typeof name is 'string'
       utils.rename "feat_#{name}_template", "feat_#{name}_content"
       image = utils.get "feat_#{name}_image"
-      if typeof image is 'string'
-        for img in ext.IMAGES when img.file is image
-          utils.set "feat_#{name}_image", img.id
-          break
-      else if typeof image is 'undefined'
-        utils.set "feat_#{name}_image", 0
+      switch typeof image
+        when 'string'
+          for img in ext.IMAGES when img.file is image
+            utils.set "feat_#{name}_image", img.id
+            break
+        when 'undefined' then utils.set "feat_#{name}_image", 0
     # Ensure that features are not updated for 0.2.0.0 again.
     update_progress.features.push '0.2.0.0'
     utils.set 'update_progress', update_progress
@@ -786,6 +786,9 @@ initFeatures_update = ->
         title:    utils.remove("feat_#{name}_title")    ? name
         usage:    0
     utils.set 'features', features
+    utils.remove utils.search(
+      /^feat_.*_(content|enabled|image|index|readonly|shortcut|title)$/
+    )...
     # Ensure that features are not updated for 1.0.0 again.
     update_progress.features.push '1.0.0'
     utils.set 'update_progress', update_progress
@@ -797,25 +800,27 @@ initStatistics = ->
 
 # Initialize the settings related to the toolbar/browser action.
 initToolbar = ->
-  utils.init 'toolbarPopup',          on
-  utils.init 'toolbarFeature',        off
-  utils.init 'toolbarFeatureDetails', off
-  utils.init 'toolbarFeatureName',    ''
+  utils.init
+    toolbarPopup:          on
+    toolbarFeature:        off
+    toolbarFeatureDetails: off
+    toolbarFeatureName:    ''
   ext.updateToolbar()
 
 # Initialize the settings related to the supported URL Shortener services.
 initUrlShorteners = ->
   initUrlShorteners_update()
-  utils.init 'bitly',           off
-  utils.init 'bitlyApiKey',     ''
-  utils.init 'bitlyUsername',   ''
-  utils.init 'googl',           on
-  utils.init 'googlOAuth',      on
-  utils.init 'yourls',          off
-  utils.init 'yourlsPassword',  ''
-  utils.init 'yourlsSignature', ''
-  utils.init 'yourlsUrl',       ''
-  utils.init 'yourlsUsername',  ''
+  utils.init
+    bitly:           off
+    bitlyApiKey:     ''
+    bitlyUsername:   ''
+    googl:           on
+    googlOAuth:      on
+    yourls:          off
+    yourlsPassword:  ''
+    yourlsSignature: ''
+    yourlsUrl:       ''
+    yourlsUsername:  ''
 
 # Handle the conversion/removal of older version of settings that may have
 # been stored previously by `initUrlShorteners`.
@@ -1107,15 +1112,17 @@ ext = window.ext =
   # This will involve initializing the settings and adding the request
   # listeners.
   init: ->
-    utils.init 'log',                  off
-    utils.init 'update_progress',      {}
+    utils.init
+      log:             off
+      update_progress: {}
     init_update()
-    utils.init 'contextMenu',          on
-    utils.init 'notifications',        on
-    utils.init 'notificationDuration', 3000
-    utils.init 'shortcuts',            on
-    utils.init 'doAnchorTarget',       off
-    utils.init 'doAnchorTitle',        off
+    utils.init
+      contextMenu:          on
+      notifications:        on
+      notificationDuration: 3000
+      shortcuts:            on
+      doAnchorTarget:       off
+      doAnchorTitle:        off
     initFeatures()
     initToolbar()
     initStatistics()
