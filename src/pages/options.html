@@ -12,13 +12,6 @@
       code {background-color: #F8F8F8; border: 1px solid #DEDEDE; font-size: 13px; padding: 0 2px; border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
       pre {background-color: #F8F8F8; border: 1px solid #CCC; font-size: 13px; line-height: 19px; margin: 20px 0; overflow: auto; padding: 6px 10px; order-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
       table {border: 0; border-collapse; collapse; width: 100%;}
-      .features tr td:first-child {padding-top: 6px; text-align: right; vertical-align: top;}
-      .feature td {text-align: left;}
-      .feature.first .expanded, .feature.collapsed.first .collapsed {display: block;}
-      .feature.first .collapsed, .feature.collapsed.first .expanded {display: none;}
-      .feature.collapsed.second, .feature.collapsed.third {display: none;}
-      .featureShortcut {text-transform: uppercase;}
-      .features tr:last-child td:first-child {padding-top: 8px !important;}
       .styled thead th {border-bottom: 1px solid #EEE;}
       .styled thead th:hover {border-bottom-color: #AAA;}
       .styled tbody tr:hover {background-color: #F3F3F3;}
@@ -91,7 +84,7 @@
     <ul id="navigation">
       <li id="general_nav" tabify="#general_tab" i18n-content="opt_general_header"></li>
       <li id="toolbar_nav" tabify="#toolbar_tab" i18n-content="opt_toolbar_header"></li>
-      <li id="features_nav" tabify="#features_tab" i18n-content="opt_feature_header"></li>
+      <li id="templates_nav" tabify="#templates_tab" i18n-content="opt_template_header"></li>
       <li id="shorteners_nav" tabify="#shorteners_tab" i18n-content="opt_url_shortener_header"></li>
     </ul>
     <div id="navigation-footer">
@@ -174,7 +167,7 @@
           <div class="contents">
             <div>
               <label>
-                <input type="checkbox" id="toolbarPopup" />
+                <input type="radio" name="toolbar_behaviour" id="toolbarPopup" />
                 <span id="toolbarPopup_txt" i18n-content="opt_toolbar_popup_text"></span>
               </label>
               <a facebox="#toolbarPopup_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
@@ -182,41 +175,41 @@
             </div>
             <div>
               <label>
-                <input type="checkbox" id="toolbarFeature" />
-                <span id="toolbarFeature_txt" i18n-content="opt_toolbar_feature_text"></span>
+                <input type="radio" name="toolbar_behaviour" id="toolbarTemplate" />
+                <span id="toolbarTemplate_txt" i18n-content="opt_toolbar_template_text"></span>
               </label>
-              <a facebox="#toolbarFeature_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-              <div id="toolbarFeature_help" class="help" i18n-content="help_toolbarFeature"></div>
+              <a facebox="#toolbarTemplate_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="toolbarTemplate_help" class="help" i18n-content="help_toolbarTemplate"></div>
             </div>
             <div style="margin: 0 0 0 40px">
-              <label for="toolbarFeatureName">
-                <span id="toolbarFeatureName_txt" i18n-content="opt_toolbar_feature_name_text"></span>
+              <label for="toolbarTemplateName">
+                <span id="toolbarTemplateName_txt" i18n-content="opt_toolbar_template_name_text"></span>
               </label>
-              <a facebox="#toolbarFeatureName_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-              <div id="toolbarFeatureName_help" class="help" i18n-content="help_toolbarFeatureName"></div>
+              <a facebox="#toolbarTemplateName_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="toolbarTemplateName_help" class="help" i18n-content="help_toolbarTemplateName"></div>
               <br>
-              <select id="toolbarFeatureName" size="1"></select>
+              <select id="toolbarTemplateName" size="1"></select>
             </div>
             <div style="margin: 4px 0 0 36px">
               <label>
-                <input type="checkbox" id="toolbarFeatureDetails" />
-                <span id="toolbarFeatureDetails_txt" i18n-content="opt_toolbar_feature_details_text"></span>
+                <input type="checkbox" id="toolbarTemplateDetails" />
+                <span id="toolbarTemplateDetails_txt" i18n-content="opt_toolbar_template_details_text"></span>
               </label>
-              <a facebox="#toolbarFeatureDetails_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-              <div id="toolbarFeatureDetails_help" class="help" i18n-content="help_toolbarFeatureDetails"></div>
+              <a facebox="#toolbarTemplateDetails_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="toolbarTemplateDetails_help" class="help" i18n-content="help_toolbarTemplateDetails"></div>
             </div>
           </div>
         </div>
       </div>
-      <div id="features_tab" class="tab">
-        <div id="features_sct" class="section">
-          <h4 id="features_hdr" i18n-content="opt_feature_header"></h4>
+      <div id="templates_tab" class="tab">
+        <div id="templates_sct" class="section">
+          <h4 id="templates_hdr" i18n-content="opt_template_header"></h4>
           <div class="contents">
             <div>
               <table>
                 <tr>
                   <td colspan="2" rowspan="2" style="min-width: 354px">
-                    <select id="features" size="5" style="width: 100%"></select>
+                    <select id="templates" size="5" style="width: 100%"></select>
                   </td>
                   <td style="padding-top: 10px; width: 50%">
                     <button id="moveUp_btn"><img src="../images/move_up_disabled.gif" /></button>
@@ -232,14 +225,14 @@
                     <table style="border-spacing: 0">
                       <tr>
                         <td style="width: 75px">
-                          <label for="feature_name">
-                            <span id="feature_name_txt" i18n-content="opt_feature_name_text"></span>
+                          <label for="template_name">
+                            <span id="template_name_txt" i18n-content="opt_template_name_text"></span>
                           </label>
-                          <a facebox="#feature_name_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                          <div id="feature_name_help" class="help" i18n-content="help_feature_name"></div>
+                          <a facebox="#template_name_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                          <div id="template_name_help" class="help" i18n-content="help_template_name"></div>
                         </td>
                         <td>
-                          <input id="feature_name" class="read-only-always" type="text" maxlength="16" size="32" />
+                          <input id="template_name" class="read-only-always" type="text" maxlength="16" size="32" />
                         </td>
                       </tr>
                     </table>
@@ -253,14 +246,14 @@
                     <table style="border-spacing: 0">
                       <tr>
                         <td style="width: 75px">
-                          <label for="feature_title">
-                            <span id="feature_title_txt" i18n-content="opt_feature_title_text"></span>
+                          <label for="template_title">
+                            <span id="template_title_txt" i18n-content="opt_template_title_text"></span>
                           </label>
-                          <a facebox="#feature_title_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                          <div id="feature_title_help" class="help" i18n-content="help_feature_title"></div>
+                          <a facebox="#template_title_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                          <div id="template_title_help" class="help" i18n-content="help_template_title"></div>
                         </td>
                         <td>
-                          <input id="feature_title" class="read-only" type="text" maxlength="32" size="32" />
+                          <input id="template_title" class="read-only" type="text" maxlength="32" size="32" />
                         </td>
                       </tr>
                     </table>
@@ -275,15 +268,15 @@
                     <table style="border-spacing: 0">
                       <tr>
                         <td style="width: 75px">
-                          <label for="feature_image">
-                            <span id="feature_image_txt" i18n-content="opt_feature_image_text"></span>
+                          <label for="template_image">
+                            <span id="template_image_txt" i18n-content="opt_template_image_text"></span>
                           </label>
-                          <a facebox="#feature_image_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                          <div id="feature_image_help" class="help" i18n-content="help_feature_image"></div>
+                          <a facebox="#template_image_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                          <div id="template_image_help" class="help" i18n-content="help_template_image"></div>
                         </td>
                         <td>
-                          <select id="feature_image"></select>
-                          <img id="feature_image_preview" width="16" height="16" style="margin-bottom: -3px" />
+                          <select id="template_image"></select>
+                          <img id="template_image_preview" width="16" height="16" style="margin-bottom: -3px" />
                         </td>
                       </tr>
                     </table>
@@ -300,18 +293,18 @@
                 <tr>
                   <td>
                     <label>
-                      <input id="feature_enabled" type="checkbox" checked />
-                      <span id="feature_enabled_txt" i18n-content="opt_feature_enabled_text"></span>
+                      <input id="template_enabled" type="checkbox" checked />
+                      <span id="template_enabled_txt" i18n-content="opt_template_enabled_text"></span>
                     </label>
-                    <a facebox="#feature_enabled_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                    <div id="feature_enabled_help" class="help" i18n-content="help_feature_enabled"></div>
+                    <a facebox="#template_enabled_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                    <div id="template_enabled_help" class="help" i18n-content="help_template_enabled"></div>
                   </td>
                   <td style="text-align: right">
                     <label>
-                      <span id="feature_shortcut_txt"></span><input id="feature_shortcut" type="text" maxlength="1" size="1" style="text-transform: uppercase" />
+                      <span id="template_shortcut_txt"></span><input id="template_shortcut" type="text" maxlength="1" size="1" style="text-transform: uppercase" />
                     </label>
-                    <a facebox="#feature_shortcut_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                    <div id="feature_shortcut_help" class="help" i18n-content="help_feature_shortcut"></div>
+                    <a facebox="#template_shortcut_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                    <div id="template_shortcut_help" class="help" i18n-content="help_template_shortcut"></div>
                   </td>
                   <td>
                     <button id="export_btn" i18n-content="opt_export_button"></button>
@@ -324,10 +317,10 @@
                 <tr>
                   <td colspan="3">
                     <label>
-                      <textarea id="feature_template" class="read-only" rows="5" cols="50" spellcheck="false" style="resize: vertical" i18n-values="placeholder:opt_feature_template_text"></textarea>
+                      <textarea id="template_content" class="read-only" rows="5" cols="50" spellcheck="false" style="resize: vertical" i18n-values="placeholder:opt_template_content_text"></textarea>
                     </label>
                     <div>
-                      <a id="template_help_lnk" facebox="#template_help" i18n-content="opt_feature_template_help" i18n-values="title:opt_help_text"></a>
+                      <a id="template_help_lnk" facebox="#template_help" i18n-content="opt_template_content_help" i18n-values="title:opt_help_text"></a>
                       <div id="template_help" class="help"></div>
                     </div>
                   </td>

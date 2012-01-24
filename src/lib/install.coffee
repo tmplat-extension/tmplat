@@ -15,10 +15,8 @@ chrome.extension.sendRequest type: 'info', (data) ->
     'chrome_install_button'
     'primary'
   ]
-  # "Install" links to be modified.
-  links   = document.querySelectorAll "a.#{classes[0]}[href$=#{data.id}]"
   # Disable all "Install" links on the homepage for Template.
-  for link in links
-    link.className += ' disabled'
-    link.innerText  = 'Installed'
-    link.className  = link.className.replace cls, '' for cls in classes
+  for anchor in document.querySelectorAll "a.#{classes[0]}[href$=#{data.id}]"
+    anchor.className += ' disabled'
+    anchor.innerText  = 'Installed'
+    anchor.className  = anchor.className.replace cls, '' for cls in classes

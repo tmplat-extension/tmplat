@@ -11,7 +11,7 @@
 DEFAULT_LOCALE   = 'en'
 # Locales supported by Template.
 LOCALES          = ['en']
-# Regular expression used to validate feature name inputs.
+# Regular expression used to validate template name inputs.
 R_VALID_NAME     = /^[A-Za-z0-9]+$/
 # Regular expression used to validate keyboard shortcut inputs.
 R_VALID_SHORTCUT = /[A-Z0-9]/
@@ -28,7 +28,7 @@ R_VALID_SHORTCUT = /[A-Z0-9]/
 # Update the options page with the values from the current settings.
 load = ->
   loadImages()
-  loadFeatures()
+  loadTemplates()
   loadNotifications()
   loadToolbar()
   loadUrlShorteners()
@@ -49,55 +49,103 @@ load = ->
   else
     $('#doAnchorTitle').removeAttr 'checked'
 
-# Create an `option` element representing the `feature` provided.  
-# The element returned should then be inserted in to the `select` element that
-# is managing the features on the options page.
-loadFeature = (feature) ->
-  opt = $ '<option/>',
-    text:  feature.title
-    value: feature.name
-  opt.data 'content',  feature.content
-  opt.data 'enabled',  String feature.enabled
-  opt.data 'image',    String feature.image
-  opt.data 'readOnly', String feature.readOnly
-  opt.data 'shortcut', feature.shortcut
-  opt.data 'usage',    String feature.usage
-  return opt
+# Create an `option` element for each available template image.  
+# Each element is inserted in to the `select` element containing template
+# images on the options page.
+loadImages = ->
+  imagePreview = $ '#template_image_preview'
+  images       = $ '#template_image'
+  sorted       = (image for image in ext.IMAGES).sort()
+  $('<option/>',
+    text:  utils.i18n 'tmpl_none'
+    value: ''
+  ).appendTo(images).data 'file', 'spacer.gif'
+  images.append $ '<option/>',
+    disabled: 'disabled'
+    text:     '---------------'
+  for image in sorted
+    $('<option/>',
+      text:  utils.i18n image
+      value: image
+    ).appendTo(images).data 'file', "#{image}.png"
+  images.change ->
+    opt = images.find 'option:selected'
+    imagePreview.attr
+      src:   "../images/#{opt.data 'file'}"
+      title: opt.text()
+  images.change()
 
-# Bind the event handlers required for controlling the features.
-loadFeatureControlEvents = ->
-  features            = $ '#features'
-  lastSelectedFeature = {}
+# Update the notification section of the options page with the current
+# settings.
+loadNotifications = ->
+  if utils.get 'notifications'
+    $('#notifications').attr 'checked', 'checked'
+  else
+    $('#notifications').removeAttr 'checked'
+  notificationDuration = utils.get 'notificationDuration'
+  timeInSecs = 0
+  timeInSecs = notificationDuration * .001 if notificationDuration > timeInSecs
+  $('#notificationDuration').val timeInSecs
+
+# Update the templates section of the options page with the current settings.
+loadTemplates = ->
+  templates = $ '#templates'
+  # Start from a clean slate.
+  templates.remove 'option'
+  # Create and insert options representing each template.
+  templates.append loadTemplate template for template in ext.templates
+  # Load all of the event handlers required for managing the templates.
+  loadTemplateControlEvents()
+  loadTemplateImportEvents()
+  loadTemplateExportEvents()
+
+# Create an `option` element representing the `template` provided.  
+# The element returned should then be inserted in to the `select` element that
+# is managing the templates on the options page.
+loadTemplate = (template) ->
+  opt = $ '<option/>',
+    text:  template.title
+    value: template.name
+  opt.data 'content',  template.content
+  opt.data 'enabled',  "#{template.enabled}"
+  opt.data 'image',    template.image
+  opt.data 'readOnly', "#{template.readOnly}"
+  opt.data 'shortcut', template.shortcut
+  opt.data 'usage',    "#{template.usage}"
+  opt
+
+# Bind the event handlers required for controlling the templates.
+loadTemplateControlEvents = ->
+  templates            = $ '#templates'
+  lastSelectedTemplate = {}
   # Whenever the selected option changes we want all the controls to represent
   # the current selection (where possible).
-  features.change(->
+  templates.change ->
     $this = $ this
     opt   = $this.find 'option:selected'
-    # Update the previously selected feature.
-    updateFeature lastSelectedFeature if lastSelectedFeature.length
+    # Update the previously selected template.
+    updateTemplate lastSelectedTemplate if lastSelectedTemplate.length
     if opt.length is 0
       # Disable all the controls as no option is selected.
-      lastSelectedFeature = {}
+      lastSelectedTemplate = {}
       utils.i18nContent '#add_btn', 'opt_add_button'
-      $('#moveUp_btn, #moveDown_btn, .toggle-feature').attr 'disabled',
-        'disabled'
+      $('#moveUp_btn, #moveDown_btn').attr 'disabled', 'disabled'
       $('.read-only, .read-only-always').removeAttr 'disabled'
       $('.read-only, .read-only-always').removeAttr 'readonly'
       $('#delete_btn').attr 'disabled', 'disabled'
-      $('#feature_enabled').attr 'checked', 'checked'
-      $('#feature_image option').first().attr 'selected', 'selected'
-      $('#feature_image').change()
-      $('#feature_name').val ''
-      $('#feature_shortcut').val ''
-      $('#feature_template').val ''
-      $('#feature_title').val ''
+      $('#template_content').val ''
+      $('#template_enabled').attr 'checked', 'checked'
+      $('#template_image option').first().attr 'selected', 'selected'
+      $('#template_image').change()
+      $('#template_name').val ''
+      $('#template_shortcut').val ''
+      $('#template_title').val ''
     else
       # An option is selected; start cooking.
-      lastSelectedFeature = opt
+      lastSelectedTemplate = opt
       utils.i18nContent '#add_btn', 'opt_add_new_button'
       $('.read-only-always').attr 'disabled', 'disabled'
       $('.read-only-always').attr 'readonly', 'readonly'
-      $('.toggle-feature').removeAttr 'disabled'
       # Disable the *Up* control since the selected option is at the top of the
       # list.
       if opt.is ':first-child'
@@ -111,20 +159,20 @@ loadFeatureControlEvents = ->
       else
         $('#moveDown_btn').removeAttr 'disabled'
       # Update the fields and controls to reflect selected option.
-      imgOpt = $ "#feature_image option[value='#{opt.data 'image'}']"
+      imgOpt = $ "#template_image option[value='#{opt.data 'image'}']"
       if imgOpt.length is 0
-        $('#feature_image option').first().attr 'selected', 'selected'
+        $('#template_image option').first().attr 'selected', 'selected'
       else
         imgOpt.attr 'selected', 'selected'
-      $('#feature_image').change()
-      $('#feature_name').val opt.val()
-      $('#feature_shortcut').val opt.data 'shortcut'
-      $('#feature_template').val opt.data 'content'
-      $('#feature_title').val opt.text()
+      $('#template_content').val opt.data 'content'
+      $('#template_image').change()
+      $('#template_name').val opt.val()
+      $('#template_shortcut').val opt.data 'shortcut'
+      $('#template_title').val opt.text()
       if opt.data('enabled') is 'true'
-        $('#feature_enabled').attr 'checked', 'checked'
+        $('#template_enabled').attr 'checked', 'checked'
       else
-        $('#feature_enabled').removeAttr 'checked'
+        $('#template_enabled').removeAttr 'checked'
       if opt.data('readOnly') is 'true'
         $('.read-only').attr 'disabled', 'disabled'
         $('.read-only').attr 'readonly', 'readonly'
@@ -139,84 +187,84 @@ loadFeatureControlEvents = ->
     $('#moveDown_btn[disabled] img').attr 'src',
       '../images/move_down_disabled.gif'
     $('#moveUp_btn[disabled] img').attr 'src', '../images/move_up_disabled.gif'
-  ).change()
+  templates.change()
   # Add a new order to the select based on the input values.
   $('#add_btn').click ->
-    opt = features.find 'option:selected'
+    opt = templates.find 'option:selected'
     if opt.length
-      # Feature was selected; clear that selection and allow creation.
-      features.val([]).change()
-      $('#feature_name').focus()
+      # Template was selected; clear that selection and allow creation.
+      templates.val([]).change()
+      $('#template_name').focus()
     else
-      name  = $('#feature_name').val().trim()
-      title = $('#feature_title').val().trim()
+      name  = $('#template_name').val().trim()
+      title = $('#template_title').val().trim()
       # Wipe any pre-existing error messages.
-      $('#errors').find('li').remove();
-      # User submitted new feature so check it out already.
-      opt = loadFeature
-        content:  $('#feature_template').val()
-        enabled:  String $('#feature_enabled').is ':checked'
-        image:    parseInt $('#feature_image option:selected').val(), 10
+      $('#errors').find('li').remove()
+      # User submitted new template so check it out already.
+      opt = loadTemplate
+        content:  $('#template_content').val()
+        enabled:  String $('#template_enabled').is ':checked'
+        image:    $('#template_image option:selected').val()
         name:     name
         readOnly: no
-        shortcut: $('#feature_shortcut').val().trim().toUpperCase()
+        shortcut: $('#template_shortcut').val().trim().toUpperCase()
         title:    title
         usage:    0
-      # Confirm the feature meets the criteria.
-      if validateFeature opt, yes
-        features.append opt
+      # Confirm that the template meets the criteria.
+      if validateTemplate opt, yes
+        templates.append opt
         opt.attr 'selected', 'selected'
-        updateToolbarFeatures()
-        features.change().focus()
+        updateToolbarTemplates()
+        templates.change().focus()
       else
         # Show the error messages to the user.
         $.facebox div: '#message'
-  # Prompt the user to confirm removal of the selected feature.
+  # Prompt the user to confirm removal of the selected template.
   $('#delete_btn').click ->
     $.facebox div: '#delete_con'
-  # Cancel the feature removal process.
+  # Cancel the template removal process.
   $('.delete_no_btn').live 'click', ->
     $(document).trigger 'close.facebox'
-  # Finalize the feature removal.
+  # Finalize the template removal.
   $('.delete_yes_btn').live 'click', ->
-    opt = features.find('option:selected');
+    opt = templates.find 'option:selected'
     if opt.data('readOnly') isnt 'true'
       opt.remove()
-      features.change().focus()
+      templates.change().focus()
     $(document).trigger 'close.facebox'
-    updateToolbarFeatures()
+    updateToolbarTemplates()
   # Move the selected option down once when the *Down* control is clicked.
   $('#moveDown_btn').click ->
-    opt = features.find 'option:selected'
+    opt = templates.find 'option:selected'
     opt.insertAfter opt.next()
-    features.change().focus()
+    templates.change().focus()
   # Move the selected option up once when the *Up* control is clicked.
   $('#moveUp_btn').click ->
-    opt = features.find 'option:selected'
+    opt = templates.find 'option:selected'
     opt.insertBefore opt.prev()
-    features.change().focus()
+    templates.change().focus()
 
-# Bind the event handlers required for exporting features.
-loadFeatureExportEvents = ->
-  features = $ '#features'
-  # Prompt the user to selected the features to be exported.
+# Bind the event handlers required for exporting templates.
+loadTemplateExportEvents = ->
+  templates = $ '#templates'
+  # Prompt the user to selected the templates to be exported.
   $('#export_btn').click ->
     list = $ '.export_con_list'
     list.find('option').remove()
-    updateFeature features.find 'option:selected'
-    features.val([]).change()
+    updateTemplate templates.find 'option:selected'
+    templates.val([]).change()
     $('.export_yes_btn').attr 'disabled', 'disabled'
     $('.export_con_stage1').show()
     $('.export_con_stage2').hide()
     $('.export_content').val ''
-    features.find('option').each ->
+    templates.find('option').each ->
       opt = $ this
       list.append $ '<option/>',
         text:  opt.text()
         value: opt.val()
     $.facebox div: '#export_con'
-  # Enable/disable the continue button depending on whether or not any features
-  # are currently selected.
+  # Enable/disable the continue button depending on whether or not any
+  # templates are currently selected.
   $('.export_con_list').live 'change', ->
     if $(this).find('option:selected').length > 0
       $('.export_yes_btn').removeAttr 'disabled'
@@ -229,7 +277,7 @@ loadFeatureExportEvents = ->
     event.preventDefault()
   ).live 'mouseover', ->
     $(this).text utils.i18n 'copy'
-  # Deselect all of the features in the list.
+  # Deselect all of the templates in the list.
   $('.export_deselect_all_btn').live 'click', ->
     $('.export_con_list option').removeAttr('selected').parent().focus()
     $('.export_yes_btn').attr 'disabled', 'disabled'
@@ -253,11 +301,11 @@ loadFeatureExportEvents = ->
             window.location.href = fileEntry.toURL()
           builder.append str
           fileWriter.write builder.getBlob 'application/json'
-  # Select all of the features in the list.
+  # Select all of the templates in the list.
   $('.export_select_all_btn').live 'click', ->
     $('.export_con_list option').attr('selected', 'selected').parent().focus()
     $('.export_yes_btn').removeAttr 'disabled'
-  # Create the exported data based on the selected features.
+  # Create the exported data based on the selected templates.
   $('.export_yes_btn').live 'click', ->
     $this = $(this).attr 'disabled', 'disabled'
     items = $this.parents('.export_con_stage1').find('.export_con_list option')
@@ -268,30 +316,30 @@ loadFeatureExportEvents = ->
     $('.export_con_stage1').hide()
     $('.export_con_stage2').show()
 
-# Bind the event handlers required for importing features.
-loadFeatureImportEvents = ->
-  features = $ '#features'
+# Bind the event handlers required for importing templates.
+loadTemplateImportEvents = ->
+  templates = $ '#templates'
   # Restore the previous view in the import process.
   $('.import_back_btn').live 'click', ->
     $('.import_con_stage1').show()
     $('.import_con_stage2, .import_con_stage3').hide()
   # Prompt the user to input/load the data to be imported.
   $('#import_btn').click ->
-    updateFeature features.find 'option:selected'
-    features.val([]).change()
+    updateTemplate templates.find 'option:selected'
+    templates.val([]).change()
     $('.import_con_stage1').show()
     $('.import_con_stage2, .import_con_stage3').hide()
     $('.import_content').val ''
     $('.import_error').html '&nbsp;'
     $.facebox div: '#import_con'
-  # Enable/disable the finalize button depending on whether or not any features
-  # are currently selected.
+  # Enable/disable the finalize button depending on whether or not any
+  # templates are currently selected.
   $('.import_con_list').live 'change', ->
     if $(this).find('option:selected').length > 0
       $('.import_final_btn').removeAttr 'disabled'
     else
       $('.import_final_btn').attr 'disabled', 'disabled'
-  # Deselect all of the features in the list.
+  # Deselect all of the templates in the list.
   $('.import_deselect_all_btn').live 'click', ->
     $('.import_con_list option').removeAttr('selected').parent().focus()
     $('.import_final_btn').attr 'disabled', 'disabled'
@@ -320,15 +368,15 @@ loadFeatureImportEvents = ->
     list = $this.parents('.import_con_stage2').find '.import_con_list'
     list.find('option:selected').each ->
       opt = $ this
-      existingOpt = features.find "option[value='#{opt.val()}']"
+      existingOpt = templates.find "option[value='#{opt.val()}']"
       opt.removeAttr 'selected'
       if existingOpt.length is 0
-        features.append opt
+        templates.append opt
       else
         existingOpt.replaceWith opt
     $(document).trigger 'close.facebox'
-    updateToolbarFeatures()
-    features.focus()
+    updateToolbarTemplates()
+    templates.focus()
   # Cancel the import process.
   $('.import_no_btn, .import_close_btn').live 'click', ->
     $(document).trigger 'close.facebox'
@@ -339,11 +387,11 @@ loadFeatureImportEvents = ->
     $(this).text utils.i18n 'pasted'
   ).live 'mouseover', ->
     $(this).text utils.i18n 'paste'
-  # Select all of the features in the list.
+  # Select all of the templates in the list.
   $('.import_select_all_btn').live 'click', ->
     $('.import_con_list option').attr('selected', 'selected').parent().focus()
     $('.import_final_btn').removeAttr 'disabled'
-  # Read the imported data and attempt to extract any valid features and list
+  # Read the imported data and attempt to extract any valid templates and list
   # the changes to user for them to check and finalize.
   $('.import_yes_btn').live 'click', ->
     $this = $(this).attr 'disabled', 'disabled'
@@ -356,106 +404,51 @@ loadFeatureImportEvents = ->
       $('.import_error').text error
     if importData
       data = readImport importData
-      if data.features.length is 0
+      if data.templates.length is 0
         $('.import_con_stage3').show()
         $('.import_con_stage1, .import_con_stage2').hide()
       else
         list.find('option').remove()
-        $('.import_count').text data.features.length
-        list.append loadFeature feature for feature in data.features
+        $('.import_count').text data.templates.length
+        list.append loadTemplate template for template in data.templates
         $('.import_final_btn').attr 'disabled', 'disabled'
         $('.import_con_stage2').show()
         $('.import_con_stage1, .import_con_stage3').hide()
     $this.removeAttr 'disabled'
 
-# Update the features section of the options page with the current settings.
-loadFeatures = ->
-  features = $ '#features'
-  # Start from a clean slate.
-  features.remove 'option'
-  # Create and insert options representing each feature.
-  features.append loadFeature feature for feature in ext.features
-  # Load all of the event handlers required for managing the features.
-  loadFeatureControlEvents()
-  loadFeatureImportEvents()
-  loadFeatureExportEvents()
-
-# Create an `option` element for each available feature image.  
-# Each element is inserted in to the `select` element containing feature images
-# on the options page.
-loadImages = ->
-  imagePreview = $ '#feature_image_preview'
-  images       = $ '#feature_image'
-  for image in ext.IMAGES
-    $('<option/>',
-      text:  image.name
-      value: image.id
-    ).appendTo(images).data 'file', image.file
-    if image.separate
-      images.append $ '<option/>',
-        disabled: 'disabled'
-        text:     '---------------'
-  images.change(->
-    opt = images.find 'option:selected'
-    imagePreview.attr
-      src:   "../images/#{opt.data 'file'}"
-      title: opt.text()
-  ).change()
-
-# Update the notification section of the options page with the current
-# settings.
-loadNotifications = ->
-  if utils.get 'notifications'
-    $('#notifications').attr 'checked', 'checked'
-  else
-    $('#notifications').removeAttr 'checked'
-  notificationDuration = utils.get 'notificationDuration'
-  timeInSecs = 0
-  timeInSecs = notificationDuration * .001 if notificationDuration > timeInSecs
-  $('#notificationDuration').val timeInSecs
-
 # Update the toolbar behaviour section of the options page with the current
 # settings.
 loadToolbar = ->
-  if utils.get 'toolbarPopup'
-    $('#toolbarFeature').removeAttr 'checked'
-    $('#toolbarPopup').attr 'checked', 'checked'
+  $('input[name="toolbar_behaviour"]').each ->
+    $this = $ this
+    $this.attr 'checked', 'checked' if utils.get $this.attr 'id'
+  if utils.get 'toolbarTemplateDetails'
+    $('#toolbarTemplateDetails').attr 'checked', 'checked'
   else
-    $('#toolbarFeature').attr 'checked', 'checked'
-    $('#toolbarPopup').removeAttr 'checked'
-  if utils.get 'toolbarFeatureDetails'
-    $('#toolbarFeatureDetails').attr 'checked', 'checked'
-  else
-    $('#toolbarFeatureDetails').removeAttr 'checked'
-  updateToolbarFeatures()
-  toggleToolbarFeature()
+    $('#toolbarTemplateDetails').removeAttr 'checked'
+  updateToolbarTemplates()
   loadToolbarControlEvents()
 
 # Bind the event handlers required for controlling toolbar behaviour changes.
 loadToolbarControlEvents = ->
-  $('#toolbarFeature').click ->
-    $this = $ this
-    if $this.is 'checked'
-      $('#toolbarPopup').attr 'checked', 'checked'
+  fields = $ '#toolbarTemplateName, #toolbarTemplateDetails'
+  radios = $ 'input[name="toolbar_behaviour"]'
+  spans  = $ '#toolbarTemplateName_txt, #toolbarTemplateDetails_txt'
+  radios.change ->
+    if $('#toolbarPopup').is ':checked'
+      spans.addClass 'disabled'
+      fields.attr 'disabled', 'disabled'
     else
-      $this.attr 'checked', 'checked'
-      $('#toolbarPopup').removeAttr 'checked'
-    toggleToolbarFeature()
-  $('#toolbarPopup').click ->
-    $this = $ this
-    if $this.is 'checked'
-      $('#toolbarFeature').attr 'checked', 'checked'
-    else
-      $this.attr 'checked', 'checked'
-      $('#toolbarFeature').removeAttr 'checked'
-    toggleToolbarFeature()
+      spans.removeClass 'disabled'
+      fields.removeAttr 'disabled'
+  radios.change()
 
 # Update the URL shorteners section of the options page with the current
 # settings.
 loadUrlShorteners = ->
   $('input[name="enabled_shortener"]').each ->
-    radio = $ this
-    radio.attr 'checked', 'checked' if utils.get radio.attr 'id'
+    $this = $ this
+    $this.attr 'checked', 'checked' if utils.get $this.attr 'id'
   $('#bitlyApiKey').val utils.get 'bitlyApiKey'
   $('#bitlyUsername').val utils.get 'bitlyUsername'
   if utils.get 'googlOAuth'
@@ -477,22 +470,11 @@ save = ->
     shortcuts:      $('#shortcuts').is ':checked'
     doAnchorTarget: $('#doAnchorTarget').is ':checked'
     doAnchorTitle:  $('#doAnchorTitle').is ':checked'
-  saveFeatures()
+  saveTemplates()
   saveNotifications()
   saveToolbar()
   saveUrlShorteners()
   ext.updateStatistics()
-
-# Update the settings with the values from the feature section of the options
-# page.
-saveFeatures = ->
-  features = []
-  # Update the settings for each feature based on their corresponding options.
-  $('#features option').each ->
-    features.push deriveFeature $ this
-  # Ensure the data for all features reflects the updated settings.
-  utils.set 'features', features
-  ext.updateFeatures()
 
 # Update the settings with the values from the notification section of the
 # options page.
@@ -503,23 +485,33 @@ saveNotifications = ->
     notifications:        $('#notifications').is ':checked'
     notificationDuration: timeInSecs
 
+# Update the settings with the values from the template section of the options
+# page.
+saveTemplates = ->
+  templates = []
+  # Update the settings for each template based on their corresponding options.
+  $('#templates option').each ->
+    templates.push deriveTemplate $ this
+  # Ensure the data for all templates reflects the updated settings.
+  utils.set 'templates', templates
+  ext.updateTemplates()
+
 # Updates the settings with the values from the toolbar section of the options
 # page.
 saveToolbar = ->
-  toolbarFeature     = $ '#toolbarFeatureName option:selected'
-  toolbarFeatureName = ''
-  toolbarFeatureName = toolbarFeature.val() if toolbarFeature.length
-  if $('#toolbarPopup').is(':checked') or not toolbarFeatureName
+  toolbarTemplate     = $ '#toolbarTemplateName option:selected'
+  toolbarTemplateName = ''
+  toolbarTemplateName = toolbarTemplate.val() if toolbarTemplate.length
+  $('input[name="toolbar_behaviour"]').each ->
+    $this = $ this
+    utils.set $this.attr('id'), $this.is ':checked'
+  unless toolbarTemplateName
     utils.set
-      toolbarFeature: no
-      toolbarPopup:   yes
-  else
-    utils.set
-      toolbarFeature: yes
-      toolbarPopup:   no
+      toolbarPopup:    yes
+      toolbarTemplate: no
   utils.set
-    toolbarFeatureDetails: $('#toolbarFeatureDetails').is ':checked'
-    toolbarFeatureName:    toolbarFeatureName
+    toolbarTemplateDetails: $('#toolbarTemplateDetails').is ':checked'
+    toolbarTemplateName:    toolbarTemplateName
   ext.updateToolbar()
 
 # Update the settings with the values from the URL shorteners section of the
@@ -537,216 +529,206 @@ saveUrlShorteners = ->
     yourlsUrl:       $('#yourlsUrl').val().trim()
     yourlsUsername:  $('#yourlsUsername').val().trim()
 
-# Update the specified `option` element that represents a feature with the
-# values taken from the available input fields.
-updateFeature = (opt) ->
-  if opt.length
-    opt.data 'content',  $('#feature_template').val()
-    opt.data 'enabled',  String $('#feature_enabled').is ':checked'
-    opt.data 'image',    $('#feature_image option:selected').val()
-    opt.data 'shortcut', $('#feature_shortcut').val().trim().toUpperCase()
-    opt.text $('#feature_title').val().trim()
-    opt.val  $('#feature_name').val().trim()
-    return opt
-
-# Update the existing feature with information extracted from the imported
-# feature provided.  
-# `feature` should not be altered in any way and the properties of `existing`
+# Update the existing template with information extracted from the imported
+# template provided.  
+# `template` should not be altered in any way and the properties of `existing`
 # should only be changed if the replacement values are valid.  
 # Protected properties will only be updated if `existing` is not read-only and
 # the replacement value is valid.
-updateImportedFeature = (feature, existing) ->
-  # Ensure read-only features are protected.
+updateImportedTemplate = (template, existing) ->
+  # Ensure that read-only templates are protected.
   unless existing.readOnly
-    existing.content = feature.content
+    existing.content = template.content
     # Only allow valid titles.
-    if feature.title.length > 0 and feature.title.length <= 32
-      existing.title = feature.title
-  existing.enabled = feature.enabled
-  # Only only existing images.
-  for image in ext.IMAGES when image.id is feature.image
-    existing.image = feature.image
-    break
+    existing.title = template.title if 0 < template.title.length <= 32
+  existing.enabled = template.enabled
+  # Only allow existing images.
+  existing.image = template.image if template.image in ext.IMAGES
   # Only allow valid keyboard shortcuts.
-  existing.shortcut = feature.shortcut if isShortcutValid feature.shortcut
-  existing.usage = feature.usage
-  return existing
+  existing.shortcut = template.shortcut if isShortcutValid template.shortcut
+  existing.usage = template.usage
+  existing
 
-# Update the selection of features in the toolbar behaviour section to reflect
-# those available in the features section.
-updateToolbarFeatures = ->
-  features                = []
-  toolbarFeatures         = $ '#toolbarFeatureName'
-  toolbarFeatureName      = utils.get 'toolbarFeatureName'
-  lastSelectedFeature     = toolbarFeatures.find 'option:selected'
-  lastSelectedFeatureName = ''
-  if lastSelectedFeature.length
-    lastSelectedFeatureName = lastSelectedFeature.val()
-  toolbarFeatures.find('option').remove()
-  $('#features option').each ->
-    $this = $ this
-    feature =
+# Update the specified `option` element that represents a template with the
+# values taken from the available input fields.
+updateTemplate = (opt) ->
+  if opt.length
+    opt.data 'content',  $('#template_content').val()
+    opt.data 'enabled',  String $('#template_enabled').is ':checked'
+    opt.data 'image',    $('#template_image option:selected').val()
+    opt.data 'shortcut', $('#template_shortcut').val().trim().toUpperCase()
+    opt.text $('#template_title').val().trim()
+    opt.val  $('#template_name').val().trim()
+  opt
+
+# Update the selection of templates in the toolbar behaviour section to reflect
+# those available in the templates section.
+updateToolbarTemplates = ->
+  templates                = []
+  toolbarTemplates         = $ '#toolbarTemplateName'
+  toolbarTemplateName      = utils.get 'toolbarTemplateName'
+  lastSelectedTemplate     = toolbarTemplates.find 'option:selected'
+  lastSelectedTemplateName = ''
+  if lastSelectedTemplate.length
+    lastSelectedTemplateName = lastSelectedTemplate.val()
+  toolbarTemplates.find('option').remove()
+  $('#templates option').each ->
+    $this    = $ this
+    template =
       name:     $this.val()
       selected: no
       title:    $this.text()
-    if lastSelectedFeatureName
-      feature.selected = yes if feature.name is lastSelectedFeatureName
-    else if feature.name is toolbarFeatureName
-      feature.selected = yes
-    features.push feature
-  features.sort (a, b) ->
-    return a.title > b.title
-  for feature in features
+    if lastSelectedTemplateName
+      template.selected = yes if template.name is lastSelectedTemplateName
+    else if template.name is toolbarTemplateName
+      template.selected = yes
+    templates.push template
+  for template in templates
     option = $ '<option/>',
-      text:  "#{feature.title} (#{feature.name})"
-      value: feature.name
-    option.attr 'selected', 'selected' if feature.selected
-    toolbarFeatures.append option
+      text:  "#{template.title} (#{template.name})"
+      value: template.name
+    option.attr 'selected', 'selected' if template.selected
+    toolbarTemplates.append option
 
 # Validation functions
 # --------------------
 
-# Indicate whether or not the specified `name` is available for use as a
-# feature.
-isNameAvailable = (name, additionalNames) ->
+# Indicate whether or not the specified `name` is available for use by a
+# template.
+isNameAvailable = (name, additionalNames = []) ->
   available = yes
-  $('#features option').each ->
-    if $(this).val() is name
-      return available = no
-  if available and $.isArray additionalNames
-    available = additionalNames.indexOf(name) is -1
-  return available
+  $('#templates option').each ->
+    available = no if $(this).val() is name
+  available and name not in additionalNames
 
-# Indicate whether or not the specified `name` is valid for use as a feature.
+# Indicate whether or not the specified `name` is valid for use by a template.
 isNameValid = (name) ->
-  return name.search(R_VALID_NAME) isnt -1
+  name.search(R_VALID_NAME) isnt -1
 
 # Indicate whether or not the specified keyboard `shortcut` is valid for use by
-# features.
+# a template.
 isShortcutValid = (shortcut) ->
-  return shortcut.search(R_VALID_SHORTCUT) isnt -1
+  shortcut.search(R_VALID_SHORTCUT) isnt -1
 
-# Validate the specified `option` element that represents a feature.  
+# Indicate whether or not `template` contains the required fields of the
+# correct types.
+# Perform a *soft* validation without validating the values themselves, instead
+# only their existence.
+validateImportedTemplate = (template) ->
+  'object'  is typeof template          and
+  'string'  is typeof template.content  and
+  'boolean' is typeof template.enabled  and
+  'string'  is typeof template.image    and
+  'string'  is typeof template.name     and
+  'string'  is typeof template.shortcut and
+  'string'  is typeof template.title    and
+  'number'  is typeof template.usage
+
+# Validate the specified `option` element that represents a template.  
 # Any validation errors encountered are added to a unordered list which should
 # be displayed to the user at some point if `true` is returned.
-validateFeature = (feature, isNew, usedShortcuts) ->
-  enabled  = feature.data('enabled') is 'true'
+validateTemplate = (template, isNew, usedShortcuts) ->
+  enabled  = template.data('enabled') is 'true'
   errors   = $ '#errors'
-  name     = feature.val().trim()
-  shortcut = feature.data('shortcut').trim()
-  title    = feature.text().trim()
-
+  name     = template.val().trim()
+  shortcut = template.data('shortcut').trim()
+  title    = template.text().trim()
   # Create a list item for the error message with the specified `name`.
   createError = (name) ->
     $('<li/>', html: utils.i18n name).appendTo errors
-
-  # Only validate name for non-read-only features.
-  if feature.data('readOnly') isnt 'true'
-    # Only validate name availability and structure for new features.
+  # Only validate name for non-read-only templates.
+  if template.data('readOnly') isnt 'true'
+    # Only validate name availability and structure for new templates.
     if isNew
       unless isNameValid name
-        createError 'opt_feature_name_invalid'
+        createError 'opt_template_name_invalid'
       else unless isNameAvailable name
-        createError 'opt_feature_name_unavailable'
+        createError 'opt_template_name_unavailable'
     # Name is missing but is required.
-    createError 'opt_feature_title_invalid' if title.length is 0
+    createError 'opt_template_title_invalid' if title.length is 0
   # If `usedShortcuts` is specified also validate that the shortcut of the
-  # feature is not already in use.  
+  # template is not already in use.  
   if shortcut and usedShortcuts?
     # Validate whether or not the shortcut is valid and available.
     unless isShortcutValid shortcut
-      createError 'opt_feature_shortcut_invalid'
+      createError 'opt_template_shortcut_invalid'
     else if enabled and usedShortcuts.indexOf(shortcut) isnt -1
-      createError 'opt_feature_shortcut_unavailable'
+      createError 'opt_template_shortcut_unavailable'
   # Indicate whether or not any validation errors were encountered.
-  return errors.find('li').length is 0
+  errors.find('li').length is 0
 
-# Validate all the `option` elements that represent features.  
+# Validate all the `option` elements that represent templates.  
 # Any validation errors encountered are added to a unordered list which should
 # be displayed to the user at some point if `true` is returned.
-validateFeatures = ->
+validateTemplates = ->
   errors        = $ '#errors'
-  features      = $ '#features option'
   shortcut      = ''
+  templates     = $ '#templates option'
   usedShortcuts = []
   # Wipe any pre-existing errors.
   errors.remove 'li'
-  features.each ->
-    $this = $ this
-    if validateFeature $this, no, usedShortcuts
+  templates.each ->
+    $this  = $ this
+    passed = no
+    if validateTemplate $this, no, usedShortcuts
       shortcut = $this.data('shortcut').trim()
-      # Only stores shortcut if used and feature is enabled.
+      # Only stores shortcut if used and the template is enabled.
       if $this.data('enabled') is 'true' and shortcut
         usedShortcuts.push shortcut
+      passed = yes
     else
-      # Show user which feature failed validation.
+      # Show the user which template failed validation.
       $this.attr 'selected', 'selected'
-      $('#features').change().focus()
-      return no
+      $('#templates').change().focus()
+    passed
   # Indicate whether or not any validation errors were encountered.
-  return errors.find('li').length is 0
-
-# Indicate whether or not `feature` contains the required fields of the correct
-# types.
-# Perform a *soft* validation without validating the values themselves, instead
-# only their existence.
-validateImportedFeature = (feature) ->
-  'object'  is typeof feature and
-  'string'  is typeof feature.content and
-  'boolean' is typeof feature.enabled and
-  'number'  is typeof feature.image and
-  'string'  is typeof feature.name and
-  'string'  is typeof feature.shortcut and
-  'string'  is typeof feature.title and
-  'string'  is typeof feature.usage
+  errors.find('li').length is 0
 
 # Miscellaneous functions
 # -----------------------
 
-# Create a feature from the information from the imported `feature` provided.  
-# `feature` is not altered in any way and the new feature is only created if
-# `feature` has a valid name.  
-# Other than the name, any invalid fields will not be copied to the new feature
-# which will instead use the preferred default value for those fields.
-addImportedFeature = (feature) ->
-  if isNameValid(feature.name) and feature.name.length <= 32
-      newFeature =
-        content:  feature.content
-        enabled:  feature.enabled
-        image:    0
-        name:     feature.name
-        readOnly: no
-        shortcut: ''
-        title:    utils.i18n 'untitled'
-        usage:    0
-      # Only allow existing images.
-      for image in ext.IMAGES when image.id is feature.image
-        newFeature.image = feature.image
-        break
-      # Only allow valid keyboard shortcuts.
-      if isShortcutValid feature.shortcut
-        newFeature.shortcut = feature.shortcut
-      # Only allow valid titles.
-      if feature.title.length > 0 and feature.title.length <= 32
-        newFeature.title = feature.title
-  return newFeature
+# Create a template from the information from the imported `template` provided.  
+# `template` is not altered in any way and the new template is only created if
+# `template` has a valid name.  
+# Other than the name, any invalid fields will not be copied to the new
+# template which will instead use the preferred default value for those fields.
+addImportedTemplate = (template) ->
+  if isNameValid(template.name) and template.name.length <= 32
+    newTemplate =
+      content:  template.content
+      enabled:  template.enabled
+      image:    ''
+      name:     template.name
+      readOnly: no
+      shortcut: ''
+      title:    utils.i18n 'untitled'
+      usage:    template.usage
+    # Only allow existing images.
+    newTemplate.image = template.image if template.image in ext.IMAGES
+    # Only allow valid keyboard shortcuts.
+    if isShortcutValid template.shortcut
+      newTemplate.shortcut = template.shortcut
+    # Only allow valid titles.
+    newTemplate.title = template.title if 0 < template.title.length <= 32
+  newTemplate
 
-# Create a JSON string to export the features with the specified `names`.
+# Create a JSON string to export the templates with the specified `names`.
 createExport = (names) ->
   data =
     templates: []
     version:   ext.version
   for name in names
-    opt = $ "#features option[value='#{name}']"
+    opt = $ "#templates option[value='#{name}']"
     data.templates.push
       content:  opt.data 'content'
       enabled:  opt.data('enabled') is 'true'
-      image:    parseInt opt.data('image'), 10
+      image:    opt.data 'image'
       name:     opt.val()
+      readOnly: opt.data('readOnly') is 'true'
       shortcut: opt.data 'shortcut'
       title:    opt.text()
       usage:    parseInt opt.data('usage'), 10
-  return JSON.stringify data
+  JSON.stringify data
 
 # Create a JSON object from the imported string specified.
 createImport = (str) ->
@@ -756,79 +738,75 @@ createImport = (str) ->
   catch error
     throw utils.i18n 'error_import_data'
   if not $.isArray(data.templates) or data.templates.length is 0 or
-     $.type(data.version) isnt 'string'
+     typeof data.version isnt 'string'
     throw utils.i18n 'error_import_invalid'
-  return data
+  data
 
-# Create a feature with the information derived from the specified `option` 
+# Create a template with the information derived from the specified `option` 
 # element.
-deriveFeature = (option) ->
+deriveTemplate = (option) ->
   if option.length > 0
-    feature =
+    template =
       content:  option.data 'content'
       enabled:  option.data('enabled') is 'true'
-      image:    parseInt option.data('image'), 10
+      image:    option.data 'image'
       index:    option.parent().find('option').index option
       name:     option.val()
       readOnly: option.data('readOnly') is 'true'
       shortcut: option.data 'shortcut'
       title:    option.text()
       usage:    parseInt option.data('usage'), 10
-  return feature
+  template
 
 # Determine which icon within the `icons` specified has the smallest
 # dimensions.
 getSmallestIcon = (icons) ->
   icon = ico for ico in icons when not icon or ico.size < icon.size
-  return icon
+  icon
 
 # Read the imported data created by `createImport` and extract all of the
-# imported features that appear to be valid.  
-# When overwriting an existing feature, only the properties with valid values
+# imported templates that appear to be valid.  
+# When overwriting an existing template, only the properties with valid values
 # will be transferred with the exception of protected properties (i.e. on
-# read-only features).  
-# When creating a new feature, any invalid properties will be replaced with
+# read-only templates).  
+# When creating a new template, any invalid properties will be replaced with
 # their default values.
 readImport = (importData) ->
-  data     = features: []
+  data     = templates: []
   names    = []
-  for feature in importData.templates
+  for template in importData.templates
     existing = {}
-    if validateImportedFeature feature
-      if isNameAvailable feature.name, names
-        # Attempt to create and add the new feature.
-        feature = addImportedFeature feature
-        if feature
-          data.features.push feature
-          names.push feature.name
+    # Ensure templates imported from previous versions are valid for 1.0.0+.
+    if importData.version < '1.0.0'
+      template.image = if template.image > 0
+        ext.IMAGES[template.image - 1]
       else
-        # Attempt to update the previously imported feature.
-        for imported, i in data.features
-          if imported.name is feature.name
-            existing         = updateImportedFeature feature, imported
-            data.features[i] = existing
+        ''
+      template.usage = 0
+    if validateImportedTemplate template
+      if isNameAvailable template.name, names
+        # Attempt to create and add the new template.
+        template = addImportedTemplate template
+        if template
+          data.templates.push template
+          names.push template.name
+      else
+        # Attempt to update the previously imported template.
+        for imported, i in data.templates
+          if imported.name is template.name
+            existing          = updateImportedTemplate template, imported
+            data.templates[i] = existing
             break
         unless existing.name
-          # Attempt to derive the existing feature from the available options.
-          existing = deriveFeature $ "#features
-            option[value='#{feature.name}']"
-          # Attempt to update the derived feature.
+          # Attempt to derive the existing template from the available options.
+          existing = deriveTemplate $ "#templates
+            option[value='#{template.name}']"
+          # Attempt to update the derived template.
           if existing
-            existing = updateImportedFeature feature, existing
-            data.features.push existing
+            existing = updateImportedTemplate template, existing
+            data.templates.push existing
             names.push existing.name
-  return data
-
-# Toggle the acccessibility of the toolbar feature details.
-toggleToolbarFeature = ->
-  fields = $ '#toolbarFeatureName, #toolbarFeatureDetails'
-  spans  = $ '#toolbarFeatureName_txt, #toolbarFeatureDetails_txt'
-  if $('#toolbarPopup').is ':checked'
-    spans.addClass 'disabled'
-    fields.attr 'disabled', 'disabled'
-  else
-    spans.removeClass 'disabled'
-    fields.removeAttr 'disabled'
+  data
 
 # Options page setup
 # ------------------
@@ -858,11 +836,11 @@ options = window.options =
     $("##{utils.get 'options_active_tab'}").click()
     # Bind event to the "Save & Close" button which will update the settings
     # with the values from the options page and close the current tab.  
-    # None of this should happen if the invalid features are found; in which
+    # None of this should happen if the invalid templates are found; in which
     # case the user is notified of these errors.
     $('.save-btn').click ->
-      updateFeature $ '#features option:selected'
-      if validateFeatures()
+      updateTemplate $ '#templates option:selected'
+      if validateTemplates()
         save()
         chrome.tabs.getSelected null, (tab) ->
           chrome.tabs.remove tab.id
@@ -905,9 +883,9 @@ options = window.options =
     # Load the current option values.
     load()
     if ext.isThisPlatform 'mac'
-      $('#feature_shortcut_txt').html ext.SHORTCUT_MAC_MODIFIERS
+      $('#template_shortcut_txt').html ext.SHORTCUT_MAC_MODIFIERS
     else
-      $('#feature_shortcut_txt').html ext.SHORTCUT_MODIFIERS
+      $('#template_shortcut_txt').html ext.SHORTCUT_MODIFIERS
     # Initialize all faceboxes.
     $('a[facebox]').click ->
       $.facebox div: $(this).attr 'facebox'

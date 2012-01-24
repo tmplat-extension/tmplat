@@ -87,12 +87,18 @@ utils = window.utils =
     return no for key in keys when not localStorage.hasOwnProperty key
     yes
 
-  # Retrieve the value associated with the specified key from `localStorage`.  
+  # Retrieve the value associated with the specified `keys` from
+  # `localStorage`.  
   # If the value is found, parse it as JSON before being returning it;
   # otherwise return `undefined`.
-  get: (key) ->
-    value = localStorage[key]
-    if value? then JSON.parse value else value
+  get: (keys...) ->
+    if keys.length is 1
+      value = localStorage[keys[0]]
+      if value? then JSON.parse value else value
+    else
+      value = {}
+      value[key] = @get key for key in keys
+      value
 
   # Initialize the value of the specified key(s) in `localStorage`.  
   # `keys` can either be a string for a single key (in which case
@@ -111,8 +117,8 @@ utils = window.utils =
   # after it has been removed.
   remove: (keys...) ->
     if keys.length is 1
-      value = @get key
-      delete localStorage[key]
+      value = @get keys[0]
+      delete localStorage[keys[0]]
       return value
     delete localStorage[key] for key in keys
 
@@ -146,6 +152,14 @@ utils = window.utils =
         oldValue = @get keys
         localStorage[keys] = if value? then JSON.stringify value else value
         oldValue
+
+  # For each of the specified `keys`, retrieve their value in `localStorage`
+  # and pass it, along with the key, to the `callback` function provided.  
+  # If `callback` returns a value that is not `undefined`, then that value will
+  # be assigned to the key in `localStorage`. This functionality is very useful
+  # when just manipulating existing values but can be used in any case.
+  sync: (keys..., callback) ->
+    @set key, callback?(@get(key), key) ? @get key for key in keys
 
   # Internationalization functions
   # ------------------------------
