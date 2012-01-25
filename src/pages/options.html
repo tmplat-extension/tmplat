@@ -8,6 +8,8 @@
       a, a:active, a:link, a:visited {color: #3D5D6A; cursor: pointer; font-weight: bold; text-decoration: none;}
       a:hover {text-decoration: underline;}
       a[facebox] {cursor: pointer; outline: 0;}
+      .config-details {display: none;}
+      .config-expand a {cursor: pointer;}
       code, pre {font: 12px 'Bitstream Vera Sans Mono','Courier',monospace;}
       code {background-color: #F8F8F8; border: 1px solid #DEDEDE; font-size: 13px; padding: 0 2px; border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
       pre {background-color: #F8F8F8; border: 1px solid #CCC; font-size: 13px; line-height: 19px; margin: 20px 0; overflow: auto; padding: 6px 10px; order-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
@@ -35,7 +37,8 @@
       .import_content, .export_content {width: 100%;}
       .import_error {color: #C00; font-style: italic;}
       input {cursor: pointer;}
-      .disabled {color: #888;}
+      img.disabled {opacity: .5;}
+      span.disabled {color: #888;}
       button, input[type="button"], input[type="file"]::-webkit-file-upload-button, input[type="reset"], input[type="submit"] {background-image: -webkit-gradient(linear, left top, left bottom, from(whiteSmoke), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, whiteSmoke, #F1F1F1); -webkit-border-radius: 2px; -webkit-user-select: none; background-color: whiteSmoke; background-image: linear-gradient(top, whiteSmoke, #F1F1F1); background-image: -o-linear-gradient(top, whiteSmoke, #F1F1F1); border: 1px solid gainsboro; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 2px; color: #666; cursor: pointer; font-size: 11px; font-weight: bold; height: 22px; line-height: 1em; margin: auto 6px auto auto; padding: 0 8px; text-align: center;}
       button:disabled, input[type="button"]:disabled, input[type="file"]:disabled::-webkit-file-upload-button, input[type="reset"]:disabled, input[type="submit"]:disabled {background-image: -webkit-gradient(linear,left top,left bottom, from(#EBEBE4), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, #EBEBE4, #F1F1F1); background-color: #EBEBE4; background-image: linear-gradient(top, #EBEBE4, #F1F1F1); background-image: -o-linear-gradient(top, #EBEBE4, #F1F1F1); border: 1px solid #C6C6C6; color: #AAA; cursor: default;}
       button:hover:not(:disabled), input[type="button"]:hover:not(:disabled), input[type="file"]::-webkit-file-upload-button:hover:not(:disabled), input[type="reset"]:hover:not(:disabled), input[type="submit"]:hover:not(:disabled) {background-image: -webkit-gradient(linear,left top,left bottom, from(#F8F8F8), to(#F1F1F1)); background-image: -webkit-linear-gradient(top, #F8F8F8, #F1F1F1); -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.1); background-color: #F8F8F8; background-image: linear-gradient(top, #F8F8F8, #F1F1F1); background-image: -o-linear-gradient(top, #F8F8F8, #F1F1F1); border: 1px solid #C6C6C6; box-shadow: 0 1px 1px rgba(0,0,0,0.1); color: #333;}
@@ -172,6 +175,14 @@
               </label>
               <a facebox="#toolbarPopup_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
               <div id="toolbarPopup_help" class="help" i18n-content="help_toolbarPopup"></div>
+            </div>
+            <div style="margin: 4px 0 0 36px">
+              <label>
+                <input type="checkbox" id="toolbarPopupClose" />
+                <span id="toolbarPopupClose_txt" i18n-content="opt_toolbar_popup_close_text"></span>
+              </label>
+              <a facebox="#toolbarPopupClose_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="toolbarPopupClose_help" class="help" i18n-content="help_toolbarPopupClose"></div>
             </div>
             <div>
               <label>
@@ -348,46 +359,60 @@
                     <td style="text-align: center"><input type="radio" name="enabled_shortener" id="bitly" /></td>
                     <td><a href="http://bit.ly" target="_blank">bit.ly</a></td>
                     <td>
-                      <table>
-                        <tr>
-                          <td style="width: 40%">
-                            <label for="bitlyUsername">
-                              <span id="bitlyUsername_txt" i18n-content="opt_url_shortener_username_text"></span>
-                            </label>
-                            <a facebox="#bitlyUsername_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                            <div id="bitlyUsername_help" class="help" i18n-content="help_bitlyUsername"></div>
-                          </td>
-                          <td>
-                            <input type="text" id="bitlyUsername" size="28" />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <label for="bitlyApiKey">
-                              <span id="bitlyApiKey_txt" i18n-content="opt_url_shortener_api_key_text"></span>
-                            </label>
-                            <a facebox="#bitlyApiKey_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                            <div id="bitlyApiKey_help" class="help" i18n-content="help_bitlyApiKey"></div>
-                          </td>
-                          <td>
-                            <input type="password" id="bitlyApiKey" size="28" />
-                          </td>
-                        </tr>
-                      </table>
+                      <div class="config">
+                        <div class="config-expand">
+                          <a i18n-content="opt_config_expand_text"></a>
+                        </div>
+                        <div class="config-details">
+                          <table>
+                            <tr>
+                              <td style="width: 40%">
+                                <label for="bitlyUsername">
+                                  <span id="bitlyUsername_txt" i18n-content="opt_url_shortener_username_text"></span>
+                                </label>
+                                <a facebox="#bitlyUsername_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                <div id="bitlyUsername_help" class="help" i18n-content="help_bitlyUsername"></div>
+                              </td>
+                              <td>
+                                <input type="text" id="bitlyUsername" size="28" />
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <label for="bitlyApiKey">
+                                  <span id="bitlyApiKey_txt" i18n-content="opt_url_shortener_api_key_text"></span>
+                                </label>
+                                <a facebox="#bitlyApiKey_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                <div id="bitlyApiKey_help" class="help" i18n-content="help_bitlyApiKey"></div>
+                              </td>
+                              <td>
+                                <input type="password" id="bitlyApiKey" size="28" />
+                              </td>
+                            </tr>
+                          </table>
+                        </div>
+                      </div>
                     </td>
                   </tr>
                   <tr style="vertical-align: top">
                     <td style="text-align: center"><input type="radio" name="enabled_shortener" id="googl" /></td>
                     <td><a href="http://goo.gl" target="_blank">goo.gl</a></td>
                     <td>
-                      <label>
-                        <input type="checkbox" id="googlOAuth" />
-                        <span id="googlOAuth_txt" i18n-content="opt_url_shortener_oauth_enable_text"></span>
-                      </label>
-                      <a facebox="#googlOAuth_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                      <div id="googlOAuth_help" class="help" i18n-content="help_googlOAuth"></div>
-                      <div>
-                        <button id="googlDeauthorize_btn" i18n-content="opt_deauthorize_button"></button>
+                      <div class="config">
+                        <div class="config-expand">
+                          <a i18n-content="opt_config_expand_text"></a>
+                        </div>
+                        <div class="config-details">
+                          <label>
+                            <input type="checkbox" id="googlOAuth" />
+                            <span id="googlOAuth_txt" i18n-content="opt_url_shortener_oauth_enable_text"></span>
+                          </label>
+                          <a facebox="#googlOAuth_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                          <div id="googlOAuth_help" class="help" i18n-content="help_googlOAuth"></div>
+                          <div>
+                            <button id="googlDeauthorize_btn" i18n-content="opt_deauthorize_button"></button>
+                          </div>
+                        </div>
                       </div>
                     </td>
                   </tr>
@@ -395,61 +420,68 @@
                     <td style="text-align: center"><input type="radio" name="enabled_shortener" id="yourls" /></td>
                     <td><a href="http://yourls.org" target="_blank">YOURLS</a></td>
                     <td>
-                      <table>
-                        <tr>
-                          <td style="width: 40%">
-                            <label for="yourlsUrl">
-                              <span id="yourlsUrl_txt" i18n-content="opt_url_shortener_url_text"></span>
-                            </label>
-                            <a facebox="#yourlsUrl_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                            <div id="yourlsUrl_help" class="help" i18n-content="help_yourlsUrl"></div>
-                          </td>
-                          <td>
-                            <input type="url" id="yourlsUrl" size="28" />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td colspan="2" style="border-bottom: 1px dashed #AAA"></td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <label for="yourlsUsername">
-                              <span id="yourlsUsername_txt" i18n-content="opt_url_shortener_username_text"></span>
-                            </label>
-                            <a facebox="#yourlsCredentials_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                            <div id="yourlsCredentials_help" class="help" i18n-content="help_yourlsCredentials"></div>
-                          </td>
-                          <td>
-                            <input type="text" id="yourlsUsername" size="28" />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <label for="yourlsPassword">
-                              <span id="yourlsPassword_txt" i18n-content="opt_url_shortener_password_text"></span>
-                            </label>
-                            <a facebox="#yourlsCredentials_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                          </td>
-                          <td>
-                            <input type="password" id="yourlsPassword" size="28" />
-                          </td>
-                        </tr>
-                        <tr>
-                          <td id="yourls_or_txt" colspan="2" style="font-weight: bold; text-align: center" i18n-content="opt_or_text"></td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <label for="yourlsSignature">
-                              <span id="yourlsSignature_txt" i18n-content="opt_url_shortener_signature_text"></span>
-                            </label>
-                            <a facebox="#yourlsSignature_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                            <div id="yourlsSignature_help" class="help" i18n-content="help_yourlsSignature"></div>
-                          </td>
-                          <td>
-                            <input type="password" id="yourlsSignature" size="28" />
-                          </td>
-                        </tr>
-                      </table>
+                      <div class="config">
+                        <div class="config-expand">
+                          <a i18n-content="opt_config_expand_text"></a>
+                        </div>
+                        <div class="config-details">
+                          <table>
+                            <tr>
+                              <td style="width: 40%">
+                                <label for="yourlsUrl">
+                                  <span id="yourlsUrl_txt" i18n-content="opt_url_shortener_url_text"></span>
+                                </label>
+                                <a facebox="#yourlsUrl_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                <div id="yourlsUrl_help" class="help" i18n-content="help_yourlsUrl"></div>
+                              </td>
+                              <td>
+                                <input type="url" id="yourlsUrl" size="28" />
+                              </td>
+                            </tr>
+                            <tr>
+                              <td colspan="2" style="border-bottom: 1px dashed #AAA"></td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <label for="yourlsUsername">
+                                  <span id="yourlsUsername_txt" i18n-content="opt_url_shortener_username_text"></span>
+                                </label>
+                                <a facebox="#yourlsCredentials_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                <div id="yourlsCredentials_help" class="help" i18n-content="help_yourlsCredentials"></div>
+                              </td>
+                              <td>
+                                <input type="text" id="yourlsUsername" size="28" />
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <label for="yourlsPassword">
+                                  <span id="yourlsPassword_txt" i18n-content="opt_url_shortener_password_text"></span>
+                                </label>
+                                <a facebox="#yourlsCredentials_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                              </td>
+                              <td>
+                                <input type="password" id="yourlsPassword" size="28" />
+                              </td>
+                            </tr>
+                            <tr>
+                              <td id="yourls_or_txt" colspan="2" style="font-weight: bold; text-align: center" i18n-content="opt_or_text"></td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <label for="yourlsSignature">
+                                  <span id="yourlsSignature_txt" i18n-content="opt_url_shortener_signature_text"></span>
+                                </label>
+                                <a facebox="#yourlsSignature_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                <div id="yourlsSignature_help" class="help" i18n-content="help_yourlsSignature"></div>
+                              </td>
+                              <td>
+                                <input type="password" id="yourlsSignature" size="28" />
+                              </td>
+                            </tr>
+                          </table>
+                        </div>
+                      </div>
                     </td>
                   </tr>
                 </tbody>
