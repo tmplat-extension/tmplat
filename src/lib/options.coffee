@@ -422,6 +422,7 @@ loadToolbar = ->
   $('input[name="toolbar_behaviour"]').each ->
     $this = $ this
     $this.attr 'checked', 'checked' if store.get $this.attr 'id'
+    yes
   if store.get 'toolbarPopupClose'
     $('#toolbarPopupClose').attr 'checked', 'checked'
   else
@@ -465,6 +466,7 @@ loadUrlShorteners = ->
   $('input[name="enabled_shortener"]').each ->
     $this = $ this
     $this.attr 'checked', 'checked' if store.get $this.attr 'id'
+    yes
   $('#bitlyApiKey').val store.get 'bitlyApiKey'
   $('#bitlyUsername').val store.get 'bitlyUsername'
   if store.get 'googlOAuth'
@@ -530,6 +532,7 @@ saveToolbar = ->
   $('input[name="toolbar_behaviour"]').each ->
     $this = $ this
     store.set $this.attr('id'), $this.is ':checked'
+    yes
   unless toolbarTemplateName
     store.set
       toolbarPopup:    yes
@@ -546,6 +549,7 @@ saveUrlShorteners = ->
   $('input[name="enabled_shortener"]').each ->
     $this = $ this
     store.set $this.attr('id'), $this.is ':checked'
+    yes
   store.set
     bitlyApiKey:     $('#bitlyApiKey').val().trim()
     bitlyUsername:   $('#bitlyUsername').val().trim()
