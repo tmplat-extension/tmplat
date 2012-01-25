@@ -419,12 +419,18 @@ onRequest = (request, sender, sendResponse) ->
           else
             copyOutput template, output
       else
-        # Close the popup if it's still open.
-        popup?.close()
+        # Close the popup if it's still open and the user wants it closed.
+        # Otherwise, reset the popup so that it can be used further.
+        if popup
+          if utils.get 'toolbarPopupClose'
+            popup.close()
+          else
+            $('#loadDiv', popup.document).hide()
+            $('#item', popup.document).show()
 
 # Display a desktop notification informing the user on whether or not the copy
 # request was successful.  
-# Also ensure that `ext` is *reset* and that notifications are only displayed
+# Also, ensure that `ext` is *reset* and that notifications are only displayed
 # if the user has enabled the corresponding option (enabled by default).
 showNotification = ->
   if utils.get 'notifications'
@@ -433,8 +439,14 @@ showNotification = ->
     ).show()
   else
     ext.reset()
-  # Close the popup if it's still open.
-  chrome.extension.getViews(type: 'popup')[0]?.close()
+  # Close the popup if it's still open and the user wants it closed. Otherwise,
+  # reset the popup so that it can be used further.
+  if popup = chrome.extension.getViews(type: 'popup')[0]
+    if utils.get 'toolbarPopupClose'
+      popup.close()
+    else
+      $('#loadDiv', popup.document).hide()
+      $('#item', popup.document).show()
 
 # Update the context menu items to reflect the currently enabled templates.  
 # If the context menu option has been disabled by the user, just remove all of
@@ -607,10 +619,11 @@ buildStandardData = (tab, shortCallback) ->
     toolbarfeaturedetails:  utils.get 'toolbarTemplateDetails'
     # Deprecated since 1.0.0, use `toolbarTemplateName` instead.
     toolbarfeaturename:     utils.get 'toolbarTemplateName'
+    toolbarpopup:           utils.get 'toolbarPopup'
+    toolbarpopupclose:      utils.get 'toolbarPopupClose'
     toolbartemplate:        utils.get 'toolbarTemplate'
     toolbartemplatedetails: utils.get 'toolbarTemplateDetails'
     toolbartemplatename:    utils.get 'toolbarTemplateName'
-    toolbarpopup:           utils.get 'toolbarPopup'
     url:                    url.attr 'source'
     version:                ext.version
     yourls:                 utils.get 'yourls'
@@ -836,6 +849,7 @@ initToolbar = ->
   initToolbar_update()
   utils.init
     toolbarPopup:           on
+    toolbarPopupClose:      on
     toolbarTemplate:        off
     toolbarTemplateDetails: off
     toolbarTemplateName:    ''
