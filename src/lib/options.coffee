@@ -422,6 +422,10 @@ loadToolbar = ->
   $('input[name="toolbar_behaviour"]').each ->
     $this = $ this
     $this.attr 'checked', 'checked' if utils.get $this.attr 'id'
+  if utils.get 'toolbarPopupClose'
+    $('#toolbarPopupClose').attr 'checked', 'checked'
+  else
+    $('#toolbarPopupClose').removeAttr 'checked'
   if utils.get 'toolbarTemplateDetails'
     $('#toolbarTemplateDetails').attr 'checked', 'checked'
   else
@@ -431,16 +435,28 @@ loadToolbar = ->
 
 # Bind the event handlers required for controlling toolbar behaviour changes.
 loadToolbarControlEvents = ->
-  fields = $ '#toolbarTemplateName, #toolbarTemplateDetails'
-  radios = $ 'input[name="toolbar_behaviour"]'
-  spans  = $ '#toolbarTemplateName_txt, #toolbarTemplateDetails_txt'
+  radios         = $ 'input[name="toolbar_behaviour"]'
+  popupFields    = $ '#toolbarPopupClose'
+  popupMisc      = $ '#toolbarPopupClose_txt'
+  templateFields = $ '#toolbarTemplateName, #toolbarTemplateDetails'
+  templateMisc   = $ '#toolbarTemplateName_txt, #toolbarTemplateDetails_txt'
+  # Extract help images for both groups.
+  popupFields.each ->
+    popupMisc = popupMisc.add $(this).parents('div').first().find 'img'
+  templateFields.each ->
+    templateMisc = templateMisc.add $(this).parents('div').first().find 'img'
+  # Bind change event to listen for changes to the radio selection.
   radios.change ->
     if $('#toolbarPopup').is ':checked'
-      spans.addClass 'disabled'
-      fields.attr 'disabled', 'disabled'
+      popupFields.removeAttr 'disabled'
+      popupMisc.removeClass  'disabled'
+      templateFields.attr    'disabled', 'disabled'
+      templateMisc.addClass  'disabled'
     else
-      spans.removeClass 'disabled'
-      fields.removeAttr 'disabled'
+      popupFields.attr          'disabled', 'disabled'
+      popupMisc.addClass        'disabled'
+      templateFields.removeAttr 'disabled'
+      templateMisc.removeClass  'disabled'
   radios.change()
 
 # Update the URL shorteners section of the options page with the current
@@ -459,6 +475,15 @@ loadUrlShorteners = ->
   $('#yourlsSignature').val utils.get 'yourlsSignature'
   $('#yourlsUrl').val utils.get 'yourlsUrl'
   $('#yourlsUsername').val utils.get 'yourlsUsername'
+  loadUrlShortenerControlEvents()
+
+# Bind the event handlers required for controlling URL shortener configuration
+# changes.
+loadUrlShortenerControlEvents = ->
+  $('.config-expand a').click ->
+    $this = $ this
+    $this.parents('.config-expand').first().hide()
+    $this.parents('.config').first().find('.config-details').show()
 
 # Save functions
 # --------------
@@ -510,6 +535,7 @@ saveToolbar = ->
       toolbarPopup:    yes
       toolbarTemplate: no
   utils.set
+    toolbarPopupClose:      $('#toolbarPopupClose').is ':checked'
     toolbarTemplateDetails: $('#toolbarTemplateDetails').is ':checked'
     toolbarTemplateName:    toolbarTemplateName
   ext.updateToolbar()
