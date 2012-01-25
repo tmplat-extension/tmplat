@@ -32,19 +32,19 @@ load = ->
   loadNotifications()
   loadToolbar()
   loadUrlShorteners()
-  if utils.get 'contextMenu'
+  if store.get 'contextMenu'
     $('#contextMenu').attr 'checked', 'checked'
   else
     $('#contextMenu').removeAttr 'checked'
-  if utils.get 'shortcuts'
+  if store.get 'shortcuts'
     $('#shortcuts').attr 'checked', 'checked'
   else
     $('#shortcuts').removeAttr 'checked'
-  if utils.get 'doAnchorTarget'
+  if store.get 'doAnchorTarget'
     $('#doAnchorTarget').attr 'checked', 'checked'
   else
     $('#doAnchorTarget').removeAttr 'checked'
-  if utils.get 'doAnchorTitle'
+  if store.get 'doAnchorTitle'
     $('#doAnchorTitle').attr 'checked', 'checked'
   else
     $('#doAnchorTitle').removeAttr 'checked'
@@ -57,7 +57,7 @@ loadImages = ->
   images       = $ '#template_image'
   sorted       = (image for image in ext.IMAGES).sort()
   $('<option/>',
-    text:  utils.i18n 'tmpl_none'
+    text:  i18n.get 'tmpl_none'
     value: ''
   ).appendTo(images).data 'file', 'spacer.gif'
   images.append $ '<option/>',
@@ -65,7 +65,7 @@ loadImages = ->
     text:     '---------------'
   for image in sorted
     $('<option/>',
-      text:  utils.i18n image
+      text:  i18n.get image
       value: image
     ).appendTo(images).data 'file', "#{image}.png"
   images.change ->
@@ -78,11 +78,11 @@ loadImages = ->
 # Update the notification section of the options page with the current
 # settings.
 loadNotifications = ->
-  if utils.get 'notifications'
+  if store.get 'notifications'
     $('#notifications').attr 'checked', 'checked'
   else
     $('#notifications').removeAttr 'checked'
-  notificationDuration = utils.get 'notificationDuration'
+  notificationDuration = store.get 'notificationDuration'
   timeInSecs = 0
   timeInSecs = notificationDuration * .001 if notificationDuration > timeInSecs
   $('#notificationDuration').val timeInSecs
@@ -128,7 +128,7 @@ loadTemplateControlEvents = ->
     if opt.length is 0
       # Disable all the controls as no option is selected.
       lastSelectedTemplate = {}
-      utils.i18nContent '#add_btn', 'opt_add_button'
+      i18n.content '#add_btn', 'opt_add_button'
       $('#moveUp_btn, #moveDown_btn').attr 'disabled', 'disabled'
       $('.read-only, .read-only-always').removeAttr 'disabled'
       $('.read-only, .read-only-always').removeAttr 'readonly'
@@ -143,7 +143,7 @@ loadTemplateControlEvents = ->
     else
       # An option is selected; start cooking.
       lastSelectedTemplate = opt
-      utils.i18nContent '#add_btn', 'opt_add_new_button'
+      i18n.content '#add_btn', 'opt_add_new_button'
       $('.read-only-always').attr 'disabled', 'disabled'
       $('.read-only-always').attr 'readonly', 'readonly'
       # Disable the *Up* control since the selected option is at the top of the
@@ -273,10 +273,10 @@ loadTemplateExportEvents = ->
   # Copy the text area contents to the system clipboard.
   $('.export_copy_btn').live('click', (event) ->
     ext.copy $('.export_content').val(), yes
-    $(this).text utils.i18n 'copied'
+    $(this).text i18n.get 'copied'
     event.preventDefault()
   ).live 'mouseover', ->
-    $(this).text utils.i18n 'copy'
+    $(this).text i18n.get 'copy'
   # Deselect all of the templates in the list.
   $('.export_deselect_all_btn').live 'click', ->
     $('.export_con_list option').removeAttr('selected').parent().focus()
@@ -296,7 +296,7 @@ loadTemplateExportEvents = ->
         fileEntry.createWriter (fileWriter) ->
           builder = new WebKitBlobBuilder()
           fileWriter.onerror = (error) ->
-            utils.error error
+            log.error error
           fileWriter.onwriteend = ->
             window.location.href = fileEntry.toURL()
           builder.append str
@@ -352,11 +352,11 @@ loadTemplateImportEvents = ->
       message = ''
       switch evt.target.error.code
         when evt.target.error.NOT_FOUND_ERR
-          message = utils.i18n 'error_file_not_found'
+          message = i18n.get 'error_file_not_found'
         when evt.target.error.ABORT_ERR
-          message = utils.i18n 'error_file_aborted'
+          message = i18n.get 'error_file_aborted'
         else
-          message = utils.i18n 'error_file_default'
+          message = i18n.get 'error_file_default'
       $('.import_error').text message
     reader.onload = (evt) ->
       $('.import_content').val evt.target.result
@@ -384,9 +384,9 @@ loadTemplateImportEvents = ->
   $('.import_paste_btn').live('click', ->
     $('.import_file_btn').val ''
     $('.import_content').val ext.paste()
-    $(this).text utils.i18n 'pasted'
+    $(this).text i18n.get 'pasted'
   ).live 'mouseover', ->
-    $(this).text utils.i18n 'paste'
+    $(this).text i18n.get 'paste'
   # Select all of the templates in the list.
   $('.import_select_all_btn').live 'click', ->
     $('.import_con_list option').attr('selected', 'selected').parent().focus()
@@ -421,12 +421,12 @@ loadTemplateImportEvents = ->
 loadToolbar = ->
   $('input[name="toolbar_behaviour"]').each ->
     $this = $ this
-    $this.attr 'checked', 'checked' if utils.get $this.attr 'id'
-  if utils.get 'toolbarPopupClose'
+    $this.attr 'checked', 'checked' if store.get $this.attr 'id'
+  if store.get 'toolbarPopupClose'
     $('#toolbarPopupClose').attr 'checked', 'checked'
   else
     $('#toolbarPopupClose').removeAttr 'checked'
-  if utils.get 'toolbarTemplateDetails'
+  if store.get 'toolbarTemplateDetails'
     $('#toolbarTemplateDetails').attr 'checked', 'checked'
   else
     $('#toolbarTemplateDetails').removeAttr 'checked'
@@ -464,17 +464,17 @@ loadToolbarControlEvents = ->
 loadUrlShorteners = ->
   $('input[name="enabled_shortener"]').each ->
     $this = $ this
-    $this.attr 'checked', 'checked' if utils.get $this.attr 'id'
-  $('#bitlyApiKey').val utils.get 'bitlyApiKey'
-  $('#bitlyUsername').val utils.get 'bitlyUsername'
-  if utils.get 'googlOAuth'
+    $this.attr 'checked', 'checked' if store.get $this.attr 'id'
+  $('#bitlyApiKey').val store.get 'bitlyApiKey'
+  $('#bitlyUsername').val store.get 'bitlyUsername'
+  if store.get 'googlOAuth'
     $('#googlOAuth').attr 'checked', 'checked'
   else
     $('#googlOAuth').removeAttr 'checked'
-  $('#yourlsPassword').val utils.get 'yourlsPassword'
-  $('#yourlsSignature').val utils.get 'yourlsSignature'
-  $('#yourlsUrl').val utils.get 'yourlsUrl'
-  $('#yourlsUsername').val utils.get 'yourlsUsername'
+  $('#yourlsPassword').val store.get 'yourlsPassword'
+  $('#yourlsSignature').val store.get 'yourlsSignature'
+  $('#yourlsUrl').val store.get 'yourlsUrl'
+  $('#yourlsUsername').val store.get 'yourlsUsername'
   loadUrlShortenerControlEvents()
 
 # Bind the event handlers required for controlling URL shortener configuration
@@ -490,7 +490,7 @@ loadUrlShortenerControlEvents = ->
 
 # Update the settings with the values from the options page.
 save = ->
-  utils.set
+  store.set
     contextMenu:    $('#contextMenu').is ':checked'
     shortcuts:      $('#shortcuts').is ':checked'
     doAnchorTarget: $('#doAnchorTarget').is ':checked'
@@ -506,7 +506,7 @@ save = ->
 saveNotifications = ->
   timeInSecs = $('#notificationDuration').val()
   timeInSecs = if timeInSecs? then parseInt(timeInSecs, 10) * 1000 else 0
-  utils.set
+  store.set
     notifications:        $('#notifications').is ':checked'
     notificationDuration: timeInSecs
 
@@ -518,7 +518,7 @@ saveTemplates = ->
   $('#templates option').each ->
     templates.push deriveTemplate $ this
   # Ensure the data for all templates reflects the updated settings.
-  utils.set 'templates', templates
+  store.set 'templates', templates
   ext.updateTemplates()
 
 # Updates the settings with the values from the toolbar section of the options
@@ -529,12 +529,12 @@ saveToolbar = ->
   toolbarTemplateName = toolbarTemplate.val() if toolbarTemplate.length
   $('input[name="toolbar_behaviour"]').each ->
     $this = $ this
-    utils.set $this.attr('id'), $this.is ':checked'
+    store.set $this.attr('id'), $this.is ':checked'
   unless toolbarTemplateName
-    utils.set
+    store.set
       toolbarPopup:    yes
       toolbarTemplate: no
-  utils.set
+  store.set
     toolbarPopupClose:      $('#toolbarPopupClose').is ':checked'
     toolbarTemplateDetails: $('#toolbarTemplateDetails').is ':checked'
     toolbarTemplateName:    toolbarTemplateName
@@ -545,8 +545,8 @@ saveToolbar = ->
 saveUrlShorteners = ->
   $('input[name="enabled_shortener"]').each ->
     $this = $ this
-    utils.set $this.attr('id'), $this.is ':checked'
-  utils.set
+    store.set $this.attr('id'), $this.is ':checked'
+  store.set
     bitlyApiKey:     $('#bitlyApiKey').val().trim()
     bitlyUsername:   $('#bitlyUsername').val().trim()
     googlOAuth:      $('#googlOAuth').is ':checked'
@@ -592,7 +592,7 @@ updateTemplate = (opt) ->
 updateToolbarTemplates = ->
   templates                = []
   toolbarTemplates         = $ '#toolbarTemplateName'
-  toolbarTemplateName      = utils.get 'toolbarTemplateName'
+  toolbarTemplateName      = store.get 'toolbarTemplateName'
   lastSelectedTemplate     = toolbarTemplates.find 'option:selected'
   lastSelectedTemplateName = ''
   if lastSelectedTemplate.length
@@ -661,7 +661,7 @@ validateTemplate = (template, isNew, usedShortcuts) ->
   title    = template.text().trim()
   # Create a list item for the error message with the specified `name`.
   createError = (name) ->
-    $('<li/>', html: utils.i18n name).appendTo errors
+    $('<li/>', html: i18n.get name).appendTo errors
   # Only validate name for non-read-only templates.
   if template.data('readOnly') isnt 'true'
     # Only validate name availability and structure for new templates.
@@ -727,7 +727,7 @@ addImportedTemplate = (template) ->
       name:     template.name
       readOnly: no
       shortcut: ''
-      title:    utils.i18n 'untitled'
+      title:    i18n.get 'untitled'
       usage:    template.usage
     # Only allow existing images.
     newTemplate.image = template.image if template.image in ext.IMAGES
@@ -762,10 +762,10 @@ createImport = (str) ->
   try
     data = JSON.parse str
   catch error
-    throw utils.i18n 'error_import_data'
+    throw i18n.get 'error_import_data'
   if not $.isArray(data.templates) or data.templates.length is 0 or
      typeof data.version isnt 'string'
-    throw utils.i18n 'error_import_invalid'
+    throw i18n.get 'error_import_invalid'
   data
 
 # Create a template with the information derived from the specified `option` 
@@ -846,7 +846,7 @@ options = window.options =
   # This will involve inserting and configuring the UI elements as well as
   # loading the current settings.
   init: ->
-    utils.i18nSetup
+    i18n.init
       footer:
         opt_footer: new Date().format 'Y'
     # Bind tab selection event to all tabs.
@@ -856,10 +856,10 @@ options = window.options =
         $this.siblings().removeClass 'selected'
         $this.addClass 'selected'
         $($this.attr 'tabify').show().siblings('.tab').hide()
-        utils.set 'options_active_tab', $this.attr 'id'
+        store.set 'options_active_tab', $this.attr 'id'
     # Reflect the persisted tab.
-    utils.init 'options_active_tab', 'general_nav'
-    $("##{utils.get 'options_active_tab'}").click()
+    store.init 'options_active_tab', 'general_nav'
+    $("##{store.get 'options_active_tab'}").click()
     # Bind event to the "Save & Close" button which will update the settings
     # with the values from the options page and close the current tab.  
     # None of this should happen if the invalid templates are found; in which
@@ -878,11 +878,11 @@ options = window.options =
     googl = ext.queryUrlShortener (shortener) ->
       shortener.name is 'goo.gl'
     $('#googlDeauthorize_btn').click ->
-      utils.remove key for key in googl.oauthKeys
+      store.remove key for key in googl.oauthKeys
       $(this).hide()
     # Only show the "Revoke Access" button if Template has previously been
     # authorized by the [Google URL Shortener](http://goo.gl).
-    for key in googl.oauthKeys when utils.exists key
+    for key in googl.oauthKeys when store.exists key
       keyExists = yes
       break
     $('#googlDeauthorize_btn').show() if keyExists
@@ -897,7 +897,7 @@ options = window.options =
       ).scrollTop 0
     # Load template section from locale-specific file.
     locale   = DEFAULT_LOCALE
-    uiLocale = utils.i18n '@@ui_locale'
+    uiLocale = i18n.get '@@ui_locale'
     for loc in LOCALES when loc is uiLocale
       locale = uiLocale
       break
