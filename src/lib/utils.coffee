@@ -66,45 +66,94 @@ i18nSubs = (element, value, subMap) ->
       break
   subs
 
-# Utilities setup
-# ---------------
+# Internationalization setup
+# --------------------------
 
-utils = window.utils =
+i18n = window.i18n =
 
-  # Generate a unique key based on the current time and using a randomly
-  # generated hexadecimal number of the specified length.
-  keyGen: (separator = '.', length = 5) ->
-    parts  = []
-    # Populate the segment(s) to attempt uniquity.
-    parts.push new Date().getTime()
-    if length > 0
-      min = @repeat '1', '0', if length is 1 then 1 else length - 1
-      max = @repeat 'f', 'f', if length is 1 then 1 else length - 1
-      min = parseInt min, 16
-      max = parseInt max, 16
-      parts.push @random min max
-    # Convert segments to their hexadecimal (base 16) forms.
-    parts[i] = part.toString 16 for part, i in parts
-    # Join all segments and transform to upper case.
-    parts.join(separator).toUpperCase()
+  # Internationalize the specified attribute of all the selected elements.
+  attribute: (selector, attribute, value, subs) ->
+    elements = document.querySelectorAll selector
+    # Ensure the substitution string(s) are in an array.
+    subs = [subs] if typeof subs is 'string'
+    element.setAttribute attribute, @get value, subs for element in elements
 
-  # Retrieve the first entity/all entities that pass the specified `filter`.
-  query: (entities, singular, filter) ->
-    return entity for entity in entities when filter entity if singular
-    entity for entity in entities when filter entity
+  # Internationalize the contents of all the selected elements.
+  content: (selector, value, subs) ->
+    elements = document.querySelectorAll selector
+    # Ensure the substitution string(s) are in an array.
+    subs = [subs] if typeof subs is 'string'
+    element.innerHTML = @get value, subs for element in elements
 
-  # Generate a random number between the `min` and `max` values provided.
-  random: (min, max) ->
-    Math.floor(Math.random() * (max - min + 1)) + min
+  # Convenient shorthand for `chrome.i18n.getMessage`.
+  get: ->
+    chrome.i18n.getMessage arguments...
 
-  # Repeat the string provided the specified number of times.
-  repeat: (str = '', repeatStr = str, count = 1) ->
-    if count isnt 0
-      # Repeat to the right if `count` is positive.
-      str += repeatStr for i in [1..count] if count > 0
-      # Repeat to the left if `count` is negative.
-      str = repeatStr + str for i in [1..count*-1] if count < 0
-    str
+  # Perform all internationalization substitutions available for the current
+  # page.
+  init: (subMap) ->
+    i18nProcess document, subMap
+
+  # Convenient shorthand for `chrome.i18n.getAcceptLanguages`.
+  langs: ->
+    chrome.i18n.getAcceptLanguages arguments...
+
+  # Retrieve the current locale.
+  locale: ->
+    @get('@@ui_locale').replace '_', '-'
+
+# Logging setup
+# -------------
+
+log = window.log =
+
+  # Output all failed `assertions`.
+  assert: (assertions...) ->
+    console.assert assertion for assertion in assertions if @enabled()
+
+  # Create/increment a counter and output its current count for all `names`.
+  count: (names...) ->
+    console.count name for name in names if @enabled()
+
+  # Output all debug `entries`.
+  debug: (entries...) ->
+    console.debug entry for entry in entries if @enabled()
+
+  # Display an interactive listing of the properties of all `entries`.
+  dir: (entries...) ->
+    console.dir entry for entry in entries if @enabled()
+
+  # Indicate whether or not logging is enabled.
+  enabled: ->
+    store.get 'log'
+
+  # Output all error `entries`.
+  error: (entries...) ->
+    console.error entry for entry in entries if @enabled()
+
+  # Output all informative `entries`.
+  info: (entries...) ->
+    console.info entry for entry in entries if @enabled()
+
+  # Output all general `entries`.
+  out: (entries...) ->
+    console.log entry for entry in entries if @enabled()
+
+  # Start a timer for all `names`.
+  time: (names...) ->
+    console.time name for name in names if @enabled()
+
+  # Stop a timer and output its elapsed time in milliseconds for all `names`.
+  timeEnd: (names...) ->
+    console.timeEnd name for name in names if @enabled()
+
+  # Output a stack trace.
+  trace: ->
+    console.trace() if @enabled()
+
+  # Output all warning `entries`.
+  warn: (entries...) ->
+    console.warn entry for entry in entries if @enabled()
 
 # Storage setup
 # -------------
@@ -194,83 +243,42 @@ store = window.store =
         localStorage[keys] = if value? then JSON.stringify value else value
         oldValue
 
-# Internationalization setup
-# --------------------------
+# Utilities setup
+# ---------------
 
-i18n = window.i18n =
+utils = window.utils =
 
-  # Internationalize the specified attribute of all the selected elements.
-  attribute: (selector, attribute, value, subs) ->
-    elements = document.querySelectorAll selector
-    # Ensure the substitution string(s) are in an array.
-    subs = [subs] if typeof subs is 'string'
-    element.setAttribute attribute, @get value, subs for element in elements
+  # Generate a unique key based on the current time and using a randomly
+  # generated hexadecimal number of the specified length.
+  keyGen: (separator = '.', length = 5) ->
+    parts  = []
+    # Populate the segment(s) to attempt uniquity.
+    parts.push new Date().getTime()
+    if length > 0
+      min = @repeat '1', '0', if length is 1 then 1 else length - 1
+      max = @repeat 'f', 'f', if length is 1 then 1 else length - 1
+      min = parseInt min, 16
+      max = parseInt max, 16
+      parts.push @random min max
+    # Convert segments to their hexadecimal (base 16) forms.
+    parts[i] = part.toString 16 for part, i in parts
+    # Join all segments and transform to upper case.
+    parts.join(separator).toUpperCase()
 
-  # Internationalize the contents of all the selected elements.
-  content: (selector, value, subs) ->
-    elements = document.querySelectorAll selector
-    # Ensure the substitution string(s) are in an array.
-    subs = [subs] if typeof subs is 'string'
-    element.innerHTML = @get value, subs for element in elements
+  # Retrieve the first entity/all entities that pass the specified `filter`.
+  query: (entities, singular, filter) ->
+    return entity for entity in entities when filter entity if singular
+    entity for entity in entities when filter entity
 
-  # Convenient shorthand for `chrome.i18n.getMessage`.
-  get: ->
-    chrome.i18n.getMessage arguments...
+  # Generate a random number between the `min` and `max` values provided.
+  random: (min, max) ->
+    Math.floor(Math.random() * (max - min + 1)) + min
 
-  # Perform all internationalization substitutions available for the current
-  # page.
-  init: (subMap) ->
-    i18nProcess document, subMap
-
-# Logging setup
-# -------------
-
-log = window.log =
-
-  # Output all failed `assertions`.
-  assert: (assertions...) ->
-    console.assert assertion for assertion in assertions if @enabled()
-
-  # Create/increment a counter and output its current count for all `names`.
-  count: (names...) ->
-    console.count name for name in names if @enabled()
-
-  # Output all debug `entries`.
-  debug: (entries...) ->
-    console.debug entry for entry in entries if @enabled()
-
-  # Display an interactive listing of the properties of all `entries`.
-  dir: (entries...) ->
-    console.dir entry for entry in entries if @enabled()
-
-  # Indicate whether or not logging is enabled.
-  enabled: ->
-    store.get 'log'
-
-  # Output all error `entries`.
-  error: (entries...) ->
-    console.error entry for entry in entries if @enabled()
-
-  # Output all informative `entries`.
-  info: (entries...) ->
-    console.info entry for entry in entries if @enabled()
-
-  # Output all general `entries`.
-  out: (entries...) ->
-    console.log entry for entry in entries if @enabled()
-
-  # Start a timer for all `names`.
-  time: (names...) ->
-    console.time name for name in names if @enabled()
-
-  # Stop a timer and output its elapsed time in milliseconds for all `names`.
-  timeEnd: (names...) ->
-    console.timeEnd name for name in names if @enabled()
-
-  # Output a stack trace.
-  trace: ->
-    console.trace() if @enabled()
-
-  # Output all warning `entries`.
-  warn: (entries...) ->
-    console.warn entry for entry in entries if @enabled()
+  # Repeat the string provided the specified number of times.
+  repeat: (str = '', repeatStr = str, count = 1) ->
+    if count isnt 0
+      # Repeat to the right if `count` is positive.
+      str += repeatStr for i in [1..count] if count > 0
+      # Repeat to the left if `count` is negative.
+      str = repeatStr + str for i in [1..count*-1] if count < 0
+    str
