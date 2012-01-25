@@ -21,7 +21,7 @@ DEFAULT_TEMPLATES = [
     name:     '_anchor'
     readOnly: yes
     shortcut: 'A'
-    title:    utils.i18n 'copy_anchor'
+    title:    i18n.get 'copy_anchor'
     usage:    0
   ,
     content:  '[url={url}]{title}[/url]'
@@ -31,7 +31,7 @@ DEFAULT_TEMPLATES = [
     name:     '_bbcode'
     readOnly: yes
     shortcut: 'B'
-    title:    utils.i18n 'copy_bbcode'
+    title:    i18n.get 'copy_bbcode'
     usage:    0
   ,
     content:  '{#encode}{url}{/encode}'
@@ -41,7 +41,7 @@ DEFAULT_TEMPLATES = [
     name:     '_encoded'
     readOnly: yes
     shortcut: 'E'
-    title:    utils.i18n 'copy_encoded'
+    title:    i18n.get 'copy_encoded'
     usage:    0
   ,
     content:  '[{title}]({url})'
@@ -51,7 +51,7 @@ DEFAULT_TEMPLATES = [
     name:     '_markdown'
     readOnly: yes
     shortcut: 'M'
-    title:    utils.i18n 'copy_markdown'
+    title:    i18n.get 'copy_markdown'
     usage:    0
   ,
     content:  '{short}'
@@ -61,7 +61,7 @@ DEFAULT_TEMPLATES = [
     name:     '_short'
     readOnly: yes
     shortcut: 'S'
-    title:    utils.i18n 'copy_short'
+    title:    i18n.get 'copy_short'
     usage:    0
   ,
     content:  '{url}'
@@ -71,11 +71,11 @@ DEFAULT_TEMPLATES = [
     name:     '_url'
     readOnly: yes
     shortcut: 'U'
-    title:    utils.i18n 'copy_url'
+    title:    i18n.get 'copy_url'
     usage:    0
 ]
 # Extension ID being used by Template.
-EXTENSION_ID      = utils.i18n '@@extension_id'
+EXTENSION_ID      = i18n.get '@@extension_id'
 # Domain of this extension's homepage.
 HOMEPAGE_DOMAIN   = 'neocotic.com'
 # List of known operating systems that could be used by the user.
@@ -94,8 +94,8 @@ SHORTENERS        = [
   # Setup [bitly](http://bit.ly).
   contentType: 'application/x-www-form-urlencoded'
   getParameters: (url) ->
-    bitlyApiKey   = utils.get 'bitlyApiKey'
-    bitlyUsername = utils.get 'bitlyUsername'
+    bitlyApiKey   = store.get 'bitlyApiKey'
+    bitlyUsername = store.get 'bitlyUsername'
     params        =
       apiKey:  'R_91eabef2f32d88c07b197c9d69eed516'
       format:  'json'
@@ -108,7 +108,7 @@ SHORTENERS        = [
   input: ->
     null
   isEnabled: ->
-    utils.get 'bitly'
+    store.get 'bitly'
   method: 'GET'
   name: 'bit.ly'
   output: (resp) ->
@@ -123,14 +123,14 @@ SHORTENERS        = [
   input: (url) ->
     JSON.stringify longUrl: url
   isEnabled: ->
-    utils.get 'googl'
+    store.get 'googl'
   isOAuthEnabled: ->
-    utils.get 'googlOAuth'
+    store.get 'googlOAuth'
   method: 'POST'
   name: 'goo.gl'
   oauth: ChromeExOAuth.initBackgroundPage
     access_url:      'https://www.google.com/accounts/OAuthGetAccessToken'
-    app_name:        utils.i18n 'app_name'
+    app_name:        i18n.get 'app_name'
     authorize_url:   'https://www.google.com/accounts/OAuthAuthorizeToken'
     consumer_key:    'anonymous'
     consumer_secret: 'anonymous'
@@ -152,9 +152,9 @@ SHORTENERS        = [
       action: 'shorturl'
       format: 'json'
       url:    url
-    yourlsPassword  = utils.get 'yourlsPassword'
-    yourlsSignature = utils.get 'yourlsSignature'
-    yourlsUsername  = utils.get 'yourlsUsername'
+    yourlsPassword  = store.get 'yourlsPassword'
+    yourlsSignature = store.get 'yourlsSignature'
+    yourlsUsername  = store.get 'yourlsUsername'
     if yourlsPassword and yourlsUsername
       params.password  = yourlsPassword
       params.username  = yourlsUsername
@@ -164,13 +164,13 @@ SHORTENERS        = [
   input: ->
     null
   isEnabled: ->
-    utils.get 'yourls'
+    store.get 'yourls'
   method: 'POST'
   name: 'YOURLS'
   output: (resp) ->
     JSON.parse(resp).shorturl
   url: ->
-    utils.get 'yourlsUrl'
+    store.get 'yourlsUrl'
 ]
 # List of extensions supported by Template and used for compatibility purposes.
 SUPPORT           = [
@@ -331,7 +331,7 @@ isSpecialPage = (tab) ->
 # that they do not originate from a blacklisted extension.
 onRequest = (request, sender, sendResponse) ->
   # Don't allow shortcut requests when shortcuts are disabled.
-  if request.type is 'shortcut' and not utils.get 'shortcuts'
+  if request.type is 'shortcut' and not store.get 'shortcuts'
     return sendResponse?()
   # Info requests are simple, just send some useful information back. Done!
   if request.type in ['info', 'version']
@@ -344,7 +344,7 @@ onRequest = (request, sender, sendResponse) ->
       data             = {}
       popup            = chrome.extension.getViews(type: 'popup')[0]
       shortCalled      = no
-      shortPlaceholder = "short#{Math.floor Math.random() * 99999 + 1000}"
+      shortPlaceholder = "short#{utils.random 1000, 99999}"
       tab              = tabs[0]
       # Attempt to copy `str` to the system clipboard while handling the
       # potential for failure.  
@@ -353,7 +353,7 @@ onRequest = (request, sender, sendResponse) ->
         if str
           ext.copy str
         else
-          ext.message = utils.i18n 'copy_fail_empty'
+          ext.message = i18n.get 'copy_fail_empty'
           ext.status  = no
           showNotification()
         updateTemplateUsage template.name
@@ -385,9 +385,9 @@ onRequest = (request, sender, sendResponse) ->
       catch error
         # Oops! Something went wrong so we should probably let the user know.
         if error instanceof URIError
-          ext.message = utils.i18n 'copy_fail_uri'
+          ext.message = i18n.get 'copy_fail_uri'
         else
-          ext.message = utils.i18n 'copy_fail_error'
+          ext.message = i18n.get 'copy_fail_error'
         ext.status = no
         showNotification()
         return
@@ -411,7 +411,7 @@ onRequest = (request, sender, sendResponse) ->
               else
                 # Aw man, something went wrong. Let the user down gently.
                 unless response.message
-                  response.message = utils.i18n 'shortener_error',
+                  response.message = i18n.get 'shortener_error',
                     response.shortener
                 ext.message = response.message
                 ext.status  = no
@@ -422,7 +422,7 @@ onRequest = (request, sender, sendResponse) ->
         # Close the popup if it's still open and the user wants it closed.
         # Otherwise, reset the popup so that it can be used further.
         if popup
-          if utils.get 'toolbarPopupClose'
+          if store.get 'toolbarPopupClose'
             popup.close()
           else
             $('#loadDiv', popup.document).hide()
@@ -433,7 +433,7 @@ onRequest = (request, sender, sendResponse) ->
 # Also, ensure that `ext` is *reset* and that notifications are only displayed
 # if the user has enabled the corresponding option (enabled by default).
 showNotification = ->
-  if utils.get 'notifications'
+  if store.get 'notifications'
     webkitNotifications.createHTMLNotification(
       chrome.extension.getURL 'pages/notification.html'
     ).show()
@@ -442,7 +442,7 @@ showNotification = ->
   # Close the popup if it's still open and the user wants it closed. Otherwise,
   # reset the popup so that it can be used further.
   if popup = chrome.extension.getViews(type: 'popup')[0]
-    if utils.get 'toolbarPopupClose'
+    if store.get 'toolbarPopupClose'
       popup.close()
     else
       $('#loadDiv', popup.document).hide()
@@ -460,11 +460,11 @@ updateContextMenu = ->
       onRequest
         data: info
         type: 'menu'
-    if utils.get 'contextMenu'
+    if store.get 'contextMenu'
       # Create and add the top-level Template menu.
       parentId = chrome.contextMenus.create
         contexts: ['all']
-        title:    utils.i18n 'name'
+        title:    i18n.get 'name'
       # Create and add a sub-menu item for each enabled template.
       for template in ext.templates when template.enabled
         menuId = chrome.contextMenus.create
@@ -478,7 +478,7 @@ updateContextMenu = ->
 # the changes.
 updateTemplateUsage = (name) ->
   template.usage++ for template in ext.templates when template.name is name
-  utils.set 'templates', ext.templates
+  store.set 'templates', ext.templates
 
 # Data functions
 # --------------
@@ -557,23 +557,23 @@ buildStandardData = (tab, shortCallback) ->
   # ignoring case by our modified version of
   # [mustache.js](https://github.com/janl/mustache.js).
   $.extend data, url.attr(),
-    bitly:                  utils.get 'bitly'
-    bitlyapikey:            utils.get 'bitlyApiKey'
-    bitlyusername:          utils.get 'bitlyUsername'
+    bitly:                  store.get 'bitly'
+    bitlyapikey:            store.get 'bitlyApiKey'
+    bitlyusername:          store.get 'bitlyUsername'
     browser:                browser.title
     browserversion:         browser.version
-    contextmenu:            utils.get 'contextMenu'
+    contextmenu:            store.get 'contextMenu'
     cookiesenabled:         window.navigator.cookieEnabled
-    count:                  utils.get('stats').count
-    customcount:            utils.get('stats').customCount
+    count:                  store.get('stats').count
+    customcount:            store.get('stats').customCount
     datetime:               ->
       (text, render) ->
         new Date().format render(text) or undefined
     decode:                 ->
       (text, render) ->
         decodeURIComponent render text
-    doanchortarget:         utils.get 'doAnchorTarget'
-    doanchortitle:          utils.get 'doAnchorTitle'
+    doanchortarget:         store.get 'doAnchorTarget'
+    doanchortitle:          store.get 'doAnchorTitle'
     encode:                 ->
       (text, render) ->
         encodeURIComponent render text
@@ -588,11 +588,11 @@ buildStandardData = (tab, shortCallback) ->
       (text, render) ->
         url.fsegment parseInt render(text), 10
     fsegments:              url.fsegment()
-    googl:                  utils.get 'googl'
-    googloauth:             utils.get 'googlOAuth'
+    googl:                  store.get 'googl'
+    googloauth:             store.get 'googlOAuth'
     java:                   window.navigator.javaEnabled()
-    notificationduration:   utils.get 'notificationDuration' * .001
-    notifications:          utils.get 'notifications'
+    notificationduration:   store.get 'notificationDuration' * .001
+    notifications:          store.get 'notifications'
     offline:                not window.navigator.onLine
     # Deprecated since 0.1.0.2, use `originalUrl` instead.
     originalsource:         tab.url
@@ -604,33 +604,33 @@ buildStandardData = (tab, shortCallback) ->
         url.param render text
     params:                 url.param()
     popular:                ext.queryTemplate (template) ->
-      template.name is utils.get('stats').popular
+      template.name is store.get('stats').popular
     segment:                ->
       (text, render) ->
         url.segment parseInt render(text), 10
     segments:               url.segment()
     short:                  ->
       shortCallback?()
-    shortcuts:              utils.get 'shortcuts'
+    shortcuts:              store.get 'shortcuts'
     title:                  title or url.attr 'source'
     # Deprecated since 1.0.0, use `toolbarTemplate` instead.
-    toolbarfeature:         utils.get 'toolbarTemplate'
+    toolbarfeature:         store.get 'toolbarTemplate'
     # Deprecated since 1.0.0, use `toolbarTemplateDetails` instead.
-    toolbarfeaturedetails:  utils.get 'toolbarTemplateDetails'
+    toolbarfeaturedetails:  store.get 'toolbarTemplateDetails'
     # Deprecated since 1.0.0, use `toolbarTemplateName` instead.
-    toolbarfeaturename:     utils.get 'toolbarTemplateName'
-    toolbarpopup:           utils.get 'toolbarPopup'
-    toolbarpopupclose:      utils.get 'toolbarPopupClose'
-    toolbartemplate:        utils.get 'toolbarTemplate'
-    toolbartemplatedetails: utils.get 'toolbarTemplateDetails'
-    toolbartemplatename:    utils.get 'toolbarTemplateName'
+    toolbarfeaturename:     store.get 'toolbarTemplateName'
+    toolbarpopup:           store.get 'toolbarPopup'
+    toolbarpopupclose:      store.get 'toolbarPopupClose'
+    toolbartemplate:        store.get 'toolbarTemplate'
+    toolbartemplatedetails: store.get 'toolbarTemplateDetails'
+    toolbartemplatename:    store.get 'toolbarTemplateName'
     url:                    url.attr 'source'
     version:                ext.version
-    yourls:                 utils.get 'yourls'
-    yourlspassword:         utils.get 'yourlsPassword'
-    yourlssignature:        utils.get 'yourlsSignature'
-    yourlsurl:              utils.get 'yourlsUrl'
-    yourlsusername:         utils.get 'yourlsUsername'
+    yourls:                 store.get 'yourls'
+    yourlspassword:         store.get 'yourlsPassword'
+    yourlssignature:        store.get 'yourlsSignature'
+    yourlsurl:              store.get 'yourlsUrl'
+    yourlsusername:         store.get 'yourlsUsername'
   data
 
 # HTML building functions
@@ -643,7 +643,7 @@ buildPopup = ->
   loadDiv  = $ '<div id="loadDiv"/>'
   loadDiv.append [
     $ '<img src="../images/loading.gif"/>'
-    $ '<div/>', text: utils.i18n 'shortening'
+    $ '<div/>', text: i18n.get 'shortening'
   ]...
   # Generate the HTML for each template.
   for template in ext.templates when template.enabled
@@ -656,7 +656,7 @@ buildPopup = ->
     ).append $ '<span/>',
       class: 'text'
       style: 'margin-left: 0'
-      text:  utils.i18n 'empty'
+      text:  i18n.get 'empty'
   item.append itemList
   ext.popupHtml = $('<div/>').append(loadDiv, item).html()
 
@@ -674,7 +674,7 @@ buildTemplate = (template) ->
   menu.append $ '<span/>',
     class: 'text'
     text:  template.title
-  if utils.get 'shortcuts'
+  if store.get 'shortcuts'
     modifiers = ext.SHORTCUT_MODIFIERS
     modifiers = ext.SHORTCUT_MAC_MODIFIERS if ext.isThisPlatform 'mac'
     menu.append $ '<span/>',
@@ -688,34 +688,34 @@ buildTemplate = (template) ->
 # Handle the conversion/removal of older version of settings that may have
 # been stored previously by `ext.init`.
 init_update = ->
-  update_progress = utils.get 'update_progress'
+  update_progress = store.get 'update_progress'
   update_progress.settings ?= []
   # Check if the settings need updated for 0.1.0.0.
   if update_progress.settings.indexOf('0.1.0.0') is -1
     # Update the settings for 0.1.0.0.
-    utils.rename 'settingNotification',      'notifications',        on
-    utils.rename 'settingNotificationTimer', 'notificationDuration', 3000
-    utils.rename 'settingShortcut',          'shortcuts',            on
-    utils.rename 'settingTargetAttr',        'doAnchorTarget',       off
-    utils.rename 'settingTitleAttr',         'doAnchorTitle',        off
-    utils.remove 'settingIeTabExtract',      'settingIeTabTitle'
+    store.rename 'settingNotification',      'notifications',        on
+    store.rename 'settingNotificationTimer', 'notificationDuration', 3000
+    store.rename 'settingShortcut',          'shortcuts',            on
+    store.rename 'settingTargetAttr',        'doAnchorTarget',       off
+    store.rename 'settingTitleAttr',         'doAnchorTitle',        off
+    store.remove 'settingIeTabExtract',      'settingIeTabTitle'
     # Ensure that settings are not updated for 0.1.0.0 again.
     update_progress.settings.push '0.1.0.0'
-    utils.set 'update_progress', update_progress
+    store.set 'update_progress', update_progress
   # Check if the settings need updated for 1.0.0.
   if update_progress.settings.indexOf('1.0.0') is -1
     # Update the settings for 1.0.0.
     update_progress.templates = update_progress.features ? []
     delete update_progress.features
-    if utils.get('options_active_tab') is 'features_nav'
-      utils.set 'options_active_tab', 'templates_nav'
+    if store.get('options_active_tab') is 'features_nav'
+      store.set 'options_active_tab', 'templates_nav'
     # Ensure that settings are not updated for 1.0.0 again.
     update_progress.settings.push '1.0.0'
-    utils.set 'update_progress', update_progress
+    store.set 'update_progress', update_progress
 
 # Initialize the settings related to statistical information.
 initStatistics = ->
-  utils.init 'stats', {}
+  store.init 'stats', {}
   ext.updateStatistics()
 
 # Initialize `template` and its properties, before adding it to `templates` to
@@ -759,66 +759,66 @@ initTemplate = (template, templates) ->
 
 # Initialize the persisted managed templates.
 initTemplates = ->
-  utils.init 'templates', []
+  store.init 'templates', []
   initTemplates_update()
-  templates = utils.get 'templates'
+  templates = store.get 'templates'
   # Initialize all default templates to ensure their properties are as
   # expected.
   initTemplate template, templates for template in DEFAULT_TEMPLATES
   # Now, initialize *all* templates to ensure their properties are valid.
   initTemplate template, templates for template in templates
-  utils.set 'templates', templates
+  store.set 'templates', templates
   ext.updateTemplates()
 
 # Handle the conversion/removal of older version of settings that may have
 # been stored previously by `initTemplates`.
 initTemplates_update = ->
-  update_progress = utils.get 'update_progress'
+  update_progress = store.get 'update_progress'
   update_progress.templates ?= []
   # Check if the templates need updated for 0.1.0.0.
   if update_progress.templates.indexOf('0.1.0.0') is -1
     # Update the templates for 0.1.0.0.
-    utils.rename 'copyAnchorEnabled',  'feat__anchor_enabled',  yes
-    utils.rename 'copyAnchorOrder',    'feat__anchor_index',    2
-    utils.rename 'copyBBCodeEnabled',  'feat__bbcode_enabled',  no
-    utils.rename 'copyBBCodeOrder',    'feat__bbcode_index',    4
-    utils.rename 'copyEncodedEnabled', 'feat__encoded_enabled', yes
-    utils.rename 'copyEncodedOrder',   'feat__encoded_index',   3
-    utils.rename 'copyShortEnabled',   'feat__short_enabled',   yes
-    utils.rename 'copyShortOrder',     'feat__short_index',     1
-    utils.rename 'copyUrlEnabled',     'feat__url_enabled',     yes
-    utils.rename 'copyUrlOrder',       'feat__url_index',       0
+    store.rename 'copyAnchorEnabled',  'feat__anchor_enabled',  yes
+    store.rename 'copyAnchorOrder',    'feat__anchor_index',    2
+    store.rename 'copyBBCodeEnabled',  'feat__bbcode_enabled',  no
+    store.rename 'copyBBCodeOrder',    'feat__bbcode_index',    4
+    store.rename 'copyEncodedEnabled', 'feat__encoded_enabled', yes
+    store.rename 'copyEncodedOrder',   'feat__encoded_index',   3
+    store.rename 'copyShortEnabled',   'feat__short_enabled',   yes
+    store.rename 'copyShortOrder',     'feat__short_index',     1
+    store.rename 'copyUrlEnabled',     'feat__url_enabled',     yes
+    store.rename 'copyUrlOrder',       'feat__url_index',       0
     # Ensure that templates are not updated for 0.1.0.0 again.
     update_progress.templates.push '0.1.0.0'
-    utils.set 'update_progress', update_progress
+    store.set 'update_progress', update_progress
   # Check if the templates need updated for 0.2.0.0.
   if update_progress.templates.indexOf('0.2.0.0') is -1
     # Update the templates for 0.2.0.0.
-    names = utils.get('features') ? []
+    names = store.get('features') ? []
     for name in names when typeof name is 'string'
-      utils.rename "feat_#{name}_template", "feat_#{name}_content"
-      image = utils.get "feat_#{name}_image"
+      store.rename "feat_#{name}_template", "feat_#{name}_content"
+      image = store.get "feat_#{name}_image"
       switch typeof image
         when 'string'
           if image in ['', 'spacer.gif', 'spacer.png']
-            utils.set "feat_#{name}_image", -1
+            store.set "feat_#{name}_image", -1
           else
             for img, i in ext.IMAGES
               oldImg = img.replace /^tmpl/, 'feat'
               if "#{oldImg}.png" is image
-                utils.set "feat_#{name}_image", i
+                store.set "feat_#{name}_image", i
                 break
-        else utils.set "feat_#{name}_image", -1
+        else store.set "feat_#{name}_image", -1
     # Ensure that templates are not updated for 0.2.0.0 again.
     update_progress.templates.push '0.2.0.0'
-    utils.set 'update_progress', update_progress
+    store.set 'update_progress', update_progress
   # Check if the templates need updated for 1.0.0.
   if update_progress.templates.indexOf('1.0.0') is -1
     # Update the templates for 1.0.0.
-    names     = utils.remove('features') ? []
+    names     = store.remove('features') ? []
     templates = []
     for name in names when typeof name is 'string'
-      image = utils.remove("feat_#{name}_image") ? -1
+      image = store.remove("feat_#{name}_image") ? -1
       if image is -1
         image = ''
       else
@@ -827,53 +827,53 @@ initTemplates_update = ->
           break
         image = '' if typeof image isnt 'string'
       templates.push
-        content:  utils.remove("feat_#{name}_content")  ? ''
-        enabled:  utils.remove("feat_#{name}_enabled")  ? yes
+        content:  store.remove("feat_#{name}_content")  ? ''
+        enabled:  store.remove("feat_#{name}_enabled")  ? yes
         image:    image
-        index:    utils.remove("feat_#{name}_index")    ? 0
+        index:    store.remove("feat_#{name}_index")    ? 0
         name:     name
-        readOnly: utils.remove("feat_#{name}_readonly") ? no
-        shortcut: utils.remove("feat_#{name}_shortcut") ? ''
-        title:    utils.remove("feat_#{name}_title")    ? name
+        readOnly: store.remove("feat_#{name}_readonly") ? no
+        shortcut: store.remove("feat_#{name}_shortcut") ? ''
+        title:    store.remove("feat_#{name}_title")    ? name
         usage:    0
-    utils.set 'templates', templates
-    utils.remove utils.search(
+    store.set 'templates', templates
+    store.remove store.search(
       /^feat_.*_(content|enabled|image|index|readonly|shortcut|title)$/
     )...
     # Ensure that templates are not updated for 1.0.0 again.
     update_progress.templates.push '1.0.0'
-    utils.set 'update_progress', update_progress
+    store.set 'update_progress', update_progress
 
 # Initialize the settings related to the toolbar/browser action.
 initToolbar = ->
   initToolbar_update()
-  utils.init
+  store.init
     toolbarPopup:           on
     toolbarPopupClose:      on
     toolbarTemplate:        off
     toolbarTemplateDetails: off
-    toolbarTemplateName:    ''
+    toolbarTemplateName:    '_url'
   ext.updateToolbar()
 
 # Handle the conversion/removal of older version of settings that may have
 # been stored previously by `initToolbar`.
 initToolbar_update = ->
-  update_progress = utils.get 'update_progress'
+  update_progress = store.get 'update_progress'
   update_progress.toolbar ?= []
   # Check if the toolbar settings need updated for 1.0.0.
   if update_progress.toolbar.indexOf('1.0.0') is -1
     # Update the toolbar settings for 1.0.0.
-    utils.rename 'toolbarFeature',        'toolbarTemplate',        off
-    utils.rename 'toolbarFeatureDetails', 'toolbarTemplateDetails', off
-    utils.rename 'toolbarFeatureName',    'toolbarTemplateName',    ''
+    store.rename 'toolbarFeature',        'toolbarTemplate',        off
+    store.rename 'toolbarFeatureDetails', 'toolbarTemplateDetails', off
+    store.rename 'toolbarFeatureName',    'toolbarTemplateName',    ''
     # Ensure that toolbar settings are not updated for 1.0.0 again.
     update_progress.toolbar.push '1.0.0'
-    utils.set 'update_progress', update_progress
+    store.set 'update_progress', update_progress
 
 # Initialize the settings related to the supported URL Shortener services.
 initUrlShorteners = ->
   initUrlShorteners_update()
-  utils.init
+  store.init
     bitly:           off
     bitlyApiKey:     ''
     bitlyUsername:   ''
@@ -888,19 +888,19 @@ initUrlShorteners = ->
 # Handle the conversion/removal of older version of settings that may have
 # been stored previously by `initUrlShorteners`.
 initUrlShorteners_update = ->
-  update_progress = utils.get 'update_progress'
+  update_progress = store.get 'update_progress'
   update_progress.shorteners ?= []
   # Check if the URL shorteners need updated for 0.1.0.0.
   if update_progress.shorteners.indexOf('0.1.0.0') is -1
     # Update the URL shorteners for 0.1.0.0.
-    utils.rename 'bitlyEnabled',       'bitly',         off
-    utils.rename 'bitlyXApiKey',       'bitlyApiKey',   ''
-    utils.rename 'bitlyXLogin',        'bitlyUsername', ''
-    utils.rename 'googleEnabled',      'googl',         on
-    utils.rename 'googleOAuthEnabled', 'googlOAuth',    on
+    store.rename 'bitlyEnabled',       'bitly',         off
+    store.rename 'bitlyXApiKey',       'bitlyApiKey',   ''
+    store.rename 'bitlyXLogin',        'bitlyUsername', ''
+    store.rename 'googleEnabled',      'googl',         on
+    store.rename 'googleOAuthEnabled', 'googlOAuth',    on
     # Ensure that URL shorteners are not updated for 0.1.0.0 again.
     update_progress.shorteners.push '0.1.0.0'
-    utils.set 'update_progress', update_progress
+    store.set 'update_progress', update_progress
 
 # URL shortener functions
 # -----------------------
@@ -916,7 +916,7 @@ callUrlShortener = (url, callback) ->
     unless sUrl
       # Should never happen... Really just a sanity check.
       callback?(
-        message:   utils.i18n 'shortener_config_error', name
+        message:   i18n.get 'shortener_config_error', name
         shortener: name
         success:   no
       )
@@ -944,7 +944,7 @@ callUrlShortener = (url, callback) ->
           else
             # Something went wrong so let's tell the user.
             callback?(
-              message:   utils.i18n 'shortener_error', name
+              message:   i18n.get 'shortener_error', name
               shortener: name
               success:   no
             )
@@ -952,9 +952,9 @@ callUrlShortener = (url, callback) ->
       req.send service.input url
     catch error
       # Aw snap! Notify the user via `callback`.
-      utils.error error
+      log.error error
       callback?(
-        message:   utils.i18n 'shortener_error', name
+        message:   i18n.get 'shortener_error', name
         shortener: name
         success:   no
       )
@@ -978,7 +978,7 @@ getActiveUrlShortener = ->
   # Should never reach here but we'll return goo.gl service by default after
   # ensuring it's the active URL shortener service from now on to save some
   # time.
-  utils.set 'googl', yes
+  store.set 'googl', yes
   getActiveUrlShortener()
 
 # Background page setup
@@ -1055,11 +1055,11 @@ ext = window.ext =
   # This will involve initializing the settings and adding the request
   # listeners.
   init: ->
-    utils.init
+    store.init
       log:             off
       update_progress: {}
     init_update()
-    utils.init
+    store.init
       contextMenu:          on
       notifications:        on
       notificationDuration: 3000
@@ -1074,7 +1074,7 @@ ext = window.ext =
     # This listener will be ignored whenever the popup is enabled.
     chrome.browserAction.onClicked.addListener (tab) ->
       onRequest
-        data: name: utils.get 'toolbarTemplateName'
+        data: name: store.get 'toolbarTemplateName'
         type: 'popup'
     # Add listeners for internal and external requests.
     chrome.extension.onRequest.addListener onRequest
@@ -1120,7 +1120,7 @@ ext = window.ext =
 
   # Update the statistical information.
   updateStatistics: ->
-    stats = utils.get 'stats'
+    stats = store.get 'stats'
     # Determine which template has the greatest usage.
     maxUsage = 0
     utils.query @templates, no, (template) ->
@@ -1132,13 +1132,13 @@ ext = window.ext =
     stats.count       = @templates.length
     stats.customCount = stats.count - DEFAULT_TEMPLATES.length
     stats.popular     = popular?.name
-    utils.set 'stats', stats
+    store.set 'stats', stats
 
   # Update the local list of templates to reflect those persisted.  
   # It is very important that this is called whenever templates may have been
   # changed in order to prepare the popup HTML and optimize performance.
   updateTemplates: ->
-    @templates = utils.get 'templates'
+    @templates = store.get 'templates'
     @templates.sort (a, b) ->
       a.index - b.index
     buildPopup()
@@ -1147,10 +1147,10 @@ ext = window.ext =
   # Update the toolbar/browser action depending on the current settings.
   updateToolbar: ->
     image    = 'images/icon_19.png'
-    name     = utils.get 'toolbarTemplateName'
+    name     = store.get 'toolbarTemplateName'
     template = getTemplateWithName name if name
-    title    = utils.i18n 'name'
-    if utils.get('toolbarPopup') or not template
+    title    = i18n.get 'name'
+    if store.get('toolbarPopup') or not template
       # Use Template's details to style the browser action.
       chrome.browserAction.setIcon  path:  chrome.extension.getURL image
       chrome.browserAction.setTitle title: title
@@ -1158,7 +1158,7 @@ ext = window.ext =
       chrome.browserAction.setPopup popup: 'pages/popup.html'
     else
       # Replace Template's details with that of the selected template.
-      if utils.get 'toolbarTemplateDetails'
+      if store.get 'toolbarTemplateDetails'
         image = getImagePathForTemplate template if template.image isnt 0
         title = template.title
       # Potentially change the style of the browser action.
