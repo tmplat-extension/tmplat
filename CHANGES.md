@@ -2,7 +2,12 @@ YYYY.MM.DD, Version 1.0.0
 
 * Full release!
 * [#20](https://github.com/neocotic/template/issues/20): Add *"Revoke Access"* button to [goo.gl](http://goo.gl)'s configuration on the Options page
+* [#35](https://github.com/neocotic/template/issues/35): Tidy naming and documentation of the code
 * [#47](https://github.com/neocotic/template/issues/47): Simplify internationalization code
+* [#48](https://github.com/neocotic/template/issues/48): Add option to keep popup open after clicking a template (available in templates via the new *"toolbarPopupClose"* option tag)
+* [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeature"* template option tag and replace with the *"toolbarTemplate"* option tag
+* [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeatureDetails"* template option tag and replace with the *"toolbarTemplateDetails"* option tag
+* [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeatureName"* template option tag and replace with the *"toolbarTemplateName"* option tag
 * [#49](https://github.com/neocotic/template/issues/49): Add new *"count"* simple tag to allow access to the total number of templates
 * [#49](https://github.com/neocotic/template/issues/49): Add new *"customCount"* simple tag to allow access to the total number of custom templates (i.e. excluding predefined)
 * [#49](https://github.com/neocotic/template/issues/49): Add new *"popular"* complex tag to allow access to the details of the most popular template
@@ -13,7 +18,9 @@ YYYY.MM.DD, Version 1.0.0
 
 2011.12.22, Version 0.3.0.0
 
-* [#48](https://github.com/neocotic/template/issues/48): Allow user to change behaviour of the toolbar icon
+* [#48](https://github.com/neocotic/template/issues/48): Add option to change behaviour of the toolbar icon (available in templates via the new *"toolbarPopup"* and *"toolbarFeature"* option tags)
+* [#48](https://github.com/neocotic/template/issues/48): Add option to change the style of the toolbar icon to that of the  (available in templates via the new *"toolbarFeatureDetails"* option tag)
+* [#48](https://github.com/neocotic/template/issues/48): Add option to select a default template (available in templates via the new *"toolbarFeatureName"* option tag)
 * [#50](https://github.com/neocotic/template/issues/50): Make tags case-insensitive
 * [#51](https://github.com/neocotic/template/issues/51): Add new *"dateTime"* simple tag and function to allow formatted date/time
 * [#53](https://github.com/neocotic/template/issues/53): Add support for [inline installation](http://code.google.com/chrome/webstore/docs/inline_installation.html)
