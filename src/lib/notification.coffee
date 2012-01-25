@@ -25,14 +25,14 @@ notification = window.notification =
     # the outcome of the copy request or the existence of an override message.
     div = document.getElementById 'tip'
     div.className = result;
-    div.innerHTML = ext.message or utils.i18n result
+    div.innerHTML = ext.message or i18n.get result
     # Reset `ext` to avoid affecting copy other copy requests. If the user has
     # disabled the notifications option this should still be called for safety.
     ext.reset()
     # Set a timer to close the notification after a specified period of time,
     # if the user enabled the corresponding option; otherwise it should stay
     # open until it is closed manually by the user.
-    duration = utils.get 'notificationDuration'
+    duration = store.get 'notificationDuration'
     if duration > 0
       window.setTimeout ->
         window.close()
