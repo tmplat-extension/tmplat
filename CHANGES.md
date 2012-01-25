@@ -19,7 +19,7 @@ YYYY.MM.DD, Version 1.0.0
 2011.12.22, Version 0.3.0.0
 
 * [#48](https://github.com/neocotic/template/issues/48): Add option to change behaviour of the toolbar icon (available in templates via the new *"toolbarPopup"* and *"toolbarFeature"* option tags)
-* [#48](https://github.com/neocotic/template/issues/48): Add option to change the style of the toolbar icon to that of the  (available in templates via the new *"toolbarFeatureDetails"* option tag)
+* [#48](https://github.com/neocotic/template/issues/48): Add option to change the style of the toolbar icon to that of the (available in templates via the new *"toolbarFeatureDetails"* option tag)
 * [#48](https://github.com/neocotic/template/issues/48): Add option to select a default template (available in templates via the new *"toolbarFeatureName"* option tag)
 * [#50](https://github.com/neocotic/template/issues/50): Make tags case-insensitive
 * [#51](https://github.com/neocotic/template/issues/51): Add new *"dateTime"* simple tag and function to allow formatted date/time
