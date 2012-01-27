@@ -30,7 +30,8 @@
       .section .contents {line-height: 25px; padding-left: 55px;}
       .sections .section .contents {padding-left: 5px;}
       .help {display: none;}
-      #add_btn, #delete_btn, #export_btn, #import_btn {margin-left: 10px;}
+      #add_btn, #delete_btn, #import_btn {margin-left: 10px;}
+      #export_btn {margin-left: 0;}
       #moveDown_btn, #moveUp_btn {padding-top: 2px; margin: 5px 10px;}
       .import_con_list, .export_con_list {width: 100%;}
       .import_count {font-weight: bold;}
@@ -147,19 +148,19 @@
           <div class="contents">
             <div>
               <label>
-                <input type="checkbox" id="doAnchorTitle" />
-                <span id="doAnchorTitle_txt" i18n-content="opt_anchor_title_text"></span>
+                <input type="checkbox" id="anchorTitle" />
+                <span id="anchorTitle_txt" i18n-content="opt_anchor_title_text"></span>
               </label>
-              <a facebox="#doAnchorTitle_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-              <div id="doAnchorTitle_help" class="help" i18n-content="help_doAnchorTitle"></div>
+              <a facebox="#anchorTitle_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="anchorTitle_help" class="help" i18n-content="help_anchorTitle"></div>
             </div>
             <div>
               <label>
-                <input type="checkbox" id="doAnchorTarget" />
-                <span id="doAnchorTarget_txt" i18n-content="opt_anchor_target_text"></span>
+                <input type="checkbox" id="anchorTarget" />
+                <span id="anchorTarget_txt" i18n-content="opt_anchor_target_text"></span>
               </label>
-              <a facebox="#doAnchorTarget_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-              <div id="doAnchorTarget_help" class="help" i18n-content="help_doAnchorTarget"></div>
+              <a facebox="#anchorTarget_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="anchorTarget_help" class="help" i18n-content="help_anchorTarget"></div>
             </div>
           </div>
         </div>
@@ -178,36 +179,36 @@
             </div>
             <div style="margin: 4px 0 0 36px">
               <label>
-                <input type="checkbox" id="toolbarPopupClose" />
-                <span id="toolbarPopupClose_txt" i18n-content="opt_toolbar_popup_close_text"></span>
+                <input type="checkbox" id="toolbarClose" />
+                <span id="toolbarClose_txt" i18n-content="opt_toolbar_close_text"></span>
               </label>
-              <a facebox="#toolbarPopupClose_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-              <div id="toolbarPopupClose_help" class="help" i18n-content="help_toolbarPopupClose"></div>
+              <a facebox="#toolbarClose_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="toolbarClose_help" class="help" i18n-content="help_toolbarClose"></div>
             </div>
             <div>
               <label>
-                <input type="radio" name="toolbar_behaviour" id="toolbarTemplate" />
-                <span id="toolbarTemplate_txt" i18n-content="opt_toolbar_template_text"></span>
+                <input type="radio" name="toolbar_behaviour" id="notToolbarPopup" />
+                <span id="notToolbarPopup_txt" i18n-content="opt_toolbar_not_popup_text"></span>
               </label>
-              <a facebox="#toolbarTemplate_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-              <div id="toolbarTemplate_help" class="help" i18n-content="help_toolbarTemplate"></div>
+              <a facebox="#notToolbarPopup_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="notToolbarPopup_help" class="help" i18n-content="help_notToolbarPopup"></div>
             </div>
             <div style="margin: 0 0 0 40px">
-              <label for="toolbarTemplateName">
-                <span id="toolbarTemplateName_txt" i18n-content="opt_toolbar_template_name_text"></span>
+              <label for="toolbarKey">
+                <span id="toolbarKey_txt" i18n-content="opt_toolbar_key_text"></span>
               </label>
-              <a facebox="#toolbarTemplateName_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-              <div id="toolbarTemplateName_help" class="help" i18n-content="help_toolbarTemplateName"></div>
+              <a facebox="#toolbarKey_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="toolbarKey_help" class="help" i18n-content="help_toolbarKey"></div>
               <br>
-              <select id="toolbarTemplateName" size="1"></select>
+              <select id="toolbarKey" size="1"></select>
             </div>
             <div style="margin: 4px 0 0 36px">
               <label>
-                <input type="checkbox" id="toolbarTemplateDetails" />
-                <span id="toolbarTemplateDetails_txt" i18n-content="opt_toolbar_template_details_text"></span>
+                <input type="checkbox" id="toolbarStyle" />
+                <span id="toolbarStyle_txt" i18n-content="opt_toolbar_style_text"></span>
               </label>
-              <a facebox="#toolbarTemplateDetails_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-              <div id="toolbarTemplateDetails_help" class="help" i18n-content="help_toolbarTemplateDetails"></div>
+              <a facebox="#toolbarStyle_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <div id="toolbarStyle_help" class="help" i18n-content="help_toolbarStyle"></div>
             </div>
           </div>
         </div>
@@ -236,27 +237,6 @@
                     <table style="border-spacing: 0">
                       <tr>
                         <td style="width: 75px">
-                          <label for="template_name">
-                            <span id="template_name_txt" i18n-content="opt_template_name_text"></span>
-                          </label>
-                          <a facebox="#template_name_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                          <div id="template_name_help" class="help" i18n-content="help_template_name"></div>
-                        </td>
-                        <td>
-                          <input id="template_name" class="read-only-always" type="text" maxlength="16" size="32" />
-                        </td>
-                      </tr>
-                    </table>
-                  </td>
-                  <td>
-                    <button id="add_btn" i18n-content="opt_add_button"></button>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="2">
-                    <table style="border-spacing: 0">
-                      <tr>
-                        <td style="width: 75px">
                           <label for="template_title">
                             <span id="template_title_txt" i18n-content="opt_template_title_text"></span>
                           </label>
@@ -270,8 +250,7 @@
                     </table>
                   </td>
                   <td>
-                    <button id="delete_btn" class="read-only" i18n-content="opt_delete_button"></button>
-                    <div id="delete_con" class="help" i18n-content="confirm_delete"></div>
+                    <button id="add_btn" i18n-content="opt_add_button"></button>
                   </td>
                 </tr>
                 <tr>
@@ -293,12 +272,8 @@
                     </table>
                   </td>
                   <td>
-                    <button id="import_btn" i18n-content="opt_import_button"></button>
-                    <div id="import_con" class="help">
-                      <div class="import_con_stage1" i18n-content="confirm_import_stage1"></div>
-                      <div class="import_con_stage2" i18n-content="confirm_import_stage2"></div>
-                      <div class="import_con_stage3" i18n-content="confirm_import_stage3"></div>
-                    </div>
+                    <button id="delete_btn" class="read-only" i18n-content="opt_delete_button"></button>
+                    <div id="delete_con" class="help" i18n-content="confirm_delete"></div>
                   </td>
                 </tr>
                 <tr>
@@ -318,7 +293,13 @@
                     <div id="template_shortcut_help" class="help" i18n-content="help_template_shortcut"></div>
                   </td>
                   <td>
+                    <button id="import_btn" i18n-content="opt_import_button"></button>
                     <button id="export_btn" i18n-content="opt_export_button"></button>
+                    <div id="import_con" class="help">
+                      <div class="import_con_stage1" i18n-content="confirm_import_stage1"></div>
+                      <div class="import_con_stage2" i18n-content="confirm_import_stage2"></div>
+                      <div class="import_con_stage3" i18n-content="confirm_import_stage3"></div>
+                    </div>
                     <div id="export_con" class="help">
                       <div class="export_con_stage1" i18n-content="confirm_export_stage1"></div>
                       <div class="export_con_stage2" i18n-content="confirm_export_stage2"></div>

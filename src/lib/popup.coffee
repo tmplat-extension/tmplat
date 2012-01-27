@@ -33,5 +33,5 @@ popup = window.popup =
   # Send a request to the background page using the information provided.
   sendRequest: (item) ->
     chrome.extension.sendRequest
-      data: name: item.getAttribute 'name'
+      data: key: item.getAttribute 'key'
       type: 'popup'

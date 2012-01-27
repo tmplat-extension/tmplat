@@ -161,7 +161,7 @@
                 <tr>
                   <td>popular</td>
                   <td>Map</td>
-                  <td>The properties of your most popular template (e.g. <code>{ 'content':'{url}', 'name':'_url', 'shortcut': 'U'}</code> - contains many more)</td>
+                  <td>The properties of your most popular template (e.g. <code>{ 'content':'{url}', 'shortcut': 'U', 'title':'URL'}</code> - contains many more)</td>
                 </tr>
                 <tr>
                   <td>segments</td>
@@ -236,6 +236,14 @@
               </thead>
               <tbody>
                 <tr>
+                  <td>anchorTarget</td>
+                  <td>Whether or not the option to include the anchor tags <code>target</code> attribute is enabled</td>
+                </tr>
+                <tr>
+                  <td>anchorTitle</td>
+                  <td>Whether or not the option to include the anchor tags <code>title</code> attribute is enabled</td>
+                </tr>
+                <tr>
                   <td>bitly</td>
                   <td>Whether or not <a href="http://bit.ly" target="_blank">bit.ly</a> is the enabled <abbr title="Uniform Resource Locator">URL</abbr> shortener</td>
                 </tr>
@@ -262,14 +270,6 @@
                 <tr>
                   <td>cookiesEnabled</td>
                   <td>Whether or not cookies are enabled</td>
-                </tr>
-                <tr>
-                  <td>doAnchorTarget</td>
-                  <td>Whether or not the option to include the anchor tag's <code>target</code> attribute is enabled</td>
-                </tr>
-                <tr>
-                  <td>doAnchorTitle</td>
-                  <td>Whether or not the option to include the anchor tag's <code>title</code> attribute is enabled</td>
                 </tr>
                 <tr>
                   <td>googl</td>
@@ -304,24 +304,20 @@
                   <td>Whether or not the option to allow keyboard shortcuts is enabled</td>
                 </tr>
                 <tr>
+                  <td>toolbarClose</td>
+                  <td>Whether or not the popup is shown when the toolbar button is clicked</td>
+                </tr>
+                <tr>
+                  <td>toolbarKey</td>
+                  <td>The key of the template activated when the toolbar button is clicked</td>
+                </tr>
+                <tr>
                   <td>toolbarPopup</td>
                   <td>Whether or not the popup is closed immediately after a template is selected</td>
                 </tr>
                 <tr>
-                  <td>toolbarPopupClose</td>
-                  <td>Whether or not the popup is shown when the toolbar button is clicked</td>
-                </tr>
-                <tr>
-                  <td>toolbarTemplate</td>
-                  <td>Whether or not a template is activated when the toolbar button is clicked</td>
-                </tr>
-                <tr>
-                  <td>toolbarTemplateDetails</td>
+                  <td>toolbarStyle</td>
                   <td>Whether or not the toolbar button's design is based on a template</td>
-                </tr>
-                <tr>
-                  <td>toolbarTemplateName</td>
-                  <td>The name of the template activated when the toolbar button is clicked</td>
                 </tr>
                 <tr>
                   <td>version</td>
@@ -352,7 +348,7 @@
             <h3>Examples</h3>
             <p>These examples will be using the following <abbr title="Uniform Resource Locator">URL</abbr>;<pre>http://example.com/test/index.html</pre></p>
             <p>To include the <code>title</code> attribute in an anchor tag only if the user wants it;
-<pre>&lt;a href=&quot;{{url}}&quot;{#doAnchorTitle} title=&quot;{{title}}&quot;{/doAnchorTitle}&gt;This is a test!&lt;/a&gt;</pre>
+<pre>&lt;a href=&quot;{{url}}&quot;{#anchorTitle} title=&quot;{{title}}&quot;{/anchorTitle}&gt;This is a test!&lt;/a&gt;</pre>
             Would output the following if this option was enabled by the user;
 <pre>&lt;a href=&quot;http://example.com/test/index.html&quot; title=&quot;Test&quot;&gt;This is a test!&lt;/a&gt;</pre>
             However, if the user disabled this option it would output as follows;

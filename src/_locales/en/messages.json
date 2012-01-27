@@ -176,6 +176,40 @@
   "extension": {
     "message": "Extension"
   },
+  "help_anchorTarget": {
+    "message": "$O_PARA$This indicates whether or not a $O_CODE$target$C_CODE$ attribute should be included in the anchor tag when building an Anchor template.$C_PARA$$O_PARA$If included, this attribute will be populated with $O_CODE$blank$C_CODE$.$C_PARA$",
+    "placeholders": {
+      "c_code": {
+        "content": "</code>"
+      },
+      "c_para": {
+        "content": "</p>"
+      },
+      "o_code": {
+        "content": "<code>"
+      },
+      "o_para": {
+        "content": "<p>"
+      }
+    }
+  },
+  "help_anchorTitle": {
+    "message": "$O_PARA$This indicates whether or not a $O_CODE$title$C_CODE$ attribute should be included in the anchor tag when building an Anchor template.$C_PARA$$O_PARA$If included, this attribute will be populated with the contextual title (e.g page, frame).$C_PARA$",
+    "placeholders": {
+      "c_code": {
+        "content": "</code>"
+      },
+      "c_para": {
+        "content": "</p>"
+      },
+      "o_code": {
+        "content": "<code>"
+      },
+      "o_para": {
+        "content": "<p>"
+      }
+    }
+  },
   "help_bitlyApiKey": {
     "message": "$O_PARA$The $API_ABBR$ key allows $O_BOLD$Template$C_BOLD$ to shorten links via $O_BOLD$bit.ly$C_BOLD$ on your behalf.$C_PARA$$O_PARA$$O_LINK_1$Get your API key$C_LINK$$C_PARA$",
     "placeholders": {
@@ -239,40 +273,6 @@
       }
     }
   },
-  "help_doAnchorTarget": {
-    "message": "$O_PARA$This indicates whether or not a $O_CODE$target$C_CODE$ attribute should be included in the anchor tag when building an Anchor template.$C_PARA$$O_PARA$If included, this attribute will be populated with $O_CODE$blank$C_CODE$.$C_PARA$",
-    "placeholders": {
-      "c_code": {
-        "content": "</code>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_code": {
-        "content": "<code>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_doAnchorTitle": {
-    "message": "$O_PARA$This indicates whether or not a $O_CODE$title$C_CODE$ attribute should be included in the anchor tag when building an Anchor template.$C_PARA$$O_PARA$If included, this attribute will be populated with the contextual title (e.g page, frame).$C_PARA$",
-    "placeholders": {
-      "c_code": {
-        "content": "</code>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_code": {
-        "content": "<code>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
   "help_googlOAuth": {
     "message": "$O_PARA$$O_LINK_1$OAuth$C_LINK$ is an open protocol that aims to standardize the way desktop and web applications access a user's private data. OAuth provides a mechanism for users to grant access to private data without sharing their private credentials (username/password).$C_PARA$$O_PARA$$O_BOLD$Template$C_BOLD$ uses OAuth to shorten links via $O_BOLD$goo.gl$C_BOLD$ on your behalf.$C_PARA$$O_PARA$If you have previously attempted to authorize $O_BOLD$Template$C_BOLD$ you can undo this locally by clicking the $O_EMPH$Revoke Access$C_EMPH$ button.$C_PARA$",
     "placeholders": {
@@ -330,6 +330,17 @@
       }
     }
   },
+  "help_notToolbarPopup": {
+    "message": "$O_PARA$This inidicates whether or not the selected template will be activated when the toolbar icon is clicked.$C_PARA$$O_PARA$Enabling this option effectively replaces the popup that is shown by default.$C_PARA$",
+    "placeholders": {
+      "c_para": {
+        "content": "</p>"
+      },
+      "o_para": {
+        "content": "<p>"
+      }
+    }
+  },
   "help_shortcuts": {
     "message": "$O_PARA$This indicates whether or not keyboard shortcuts will be recognised.$C_PARA$",
     "placeholders": {
@@ -357,38 +368,6 @@
     "placeholders": {
       "c_para": {
         "content": "</p>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_template_name": {
-    "message": "$O_PARA$The name is used internally and is only displayed here.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be unique$C_ITEM$$O_ITEM$Cannot contains spaces or underscores$BREAK$(an underscore is prefixed to predefined template names to prevent any possible conflicts with user creations)$C_ITEM$$O_ITEM$Must only contain alphanumeric characters$C_ITEM$$C_LIST$$O_PARA$This $O_EMPH$cannot$C_EMPH$ be changed for predefined templates.$C_PARA$",
-    "placeholders": {
-      "break": {
-        "content": "<br />"
-      },
-      "c_emph": {
-        "content": "</em>"
-      },
-      "c_item": {
-        "content": "</li>"
-      },
-      "c_list": {
-        "content": "</ul>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_emph": {
-        "content": "<em>"
-      },
-      "o_item": {
-        "content": "<li>"
-      },
-      "o_list": {
-        "content": "<ul>"
       },
       "o_para": {
         "content": "<p>"
@@ -453,6 +432,28 @@
       }
     }
   },
+  "help_toolbarClose": {
+    "message": "$O_PARA$This indicates whether or not the popup will be automatically closed after clicking on one of the listed templates.$C_PARA$",
+    "placeholders": {
+      "c_para": {
+        "content": "</p>"
+      },
+      "o_para": {
+        "content": "<p>"
+      }
+    }
+  },
+  "help_toolbarKey": {
+    "message": "$O_PARA$This template will be activated when the toolbar icon is clicked and the popup is disabled.$C_PARA$",
+    "placeholders": {
+      "c_para": {
+        "content": "</p>"
+      },
+      "o_para": {
+        "content": "<p>"
+      }
+    }
+  },
   "help_toolbarPopup": {
     "message": "$O_PARA$This inidicates whether or not the standard popup will be displayed when the toolbar icon is clicked.$C_PARA$",
     "placeholders": {
@@ -464,29 +465,7 @@
       }
     }
   },
-  "help_toolbarPopupClose": {
-    "message": "$O_PARA$This indicates whether or not the popup will be automatically closed after clicking on one of the listed templates.$C_PARA$",
-    "placeholders": {
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_toolbarTemplate": {
-    "message": "$O_PARA$This inidicates whether or not the selected template will be activated when the toolbar icon is clicked.$C_PARA$$O_PARA$Enabling this option effectively replaces the popup that is shown by default.$C_PARA$",
-    "placeholders": {
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_toolbarTemplateDetails": {
+  "help_toolbarStyle": {
     "message": "$O_PARA$This indicates whether or not the design of the toolbar icon will be replaced by that of the selected template.$C_PARA$$O_PARA$The following aspects of the toolbar icon will be changed;$C_PARA$$O_LIST$$O_ITEM$Hover over text will be the template's title$C_ITEM$$O_ITEM$Icon will be the template's image$BREAK$($O_EMPH$only$C_EMPH$ if it's not blank)$C_ITEM$$C_LIST$",
     "placeholders": {
       "break": {
@@ -512,17 +491,6 @@
       },
       "o_list": {
         "content": "<ul>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_toolbarTemplateName": {
-    "message": "$O_PARA$This template will be activated when the toolbar icon is clicked and the popup is disabled.$C_PARA$",
-    "placeholders": {
-      "c_para": {
-        "content": "</p>"
       },
       "o_para": {
         "content": "<p>"
@@ -730,15 +698,6 @@
   "opt_template_image_text": {
     "message": "Image"
   },
-  "opt_template_name_invalid": {
-    "message": "Name is missing or contains invalid characters"
-  },
-  "opt_template_name_text": {
-    "message": "Name"
-  },
-  "opt_template_name_unavailable": {
-    "message": "Name is already in use"
-  },
   "opt_template_shortcut_invalid": {
     "message": "Keyboard shortcut uses invalid key"
   },
@@ -754,23 +713,23 @@
   "opt_toolbar_behaviour_header": {
     "message": "Toolbar Behaviour"
   },
+  "opt_toolbar_close_text": {
+    "message": "Hide the popup after selecting a template"
+  },
   "opt_toolbar_header": {
     "message": "Toolbar"
   },
-  "opt_toolbar_popup_close_text": {
-    "message": "Hide the popup after selecting a template"
+  "opt_toolbar_key_text": {
+    "message": "Select the template to be activated"
+  },
+  "opt_toolbar_not_popup_text": {
+    "message": "Activate the selected template when the toolbar button is clicked"
   },
   "opt_toolbar_popup_text": {
     "message": "Show popup when the toolbar button is clicked"
   },
-  "opt_toolbar_template_text": {
-    "message": "Activate the selected template when the toolbar button is clicked"
-  },
-  "opt_toolbar_template_details_text": {
+  "opt_toolbar_style_text": {
     "message": "Show the template's details in the toolbar button"
-  },
-  "opt_toolbar_template_name_text": {
-    "message": "Select the template to be activated"
   },
   "opt_url_shortener_api_key_text": {
     "message": "$API_ABBR$ Key",
