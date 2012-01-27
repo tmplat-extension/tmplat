@@ -32,7 +32,7 @@ notification = window.notification =
     # Set a timer to close the notification after a specified period of time,
     # if the user enabled the corresponding option; otherwise it should stay
     # open until it is closed manually by the user.
-    duration = store.get 'notificationDuration'
+    duration = store.get 'notifications.duration'
     if duration > 0
       window.setTimeout ->
         window.close()
