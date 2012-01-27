@@ -30,8 +30,8 @@ i18nHandlers   =
         propExpr = prop[2]
         if propName.indexOf('.') is 0
           path = propName.slice(1).split '.'
-          obj = element
-          obj = obj[path.shift()] while obj and path.length > 1
+          obj  = element
+          obj  = obj[path.shift()] while obj and path.length > 1
           if obj
             obj[path] = i18n.get value, subs
             i18nProcess element, subMap if path is 'innerHTML'
@@ -46,6 +46,24 @@ i18nSelector   = "[#{i18nAttributes.join '],['}]"
 
 # Private functions
 # -----------------
+
+# Attempt to dig down in to the `root` object and stop on the parent of the
+# target property.  
+# Return the progress of the mining as an array in this structure;
+# `[root-object, base-object, base-path, target-parent, target-property]`.
+dig = (root, path, force, parseFirst = yes) ->
+  result = [root]
+  if path and path.indexOf('.') isnt -1
+    path   = path.split '.'
+    object = base = root[basePath = path.shift()]
+    object = base = tryParse object if parseFirst
+    while object and path.length > 1
+      object = object[path.shift()]
+      object = {} if not object? and force
+    result.push base, basePath, object, path.shift()
+  else
+    result.push root, path, root, path
+  result
 
 # Find all elements to be internationalized and call their corresponding
 # handler(s).
@@ -65,6 +83,16 @@ i18nSubs = (element, value, subMap) ->
         break
       break
   subs
+
+# Attempt to parse `value` as a JSON object if it's not `null`; otherwise just
+# return `value`.
+tryParse = (value) ->
+  if value? then JSON.parse value else value
+
+# Attempt to stringify `value` in to a JSON string if it's not `null`;
+# otherwise just return `value`.
+tryStringify = (value) ->
+  if value? then JSON.stringify value else value
 
 # Internationalization setup
 # --------------------------
@@ -169,18 +197,18 @@ store = window.store =
     return no for key in keys when not localStorage.hasOwnProperty key
     yes
 
-  # Retrieve the value associated with the specified `keys` from
+  # Retrieve the value associated with the specified `key` from
   # `localStorage`.  
-  # If the value is found, parse it as JSON before being returning it;
-  # otherwise return `undefined`.
-  get: (keys...) ->
-    if keys.length is 1
-      value = localStorage[keys[0]]
-      if value? then JSON.parse value else value
-    else
-      value = {}
-      value[key] = @get key for key in keys
-      value
+  # If the value is found, parse it as a JSON object before being returning
+  # it.
+  get: (key) ->
+    parts = dig localStorage, key
+    if parts[3]
+      value = parts[3][parts[4]]
+      # Ensure that the value is parsed if retrieved directly from
+      # `localStorage`.
+      value = tryParse value if parts[3] is parts[0]
+    value
 
   # Initialize the value of the specified key(s) in `localStorage`.  
   # `keys` can either be a string for a single key (in which case
@@ -188,19 +216,20 @@ store = window.store =
   # pairs.  
   # If the value is currently `undefined`, assign the specified default value;
   # otherwise reassign itself.
-  init: (keys = {}, defaultValue) ->
+  init: (keys, defaultValue) ->
     switch typeof keys
       when 'object'
-        @set key, @get(key) ? defaultValue for own key, defaultValue of keys
+        @init key, defaultValue for own key, defaultValue of keys
       when 'string' then @set keys, @get(keys) ? defaultValue
 
   # For each of the specified `keys`, retrieve their value in `localStorage`
   # and pass it, along with the key, to the `callback` function provided.  
-  # If `callback` returns a value that is not `undefined`, then that value will
-  # be assigned to the key in `localStorage`. This functionality is very useful
-  # when just manipulating existing values but can be used in any case.
+  # This functionality is very useful when just manipulating existing values.
   modify: (keys..., callback) ->
-    @set key, callback?(@get(key), key) ? @get key for key in keys
+    for key in keys
+      value = @get key
+      callback? value, key
+      @set key, value
 
   # Remove the specified `keys` from `localStorage`.  
   # If only one key is specified then the current value of that key is returned
@@ -218,10 +247,10 @@ store = window.store =
   # default value to it instead.
   rename: (oldKey, newKey, defaultValue) ->
     if @exists oldKey
-      @init newKey, @get oldKey
+      @set newKey, @get oldKey
       @remove oldKey
     else
-      @init newKey, defaultValue
+      @set newKey, defaultValue
 
   # Search `localStorage` for all keys that match the specified regular
   # expression.
@@ -235,12 +264,10 @@ store = window.store =
   # key; otherwise transform it to a JSON string beforehand.
   set: (keys, value) ->
     switch typeof keys
-      when 'object'
-        for own key, value of keys
-          localStorage[key] = if value? then JSON.stringify value else value
+      when 'object' then @set key, value for own key, value of keys
       when 'string'
         oldValue = @get keys
-        localStorage[keys] = if value? then JSON.stringify value else value
+        localStorage[keys] = tryStringify value
         oldValue
 
 # Utilities setup
