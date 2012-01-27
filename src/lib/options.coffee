@@ -40,11 +40,12 @@ load = ->
     $('#shortcuts').attr 'checked', 'checked'
   else
     $('#shortcuts').removeAttr 'checked'
-  if store.get 'anchor.target'
+  anchor = store.get 'anchor'
+  if anchor.target
     $('#anchorTarget').attr 'checked', 'checked'
   else
     $('#anchorTarget').removeAttr 'checked'
-  if store.get 'anchor.title'
+  if anchor.title
     $('#anchorTitle').attr 'checked', 'checked'
   else
     $('#anchorTitle').removeAttr 'checked'
@@ -78,14 +79,15 @@ loadImages = ->
 # Update the notification section of the options page with the current
 # settings.
 loadNotifications = ->
-  if store.get 'notifications.enabled'
+  notifications = store.get 'notifications'
+  if notifications.enabled
     $('#notifications').attr 'checked', 'checked'
   else
     $('#notifications').removeAttr 'checked'
-  notificationDuration = store.get 'notifications.duration'
-  timeInSecs = 0
-  timeInSecs = notificationDuration * .001 if notificationDuration > timeInSecs
-  $('#notificationDuration').val timeInSecs
+  $('#notificationDuration').val if notifications.duration > 0
+    notifications.duration * .001
+  else
+    0
 
 # Update the templates section of the options page with the current settings.
 loadTemplates = ->

@@ -547,8 +547,15 @@ buildStandardData = (tab, shortCallback) ->
   unless compatibility
     title = tab.title
     url   = $.url tab.url
-  # TODO: Get base objects for all grouped options to improve lookup
+  # Create references to the base of all grouped options to improve lookup
   # performance.
+  anchor        = store.get 'anchor'
+  bitly         = store.get 'bitly'
+  googl         = store.get 'googl'
+  notifications = store.get 'notifications'
+  stats         = store.get 'stats'
+  toolbar       = store.get 'toolbar'
+  yourls        = store.get 'yourls'
   # Merge the initial data with the attributes of the [URL
   # parser](https://github.com/allmarkedup/jQuery-URL-Parser) and all of the
   # custom Template properties.  
@@ -556,17 +563,17 @@ buildStandardData = (tab, shortCallback) ->
   # ignoring case by our modified version of
   # [mustache.js](https://github.com/janl/mustache.js).
   $.extend data, url.attr(),
-    anchortarget:          store.get 'anchor.target'
-    anchortitle:           store.get 'anchor.title'
-    bitly:                 store.get 'bitly.enabled'
-    bitlyapikey:           store.get 'bitly.apiKey'
-    bitlyusername:         store.get 'bitly.username'
+    anchortarget:          anchor.target
+    anchortitle:           anchor.title
+    bitly:                 bitly.enabled
+    bitlyapikey:           bitly.apiKey
+    bitlyusername:         bitly.username
     browser:               browser.title
     browserversion:        browser.version
     contextmenu:           store.get 'contextMenu'
     cookiesenabled:        window.navigator.cookieEnabled
-    count:                 store.get 'stats.count'
-    customcount:           store.get 'stats.customCount'
+    count:                 stats.count
+    customcount:           stats.customCount
     datetime:              ->
       (text, render) ->
         new Date().format render(text) or undefined
@@ -574,9 +581,9 @@ buildStandardData = (tab, shortCallback) ->
       (text, render) ->
         decodeURIComponent render text
     # Deprecated since 1.0.0, use `anchorTarget` instead.
-    doanchortarget:        store.get 'anchor.target'
+    doanchortarget:        anchor.target
     # Deprecated since 1.0.0, use `anchorTitle` instead.
-    doanchortitle:         store.get 'anchor.title'
+    doanchortitle:         anchor.title
     encode:                ->
       (text, render) ->
         encodeURIComponent render text
@@ -591,11 +598,11 @@ buildStandardData = (tab, shortCallback) ->
       (text, render) ->
         url.fsegment parseInt render(text), 10
     fsegments:             url.fsegment()
-    googl:                 store.get 'googl.enabled'
-    googloauth:            store.get 'googl.oauth'
+    googl:                 googl.enabled
+    googloauth:            googl.oauth
     java:                  window.navigator.javaEnabled()
-    notifications:         store.get 'notifications.enabled'
-    notificationduration:  store.get('notifications.duration') * .001
+    notifications:         notifications.enabled
+    notificationduration:  notifications.duration * .001
     offline:               not window.navigator.onLine
     # Deprecated since 0.1.0.2, use `originalUrl` instead.
     originalsource:        tab.url
@@ -607,7 +614,7 @@ buildStandardData = (tab, shortCallback) ->
         url.param render text
     params:                url.param()
     popular:               ext.queryTemplate (template) ->
-      template.key is store.get 'stats.popular'
+      template.key is stats.popular
     segment:               ->
       (text, render) ->
         url.segment parseInt render(text), 10
@@ -616,23 +623,23 @@ buildStandardData = (tab, shortCallback) ->
       shortCallback?()
     shortcuts:             store.get 'shortcuts'
     title:                 title or url.attr 'source'
-    toolbarclose:          store.get 'toolbar.close'
+    toolbarclose:          toolbar.close
     # Deprecated since 1.0.0, use the inverse of `toolbarPopup` instead.
-    toolbarfeature:        not store.get 'toolbar.popup'
+    toolbarfeature:        not toolbar.popup
     # Deprecated since 1.0.0, use `toolbarStyle` instead.
-    toolbarfeaturedetails: store.get 'toolbar.style'
+    toolbarfeaturedetails: toolbar.style
     # Deprecated since 1.0.0, use `toolbarKey` instead.
-    toolbarfeaturename:    store.get 'toolbar.key'
-    toolbarkey:            store.get 'toolbar.key'
-    toolbarpopup:          store.get 'toolbar.popup'
-    toolbarstyle:          store.get 'toolbar.style'
+    toolbarfeaturename:    toolbar.key
+    toolbarkey:            toolbar.key
+    toolbarpopup:          toolbar.popup
+    toolbarstyle:          toolbar.style
     url:                   url.attr 'source'
     version:               ext.version
-    yourls:                store.get 'yourls.enabled'
-    yourlspassword:        store.get 'yourls.password'
-    yourlssignature:       store.get 'yourls.signature'
-    yourlsurl:             store.get 'yourls.url'
-    yourlsusername:        store.get 'yourls.username'
+    yourls:                yourls.enabled
+    yourlspassword:        yourls.password
+    yourlssignature:       yourls.signature
+    yourlsurl:             yourls.url
+    yourlsusername:        yourls.username
   data
 
 # HTML building functions
@@ -1206,7 +1213,7 @@ ext = window.ext =
     key      = store.get 'toolbar.key'
     template = getTemplateWithKey key if key
     title    = i18n.get 'name'
-    if store.get('toolbar.popup') or not template
+    if not template or store.get 'toolbar.popup'
       # Use Template's details to style the browser action.
       chrome.browserAction.setIcon  path:  chrome.extension.getURL image
       chrome.browserAction.setTitle title: title
