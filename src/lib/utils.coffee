@@ -286,7 +286,7 @@ utils = window.utils =
       max = @repeat 'f', 'f', if length is 1 then 1 else length - 1
       min = parseInt min, 16
       max = parseInt max, 16
-      parts.push @random min max
+      parts.push @random min, max
     # Convert segments to their hexadecimal (base 16) forms.
     parts[i] = part.toString 16 for part, i in parts
     # Join all segments and transform to upper case.
