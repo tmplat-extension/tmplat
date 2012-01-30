@@ -354,7 +354,7 @@ onRequest = (request, sender, sendResponse) ->
           ext.status  = no
           showNotification()
         updateTemplateUsage template.key
-        ext.updateStatistics()
+        updateStatistics()
       # Called whenever the `short` tag is found to indicate that the URL
       # needs shortened.  
       # Replace the `short` tag with the unique placeholder so that it can be
@@ -470,6 +470,21 @@ updateContextMenu = ->
           parentId: parentId
           title:    template.title
         template.menuId = menuId
+
+# Update the statistical information.
+updateStatistics = ->
+  store.modify 'stats', (stats) =>
+    # Determine which template has the greatest usage.
+    maxUsage = 0
+    utils.query ext.templates, no, (template) ->
+      maxUsage = template.usage if template.usage > maxUsage
+      no
+    popular = ext.queryTemplate (template) ->
+      template.usage is maxUsage
+    # Calculate the up-to-date statistical information.
+    stats.count       = ext.templates.length
+    stats.customCount = stats.count - DEFAULT_TEMPLATES.length
+    stats.popular     = popular?.key
 
 # Increment the usage for the template with the specified `key` and persist the
 # changes.
@@ -732,7 +747,7 @@ init_update = ->
 # Initialize the settings related to statistical information.
 initStatistics = ->
   store.init 'stats', {}
-  ext.updateStatistics()
+  updateStatistics()
 
 # Initialize `template` and its properties, before adding it to `templates` to
 # be persisted later.
@@ -1181,21 +1196,6 @@ ext = window.ext =
     @message = ''
     @status  = no
 
-  # Update the statistical information.
-  updateStatistics: ->
-    store.modify 'stats', (stats) =>
-      # Determine which template has the greatest usage.
-      maxUsage = 0
-      utils.query @templates, no, (template) ->
-        maxUsage = template.usage if template.usage > maxUsage
-        no
-      popular = @queryTemplate (template) ->
-        template.usage is maxUsage
-      # Calculate the up-to-date statistical information.
-      stats.count       = @templates.length
-      stats.customCount = stats.count - DEFAULT_TEMPLATES.length
-      stats.popular     = popular?.key
-
   # Update the local list of templates to reflect those persisted.  
   # It is very important that this is called whenever templates may have been
   # changed in order to prepare the popup HTML and optimize performance.
@@ -1205,6 +1205,7 @@ ext = window.ext =
       a.index - b.index
     buildPopup()
     updateContextMenu()
+    updateStatistics()
 
   # Update the toolbar/browser action depending on the current settings.
   updateToolbar: ->
