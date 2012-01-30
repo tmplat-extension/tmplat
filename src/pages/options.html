@@ -8,7 +8,7 @@
       a, a:active, a:link, a:visited {color: #3D5D6A; cursor: pointer; font-weight: bold; text-decoration: none;}
       a:hover {text-decoration: underline;}
       a[facebox] {cursor: pointer; outline: 0;}
-      .config-details {display: none;}
+      .config-expand {display: none;}
       .config-expand a {cursor: pointer;}
       code, pre {font: 12px 'Bitstream Vera Sans Mono','Courier',monospace;}
       code {background-color: #F8F8F8; border: 1px solid #DEDEDE; font-size: 13px; padding: 0 2px; border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
@@ -25,18 +25,19 @@
       #navigation-footer div {background-color: white; border-radius: 20px 20px 0 0; height: 20px;}
       .content-box {background-color: white; border: 3px solid #BEC9CE; border-radius: 0 0 20px 20px; border-top: 0; height: auto;  margin: 0 auto 20px auto; padding: 10px 30px 30px; text-align: left; width: 600px;}
       h4 {border-bottom: 2px dotted #C3C3C3; color: #333; font-size: 15px; line-height: 28px; padding-left: 0.5em;}
+      .tab > .section:first-child > h4:first-child {margin-top: 0;}
       .tab {display: none;}
-      .controls {margin: 25px 0 0 0;}
+      .controls {display: none; margin: 25px 0 0 0;}
       .section .contents {line-height: 25px; padding-left: 55px;}
       .sections .section .contents {padding-left: 5px;}
       .help {display: none;}
-      #add_btn, #delete_btn, #import_btn {margin-left: 10px;}
-      #export_btn {margin-left: 0;}
+      #add_btn, #delete_btn, #export_btn, #import_btn {margin-left: 10px;}
       #moveDown_btn, #moveUp_btn {padding-top: 2px; margin: 5px 10px;}
       .import_con_list, .export_con_list {width: 100%;}
       .import_count {font-weight: bold;}
       .import_content, .export_content {width: 100%;}
       .import_error {color: #C00; font-style: italic;}
+      #template_content {font: 12px 'Bitstream Vera Sans Mono','Courier',monospace;}
       input {cursor: pointer;}
       img.disabled {opacity: .5;}
       span.disabled {color: #888;}
@@ -220,7 +221,7 @@
             <div>
               <table>
                 <tr>
-                  <td colspan="2" rowspan="2" style="min-width: 354px">
+                  <td colspan="2" rowspan="2" style="min-width: 352px">
                     <select id="templates" size="5" style="width: 100%"></select>
                   </td>
                   <td style="padding-top: 10px; width: 50%">
@@ -232,11 +233,11 @@
                     <button id="moveDown_btn"><img src="../images/move_down_disabled.gif" /></button>
                   </td>
                 </tr>
-                <tr>
+                <tr style="height: 30px">
                   <td colspan="2">
                     <table style="border-spacing: 0">
                       <tr>
-                        <td style="width: 75px">
+                        <td style="width: 85px">
                           <label for="template_title">
                             <span id="template_title_txt" i18n-content="opt_template_title_text"></span>
                           </label>
@@ -253,11 +254,11 @@
                     <button id="add_btn" i18n-content="opt_add_button"></button>
                   </td>
                 </tr>
-                <tr>
+                <tr style="height: 30px">
                   <td colspan="2">
                     <table style="border-spacing: 0">
                       <tr>
-                        <td style="width: 75px">
+                        <td style="width: 85px">
                           <label for="template_image">
                             <span id="template_image_txt" i18n-content="opt_template_image_text"></span>
                           </label>
@@ -276,30 +277,53 @@
                     <div id="delete_con" class="help" i18n-content="confirm_delete"></div>
                   </td>
                 </tr>
-                <tr>
-                  <td>
-                    <label>
-                      <input id="template_enabled" type="checkbox" checked />
-                      <span id="template_enabled_txt" i18n-content="opt_template_enabled_text"></span>
-                    </label>
-                    <a facebox="#template_enabled_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                    <div id="template_enabled_help" class="help" i18n-content="help_template_enabled"></div>
-                  </td>
-                  <td style="text-align: right">
-                    <label>
-                      <span id="template_shortcut_txt"></span><input id="template_shortcut" type="text" maxlength="1" size="1" style="text-transform: uppercase" />
-                    </label>
-                    <a facebox="#template_shortcut_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                    <div id="template_shortcut_help" class="help" i18n-content="help_template_shortcut"></div>
+                <tr style="height: 30px">
+                  <td colspan="2">
+                    <table style="border-spacing: 0">
+                      <tr>
+                        <td style="width: 85px">
+                          <label for="template_shortcut">
+                            <span id="template_shortcut_txt" i18n-content="opt_template_shortcut_text"></span>
+                          </label>
+                          <a facebox="#template_shortcut_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                          <div id="template_shortcut_help" class="help" i18n-content="help_template_shortcut"></div>
+                        </td>
+                        <td>
+                          <label>
+                            <span id="template_shortcut_modifier"></span><input id="template_shortcut" type="text" maxlength="1" size="1" style="text-transform: uppercase" />
+                          </label>
+                        </td>
+                      </tr>
+                    </table>
                   </td>
                   <td>
                     <button id="import_btn" i18n-content="opt_import_button"></button>
-                    <button id="export_btn" i18n-content="opt_export_button"></button>
                     <div id="import_con" class="help">
                       <div class="import_con_stage1" i18n-content="confirm_import_stage1"></div>
                       <div class="import_con_stage2" i18n-content="confirm_import_stage2"></div>
                       <div class="import_con_stage3" i18n-content="confirm_import_stage3"></div>
                     </div>
+                  </td>
+                </tr>
+                <tr style="height: 30px">
+                  <td colspan="2">
+                    <table style="border-spacing: 0">
+                      <tr>
+                        <td style="width: 85px">
+                          <label for="template_enabled">
+                            <span id="template_enabled_txt" i18n-content="opt_template_enabled_text"></span>
+                          </label>
+                          <a facebox="#template_enabled_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                          <div id="template_enabled_help" class="help" i18n-content="help_template_enabled"></div>
+                        </td>
+                        <td>
+                          <input id="template_enabled" type="checkbox" checked />
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                  <td>
+                    <button id="export_btn" i18n-content="opt_export_button"></button>
                     <div id="export_con" class="help">
                       <div class="export_con_stage1" i18n-content="confirm_export_stage1"></div>
                       <div class="export_con_stage2" i18n-content="confirm_export_stage2"></div>
@@ -309,7 +333,7 @@
                 <tr>
                   <td colspan="3">
                     <label>
-                      <textarea id="template_content" class="read-only" rows="5" cols="50" spellcheck="false" style="resize: vertical" i18n-values="placeholder:opt_template_content_text"></textarea>
+                      <textarea id="template_content" class="read-only" rows="5" cols="47" spellcheck="false" style="resize: vertical" i18n-values="placeholder:opt_template_content_text"></textarea>
                     </label>
                     <div>
                       <a id="template_help_lnk" facebox="#template_help" i18n-content="opt_template_content_help" i18n-values="title:opt_help_text"></a>
@@ -385,11 +409,11 @@
                         </div>
                         <div class="config-details">
                           <label>
-                            <input type="checkbox" id="googlOAuth" />
-                            <span id="googlOAuth_txt" i18n-content="opt_url_shortener_oauth_enable_text"></span>
+                            <input type="checkbox" id="googlOauth" />
+                            <span id="googlOauth_txt" i18n-content="opt_url_shortener_oauth_enable_text"></span>
                           </label>
-                          <a facebox="#googlOAuth_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
-                          <div id="googlOAuth_help" class="help" i18n-content="help_googlOAuth"></div>
+                          <a facebox="#googlOauth_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                          <div id="googlOauth_help" class="help" i18n-content="help_googlOauth"></div>
                           <div>
                             <button id="googlDeauthorize_btn" i18n-content="opt_deauthorize_button"></button>
                           </div>
@@ -475,7 +499,7 @@
         <table>
           <tr>
             <td style="width: 50%">
-              <button class="save-btn" i18n-content="opt_save_button"></button>
+              <button class="close-btn" i18n-content="opt_close_button"></button>
             </td>
             <td style="text-align: right">&nbsp;</td>
           </tr>
