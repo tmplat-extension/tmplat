@@ -47,6 +47,10 @@ i18nSelector   = "[#{i18nAttributes.join '],['}]"
 # Private functions
 # -----------------
 
+# Indicate whether or not logging is enabled for specified `level`.
+canLog = (level) ->
+  log.logger.enabled and log.logger.level >= level
+
 # Attempt to dig down in to the `root` object and stop on the parent of the
 # target property.  
 # Return the progress of the mining as an array in this structure;
@@ -99,6 +103,9 @@ tryStringify = (value) ->
 
 i18n = window.i18n =
 
+  # Public functions
+  # ----------------
+
   # Internationalize the specified attribute of all the selected elements.
   attribute: (selector, attribute, value, subs) ->
     elements = document.querySelectorAll selector
@@ -135,58 +142,81 @@ i18n = window.i18n =
 
 log = window.log =
 
+  # Public constants
+  # ----------------
+
+  # Error logging level.
+  ERROR: 50
+
+  # Debug logging level.
+  DEBUG: 30
+
+  # Information logging level.
+  INFORMATION: 20
+
+  # Trace logging level.
+  TRACE: 10
+
+  # Warning logging level.
+  WARNING: 40
+
+  # Public functions
+  # ----------------
+
   # Output all failed `assertions`.
   assert: (assertions...) ->
-    console.assert assertion for assertion in assertions if @enabled()
+    console.assert assertion for assertion in assertions if @logger.assertions
 
   # Create/increment a counter and output its current count for all `names`.
   count: (names...) ->
-    console.count name for name in names if @enabled()
+    console.count name for name in names if canLog @DEBUG
 
   # Output all debug `entries`.
   debug: (entries...) ->
-    console.debug entry for entry in entries if @enabled()
+    console.debug entry for entry in entries if canLog @DEBUG
 
   # Display an interactive listing of the properties of all `entries`.
   dir: (entries...) ->
-    console.dir entry for entry in entries if @enabled()
-
-  # Indicate whether or not logging is enabled.
-  enabled: ->
-    store.get 'log'
+    console.dir entry for entry in entries if canLog @DEBUG
 
   # Output all error `entries`.
   error: (entries...) ->
-    console.error entry for entry in entries if @enabled()
+    console.error entry for entry in entries if canLog @ERROR
 
   # Output all informative `entries`.
   info: (entries...) ->
-    console.info entry for entry in entries if @enabled()
+    console.info entry for entry in entries if canLog @INFORMATION
+
+  # Hold the information for the current state of the logger.
+  logger: {}
 
   # Output all general `entries`.
   out: (entries...) ->
-    console.log entry for entry in entries if @enabled()
+    console.log entry for entry in entries if @logger.enabled
 
   # Start a timer for all `names`.
   time: (names...) ->
-    console.time name for name in names if @enabled()
+    console.time name for name in names if canLog @DEBUG
 
   # Stop a timer and output its elapsed time in milliseconds for all `names`.
   timeEnd: (names...) ->
-    console.timeEnd name for name in names if @enabled()
+    console.timeEnd name for name in names if canLog @DEBUG
 
   # Output a stack trace.
   trace: ->
-    console.trace() if @enabled()
+    console.trace() if @canLog @TRACE
 
   # Output all warning `entries`.
   warn: (entries...) ->
-    console.warn entry for entry in entries if @enabled()
+    console.warn entry for entry in entries if canLog @WARNING
 
 # Storage setup
 # -------------
 
 store = window.store =
+
+  # Public functions
+  # ----------------
 
   # Clear all keys from `localStorage`.
   clear: ->
@@ -275,6 +305,9 @@ store = window.store =
 
 utils = window.utils =
 
+  # Public functions
+  # ----------------
+
   # Generate a unique key based on the current time and using a randomly
   # generated hexadecimal number of the specified length.
   keyGen: (separator = '.', length = 5) ->
@@ -309,3 +342,11 @@ utils = window.utils =
       # Repeat to the left if `count` is negative.
       str = repeatStr + str for i in [1..count*-1] if count < 0
     str
+
+# Initialize logging.
+store.init 'logger', {}
+store.modify 'logger', (logger) ->
+  logger.assertions ?= no
+  logger.enabled    ?= no
+  logger.level      ?= log.DEBUG
+  log.logger = logger
