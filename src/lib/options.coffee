@@ -25,30 +25,47 @@ R_VALID_SHORTCUT = /[A-Z0-9]/i
 # Load functions
 # --------------
 
+# Bind an event of the specified `type` to the elements included by
+# `selector` that, when triggered, modifies the underlying `option` with the
+# value returned by `evaluate`.
+bindSaveEvent = (selector, type, option, evaluate, callback) ->
+  $(selector).on type, ->
+    $this = $ this
+    key   = ''
+    value = null
+    store.modify option, (data) ->
+      key = $this.attr('id').match(new RegExp("^#{option}(\\S*)"))[1]
+      key = key[0].toLowerCase() + key.substr 1
+      data[key] = value = evaluate.call $this, key
+    callback? $this, key, value
+
+# Bind an event of the specified `type` to the elements included by
+# `selector` that, when triggered, manipulates the selected template `option`
+# element via `assign`.
+bindTemplateSaveEvent = (selector, type, assign, callback) ->
+  $(selector).on type, ->
+    $this  = $ this
+    key    = ''
+    option = $ '#templates option:selected'
+    if option.length
+      key = $this.attr('id').match(/^template_(\S*)/)[1]
+      key = key[0].toLowerCase() + key.substr 1
+      assign.call $this, option, key
+      callback? $this, option, key
+
 # Update the options page with the values from the current settings.
 load = ->
+  anchor = store.get 'anchor'
+  $('#anchorTarget').attr 'checked', 'checked' if anchor.target
+  $('#anchorTitle').attr  'checked', 'checked' if anchor.title
+  $('#contextMenu').attr  'checked', 'checked' if store.get 'contextMenu'
+  $('#shortcuts').attr    'checked', 'checked' if store.get 'shortcuts'
+  loadSaveEvents()
   loadImages()
   loadTemplates()
   loadNotifications()
   loadToolbar()
   loadUrlShorteners()
-  if store.get 'contextMenu'
-    $('#contextMenu').attr 'checked', 'checked'
-  else
-    $('#contextMenu').removeAttr 'checked'
-  if store.get 'shortcuts'
-    $('#shortcuts').attr 'checked', 'checked'
-  else
-    $('#shortcuts').removeAttr 'checked'
-  anchor = store.get 'anchor'
-  if anchor.target
-    $('#anchorTarget').attr 'checked', 'checked'
-  else
-    $('#anchorTarget').removeAttr 'checked'
-  if anchor.title
-    $('#anchorTitle').attr 'checked', 'checked'
-  else
-    $('#anchorTitle').removeAttr 'checked'
 
 # Create an `option` element for each available template image.  
 # Each element is inserted in to the `select` element containing template
@@ -80,14 +97,32 @@ loadImages = ->
 # settings.
 loadNotifications = ->
   notifications = store.get 'notifications'
-  if notifications.enabled
-    $('#notifications').attr 'checked', 'checked'
-  else
-    $('#notifications').removeAttr 'checked'
+  $('#notifications').attr 'checked', 'checked' if notifications.enabled
   $('#notificationDuration').val if notifications.duration > 0
     notifications.duration * .001
   else
     0
+  loadNotificationSaveEvents()
+
+# Bind the event handlers required for persisting notification changes.
+loadNotificationSaveEvents = ->
+  $('#notificationDuration').on 'input', ->
+    store.modify 'notifications', (notifications) =>
+      seconds = $(this).val()
+      seconds = if seconds? then parseInt(seconds, 10) * 1000 else 0
+      notifications.duration = seconds
+  $('#notifications').change ->
+    store.modify 'notifications', (notifications) =>
+      notifications.enabled = $(this).is ':checked'
+
+# Bind the event handlers required for persisting general changes.
+loadSaveEvents = ->
+  bindSaveEvent '#anchorTarget, #anchorTitle', 'change', 'anchor', ->
+    @is ':checked'
+  $('#contextMenu').change ->
+    store.set 'contextMenu', $(this).is ':checked'
+  $('#shortcuts').change ->
+    store.set 'shortcuts', $(this).is ':checked'
 
 # Update the templates section of the options page with the current settings.
 loadTemplates = ->
@@ -100,6 +135,7 @@ loadTemplates = ->
   loadTemplateControlEvents()
   loadTemplateImportEvents()
   loadTemplateExportEvents()
+  loadTemplateSaveEvents()
 
 # Create an `option` element representing the `template` provided.  
 # The element returned should then be inserted in to the `select` element that
@@ -119,14 +155,11 @@ loadTemplate = (template) ->
 # Bind the event handlers required for controlling the templates.
 loadTemplateControlEvents = ->
   templates            = $ '#templates'
-  lastSelectedTemplate = {}
   # Whenever the selected option changes we want all the controls to represent
   # the current selection (where possible).
   templates.change ->
     $this = $ this
     opt   = $this.find 'option:selected'
-    # Update the previously selected template.
-    updateTemplate lastSelectedTemplate if lastSelectedTemplate.length
     if opt.length is 0
       # Disable all the controls as no option is selected.
       lastSelectedTemplate = {}
@@ -143,7 +176,6 @@ loadTemplateControlEvents = ->
       $('#template_title').val ''
     else
       # An option is selected; start cooking.
-      lastSelectedTemplate = opt
       i18n.content '#add_btn', 'opt_add_new_button'
       $('.read-only-always').attr 'disabled', 'disabled'
       $('.read-only-always').attr 'readonly', 'readonly'
@@ -229,6 +261,7 @@ loadTemplateControlEvents = ->
     if opt.data('readOnly') isnt 'true'
       opt.remove()
       templates.change().focus()
+      saveTemplates()
     $(document).trigger 'close.facebox'
     updateToolbarTemplates()
   # Move the selected option down once when the *Down* control is clicked.
@@ -414,6 +447,22 @@ loadTemplateImportEvents = ->
         $('.import_con_stage1, .import_con_stage3').hide()
     $this.removeAttr 'disabled'
 
+# Bind the event handlers required for persisting template changes.
+loadTemplateSaveEvents = ->
+  bindTemplateSaveEvent '#template_enabled, #template_image', 'change',
+   (opt, key) ->
+    opt.data key, switch key
+      when 'enabled' then "#{@is ':checked'}"
+      when 'image'   then @val()
+  , saveTemplates
+  bindTemplateSaveEvent "#template_content, #template_shortcut,
+   #template_title", 'input', (opt, key) ->
+    switch key
+      when 'content'  then opt.data key, @val()
+      when 'shortcut' then opt.data key, @val().toUpperCase().trim()
+      when 'title'    then opt.text @val().trim()
+  , saveTemplates
+
 # Update the toolbar behaviour section of the options page with the current
 # settings.
 loadToolbar = ->
@@ -422,16 +471,11 @@ loadToolbar = ->
     $('#toolbarPopup').attr 'checked', 'checked'
   else
     $('#notToolbarPopup').attr 'checked', 'checked'
-  if toolbar.close
-    $('#toolbarClose').attr 'checked', 'checked'
-  else
-    $('#toolbarClose').removeAttr 'checked'
-  if toolbar.style
-    $('#toolbarStyle').attr 'checked', 'checked'
-  else
-    $('#toolbarStyle').removeAttr 'checked'
+  $('#toolbarClose').attr 'checked', 'checked' if toolbar.close
+  $('#toolbarStyle').attr 'checked', 'checked' if toolbar.style
   updateToolbarTemplates()
   loadToolbarControlEvents()
+  loadToolbarSaveEvents()
 
 # Bind the event handlers required for controlling toolbar behaviour changes.
 loadToolbarControlEvents = ->
@@ -459,6 +503,17 @@ loadToolbarControlEvents = ->
       templateMisc.removeClass  'disabled'
   radios.change()
 
+# Bind the event handlers required for persisting toolbar behaviour changes.
+loadToolbarSaveEvents = ->
+  $('input[name="toolbar_behaviour"]').change ->
+    store.modify 'toolbar', (toolbar) ->
+      toolbar.popup = $('#toolbarPopup').is ':checked'
+    ext.updateToolbar()
+  bindSaveEvent '#toolbarClose, #toolbarKey, #toolbarStyle', 'change',
+   'toolbar', (key) ->
+    if key is 'key' then @val() else @is ':checked'
+  , ext.updateToolbar
+
 # Update the URL shorteners section of the options page with the current
 # settings.
 loadUrlShorteners = ->
@@ -471,15 +526,13 @@ loadUrlShorteners = ->
     yes
   $('#bitlyApiKey').val bitly.apiKey
   $('#bitlyUsername').val bitly.username
-  if googl.oauth
-    $('#googlOAuth').attr 'checked', 'checked'
-  else
-    $('#googlOAuth').removeAttr 'checked'
+  $('#googlOauth').attr 'checked', 'checked' if googl.oauth
   $('#yourlsPassword').val yourls.password
   $('#yourlsSignature').val yourls.signature
   $('#yourlsUrl').val yourls.url
   $('#yourlsUsername').val yourls.username
   loadUrlShortenerControlEvents()
+  loadUrlShortenerSaveEvents()
 
 # Bind the event handlers required for controlling URL shortener configuration
 # changes.
@@ -489,73 +542,52 @@ loadUrlShortenerControlEvents = ->
     $this.parents('.config-expand').first().hide()
     $this.parents('.config').first().find('.config-details').show()
 
+# Bind the event handlers required for persisting URL shortener configuration
+# changes.
+loadUrlShortenerSaveEvents = ->
+  $('input[name="enabled_shortener"]').change ->
+    store.modify 'bitly', 'googl', 'yourls', (data, key) ->
+      data.enabled = $("##{key}").is ':checked'
+  bindSaveEvent '#bitlyApiKey, #bitlyUsername', 'input', 'bitly', ->
+    @val().trim()
+  bindSaveEvent '#googlOauth', 'change', 'googl', ->
+    @is ':checked'
+  bindSaveEvent "#yourlsPassword, #yourlsSignature, #yourlsUrl,
+   #yourlsUsername", 'input', 'yourls', ->
+    @val().trim()
+
 # Save functions
 # --------------
-
-# Update the settings with the values from the options page.
-save = ->
-  store.set
-    contextMenu: $('#contextMenu').is ':checked'
-    shortcuts:   $('#shortcuts').is ':checked'
-  store.modify 'anchor', (anchor) ->
-    anchor.target = $('#anchorTarget').is ':checked'
-    anchor.title  = $('#anchorTitle').is ':checked'
-  saveTemplates()
-  saveNotifications()
-  saveToolbar()
-  saveUrlShorteners()
-  ext.updateStatistics()
-
-# Update the settings with the values from the notification section of the
-# options page.
-saveNotifications = ->
-  timeInSecs = $('#notificationDuration').val()
-  timeInSecs = if timeInSecs? then parseInt(timeInSecs, 10) * 1000 else 0
-  store.modify 'notifications', (notifications) ->
-    notifications.duration = timeInSecs
-    notifications.enabled  = $('#notifications').is ':checked'
 
 # Update the settings with the values from the template section of the options
 # page.
 saveTemplates = ->
+  # Validate all the `option` elements that represent templates.  
+  # Any validation errors encountered are added to a unordered list which
+  # should be displayed to the user at some point if `true` is returned.
+  errors    = $ '#errors'
   templates = []
+  # Wipe any pre-existing errors.
+  errors.remove 'li'
   # Update the settings for each template based on their corresponding options.
   $('#templates option').each ->
-    templates.push deriveTemplate $ this
-  # Ensure the data for all templates reflects the updated settings.
-  store.set 'templates', templates
-  ext.updateTemplates()
-
-# Updates the settings with the values from the toolbar section of the options
-# page.
-saveToolbar = ->
-  toolbarTemplate = $ '#toolbarKey option:selected'
-  toolbarKey      = ''
-  toolbarKey      = toolbarTemplate.val() if toolbarTemplate.length
-  store.modify 'toolbar', (toolbar) ->
-    toolbar.close = $('#toolbarClose').is ':checked'
-    toolbar.key   = toolbarKey
-    toolbar.popup = $('#toolbarPopup').is ':checked'
-    toolbar.popup = yes unless not toolbar.popup and toolbarKey
-    toolbar.style = $('#toolbarStyle').is ':checked'
-  ext.updateToolbar()
-
-# Update the settings with the values from the URL shorteners section of the
-# options page.
-saveUrlShorteners = ->
-  store.modify 'bitly', (bitly) ->
-    bitly.apiKey   = $('#bitlyApiKey').val().trim()
-    bitly.enabled  = $('#bitly').is ':checked'
-    bitly.username = $('#bitlyUsername').val().trim()
-  store.modify 'googl', (googl) ->
-    googl.enabled = $('#googl').is ':checked'
-    googl.oauth   = $('#googlOAuth').is ':checked'
-  store.modify 'yourls', (yourls) ->
-    yourls.enabled   = $('#yourls').is ':checked'
-    yourls.password  = $('#yourlsPassword').val()
-    yourls.signature = $('#yourlsSignature').val().trim()
-    yourls.url       = $('#yourlsUrl').val().trim()
-    yourls.username  = $('#yourlsUsername').val().trim()
+    passed   = no
+    template = deriveTemplate $ this
+    if validateTemplate template, no
+      templates.push template
+      passed = yes
+    else
+      # Show the user which template failed validation.
+      $this.attr 'selected', 'selected'
+      $('#templates').change().focus()
+    passed
+  # Determine whether or not any validation errors were encountered.
+  if errors.find('li').length is 0
+    # Ensure the data for all changes to templates are persisted.
+    store.set 'templates', templates
+    ext.updateTemplates()
+  else
+    $.facebox div: '#message'
 
 # Update the existing template with information extracted from the imported
 # template provided.  
@@ -651,59 +683,25 @@ validateImportedTemplate = (template) ->
   'string'  is typeof template.title    and
   'number'  is typeof template.usage
 
-# Validate the specified `option` element that represents a template.  
+# Validate the specified `object` that represents a template.  
 # Any validation errors encountered are added to a unordered list which should
 # be displayed to the user at some point if `true` is returned.
-validateTemplate = (option, isNew, usedShortcuts) ->
-  enabled  = option.data('enabled') is 'true'
+validateTemplate = (object, isNew) ->
   errors   = $ '#errors'
-  key      = option.val().trim()
-  shortcut = option.data('shortcut').trim()
-  title    = option.text().trim()
+  template = if $.isPlainObject object then object else deriveTemplate object
   # Create a list item for the error message with the specified `name`.
   createError = (name) ->
     $('<li/>', html: i18n.get name).appendTo errors
   # Only validate the key and title of user-defined templates.
-  if option.data('readOnly') isnt 'true'
+  unless template.readOnly
     # Only validate keys of new templates.
-    createError 'opt_template_key_invalid' if isNew and not isKeyValid key
+    if isNew and not isKeyValid template.key
+      createError 'opt_template_key_invalid'
     # Title is missing but is required.
-    createError 'opt_template_title_invalid' if title.length is 0
-  # If `usedShortcuts` is specified also validate that the shortcut of the
-  # template is not already in use.  
-  if shortcut and usedShortcuts?
-    # Validate whether or not the shortcut is valid and available.
-    unless isShortcutValid shortcut
-      createError 'opt_template_shortcut_invalid'
-    else if enabled and usedShortcuts.indexOf(shortcut) isnt -1
-      createError 'opt_template_shortcut_unavailable'
-  # Indicate whether or not any validation errors were encountered.
-  errors.find('li').length is 0
-
-# Validate all the `option` elements that represent templates.  
-# Any validation errors encountered are added to a unordered list which should
-# be displayed to the user at some point if `true` is returned.
-validateTemplates = ->
-  errors        = $ '#errors'
-  shortcut      = ''
-  templates     = $ '#templates option'
-  usedShortcuts = []
-  # Wipe any pre-existing errors.
-  errors.remove 'li'
-  templates.each ->
-    $this  = $ this
-    passed = no
-    if validateTemplate $this, no, usedShortcuts
-      shortcut = $this.data('shortcut').trim()
-      # Only stores shortcut if used and the template is enabled.
-      if $this.data('enabled') is 'true' and shortcut
-        usedShortcuts.push shortcut
-      passed = yes
-    else
-      # Show the user which template failed validation.
-      $this.attr 'selected', 'selected'
-      $('#templates').change().focus()
-    passed
+    createError 'opt_template_title_invalid' if template.title.length is 0
+  # Validate whether or not the shortcut is valid.
+  if template.shortcut and not isShortcutValid template.shortcut
+    createError 'opt_template_shortcut_invalid'
   # Indicate whether or not any validation errors were encountered.
   errors.find('li').length is 0
 
@@ -741,16 +739,7 @@ createExport = (keys) ->
     templates: []
     version:   ext.version
   for key in keys
-    opt = $ "#templates option[value='#{key}']"
-    data.templates.push
-      content:  opt.data 'content'
-      enabled:  opt.data('enabled') is 'true'
-      image:    opt.data 'image'
-      key:      opt.val()
-      readOnly: opt.data('readOnly') is 'true'
-      shortcut: opt.data 'shortcut'
-      title:    opt.text()
-      usage:    parseInt opt.data('usage'), 10
+    data.templates.push deriveTemplate $ "#templates option[value='#{key}']"
   JSON.stringify data
 
 # Create a JSON object from the imported string specified.
@@ -858,18 +847,16 @@ options = window.options =
     # Reflect the persisted tab.
     store.init 'options_active_tab', 'general_nav'
     $("##{store.get 'options_active_tab'}").click()
-    # Bind event to the "Save & Close" button which will update the settings
-    # with the values from the options page and close the current tab.  
-    # None of this should happen if the invalid templates are found; in which
-    # case the user is notified of these errors.
-    $('.save-btn').click ->
-      updateTemplate $ '#templates option:selected'
-      if validateTemplates()
-        save()
-        chrome.tabs.getSelected null, (tab) ->
-          chrome.tabs.remove tab.id
-      else
-        $.facebox div: '#message'
+    # Bind event to the "Close" button which should simply close the current
+    # tab.
+    $('.close-btn').click ->
+      chrome.windows.getCurrent (win) ->
+        chrome.tabs.query
+          active:   yes
+          windowId: win.id
+        , (tabs) ->
+          chrome.tabs.remove tabs.map (tab) ->
+            tab.id
     # Bind event to the "Revoke Access" button which will remove the persisted
     # settings storing OAuth information for the [Google URL
     # Shortener](http://goo.gl).
@@ -906,10 +893,10 @@ options = window.options =
     )
     # Load the current option values.
     load()
-    if ext.isThisPlatform 'mac'
-      $('#template_shortcut_txt').html ext.SHORTCUT_MAC_MODIFIERS
+    $('#template_shortcut_modifier').html if ext.isThisPlatform 'mac'
+      ext.SHORTCUT_MAC_MODIFIERS
     else
-      $('#template_shortcut_txt').html ext.SHORTCUT_MODIFIERS
+      ext.SHORTCUT_MODIFIERS
     # Initialize all faceboxes.
     $('a[facebox]').click ->
       $.facebox div: $(this).attr 'facebox'
