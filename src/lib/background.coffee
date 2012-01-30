@@ -450,7 +450,7 @@ showNotification = ->
 # the existing menu items.
 updateContextMenu = ->
   # Ensure that any previously added context menu items are removed.
-  chrome.contextMenus.removeAll = ->
+  chrome.contextMenus.removeAll ->
     # Called whenever a menu item is clicked.  
     # Send a self request, passing along the available information.
     onMenuClick = (info, tab) ->
@@ -1117,7 +1117,6 @@ ext = window.ext =
   init: ->
     store.init
       anchor:        {}
-      log:           off
       notifications: {}
       updates:       {}
     init_update()
