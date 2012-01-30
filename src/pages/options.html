@@ -8,12 +8,28 @@
       a, a:active, a:link, a:visited {color: #3D5D6A; cursor: pointer; font-weight: bold; text-decoration: none;}
       a:hover {text-decoration: underline;}
       a[facebox] {cursor: pointer; outline: 0;}
+      #message {display: none;}
+      #templates {min-width: 352px;}
+      #template_image_preview, img[alt="?"] {margin-bottom: -3px;}
+      .bold {font-weight: bold;}
+      .italic {font-style: italic;}
+      .top {vertical-align: top;}
+      .middle {vertical-align: middle;}
+      .bottom {vertical-align: bottom;}
+      .full {width: 100%;}
+      .half {width: 50%;}
+      .left {text-align: left;}
+      .center {text-align: center;}
+      .right {text-align: right;}
+      .config-details > table > tbody > tr:first-child > td:first-child {width: 40%;}
+      .config-divider {border-bottom: 1px dashed #AAA;}
       .config-expand {display: none;}
       .config-expand a {cursor: pointer;}
       code, pre {font: 12px 'Bitstream Vera Sans Mono','Courier',monospace;}
       code {background-color: #F8F8F8; border: 1px solid #DEDEDE; font-size: 13px; padding: 0 2px; border-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
       pre {background-color: #F8F8F8; border: 1px solid #CCC; font-size: 13px; line-height: 19px; margin: 20px 0; overflow: auto; padding: 6px 10px; order-radius: 3px; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
       table {border: 0; border-collapse; collapse; width: 100%;}
+      table.no-spacing {border-spacing: 0;}
       .styled thead th {border-bottom: 1px solid #EEE;}
       .styled thead th:hover {border-bottom-color: #AAA;}
       .styled tbody tr:hover {background-color: #F3F3F3;}
@@ -37,7 +53,10 @@
       .import_count {font-weight: bold;}
       .import_content, .export_content {width: 100%;}
       .import_error {color: #C00; font-style: italic;}
-      #template_content {font: 12px 'Bitstream Vera Sans Mono','Courier',monospace;}
+      tr.template-input {height: 30px;}
+      tr.template-input > td:first-child > table.no-spacing > tbody > tr:first-child > td:first-child {width: 85px;}
+      #template_content {font: 12px 'Bitstream Vera Sans Mono','Courier',monospace; resize: vertical;}
+      #template_shortcut {text-transform: uppercase;}
       input {cursor: pointer;}
       img.disabled {opacity: .5;}
       span.disabled {color: #888;}
@@ -96,7 +115,7 @@
       <div></div>
     </div>
     <div class="content-box">
-      <div id="message" style="display: none">
+      <div id="message">
         <p id="errors_hdr" i18n-content="opt_errors_header"></p>
         <ul id="errors"></ul>
       </div>
@@ -109,7 +128,7 @@
                 <input type="checkbox" id="contextMenu" />
                 <span id="contextMenu_txt" i18n-content="opt_context_menu_text"></span>
               </label>
-              <a facebox="#contextMenu_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <a facebox="#contextMenu_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
               <div id="contextMenu_help" class="help" i18n-content="help_contextMenu"></div>
             </div>
             <div>
@@ -117,7 +136,7 @@
                 <input type="checkbox" id="shortcuts" />
                 <span id="shortcuts_txt" i18n-content="opt_shortcut_text"></span>
               </label>
-              <a facebox="#shortcuts_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <a facebox="#shortcuts_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
               <div id="shortcuts_help" class="help" i18n-content="help_shortcuts"></div>
             </div>
           </div>
@@ -130,7 +149,7 @@
                 <input type="checkbox" id="notifications" />
                 <span id="notifications_txt" i18n-content="opt_notification_text"></span>
               </label>
-              <a facebox="#notifications_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <a facebox="#notifications_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
               <div id="notifications_help" class="help" i18n-content="help_notifications"></div>
             </div>
             <div style="margin: 0 0 0 4px">
@@ -139,7 +158,7 @@
                 <input id="notificationDuration" max="60" min="0" size="1" step="1" type="number" />
                 <span id="notificationDuration_txt2" i18n-content="opt_notification_timer_text2"></span>
               </label>
-              <a facebox="#notificationDuration_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <a facebox="#notificationDuration_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
               <div id="notificationDuration_help" class="help" i18n-content="help_notificationDuration"></div>
             </div>
           </div>
@@ -152,7 +171,7 @@
                 <input type="checkbox" id="anchorTitle" />
                 <span id="anchorTitle_txt" i18n-content="opt_anchor_title_text"></span>
               </label>
-              <a facebox="#anchorTitle_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <a facebox="#anchorTitle_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
               <div id="anchorTitle_help" class="help" i18n-content="help_anchorTitle"></div>
             </div>
             <div>
@@ -160,7 +179,7 @@
                 <input type="checkbox" id="anchorTarget" />
                 <span id="anchorTarget_txt" i18n-content="opt_anchor_target_text"></span>
               </label>
-              <a facebox="#anchorTarget_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <a facebox="#anchorTarget_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
               <div id="anchorTarget_help" class="help" i18n-content="help_anchorTarget"></div>
             </div>
           </div>
@@ -175,7 +194,7 @@
                 <input type="radio" name="toolbar_behaviour" id="toolbarPopup" />
                 <span id="toolbarPopup_txt" i18n-content="opt_toolbar_popup_text"></span>
               </label>
-              <a facebox="#toolbarPopup_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <a facebox="#toolbarPopup_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
               <div id="toolbarPopup_help" class="help" i18n-content="help_toolbarPopup"></div>
             </div>
             <div style="margin: 4px 0 0 36px">
@@ -183,7 +202,7 @@
                 <input type="checkbox" id="toolbarClose" />
                 <span id="toolbarClose_txt" i18n-content="opt_toolbar_close_text"></span>
               </label>
-              <a facebox="#toolbarClose_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <a facebox="#toolbarClose_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
               <div id="toolbarClose_help" class="help" i18n-content="help_toolbarClose"></div>
             </div>
             <div>
@@ -191,14 +210,14 @@
                 <input type="radio" name="toolbar_behaviour" id="notToolbarPopup" />
                 <span id="notToolbarPopup_txt" i18n-content="opt_toolbar_not_popup_text"></span>
               </label>
-              <a facebox="#notToolbarPopup_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <a facebox="#notToolbarPopup_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
               <div id="notToolbarPopup_help" class="help" i18n-content="help_notToolbarPopup"></div>
             </div>
             <div style="margin: 0 0 0 40px">
               <label for="toolbarKey">
                 <span id="toolbarKey_txt" i18n-content="opt_toolbar_key_text"></span>
               </label>
-              <a facebox="#toolbarKey_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <a facebox="#toolbarKey_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
               <div id="toolbarKey_help" class="help" i18n-content="help_toolbarKey"></div>
               <br>
               <select id="toolbarKey" size="1"></select>
@@ -208,7 +227,7 @@
                 <input type="checkbox" id="toolbarStyle" />
                 <span id="toolbarStyle_txt" i18n-content="opt_toolbar_style_text"></span>
               </label>
-              <a facebox="#toolbarStyle_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+              <a facebox="#toolbarStyle_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
               <div id="toolbarStyle_help" class="help" i18n-content="help_toolbarStyle"></div>
             </div>
           </div>
@@ -221,10 +240,10 @@
             <div>
               <table>
                 <tr>
-                  <td colspan="2" rowspan="2" style="min-width: 352px">
-                    <select id="templates" size="5" style="width: 100%"></select>
+                  <td colspan="2" rowspan="2">
+                    <select id="templates" size="5"></select>
                   </td>
-                  <td style="padding-top: 10px; width: 50%">
+                  <td class="half" style="padding-top: 10px">
                     <button id="moveUp_btn"><img src="../images/move_up_disabled.gif" /></button>
                   </td>
                 </tr>
@@ -233,15 +252,15 @@
                     <button id="moveDown_btn"><img src="../images/move_down_disabled.gif" /></button>
                   </td>
                 </tr>
-                <tr style="height: 30px">
+                <tr class="template-input">
                   <td colspan="2">
-                    <table style="border-spacing: 0">
+                    <table class="no-spacing">
                       <tr>
-                        <td style="width: 85px">
+                        <td>
                           <label for="template_title">
                             <span id="template_title_txt" i18n-content="opt_template_title_text"></span>
                           </label>
-                          <a facebox="#template_title_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                          <a facebox="#template_title_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
                           <div id="template_title_help" class="help" i18n-content="help_template_title"></div>
                         </td>
                         <td>
@@ -254,20 +273,20 @@
                     <button id="add_btn" i18n-content="opt_add_button"></button>
                   </td>
                 </tr>
-                <tr style="height: 30px">
+                <tr class="template-input">
                   <td colspan="2">
-                    <table style="border-spacing: 0">
+                    <table class="no-spacing">
                       <tr>
-                        <td style="width: 85px">
+                        <td>
                           <label for="template_image">
                             <span id="template_image_txt" i18n-content="opt_template_image_text"></span>
                           </label>
-                          <a facebox="#template_image_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                          <a facebox="#template_image_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
                           <div id="template_image_help" class="help" i18n-content="help_template_image"></div>
                         </td>
                         <td>
                           <select id="template_image"></select>
-                          <img id="template_image_preview" width="16" height="16" style="margin-bottom: -3px" />
+                          <img id="template_image_preview" width="16" height="16" />
                         </td>
                       </tr>
                     </table>
@@ -277,20 +296,20 @@
                     <div id="delete_con" class="help" i18n-content="confirm_delete"></div>
                   </td>
                 </tr>
-                <tr style="height: 30px">
+                <tr class="template-input">
                   <td colspan="2">
-                    <table style="border-spacing: 0">
+                    <table class="no-spacing">
                       <tr>
-                        <td style="width: 85px">
+                        <td>
                           <label for="template_shortcut">
                             <span id="template_shortcut_txt" i18n-content="opt_template_shortcut_text"></span>
                           </label>
-                          <a facebox="#template_shortcut_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                          <a facebox="#template_shortcut_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
                           <div id="template_shortcut_help" class="help" i18n-content="help_template_shortcut"></div>
                         </td>
                         <td>
                           <label>
-                            <span id="template_shortcut_modifier"></span><input id="template_shortcut" type="text" maxlength="1" size="1" style="text-transform: uppercase" />
+                            <span id="template_shortcut_modifier"></span><input id="template_shortcut" type="text" maxlength="1" size="1" />
                           </label>
                         </td>
                       </tr>
@@ -305,15 +324,15 @@
                     </div>
                   </td>
                 </tr>
-                <tr style="height: 30px">
+                <tr class="template-input">
                   <td colspan="2">
-                    <table style="border-spacing: 0">
+                    <table class="no-spacing">
                       <tr>
-                        <td style="width: 85px">
+                        <td>
                           <label for="template_enabled">
                             <span id="template_enabled_txt" i18n-content="opt_template_enabled_text"></span>
                           </label>
-                          <a facebox="#template_enabled_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                          <a facebox="#template_enabled_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
                           <div id="template_enabled_help" class="help" i18n-content="help_template_enabled"></div>
                         </td>
                         <td>
@@ -333,7 +352,7 @@
                 <tr>
                   <td colspan="3">
                     <label>
-                      <textarea id="template_content" class="read-only" rows="5" cols="47" spellcheck="false" style="resize: vertical" i18n-values="placeholder:opt_template_content_text"></textarea>
+                      <textarea id="template_content" class="read-only" rows="5" cols="47" spellcheck="false" i18n-values="placeholder:opt_template_content_text"></textarea>
                     </label>
                     <div>
                       <a id="template_help_lnk" facebox="#template_help" i18n-content="opt_template_content_help" i18n-values="title:opt_help_text"></a>
@@ -354,14 +373,14 @@
               <table class="styled">
                 <thead>
                   <tr>
-                    <th id="shorteners_enabled_hdr" style="text-align: center; width: 12%" i18n-content="opt_url_shortener_enabled_header"></th>
+                    <th id="shorteners_enabled_hdr" class="center" style="width: 12%" i18n-content="opt_url_shortener_enabled_header"></th>
                     <th id="shorteners_name_hdr" style="width: 23%" i18n-content="opt_url_shortener_name_header"></th>
                     <th id="shorteners_config_hdr" style="width: 65%" i18n-content="opt_url_shortener_config_header"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr style="vertical-align: top">
-                    <td style="text-align: center"><input type="radio" name="enabled_shortener" id="bitly" /></td>
+                  <tr class="top">
+                    <td class="center"><input type="radio" name="enabled_shortener" id="bitly" /></td>
                     <td><a href="http://bit.ly" target="_blank">bit.ly</a></td>
                     <td>
                       <div class="config">
@@ -371,11 +390,11 @@
                         <div class="config-details">
                           <table>
                             <tr>
-                              <td style="width: 40%">
+                              <td>
                                 <label for="bitlyUsername">
                                   <span id="bitlyUsername_txt" i18n-content="opt_url_shortener_username_text"></span>
                                 </label>
-                                <a facebox="#bitlyUsername_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                <a facebox="#bitlyUsername_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
                                 <div id="bitlyUsername_help" class="help" i18n-content="help_bitlyUsername"></div>
                               </td>
                               <td>
@@ -387,7 +406,7 @@
                                 <label for="bitlyApiKey">
                                   <span id="bitlyApiKey_txt" i18n-content="opt_url_shortener_api_key_text"></span>
                                 </label>
-                                <a facebox="#bitlyApiKey_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                <a facebox="#bitlyApiKey_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
                                 <div id="bitlyApiKey_help" class="help" i18n-content="help_bitlyApiKey"></div>
                               </td>
                               <td>
@@ -399,8 +418,8 @@
                       </div>
                     </td>
                   </tr>
-                  <tr style="vertical-align: top">
-                    <td style="text-align: center"><input type="radio" name="enabled_shortener" id="googl" /></td>
+                  <tr class="top">
+                    <td class="center"><input type="radio" name="enabled_shortener" id="googl" /></td>
                     <td><a href="http://goo.gl" target="_blank">goo.gl</a></td>
                     <td>
                       <div class="config">
@@ -412,7 +431,7 @@
                             <input type="checkbox" id="googlOauth" />
                             <span id="googlOauth_txt" i18n-content="opt_url_shortener_oauth_enable_text"></span>
                           </label>
-                          <a facebox="#googlOauth_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                          <a facebox="#googlOauth_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
                           <div id="googlOauth_help" class="help" i18n-content="help_googlOauth"></div>
                           <div>
                             <button id="googlDeauthorize_btn" i18n-content="opt_deauthorize_button"></button>
@@ -421,8 +440,8 @@
                       </div>
                     </td>
                   </tr>
-                  <tr style="vertical-align: top">
-                    <td style="text-align: center"><input type="radio" name="enabled_shortener" id="yourls" /></td>
+                  <tr class="top">
+                    <td class="center"><input type="radio" name="enabled_shortener" id="yourls" /></td>
                     <td><a href="http://yourls.org" target="_blank">YOURLS</a></td>
                     <td>
                       <div class="config">
@@ -432,11 +451,11 @@
                         <div class="config-details">
                           <table>
                             <tr>
-                              <td style="width: 40%">
+                              <td>
                                 <label for="yourlsUrl">
                                   <span id="yourlsUrl_txt" i18n-content="opt_url_shortener_url_text"></span>
                                 </label>
-                                <a facebox="#yourlsUrl_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                <a facebox="#yourlsUrl_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
                                 <div id="yourlsUrl_help" class="help" i18n-content="help_yourlsUrl"></div>
                               </td>
                               <td>
@@ -444,14 +463,14 @@
                               </td>
                             </tr>
                             <tr>
-                              <td colspan="2" style="border-bottom: 1px dashed #AAA"></td>
+                              <td colspan="2" class="config-divider"></td>
                             </tr>
                             <tr>
                               <td>
                                 <label for="yourlsUsername">
                                   <span id="yourlsUsername_txt" i18n-content="opt_url_shortener_username_text"></span>
                                 </label>
-                                <a facebox="#yourlsCredentials_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                <a facebox="#yourlsCredentials_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
                                 <div id="yourlsCredentials_help" class="help" i18n-content="help_yourlsCredentials"></div>
                               </td>
                               <td>
@@ -463,21 +482,21 @@
                                 <label for="yourlsPassword">
                                   <span id="yourlsPassword_txt" i18n-content="opt_url_shortener_password_text"></span>
                                 </label>
-                                <a facebox="#yourlsCredentials_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                <a facebox="#yourlsCredentials_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
                               </td>
                               <td>
                                 <input type="password" id="yourlsPassword" size="28" />
                               </td>
                             </tr>
                             <tr>
-                              <td id="yourls_or_txt" colspan="2" style="font-weight: bold; text-align: center" i18n-content="opt_or_text"></td>
+                              <td id="yourls_or_txt" colspan="2" class="bold center" i18n-content="opt_or_text"></td>
                             </tr>
                             <tr>
                               <td>
                                 <label for="yourlsSignature">
                                   <span id="yourlsSignature_txt" i18n-content="opt_url_shortener_signature_text"></span>
                                 </label>
-                                <a facebox="#yourlsSignature_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" style="margin-bottom: -3px" /></a>
+                                <a facebox="#yourlsSignature_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
                                 <div id="yourlsSignature_help" class="help" i18n-content="help_yourlsSignature"></div>
                               </td>
                               <td>
@@ -498,10 +517,10 @@
       <div class="controls">
         <table>
           <tr>
-            <td style="width: 50%">
+            <td class="half">
               <button class="close-btn" i18n-content="opt_close_button"></button>
             </td>
-            <td style="text-align: right">&nbsp;</td>
+            <td class="right">&nbsp;</td>
           </tr>
         </table>
       </div>
