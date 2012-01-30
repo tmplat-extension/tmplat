@@ -44,10 +44,11 @@ bindSaveEvent = (selector, type, option, evaluate, callback) ->
 # element via `assign`.
 bindTemplateSaveEvent = (selector, type, assign, callback) ->
   $(selector).on type, ->
-    $this  = $ this
-    key    = ''
-    option = $ '#templates option:selected'
-    if option.length
+    $this     = $ this
+    key       = ''
+    templates = $ '#templates'
+    option    = templates.find 'option:selected'
+    if option.length and templates.data('quiet') isnt 'true'
       key = $this.attr('id').match(/^template_(\S*)/)[1]
       key = key[0].toLowerCase() + key.substr 1
       assign.call $this, option, key
@@ -160,6 +161,7 @@ loadTemplateControlEvents = ->
   templates.change ->
     $this = $ this
     opt   = $this.find 'option:selected'
+    templates.data 'quiet', 'true'
     if opt.length is 0
       # Disable all the controls as no option is selected.
       lastSelectedTemplate = {}
@@ -211,6 +213,7 @@ loadTemplateControlEvents = ->
       else
         $('.read-only').removeAttr 'disabled'
         $('.read-only').removeAttr 'readonly'
+    templates.data 'quiet', 'false'
     # Ensure the correct arrows display in the *Up* and *Down* controls
     # depending on whether or not the controls are currently disabled.
     $('#moveDown_btn:not([disabled]) img').attr 'src',
@@ -246,6 +249,7 @@ loadTemplateControlEvents = ->
         opt.attr 'selected', 'selected'
         updateToolbarTemplates()
         templates.change().focus()
+        saveTemplates()
       else
         # Show the error messages to the user.
         $.facebox div: '#message'
@@ -269,11 +273,13 @@ loadTemplateControlEvents = ->
     opt = templates.find 'option:selected'
     opt.insertAfter opt.next()
     templates.change().focus()
+    saveTemplates()
   # Move the selected option up once when the *Up* control is clicked.
   $('#moveUp_btn').click ->
     opt = templates.find 'option:selected'
     opt.insertBefore opt.prev()
     templates.change().focus()
+    saveTemplates()
 
 # Bind the event handlers required for exporting templates.
 loadTemplateExportEvents = ->
@@ -408,6 +414,7 @@ loadTemplateImportEvents = ->
     $(document).trigger 'close.facebox'
     updateToolbarTemplates()
     templates.focus()
+    saveTemplates()
   # Cancel the import process.
   $('.import_no_btn, .import_close_btn').live 'click', ->
     $(document).trigger 'close.facebox'
