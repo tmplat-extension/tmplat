@@ -273,7 +273,7 @@
       }
     }
   },
-  "help_googlOAuth": {
+  "help_googlOauth": {
     "message": "$O_PARA$$O_LINK_1$OAuth$C_LINK$ is an open protocol that aims to standardize the way desktop and web applications access a user's private data. OAuth provides a mechanism for users to grant access to private data without sharing their private credentials (username/password).$C_PARA$$O_PARA$$O_BOLD$Template$C_BOLD$ uses OAuth to shorten links via $O_BOLD$goo.gl$C_BOLD$ on your behalf.$C_PARA$$O_PARA$If you have previously attempted to authorize $O_BOLD$Template$C_BOLD$ you can undo this locally by clicking the $O_EMPH$Revoke Access$C_EMPH$ button.$C_PARA$",
     "placeholders": {
       "c_bold": {
@@ -375,7 +375,7 @@
     }
   },
   "help_template_shortcut": {
-    "message": "$O_PARA$The assigned keyboard shortcut which will trigger this template if/when used.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be unique$C_ITEM$$O_ITEM$Must be an alphanumeric key$BREAK$(may change in the future)$C_ITEM$$C_LIST$",
+    "message": "$O_PARA$The assigned keyboard shortcut which will trigger this template if/when used.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be an alphanumeric key$BREAK$(may change in the future)$C_ITEM$$O_ITEM$Doesn't have to be unique$BREAK$(but it's recommended)$C_ITEM$$O_ITEM$Where duplicated, the template with highest in the order will be activated$C_ITEM$$C_LIST$",
     "placeholders": {
       "break": {
         "content": "<br />"
@@ -627,6 +627,9 @@
       }
     }
   },
+  "opt_close_button": {
+    "message": "Close"
+  },
   "opt_config_expand_text": {
     "message": "Show"
   },
@@ -677,9 +680,6 @@
   "opt_or_text": {
     "message": "OR"
   },
-  "opt_save_button": {
-    "message": "Save &amp; Close"
-  },
   "opt_shortcut_text": {
     "message": "Enable keyboard shortcuts"
   },
@@ -700,6 +700,9 @@
   },
   "opt_template_shortcut_invalid": {
     "message": "Keyboard shortcut uses invalid key"
+  },
+  "opt_template_shortcut_text": {
+    "message": "Shortcut"
   },
   "opt_template_shortcut_unavailable": {
     "message": "Keyboard shortcut is already in use"
