@@ -104,14 +104,17 @@ SHORTENERS        = [
       params.x_apiKey = bitly.apiKey
       params.x_login  = bitly.username
     params
+  getUsage: ->
+    store.get 'bitly.usage'
   input: ->
     null
   isEnabled: ->
     store.get 'bitly.enabled'
   method: 'GET'
-  name: 'bit.ly'
+  name: 'bitly'
   output: (resp) ->
     JSON.parse(resp).data.url
+  title: 'bit.ly'
   url: ->
     'http://api.bitly.com/v3/shorten'
 ,
@@ -119,6 +122,8 @@ SHORTENERS        = [
   contentType: 'application/json'
   getParameters: ->
     key: 'AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY'
+  getUsage: ->
+    store.get 'googl.usage'
   input: (url) ->
     JSON.stringify longUrl: url
   isEnabled: ->
@@ -126,7 +131,7 @@ SHORTENERS        = [
   isOAuthEnabled: ->
     store.get 'googl.oauth'
   method: 'POST'
-  name: 'goo.gl'
+  name: 'googl'
   oauth: ChromeExOAuth.initBackgroundPage
     access_url:      'https://www.google.com/accounts/OAuthGetAccessToken'
     app_name:        i18n.get 'app_name'
@@ -141,6 +146,7 @@ SHORTENERS        = [
   ]
   output: (resp) ->
     JSON.parse(resp).id
+  title: 'goo.gl'
   url: ->
     'https://www.googleapis.com/urlshortener/v1/url'
 ,
@@ -158,14 +164,17 @@ SHORTENERS        = [
     else if yourls.signature
       params.signature = yourls.signature
     params
+  getUsage: ->
+    store.get 'yourls.usage'
   input: ->
     null
   isEnabled: ->
     store.get 'yourls.enabled'
   method: 'POST'
-  name: 'YOURLS'
+  name: 'yourls'
   output: (resp) ->
     JSON.parse(resp).shorturl
+  title: 'YOURLS'
   url: ->
     store.get 'yourls.url'
 ]
@@ -445,34 +454,9 @@ showNotification = ->
       $('#loadDiv', popup.document).hide()
       $('#item', popup.document).show()
 
-# Update the context menu items to reflect the currently enabled templates.  
-# If the context menu option has been disabled by the user, just remove all of
-# the existing menu items.
-updateContextMenu = ->
-  # Ensure that any previously added context menu items are removed.
-  chrome.contextMenus.removeAll ->
-    # Called whenever a menu item is clicked.  
-    # Send a self request, passing along the available information.
-    onMenuClick = (info, tab) ->
-      onRequest
-        data: info
-        type: 'menu'
-    if store.get 'contextMenu'
-      # Create and add the top-level Template menu.
-      parentId = chrome.contextMenus.create
-        contexts: ['all']
-        title:    i18n.get 'name'
-      # Create and add a sub-menu item for each enabled template.
-      for template in ext.templates when template.enabled
-        menuId = chrome.contextMenus.create
-          contexts: ['all']
-          onclick:  onMenuClick
-          parentId: parentId
-          title:    template.title
-        template.menuId = menuId
-
 # Update the statistical information.
 updateStatistics = ->
+  store.init 'stats', {}
   store.modify 'stats', (stats) =>
     # Determine which template has the greatest usage.
     maxUsage = 0
@@ -491,6 +475,12 @@ updateStatistics = ->
 updateTemplateUsage = (key) ->
   template.usage++ for template in ext.templates when template.key is key
   store.set 'templates', ext.templates
+
+# Increment the usage for the URL shortener service with the specified `name`
+# and persist the changes.
+updateUrlShortenerUsage = (name) ->
+  store.modify name, (shortener) ->
+    shortener.usage++
 
 # Data functions
 # --------------
@@ -913,16 +903,19 @@ initUrlShorteners = ->
   store.modify 'bitly', (bitly) ->
     bitly.apiKey   ?= ''
     bitly.enabled  ?= no
+    bitly.usage    ?= 0
     bitly.username ?= ''
   store.modify 'googl', (googl) ->
     googl.enabled ?= yes
     googl.oauth   ?= yes
+    googl.usage   ?= 0
   store.modify 'yourls', (yourls) ->
     yourls.enabled   ?= no
     yourls.password  ?= ''
     yourls.signature ?= ''
     yourls.url       ?= ''
     yourls.username  ?= ''
+    yourls.usage     ?= 0
 
 # Handle the conversion/removal of older version of settings that may have been
 # stored previously by `initUrlShorteners`.
@@ -972,13 +965,13 @@ initUrlShorteners_update = ->
 # URL shortener service.
 callUrlShortener = (url, callback) ->
   callUrlShortenerHelper (service) ->
-    name = service.name
-    sUrl = service.url()
+    sUrl  = service.url()
+    title = service.title
     unless sUrl
       # Should never happen... Really just a sanity check.
       callback?(
-        message:   i18n.get 'shortener_config_error', name
-        shortener: name
+        message:   i18n.get 'shortener_config_error', title
+        shortener: title
         success:   no
       )
       return
@@ -997,16 +990,17 @@ callUrlShortener = (url, callback) ->
       req.onreadystatechange = ->
         if req.readyState is 4
           if req.status is 200
+            updateUrlShortenerUsage service.name
             callback?(
               shortUrl:  service.output req.responseText
-              shortener: name
+              shortener: title
               success:   yes
             )
           else
             # Something went wrong so let's tell the user.
             callback?(
-              message:   i18n.get 'shortener_error', name
-              shortener: name
+              message:   i18n.get 'shortener_error', title
+              shortener: title
               success:   no
             )
       # Finally, send the HTTP request.
@@ -1015,8 +1009,8 @@ callUrlShortener = (url, callback) ->
       # Aw snap! Notify the user via `callback`.
       log.error error
       callback?(
-        message:   i18n.get 'shortener_error', name
-        shortener: name
+        message:   i18n.get 'shortener_error', title
+        shortener: title
         success:   no
       )
 
@@ -1196,6 +1190,32 @@ ext = window.ext =
     @message = ''
     @status  = no
 
+  # Update the context menu items to reflect the currently enabled templates.  
+  # If the context menu option has been disabled by the user, just remove all
+  # of the existing menu items.
+  updateContextMenu: ->
+    # Ensure that any previously added context menu items are removed.
+    chrome.contextMenus.removeAll =>
+      # Called whenever a menu item is clicked.  
+      # Send a self request, passing along the available information.
+      onMenuClick = (info, tab) ->
+        onRequest
+          data: info
+          type: 'menu'
+      if store.get 'contextMenu'
+        # Create and add the top-level Template menu.
+        parentId = chrome.contextMenus.create
+          contexts: ['all']
+          title:    i18n.get 'name'
+        # Create and add a sub-menu item for each enabled template.
+        for template in @templates when template.enabled
+          menuId = chrome.contextMenus.create
+            contexts: ['all']
+            onclick:  onMenuClick
+            parentId: parentId
+            title:    template.title
+          template.menuId = menuId
+
   # Update the local list of templates to reflect those persisted.  
   # It is very important that this is called whenever templates may have been
   # changed in order to prepare the popup HTML and optimize performance.
@@ -1204,7 +1224,7 @@ ext = window.ext =
     @templates.sort (a, b) ->
       a.index - b.index
     buildPopup()
-    updateContextMenu()
+    @updateContextMenu()
     updateStatistics()
 
   # Update the toolbar/browser action depending on the current settings.
