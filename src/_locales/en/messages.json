@@ -176,6 +176,23 @@
   "extension": {
     "message": "Extension"
   },
+  "help_analytics": {
+    "message": "$O_PARA$This indicates whether or not anonymous information relating to how you use $O_BOLD$Template$C_BOLD$ is collected.$C_PARA$$O_PARA$This information is only used to help improve this extension by understanding its users.$C_PARA$",
+    "placeholders": {
+      "c_bold": {
+        "content": "</strong>"
+      },
+      "c_para": {
+        "content": "</p>"
+      },
+      "o_bold": {
+        "content": "<strong>"
+      },
+      "o_para": {
+        "content": "<p>"
+      }
+    }
+  },
   "help_anchorTarget": {
     "message": "$O_PARA$This indicates whether or not a $O_CODE$target$C_CODE$ attribute should be included in the anchor tag when building an Anchor template.$C_PARA$$O_PARA$If included, this attribute will be populated with $O_CODE$blank$C_CODE$.$C_PARA$",
     "placeholders": {
@@ -607,6 +624,9 @@
   },
   "opt_add_new_button": {
     "message": "Add New"
+  },
+  "opt_analytics_text": {
+    "message": "Send anonymous usage statistics"
   },
   "opt_anchor_header": {
     "message": "Anchors"
