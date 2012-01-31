@@ -43,6 +43,7 @@ i18nAttributes.push key for own key of i18nHandlers
 # Selector containing the available internationalization attributes/handlers
 # which is used by `i18nProcess` to query all elements.
 i18nSelector   = "[#{i18nAttributes.join '],['}]"
+# Mapping of all timers currently being managed by `utils`.
 timings        = {}
 
 # Private functions
