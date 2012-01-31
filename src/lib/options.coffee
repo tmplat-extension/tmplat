@@ -56,6 +56,7 @@ bindTemplateSaveEvent = (selector, type, assign, callback) ->
 
 # Update the options page with the values from the current settings.
 load = ->
+  $('#analytics').attr    'checked', 'checked' if store.get 'analytics'
   anchor = store.get 'anchor'
   $('#anchorTarget').attr 'checked', 'checked' if anchor.target
   $('#anchorTitle').attr  'checked', 'checked' if anchor.title
@@ -118,10 +119,19 @@ loadNotificationSaveEvents = ->
 
 # Bind the event handlers required for persisting general changes.
 loadSaveEvents = ->
+  $('#analytics').change ->
+    store.set 'analytics', analytics = $(this).is ':checked'
+    if analytics
+      utils.addAnalytics()
+      chrome.extension.getBackgroundPage().utils.addAnalytics()
+    else
+      utils.removeAnalytics()
+      chrome.extension.getBackgroundPage().utils.removeAnalytics()
   bindSaveEvent '#anchorTarget, #anchorTitle', 'change', 'anchor', ->
     @is ':checked'
   $('#contextMenu').change ->
     store.set 'contextMenu', $(this).is ':checked'
+    ext.updateContextMenu()
   $('#shortcuts').change ->
     store.set 'shortcuts', $(this).is ':checked'
 
@@ -842,7 +852,7 @@ options = window.options =
   init: ->
     i18n.init
       footer:
-        opt_footer: new Date().format 'Y'
+        opt_footer: "#{new Date().getFullYear()}"
     # Bind tab selection event to all tabs.
     $('[tabify]').click ->
       $this = $ this
@@ -850,7 +860,10 @@ options = window.options =
         $this.siblings().removeClass 'selected'
         $this.addClass 'selected'
         $($this.attr 'tabify').show().siblings('.tab').hide()
-        store.set 'options_active_tab', $this.attr 'id'
+        id = $this.attr 'id'
+        store.set 'options_active_tab', id
+        id = id.match(/(\S*)_nav$/)[1]
+        # TODO: Analytics event tracking.
     # Reflect the persisted tab.
     store.init 'options_active_tab', 'general_nav'
     $("##{store.get 'options_active_tab'}").click()
@@ -868,7 +881,7 @@ options = window.options =
     # settings storing OAuth information for the [Google URL
     # Shortener](http://goo.gl).
     googl = ext.queryUrlShortener (shortener) ->
-      shortener.name is 'goo.gl'
+      shortener.name is 'googl'
     $('#googlDeauthorize_btn').click ->
       store.remove key for key in googl.oauthKeys
       $(this).hide()
