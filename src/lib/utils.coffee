@@ -43,6 +43,7 @@ i18nAttributes.push key for own key of i18nHandlers
 # Selector containing the available internationalization attributes/handlers
 # which is used by `i18nProcess` to query all elements.
 i18nSelector   = "[#{i18nAttributes.join '],['}]"
+timings        = {}
 
 # Private functions
 # -----------------
@@ -342,6 +343,21 @@ utils = window.utils =
       # Repeat to the left if `count` is negative.
       str = repeatStr + str for i in [1..count*-1] if count < 0
     str
+
+  # Begin a timer for the specified `key`.
+  time: (key) ->
+    timings[key] = new Date().getTime()
+
+  # End the timer for the specified `key` and return the time difference in
+  # milliseconds.  
+  # If no timer exists for `key`, simply return `-1'.
+  timeEnd: (key) ->
+    if timings.hasOwnProperty key
+      start = timings[key]
+      delete timings[key]
+      new Date().getTime() - start
+    else
+      -1
 
 # Initialize logging.
 store.init 'logger', {}
