@@ -351,14 +351,14 @@ utils = window.utils =
 
   # End the timer for the specified `key` and return the time difference in
   # milliseconds.  
-  # If no timer exists for `key`, simply return `-1'.
+  # If no timer exists for `key`, simply return `0'.
   timeEnd: (key) ->
     if timings.hasOwnProperty key
       start = timings[key]
       delete timings[key]
       new Date().getTime() - start
     else
-      -1
+      0
 
 # Initialize logging.
 store.init 'logger', {}
