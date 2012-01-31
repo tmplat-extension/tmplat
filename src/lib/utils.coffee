@@ -345,12 +345,17 @@ utils = window.utils =
       str = repeatStr + str for i in [1..count*-1] if count < 0
     str
 
-  # Begin a timer for the specified `key`.
+  # Start a new timer for the specified `key`.  
+  # If a timer already exists for `key`, return the time difference in
+  # milliseconds.
   time: (key) ->
-    timings[key] = new Date().getTime()
+    if timings.hasOwnProperty key
+      new Date().getTime() - timings[key]
+    else
+      timings[key] = new Date().getTime()
 
   # End the timer for the specified `key` and return the time difference in
-  # milliseconds.  
+  # milliseconds and remove the timer.  
   # If no timer exists for `key`, simply return `0'.
   timeEnd: (key) ->
     if timings.hasOwnProperty key
