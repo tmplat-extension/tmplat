@@ -113,27 +113,40 @@ loadNotificationSaveEvents = ->
       seconds = $(this).val()
       seconds = if seconds? then parseInt(seconds, 10) * 1000 else 0
       notifications.duration = seconds
+      analytics.track 'Notifications', 'Changed', 'Duration', seconds
   $('#notifications').change ->
     store.modify 'notifications', (notifications) =>
       notifications.enabled = $(this).is ':checked'
+      analytics.track 'Notifications', 'Changed', 'Enabled',
+        if notifications.enabled then 1 else 0
 
 # Bind the event handlers required for persisting general changes.
 loadSaveEvents = ->
   $('#analytics').change ->
-    store.set 'analytics', analytics = $(this).is ':checked'
-    if analytics
-      utils.addAnalytics()
-      chrome.extension.getBackgroundPage().utils.addAnalytics()
+    if $(this).is ':checked'
+      store.set 'analytics', yes
+      chrome.extension.getBackgroundPage().analytics.add()
+      analytics.add()
+      analytics.track 'General', 'Changed', 'Analytics', 1
     else
-      utils.removeAnalytics()
-      chrome.extension.getBackgroundPage().utils.removeAnalytics()
+      analytics.track 'General', 'Changed', 'Analytics', 0
+      analytics.remove()
+      chrome.extension.getBackgroundPage().analytics.remove()
+      store.set 'analytics', no
   bindSaveEvent '#anchorTarget, #anchorTitle', 'change', 'anchor', ->
     @is ':checked'
+  , (jel, key, value) ->
+    key = key[0].toUpperCase() + key.substr 1
+    analytics.track 'Anchors', 'Changed', key, if value then 1 else 0
   $('#contextMenu').change ->
-    store.set 'contextMenu', $(this).is ':checked'
+    store.set 'contextMenu', contextMenu = $(this).is ':checked'
     ext.updateContextMenu()
+    analytics.track 'General', 'Changed', 'Context Menu',
+      if contextMenu then 1 else 0
   $('#shortcuts').change ->
-    store.set 'shortcuts', $(this).is ':checked'
+    store.set 'shortcuts', shortcuts = $(this).is ':checked'
+    analytics.track 'General', 'Changed', 'Keyboard Shortcuts',
+      if shortcuts then 1 else 0
 
 # Update the templates section of the options page with the current settings.
 loadTemplates = ->
@@ -260,6 +273,7 @@ loadTemplateControlEvents = ->
         updateToolbarTemplates()
         templates.change().focus()
         saveTemplates()
+        analytics.track 'Templates', 'Added', opt.text()
       else
         # Show the error messages to the user.
         $.facebox div: '#message'
@@ -273,9 +287,11 @@ loadTemplateControlEvents = ->
   $('.delete_yes_btn').live 'click', ->
     opt = templates.find 'option:selected'
     if opt.data('readOnly') isnt 'true'
+      title = opt.text()
       opt.remove()
       templates.change().focus()
       saveTemplates()
+      analytics.track 'Templates', 'Deleted', title
     $(document).trigger 'close.facebox'
     updateToolbarTemplates()
   # Move the selected option down once when the *Down* control is clicked.
@@ -365,6 +381,7 @@ loadTemplateExportEvents = ->
 
 # Bind the event handlers required for importing templates.
 loadTemplateImportEvents = ->
+  data      = null
   templates = $ '#templates'
   # Restore the previous view in the import process.
   $('.import_back_btn').live 'click', ->
@@ -412,9 +429,9 @@ loadTemplateImportEvents = ->
   # Finalize the import process.
   $('.import_final_btn').live 'click', ->
     $this = $ this
-    list = $this.parents('.import_con_stage2').find '.import_con_list'
+    list  = $this.parents('.import_con_stage2').find '.import_con_list'
     list.find('option:selected').each ->
-      opt = $ this
+      opt         = $ this
       existingOpt = templates.find "option[value='#{opt.val()}']"
       opt.removeAttr 'selected'
       if existingOpt.length is 0
@@ -425,6 +442,9 @@ loadTemplateImportEvents = ->
     updateToolbarTemplates()
     templates.focus()
     saveTemplates()
+    if data?
+      analytics.track 'Templates', 'Imported', data.version,
+        data.templates.length
   # Cancel the import process.
   $('.import_no_btn, .import_close_btn').live 'click', ->
     $(document).trigger 'close.facebox'
@@ -523,13 +543,21 @@ loadToolbarControlEvents = ->
 # Bind the event handlers required for persisting toolbar behaviour changes.
 loadToolbarSaveEvents = ->
   $('input[name="toolbar_behaviour"]').change ->
+    popup = $('#toolbarPopup').is ':checked'
     store.modify 'toolbar', (toolbar) ->
-      toolbar.popup = $('#toolbarPopup').is ':checked'
+      toolbar.popup = popup
     ext.updateToolbar()
+    analytics.track 'Toolbars', 'Changed', 'Behaviour', if popup then 1 else 0
   bindSaveEvent '#toolbarClose, #toolbarKey, #toolbarStyle', 'change',
    'toolbar', (key) ->
     if key is 'key' then @val() else @is ':checked'
-  , ext.updateToolbar
+  , (jel, key, value) ->
+    ext.updateToolbar
+    key = key[0].toUpperCase() + key.substr 1
+    if key is 'Key'
+      analytics.track 'Toolbars', 'Changed', key
+    else
+      analytics.track 'Toolbars', 'Changed', key, if value then 1 else 0
 
 # Update the URL shorteners section of the options page with the current
 # settings.
@@ -564,11 +592,17 @@ loadUrlShortenerControlEvents = ->
 loadUrlShortenerSaveEvents = ->
   $('input[name="enabled_shortener"]').change ->
     store.modify 'bitly', 'googl', 'yourls', (data, key) ->
-      data.enabled = $("##{key}").is ':checked'
+      if data.enabled = $("##{key}").is ':checked'
+        shortener = ext.queryUrlShortener (shortener) ->
+          shortener.name is key
+        analytics.track 'Shorteners', 'Enabled', shortener.title
   bindSaveEvent '#bitlyApiKey, #bitlyUsername', 'input', 'bitly', ->
     @val().trim()
   bindSaveEvent '#googlOauth', 'change', 'googl', ->
     @is ':checked'
+  , (jel, key, value) ->
+    analytics.track 'Shorteners', 'Changed', 'goo.gl OAuth',
+      if value then 1 else 0
   bindSaveEvent "#yourlsPassword, #yourlsSignature, #yourlsUrl,
    #yourlsUsername", 'input', 'yourls', ->
     @val().trim()
@@ -757,6 +791,8 @@ createExport = (keys) ->
     version:   ext.version
   for key in keys
     data.templates.push deriveTemplate $ "#templates option[value='#{key}']"
+  if data.templates.length
+    analytics.track 'Templates', 'Exported', ext.version, data.templates.length
   JSON.stringify data
 
 # Create a JSON object from the imported string specified.
@@ -854,16 +890,19 @@ options = window.options =
       footer:
         opt_footer: "#{new Date().getFullYear()}"
     # Bind tab selection event to all tabs.
+    initialTabChange = yes
     $('[tabify]').click ->
       $this = $ this
       unless $this.hasClass 'selected'
         $this.siblings().removeClass 'selected'
         $this.addClass 'selected'
         $($this.attr 'tabify').show().siblings('.tab').hide()
-        id = $this.attr 'id'
-        store.set 'options_active_tab', id
-        id = id.match(/(\S*)_nav$/)[1]
-        # TODO: Analytics event tracking.
+        store.set 'options_active_tab', id = $this.attr 'id'
+        unless initialTabChange
+          id = id.match(/(\S*)_nav$/)[1]
+          id = id[0].toUpperCase() + id.substr 1
+          analytics.track 'Tabs', 'Changed', id
+        initialTabChange = no
     # Reflect the persisted tab.
     store.init 'options_active_tab', 'general_nav'
     $("##{store.get 'options_active_tab'}").click()
@@ -885,12 +924,12 @@ options = window.options =
     $('#googlDeauthorize_btn').click ->
       store.remove key for key in googl.oauthKeys
       $(this).hide()
+      analytics.track 'Shorteners', 'Deauthorized', googl.title
     # Only show the "Revoke Access" button if Template has previously been
     # authorized by the [Google URL Shortener](http://goo.gl).
     for key in googl.oauthKeys when store.exists key
-      keyExists = yes
+      $('#googlDeauthorize_btn').show()
       break
-    $('#googlDeauthorize_btn').show() if keyExists
     # Bind event to template section items which will toggle the visibility of
     # its contents.
     $('.template-section').live 'click', ->
@@ -906,11 +945,9 @@ options = window.options =
     for loc in LOCALES when loc is uiLocale
       locale = uiLocale
       break
-    $('#template_help').load(
-      chrome.extension.getURL("pages/templates_#{locale}.html"), ->
-        $('.template-section:first-child').click()
-        $('.version-replace').text ext.version
-    )
+    $('#template_help').load utils.url("pages/templates_#{locale}.html"), ->
+      $('.template-section:first-child').click()
+      $('.version-replace').text ext.version
     # Load the current option values.
     load()
     $('#template_shortcut_modifier').html if ext.isThisPlatform 'mac'
@@ -919,7 +956,8 @@ options = window.options =
       ext.SHORTCUT_MODIFIERS
     # Initialize all faceboxes.
     $('a[facebox]').click ->
-      $.facebox div: $(this).attr 'facebox'
+      $.facebox div: id = $(this).attr 'facebox'
+      analytics.track 'Help', 'Opened', id.substr 1
     $(document).bind 'reveal.facebox', ->
       facebox = $ '#facebox > .popup > .content'
       facebox.css 'margin-right',
