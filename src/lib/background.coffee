@@ -528,6 +528,15 @@ updateUrlShortenerUsage = (name, oauth) ->
 addAdditionalData = (tab, data, callback) ->
   # Create a runner to simplify this process.
   runner = new utils.Runner()
+  runner.push navigator.geolocation, 'getCurrentPosition', (position) ->
+    coords = {}
+    for own prop, value of position.coords
+      coords[prop.toLowerCase()] = if value? then "#{value}" else ''
+    $.extend data, coords: coords
+    runner.next()
+  , (error) ->
+    log.error error.message
+    runner.next()
   runner.push chrome.cookies, 'getAll', url: data.url, (cookies = []) ->
     names = []
     # Extract the names of each cookie.

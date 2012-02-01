@@ -144,6 +144,11 @@
                   <td>The names of all cookies associated with <span class="template-definition">url</span></td>
                 </tr>
                 <tr>
+                  <td>coords</td>
+                  <td>Map</td>
+                  <td>The properties of your current physical location (e.g. <code>{ 'latitude':'56.490671', 'longitude':'-4.202646' }</code> - contains more)</td>
+                </tr>
+                <tr>
                   <td>fparams</td>
                   <td>Map</td>
                   <td>The key/value pairs of all parameters within the hash fragment (e.g. <code>{ 'foo':'bar', 'fu':'baz' }</code>)</td>
@@ -221,6 +226,14 @@
 &lt;li&gt;JSESSIONID = 2pkffy9ivmpfwntf12y6o4cgu&lt;/li&gt;
 &lt;li&gt;__utmc = 224978569&lt;/li&gt;
 &lt;/ul&gt;
+</pre>
+            If you would like to embed a map of your current location you can use something like the this;
+<pre>
+{#coords}
+&lt;iframe width=&quot;425&quot; height=&quot;350&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot; marginheight=&quot;0&quot; marginwidth=&quot;0&quot; src=&quot;http://maps.google.com/maps?ll={latitude},{longitude}&output=embed&quot;>&lt;/iframe&gt;
+&lt;br /&gt;
+&lt;small&gt;&lt;a href=&quot;http://maps.google.com/maps?ll={latitude},{longitude}&source=embed&quot;>View Larger Map&lt;/a&gt;&lt;/small&gt;
+{/coords}
 </pre></p>
           </li>
           <li class="template-section">Options</li>

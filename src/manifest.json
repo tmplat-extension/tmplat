@@ -48,6 +48,7 @@
     "clipboardWrite",
     "contextMenus",
     "cookies",
+    "geolocation",
     "notifications",
     "tabs",
     "<all_urls>"
