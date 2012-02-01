@@ -89,6 +89,8 @@ OPERATING_SYSTEMS = [
   substring: 'Linux'
   title:     'Linux'
 ]
+# Extension ID of the production version of Template.
+REAL_EXTENSION_ID = 'dcjnfaoifoefmnbhhlbppaebgnccfddf'
 # List of URL shortener services supported by Template.
 SHORTENERS        = [
   # Setup [bitly](http://bit.ly).
@@ -241,11 +243,15 @@ SUPPORT           = [
 # -----------------
 
 # Details of the current browser.
-browser         =
+browser           =
   title:   'Chrome'
   version: ''
+# Indicate whether or not Template has just been installed.
+isNewInstall      = no
+# Indicate whether or not Template is currently running the production build.
+isProductionBuild = EXTENSION_ID is REAL_EXTENSION_ID
 # Name of the user's operating system.
-operatingSystem = ''
+operatingSystem   = ''
 
 # Private functions
 # -----------------
@@ -342,97 +348,123 @@ onRequest = (request, sender, sendResponse) ->
   # Info requests are simple, just send some useful information back. Done!
   if request.type in ['info', 'version']
     return sendResponse? id: EXTENSION_ID, version: ext.version
-  chrome.windows.getCurrent (win) ->
-    chrome.tabs.query
-      active:   yes
-      windowId: win.id
-    , (tabs) ->
-      data             = {}
-      popup            = chrome.extension.getViews(type: 'popup')[0]
-      shortCalled      = no
-      shortPlaceholder = "short#{utils.random 1000, 99999}"
-      tab              = tabs[0]
-      # Attempt to copy `str` to the system clipboard while handling the
-      # potential for failure.  
-      # Finally, increment the usage of `template` and update the statistics.
-      copyOutput = (template, str) ->
-        if str
-          ext.copy str
+  data             = null
+  output           = null
+  popup            = chrome.extension.getViews(type: 'popup')[0]
+  shortCalled      = no
+  shortPlaceholder = "short#{utils.random 1000, 99999}"
+  tab              = null
+  template         = null
+  windowId         = null
+  # Create a runner to manage this asynchronous mess.
+  runner = new utils.Runner()
+  runner.push chrome.windows, 'getCurrent', (win) ->
+    windowId = win.id
+    runner.next()
+  runner.pushPacked chrome.tabs, 'query', ->
+    [active: yes, windowId: windowId, (tabs) ->
+      tab = tabs[0]
+      runner.next()
+    ]
+  runner.push null, ->
+    # Called whenever the `short` tag is found to indicate that the URL needs
+    # shortened.  
+    # Replace the `short` tag with the unique placeholder so that it can be
+    # rendered again later with the short URL.
+    shortCallback = ->
+      shortCalled = yes
+      "{#{shortPlaceholder}}"
+    # If the popup is currently displayed, hide the template list and show a
+    # loading animation.
+    if popup
+      $('#item', popup.document).hide()
+      $('#loadDiv', popup.document).show()
+    # Attempt to derive the contextual template data.
+    try
+      switch request.type
+        when 'menu'
+          data     = buildDerivedData tab, request.data, shortCallback
+          template = getTemplateWithMenuId request.data.menuItemId
+        when 'popup', 'toolbar'
+          data     = buildStandardData tab, shortCallback
+          template = getTemplateWithKey request.data.key
+        when 'shortcut'
+          data     = buildStandardData tab, shortCallback
+          template = getTemplateWithShortcut request.data.key
+      if data? and template? then runner.next() else runner.finish()
+    catch error
+      # Oops! Something went wrong so we should probably let the user know.
+      runner.finish
+        message: i18n.get if error instanceof URIError
+          'copy_fail_uri'
         else
-          ext.message = i18n.get 'copy_fail_empty'
-          ext.status  = no
-          showNotification()
-        updateTemplateUsage template.key
-        updateStatistics()
-      # Called whenever the `short` tag is found to indicate that the URL
-      # needs shortened.  
-      # Replace the `short` tag with the unique placeholder so that it can be
-      # rendered again later with the short URL.
-      shortCallback = ->
-        shortCalled = yes
-        "{#{shortPlaceholder}}"
-      # If the popup is currently displayed, hide the template list and show a
-      # loading animation.
-      if popup
-        $('#item', popup.document).hide()
-        $('#loadDiv', popup.document).show()
-      # Attempt to derive the contextual template data.
-      try
-        switch request.type
-          when 'menu'
-            data     = buildDerivedData tab, request.data, shortCallback
-            template = getTemplateWithMenuId request.data.menuItemId
-          when 'popup'
-            data     = buildStandardData tab, shortCallback
-            template = getTemplateWithKey request.data.key
-          when 'shortcut'
-            data     = buildStandardData tab, shortCallback
-            template = getTemplateWithShortcut request.data.key
-      catch error
-        # Oops! Something went wrong so we should probably let the user know.
-        if error instanceof URIError
-          ext.message = i18n.get 'copy_fail_uri'
-        else
-          ext.message = i18n.get 'copy_fail_error'
-        ext.status = no
-        showNotification()
-        return
-      if template
-        addAdditionalData tab, data, ->
-          unless template.content
-            # Display the *empty template* error message.
-            copyOutput template
-            return
-          output = Mustache.to_html template.content, data
-          if shortCalled
-            # At least one `short` tag was found and replaced, so now we need
-            # to call the URL shortener service and replace that with the
-            # actual short URL.
-            callUrlShortener data.url, (response) ->
-              if response.success and response.shortUrl
-                # Short URL was successfully returned, so get rendering.
-                newData = {}
-                newData[shortPlaceholder] = response.shortUrl
-                copyOutput template, Mustache.to_html output, newData
-              else
-                # Aw man, something went wrong. Let the user down gently.
-                unless response.message
-                  response.message = i18n.get 'shortener_error',
-                    response.shortener
-                ext.message = response.message
-                ext.status  = no
-                showNotification()
-          else
-            copyOutput template, output
+          'copy_fail_error'
+        success: no
+  runner.pushPacked null, addAdditionalData, ->
+    [tab, data, ->
+      if template.content
+        output = Mustache.to_html template.content, data
+        # If any `short` tags are found and replaced, the URL shortener service
+        # needs to be called in order to replace the placeholder with the real
+        # short URL.
+        if shortCalled then runner.next() else runner.finish
+          contents: output
+          success:  yes
+          template: template
       else
-        # Close the popup if it's still open and the user wants it closed.
-        # Otherwise, reset the popup so that it can be used further.
-        if popup
-          if store.get 'toolbar.close'
-            popup.close()
-          else
-            $('#loadDiv', popup.document).hide()
-            $('#item', popup.document).show()
+        # Display the *empty contents* error message if the contents of the
+        # template itself is empty.
+        runner.finish
+          contents: ''
+          success:  yes
+          template: template
+    ]
+  runner.pushPacked null, callUrlShortener, ->
+    [data.url, (response) ->
+      if response.success and response.shortUrl
+        # Short URL was successfully returned so re-render the output.
+        newData = {}
+        newData[shortPlaceholder] = response.shortUrl
+        runner.finish
+          contents: Mustache.to_html output, newData
+          success:  yes
+          template: template
+      else
+        # Aw man, something went wrong. Let the user down gently.
+        response.message ?= i18n.get 'shortener_error', response.shortener
+        runner.finish
+          message:  response.message
+          success:  no
+          template: template
+    ]
+  runner.run (result) ->
+    type  = request.type[0].toUpperCase() + request.type.substr 1
+    value = request.data.key.charCodeAt 0 if request.type is 'shortcut'
+    analytics.track 'Requests', 'Processed', type, value
+    if result?
+      # Ensure that the user is notified if they have attempted to copy an
+      # empty string to the system clipboard.
+      if result.success and not result.contents
+        result.message = i18n.get 'copy_fail_empty'
+        result.success = no
+      if result.success
+        ext.copy result.contents
+      else
+        ext.message = result.message
+        ext.status  = no
+        showNotification()
+      if result.template?
+        updateTemplateUsage result.template.key
+        updateStatistics()
+    else
+      # Close the popup if it's still open and the user wants it closed.
+      # Otherwise, reset the popup so that it can be used further.
+      if popup
+        if store.get 'toolbar.close'
+          popup.close()
+        else
+          $('#loadDiv', popup.document).hide()
+          $('#item', popup.document).show()
 
 # Display a desktop notification informing the user on whether or not the copy
 # request was successful.  
@@ -441,7 +473,7 @@ onRequest = (request, sender, sendResponse) ->
 showNotification = ->
   if store.get 'notifications.enabled'
     webkitNotifications.createHTMLNotification(
-      chrome.extension.getURL 'pages/notification.html'
+      utils.url 'pages/notification.html'
     ).show()
   else
     ext.reset()
@@ -473,45 +505,51 @@ updateStatistics = ->
 # Increment the usage for the template with the specified `key` and persist the
 # changes.
 updateTemplateUsage = (key) ->
-  template.usage++ for template in ext.templates when template.key is key
+  for template in ext.templates when template.key is key
+    template.usage++
+    break
   store.set 'templates', ext.templates
+  analytics.track 'Templates', 'Used', template.title,
+    if template.readOnly then 1 else 0
 
 # Increment the usage for the URL shortener service with the specified `name`
 # and persist the changes.
-updateUrlShortenerUsage = (name) ->
+updateUrlShortenerUsage = (name, oauth) ->
   store.modify name, (shortener) ->
     shortener.usage++
+  shortener = ext.queryUrlShortener (shortener) ->
+    shortener.name is name
+  analytics.track 'Shorteners', 'Used', shortener.title, if oauth then 1 else 0
 
 # Data functions
 # --------------
 
 # Extract additional information from `tab` and add it to `data`.
 addAdditionalData = (tab, data, callback) ->
-  chrome.cookies.getAll url: data.url, (cookies) ->
-    names     = []
-    cookies or= []
+  # Create a runner to simplify this process.
+  runner = new utils.Runner()
+  runner.push chrome.cookies, 'getAll', url: data.url, (cookies = []) ->
+    names = []
     # Extract the names of each cookie.
     names.push cookie.name for cookie in cookies
     $.extend data,
-      cookie: ->
+      cookie:  ->
         (text, render) ->
           name = render text
           # Attempt to find the value for the cookie name.
           return cookie.value for cookie in cookies when cookie.name is name
           ''
       cookies: names
-    # Try to prevent pages hanging because content script wasn't executed.
-    if isProtectedPage tab
-      $.extend data,
-        selection:      ''
-        selectionlinks: []
-      callback?()
-    else
-      chrome.tabs.sendRequest tab.id, {}, (response) ->
-        $.extend data,
-          selection:      response.text or ''
-          selectionlinks: response.urls or []
-        callback?()
+    # Try to prevent pages hanging because content script should not have been
+    # executed.
+    if isProtectedPage tab then runner.finish() else runner.next()
+  runner.push chrome.tabs, 'sendRequest', tab.id, {}, (response) ->
+    runner.finish response
+  runner.run (result = {}) ->
+    $.extend data,
+      selection:      result.text ? ''
+      selectionlinks: result.urls ? []
+    callback?()
 
 # Creates an object containing data based on information derived from the
 # specified tab and menu item data.
@@ -705,6 +743,8 @@ init_update = ->
   store.rename 'update_progress', 'updates', {}
   store.modify 'updates', (updates) ->
     updates.settings ?= []
+    # Determine whether or not the user has just installed Template.
+    isNewInstall = updates.settings.length is 0
     # Check if the settings need updated for 0.1.0.0.
     if '0.1.0.0' not in updates.settings
       # Update the settings for 0.1.0.0.
@@ -964,17 +1004,22 @@ initUrlShorteners_update = ->
 # `callback` will be called with the result once it has been received from the
 # URL shortener service.
 callUrlShortener = (url, callback) ->
-  callUrlShortenerHelper (service) ->
+  service = getActiveUrlShortener()
+  # Create a runner to control the dependencies in the asynchronous processes.
+  runner = new utils.Runner()
+  if service.oauth and service.isOAuthEnabled()
+    runner.push service.oauth, 'authorize', ->
+      runner.next();
+  runner.push null, ->
+    oauth = no
     sUrl  = service.url()
     title = service.title
     unless sUrl
       # Should never happen... Really just a sanity check.
-      callback?(
+      return runner.finish
         message:   i18n.get 'shortener_config_error', title
         shortener: title
         success:   no
-      )
-      return
     try
       params = service.getParameters(url) or {}
       # Build the HTTP request for the URL shortener service.
@@ -983,46 +1028,36 @@ callUrlShortener = (url, callback) ->
       req.setRequestHeader 'Content-Type', service.contentType
       # Setup the OAuth header, if required.
       if service.oauth and service.isOAuthEnabled()
+        oauth = yes
         req.setRequestHeader 'Authorization',
           service.oauth.getAuthorizationHeader sUrl, service.method, params
       # Wait for the response and let the service handle it before passing the
-      # result to `callback`.
+      # result to `callback` via the runner.
       req.onreadystatechange = ->
         if req.readyState is 4
           if req.status is 200
-            updateUrlShortenerUsage service.name
-            callback?(
+            updateUrlShortenerUsage service.name, oauth
+            runner.finish
               shortUrl:  service.output req.responseText
               shortener: title
               success:   yes
-            )
           else
             # Something went wrong so let's tell the user.
-            callback?(
+            runner.finish
               message:   i18n.get 'shortener_error', title
               shortener: title
               success:   no
-            )
       # Finally, send the HTTP request.
       req.send service.input url
     catch error
       # Aw snap! Notify the user via `callback`.
       log.error error
-      callback?(
+      runner.finish
         message:   i18n.get 'shortener_error', title
         shortener: title
         success:   no
-      )
-
-# Determine when `callback` is called depending on whether or not the active
-# URL Shortener supports [OAuth](http://oauth.net).
-callUrlShortenerHelper = (callback) ->
-  service = getActiveUrlShortener()
-  if service.oauth and service.isOAuthEnabled()
-    service.oauth.authorize ->
-      callback? service
-  else
-    callback? service
+  runner.run (result = {}) ->
+    callback? result
 
 # Retrieve the active URL shortener service.
 getActiveUrlShortener = ->
@@ -1147,18 +1182,23 @@ ext = window.ext =
     chrome.browserAction.onClicked.addListener (tab) ->
       onRequest
         data: key: store.get 'toolbar.key'
-        type: 'popup'
+        type: 'toolbar'
     # Add listeners for internal and external requests.
     chrome.extension.onRequest.addListener onRequest
     chrome.extension.onRequestExternal.addListener (req, sender, cb) ->
-      return cb?() if isBlacklisted sender
-      onRequest req, sender, cb
+      blocked = isBlacklisted sender
+      analytics.track 'External Requests', 'Started', sender.id,
+        if blocked then 0 else 1
+      if blocked then cb?() else onRequest req, sender, cb
     # Derive the browser and OS information.
     browser.version = getBrowserVersion()
     operatingSystem = getOperatingSystem()
     # It's nice knowing what version is running.
-    $.getJSON chrome.extension.getURL('manifest.json'), (data) =>
+    $.getJSON utils.url('manifest.json'), (data) =>
       @version = data.version
+      if isNewInstall
+        analytics.track 'Installs', 'New', @version,
+          if isProductionBuild then 1 else 0
       # Execute content scripts now that we know the version.
       executeScriptsInExistingWindows()
 
@@ -1235,7 +1275,7 @@ ext = window.ext =
     title    = i18n.get 'name'
     if not template or store.get 'toolbar.popup'
       # Use Template's details to style the browser action.
-      chrome.browserAction.setIcon  path:  chrome.extension.getURL image
+      chrome.browserAction.setIcon  path:  utils.url image
       chrome.browserAction.setTitle title: title
       # Show the popup when the browser action is clicked.
       chrome.browserAction.setPopup popup: 'pages/popup.html'
@@ -1245,7 +1285,7 @@ ext = window.ext =
         image = getImagePathForTemplate template if template.image isnt 0
         title = template.title
       # Potentially change the style of the browser action.
-      chrome.browserAction.setIcon  path:  chrome.extension.getURL image
+      chrome.browserAction.setIcon  path:  utils.url image
       chrome.browserAction.setTitle title: title
       # Disable the popup, effectively enabling the listener for
       # `chrome.browserAction.onClicked`.
