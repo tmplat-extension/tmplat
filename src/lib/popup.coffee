@@ -24,8 +24,8 @@ popup = window.popup =
     document.body.innerHTML = ext.popupHtml
     # Calculate the widest text used by the `div` elements in the popup and
     # assign it to all of the others.
-    textItems   = document.getElementsByClassName 'text'
-    width       = 0
+    textItems = document.getElementsByClassName 'text'
+    width     = 0
     for textItem in textItems when textItem.scrollWidth > width
       width = textItem.scrollWidth
     textItem.style.width = "#{width}px" for textItem in textItems
