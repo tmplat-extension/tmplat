@@ -15,6 +15,8 @@ ANALYTICS_SOURCE  = 'https://ssl.google-analytics.com/ga.js'
 # Private variables
 # -----------------
 
+# Ensure that all logs are sent to the background pages console.
+console        = chrome.extension.getBackgroundPage().console
 # Mapping for internationalization handlers.  
 # Each handler represents an attribute (based on the property name) and is
 # called for each attribute found in the current `document`.
@@ -107,6 +109,50 @@ tryParse = (value) ->
 # otherwise just return `value`.
 tryStringify = (value) ->
   if value? then JSON.stringify value else value
+
+# Analytics setup
+# ---------------
+
+analytics = window.analytics =
+
+  # Public functions
+  # ----------------
+
+  # Add analytics to the current page.
+  add: ->
+    # Setup tracking details for analytics.
+    _gaq = window._gaq ?= []
+    _gaq.push ['_setAccount', ANALYTICS_ACCOUNT]
+    _gaq.push ['_trackPageview']
+    # Inject script to capture analytics.
+    ga = document.createElement 'script'
+    ga.async = yes
+    ga.src   = ANALYTICS_SOURCE
+    script = document.getElementsByTagName('script')[0]
+    script.parentNode.insertBefore ga, script
+
+  # Remove analytics from the current page.
+  remove: ->
+    # Delete scripts used to capture analytics.
+    scripts = document.querySelectorAll "script[src='#{ANALYTICS_SOURCE}']"
+    script.parentNode.removeChild script for script in scripts
+    # Remove tracking details for analytics.
+    delete window._gaq
+
+  # Create an event with the information provided and track it in analytics.
+  track: (category, action, label, value, nonInteraction) ->
+    if store.get 'analytics'
+      event = ['_trackEvent']
+      # Add the required information.
+      event.push category
+      event.push action
+      # Add the optional information where possible.
+      event.push label          if label?
+      event.push value          if value?
+      event.push nonInteraction if nonInteraction?
+      # Add the event to analytics.
+      _gaq = window._gaq ?= []
+      _gaq.push event
 
 # Internationalization setup
 # --------------------------
@@ -318,19 +364,6 @@ utils = window.utils =
   # Public functions
   # ----------------
 
-  # Add analytics to the current page.
-  addAnalytics: ->
-    # Setup tracking details for analytics.
-    _gaq = window._gaq ?= []
-    _gaq.push ['_setAccount', ANALYTICS_ACCOUNT]
-    _gaq.push ['_trackPageview']
-    # Inject script to capture analytics.
-    ga = document.createElement 'script'
-    ga.async = yes
-    ga.src   = ANALYTICS_SOURCE
-    script = document.getElementsByTagName('script')[0]
-    script.parentNode.insertBefore ga, script
-
   # Generate a unique key based on the current time and using a randomly
   # generated hexadecimal number of the specified length.
   keyGen: (separator = '.', length = 5) ->
@@ -356,14 +389,6 @@ utils = window.utils =
   # Generate a random number between the `min` and `max` values provided.
   random: (min, max) ->
     Math.floor(Math.random() * (max - min + 1)) + min
-
-  # Remove analytics from the current page.
-  removeAnalytics: ->
-    # Delete scripts used to capture analytics.
-    scripts = document.querySelectorAll "script[src='#{ANALYTICS_SOURCE}']"
-    script.parentNode.removeChild script for script in scripts
-    # Remove tracking details for analytics.
-    delete window._gaq
 
   # Repeat the string provided the specified number of times.
   repeat: (str = '', repeatStr = str, count = 1) ->
@@ -394,23 +419,76 @@ utils = window.utils =
     else
       0
 
-  # Create an event with the information provided and track it in analytics.  
-  # Indicate whether or not the event was tracked.
-  track: (category, action, label, value, nonInteraction) ->
-    if store.get 'analytics'
-      event = ['_trackEvent']
-      # Add the required information.
-      event.push category
-      event.push action
-      # Add the optional information where possible.
-      event.push label          if label?
-      event.push value          if value?
-      event.push nonInteraction if nonInteraction?
-      # Add the event to analytics.
-      _gaq?.push event
-      yes
-    else
-      no
+  # Convenient shorthand for `chrome.extension.getURL`.
+  url: ->
+    chrome.extension.getURL arguments...
+
+# `Runner` allows asynchronous code to be executed dependently in an
+# organized manner.
+class utils.Runner
+
+  # Create a new instance of `Runner`.
+  constructor: ->
+    @queue = []
+
+  # Finalize the process by resetting this `Runner` an then calling `onfinish`,
+  # if it was specified when `run` was called.  
+  # Any arguments passed in should also be passed to the registered `onfinish`
+  # handler.
+  finish: (args...) ->
+    @queue = []
+    @started = no
+    @onfinish? args...
+
+  # Remove the next item from the queue and call it.  
+  # Finish up if there are no more items in the queue.
+  next: ->
+    if @started
+      if @queue.length
+        ctx = fn = null
+        item = @queue.shift()
+        # Determine what context the function should be executed in.
+        switch typeof item.reference
+          when 'function' then fn = item.reference
+          when 'string'
+            ctx = item.context
+            fn  = ctx[item.reference]
+        # Unpack the arguments where required.
+        if typeof item.args is 'function'
+          item.args = item.args.apply null
+        fn?.apply ctx, item.args
+        return yes
+      else
+        @finish()
+    no
+
+  # Add a new item to the queue using the values provided.  
+  # `reference` can either be the name of the property on the `context` object
+  # which references the target function or the function itself. When the
+  # latter, `context` is ignored and should be `null` (not omitted). All of the
+  # remaining `args` are passed to the function when it is called during the
+  # process.
+  push: (context, reference, args...) ->
+    @queue.push
+      args:      args
+      context:   context
+      reference: reference
+
+  # Add a new item to the queue using the *packed* values provided.  
+  # This method varies from `push` since the arguments are provided in the form
+  # of a function which is called immediately before the function, which allows
+  # any dependent arguments to be correctly referenced.
+  pushPacked: (context, reference, packedArgs) ->
+    @queue.push
+      args:      packedArgs
+      context:   context
+      reference: reference
+
+  # Start the process by calling the first item in the queue and register the
+  # `onfinish` function provided.
+  run: (@onfinish) ->
+    @started = yes
+    @next()
 
 # Initialize analytics and logging.
 store.init
@@ -422,4 +500,4 @@ store.modify 'logger', (logger) ->
   logger.level      ?= log.DEBUG
   log.logger = logger
 # Add support for analytics if the user hasn't opted out.
-utils.addAnalytics() if store.get 'analytics'
+analytics.add() if store.get 'analytics'
