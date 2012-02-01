@@ -177,7 +177,7 @@
     "message": "Extension"
   },
   "help_analytics": {
-    "message": "$O_PARA$This indicates whether or not anonymous information relating to how you use $O_BOLD$Template$C_BOLD$ is collected.$C_PARA$$O_PARA$This information is only used to help improve this extension by understanding its users.$C_PARA$",
+    "message": "$O_PARA$This indicates whether or not anonymous information relating to how you use $O_BOLD$Template$C_BOLD$ is collected.$C_PARA$$O_PARA$This information is only ever used to help improve user experience and will never be supplied to a 3rd party.$C_PARA$",
     "placeholders": {
       "c_bold": {
         "content": "</strong>"
