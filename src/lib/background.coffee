@@ -89,6 +89,8 @@ OPERATING_SYSTEMS = [
   substring: 'Linux'
   title:     'Linux'
 ]
+# Extension ID of the production version of Template.
+REAL_EXTENSION_ID = 'dcjnfaoifoefmnbhhlbppaebgnccfddf'
 # List of URL shortener services supported by Template.
 SHORTENERS        = [
   # Setup [bitly](http://bit.ly).
@@ -104,14 +106,17 @@ SHORTENERS        = [
       params.x_apiKey = bitly.apiKey
       params.x_login  = bitly.username
     params
+  getUsage: ->
+    store.get 'bitly.usage'
   input: ->
     null
   isEnabled: ->
     store.get 'bitly.enabled'
   method: 'GET'
-  name: 'bit.ly'
+  name: 'bitly'
   output: (resp) ->
     JSON.parse(resp).data.url
+  title: 'bit.ly'
   url: ->
     'http://api.bitly.com/v3/shorten'
 ,
@@ -119,6 +124,8 @@ SHORTENERS        = [
   contentType: 'application/json'
   getParameters: ->
     key: 'AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY'
+  getUsage: ->
+    store.get 'googl.usage'
   input: (url) ->
     JSON.stringify longUrl: url
   isEnabled: ->
@@ -126,7 +133,7 @@ SHORTENERS        = [
   isOAuthEnabled: ->
     store.get 'googl.oauth'
   method: 'POST'
-  name: 'goo.gl'
+  name: 'googl'
   oauth: ChromeExOAuth.initBackgroundPage
     access_url:      'https://www.google.com/accounts/OAuthGetAccessToken'
     app_name:        i18n.get 'app_name'
@@ -141,6 +148,7 @@ SHORTENERS        = [
   ]
   output: (resp) ->
     JSON.parse(resp).id
+  title: 'goo.gl'
   url: ->
     'https://www.googleapis.com/urlshortener/v1/url'
 ,
@@ -158,14 +166,17 @@ SHORTENERS        = [
     else if yourls.signature
       params.signature = yourls.signature
     params
+  getUsage: ->
+    store.get 'yourls.usage'
   input: ->
     null
   isEnabled: ->
     store.get 'yourls.enabled'
   method: 'POST'
-  name: 'YOURLS'
+  name: 'yourls'
   output: (resp) ->
     JSON.parse(resp).shorturl
+  title: 'YOURLS'
   url: ->
     store.get 'yourls.url'
 ]
@@ -232,11 +243,15 @@ SUPPORT           = [
 # -----------------
 
 # Details of the current browser.
-browser         =
+browser           =
   title:   'Chrome'
   version: ''
+# Indicate whether or not Template has just been installed.
+isNewInstall      = no
+# Indicate whether or not Template is currently running the production build.
+isProductionBuild = EXTENSION_ID is REAL_EXTENSION_ID
 # Name of the user's operating system.
-operatingSystem = ''
+operatingSystem   = ''
 
 # Private functions
 # -----------------
@@ -333,97 +348,123 @@ onRequest = (request, sender, sendResponse) ->
   # Info requests are simple, just send some useful information back. Done!
   if request.type in ['info', 'version']
     return sendResponse? id: EXTENSION_ID, version: ext.version
-  chrome.windows.getCurrent (win) ->
-    chrome.tabs.query
-      active:   yes
-      windowId: win.id
-    , (tabs) ->
-      data             = {}
-      popup            = chrome.extension.getViews(type: 'popup')[0]
-      shortCalled      = no
-      shortPlaceholder = "short#{utils.random 1000, 99999}"
-      tab              = tabs[0]
-      # Attempt to copy `str` to the system clipboard while handling the
-      # potential for failure.  
-      # Finally, increment the usage of `template` and update the statistics.
-      copyOutput = (template, str) ->
-        if str
-          ext.copy str
+  data             = null
+  output           = null
+  popup            = chrome.extension.getViews(type: 'popup')[0]
+  shortCalled      = no
+  shortPlaceholder = "short#{utils.random 1000, 99999}"
+  tab              = null
+  template         = null
+  windowId         = null
+  # Create a runner to manage this asynchronous mess.
+  runner = new utils.Runner()
+  runner.push chrome.windows, 'getCurrent', (win) ->
+    windowId = win.id
+    runner.next()
+  runner.pushPacked chrome.tabs, 'query', ->
+    [active: yes, windowId: windowId, (tabs) ->
+      tab = tabs[0]
+      runner.next()
+    ]
+  runner.push null, ->
+    # Called whenever the `short` tag is found to indicate that the URL needs
+    # shortened.  
+    # Replace the `short` tag with the unique placeholder so that it can be
+    # rendered again later with the short URL.
+    shortCallback = ->
+      shortCalled = yes
+      "{#{shortPlaceholder}}"
+    # If the popup is currently displayed, hide the template list and show a
+    # loading animation.
+    if popup
+      $('#item', popup.document).hide()
+      $('#loadDiv', popup.document).show()
+    # Attempt to derive the contextual template data.
+    try
+      switch request.type
+        when 'menu'
+          data     = buildDerivedData tab, request.data, shortCallback
+          template = getTemplateWithMenuId request.data.menuItemId
+        when 'popup', 'toolbar'
+          data     = buildStandardData tab, shortCallback
+          template = getTemplateWithKey request.data.key
+        when 'shortcut'
+          data     = buildStandardData tab, shortCallback
+          template = getTemplateWithShortcut request.data.key
+      if data? and template? then runner.next() else runner.finish()
+    catch error
+      # Oops! Something went wrong so we should probably let the user know.
+      runner.finish
+        message: i18n.get if error instanceof URIError
+          'copy_fail_uri'
         else
-          ext.message = i18n.get 'copy_fail_empty'
-          ext.status  = no
-          showNotification()
-        updateTemplateUsage template.key
-        ext.updateStatistics()
-      # Called whenever the `short` tag is found to indicate that the URL
-      # needs shortened.  
-      # Replace the `short` tag with the unique placeholder so that it can be
-      # rendered again later with the short URL.
-      shortCallback = ->
-        shortCalled = yes
-        "{#{shortPlaceholder}}"
-      # If the popup is currently displayed, hide the template list and show a
-      # loading animation.
-      if popup
-        $('#item', popup.document).hide()
-        $('#loadDiv', popup.document).show()
-      # Attempt to derive the contextual template data.
-      try
-        switch request.type
-          when 'menu'
-            data     = buildDerivedData tab, request.data, shortCallback
-            template = getTemplateWithMenuId request.data.menuItemId
-          when 'popup'
-            data     = buildStandardData tab, shortCallback
-            template = getTemplateWithKey request.data.key
-          when 'shortcut'
-            data     = buildStandardData tab, shortCallback
-            template = getTemplateWithShortcut request.data.key
-      catch error
-        # Oops! Something went wrong so we should probably let the user know.
-        if error instanceof URIError
-          ext.message = i18n.get 'copy_fail_uri'
-        else
-          ext.message = i18n.get 'copy_fail_error'
-        ext.status = no
-        showNotification()
-        return
-      if template
-        addAdditionalData tab, data, ->
-          unless template.content
-            # Display the *empty template* error message.
-            copyOutput template
-            return
-          output = Mustache.to_html template.content, data
-          if shortCalled
-            # At least one `short` tag was found and replaced, so now we need
-            # to call the URL shortener service and replace that with the
-            # actual short URL.
-            callUrlShortener data.url, (response) ->
-              if response.success and response.shortUrl
-                # Short URL was successfully returned, so get rendering.
-                newData = {}
-                newData[shortPlaceholder] = response.shortUrl
-                copyOutput template, Mustache.to_html output, newData
-              else
-                # Aw man, something went wrong. Let the user down gently.
-                unless response.message
-                  response.message = i18n.get 'shortener_error',
-                    response.shortener
-                ext.message = response.message
-                ext.status  = no
-                showNotification()
-          else
-            copyOutput template, output
+          'copy_fail_error'
+        success: no
+  runner.pushPacked null, addAdditionalData, ->
+    [tab, data, ->
+      if template.content
+        output = Mustache.to_html template.content, data
+        # If any `short` tags are found and replaced, the URL shortener service
+        # needs to be called in order to replace the placeholder with the real
+        # short URL.
+        if shortCalled then runner.next() else runner.finish
+          contents: output
+          success:  yes
+          template: template
       else
-        # Close the popup if it's still open and the user wants it closed.
-        # Otherwise, reset the popup so that it can be used further.
-        if popup
-          if store.get 'toolbar.close'
-            popup.close()
-          else
-            $('#loadDiv', popup.document).hide()
-            $('#item', popup.document).show()
+        # Display the *empty contents* error message if the contents of the
+        # template itself is empty.
+        runner.finish
+          contents: ''
+          success:  yes
+          template: template
+    ]
+  runner.pushPacked null, callUrlShortener, ->
+    [data.url, (response) ->
+      if response.success and response.shortUrl
+        # Short URL was successfully returned so re-render the output.
+        newData = {}
+        newData[shortPlaceholder] = response.shortUrl
+        runner.finish
+          contents: Mustache.to_html output, newData
+          success:  yes
+          template: template
+      else
+        # Aw man, something went wrong. Let the user down gently.
+        response.message ?= i18n.get 'shortener_error', response.shortener
+        runner.finish
+          message:  response.message
+          success:  no
+          template: template
+    ]
+  runner.run (result) ->
+    type  = request.type[0].toUpperCase() + request.type.substr 1
+    value = request.data.key.charCodeAt 0 if request.type is 'shortcut'
+    analytics.track 'Requests', 'Processed', type, value
+    if result?
+      # Ensure that the user is notified if they have attempted to copy an
+      # empty string to the system clipboard.
+      if result.success and not result.contents
+        result.message = i18n.get 'copy_fail_empty'
+        result.success = no
+      if result.success
+        ext.copy result.contents
+      else
+        ext.message = result.message
+        ext.status  = no
+        showNotification()
+      if result.template?
+        updateTemplateUsage result.template.key
+        updateStatistics()
+    else
+      # Close the popup if it's still open and the user wants it closed.
+      # Otherwise, reset the popup so that it can be used further.
+      if popup
+        if store.get 'toolbar.close'
+          popup.close()
+        else
+          $('#loadDiv', popup.document).hide()
+          $('#item', popup.document).show()
 
 # Display a desktop notification informing the user on whether or not the copy
 # request was successful.  
@@ -432,7 +473,7 @@ onRequest = (request, sender, sendResponse) ->
 showNotification = ->
   if store.get 'notifications.enabled'
     webkitNotifications.createHTMLNotification(
-      chrome.extension.getURL 'pages/notification.html'
+      utils.url 'pages/notification.html'
     ).show()
   else
     ext.reset()
@@ -445,68 +486,79 @@ showNotification = ->
       $('#loadDiv', popup.document).hide()
       $('#item', popup.document).show()
 
-# Update the context menu items to reflect the currently enabled templates.  
-# If the context menu option has been disabled by the user, just remove all of
-# the existing menu items.
-updateContextMenu = ->
-  # Ensure that any previously added context menu items are removed.
-  chrome.contextMenus.removeAll = ->
-    # Called whenever a menu item is clicked.  
-    # Send a self request, passing along the available information.
-    onMenuClick = (info, tab) ->
-      onRequest
-        data: info
-        type: 'menu'
-    if store.get 'contextMenu'
-      # Create and add the top-level Template menu.
-      parentId = chrome.contextMenus.create
-        contexts: ['all']
-        title:    i18n.get 'name'
-      # Create and add a sub-menu item for each enabled template.
-      for template in ext.templates when template.enabled
-        menuId = chrome.contextMenus.create
-          contexts: ['all']
-          onclick:  onMenuClick
-          parentId: parentId
-          title:    template.title
-        template.menuId = menuId
+# Update the statistical information.
+updateStatistics = ->
+  store.init 'stats', {}
+  store.modify 'stats', (stats) =>
+    # Determine which template has the greatest usage.
+    maxUsage = 0
+    utils.query ext.templates, no, (template) ->
+      maxUsage = template.usage if template.usage > maxUsage
+      no
+    popular = ext.queryTemplate (template) ->
+      template.usage is maxUsage
+    # Calculate the up-to-date statistical information.
+    stats.count       = ext.templates.length
+    stats.customCount = stats.count - DEFAULT_TEMPLATES.length
+    stats.popular     = popular?.key
 
 # Increment the usage for the template with the specified `key` and persist the
 # changes.
 updateTemplateUsage = (key) ->
-  template.usage++ for template in ext.templates when template.key is key
+  for template in ext.templates when template.key is key
+    template.usage++
+    break
   store.set 'templates', ext.templates
+  analytics.track 'Templates', 'Used', template.title,
+    if template.readOnly then 1 else 0
+
+# Increment the usage for the URL shortener service with the specified `name`
+# and persist the changes.
+updateUrlShortenerUsage = (name, oauth) ->
+  store.modify name, (shortener) ->
+    shortener.usage++
+  shortener = ext.queryUrlShortener (shortener) ->
+    shortener.name is name
+  analytics.track 'Shorteners', 'Used', shortener.title, if oauth then 1 else 0
 
 # Data functions
 # --------------
 
 # Extract additional information from `tab` and add it to `data`.
 addAdditionalData = (tab, data, callback) ->
-  chrome.cookies.getAll url: data.url, (cookies) ->
-    names     = []
-    cookies or= []
+  # Create a runner to simplify this process.
+  runner = new utils.Runner()
+  runner.push navigator.geolocation, 'getCurrentPosition', (position) ->
+    coords = {}
+    for own prop, value of position.coords
+      coords[prop.toLowerCase()] = if value? then "#{value}" else ''
+    $.extend data, coords: coords
+    runner.next()
+  , (error) ->
+    log.error error.message
+    runner.next()
+  runner.push chrome.cookies, 'getAll', url: data.url, (cookies = []) ->
+    names = []
     # Extract the names of each cookie.
     names.push cookie.name for cookie in cookies
     $.extend data,
-      cookie: ->
+      cookie:  ->
         (text, render) ->
           name = render text
           # Attempt to find the value for the cookie name.
           return cookie.value for cookie in cookies when cookie.name is name
           ''
       cookies: names
-    # Try to prevent pages hanging because content script wasn't executed.
-    if isProtectedPage tab
-      $.extend data,
-        selection:      ''
-        selectionlinks: []
-      callback?()
-    else
-      chrome.tabs.sendRequest tab.id, {}, (response) ->
-        $.extend data,
-          selection:      response.text or ''
-          selectionlinks: response.urls or []
-        callback?()
+    # Try to prevent pages hanging because content script should not have been
+    # executed.
+    if isProtectedPage tab then runner.finish() else runner.next()
+  runner.push chrome.tabs, 'sendRequest', tab.id, {}, (response) ->
+    runner.finish response
+  runner.run (result = {}) ->
+    $.extend data,
+      selection:      result.text ? ''
+      selectionlinks: result.urls ? []
+    callback?()
 
 # Creates an object containing data based on information derived from the
 # specified tab and menu item data.
@@ -547,8 +599,15 @@ buildStandardData = (tab, shortCallback) ->
   unless compatibility
     title = tab.title
     url   = $.url tab.url
-  # TODO: Get base objects for all grouped options to improve lookup
+  # Create references to the base of all grouped options to improve lookup
   # performance.
+  anchor        = store.get 'anchor'
+  bitly         = store.get 'bitly'
+  googl         = store.get 'googl'
+  notifications = store.get 'notifications'
+  stats         = store.get 'stats'
+  toolbar       = store.get 'toolbar'
+  yourls        = store.get 'yourls'
   # Merge the initial data with the attributes of the [URL
   # parser](https://github.com/allmarkedup/jQuery-URL-Parser) and all of the
   # custom Template properties.  
@@ -556,17 +615,17 @@ buildStandardData = (tab, shortCallback) ->
   # ignoring case by our modified version of
   # [mustache.js](https://github.com/janl/mustache.js).
   $.extend data, url.attr(),
-    anchortarget:          store.get 'anchor.target'
-    anchortitle:           store.get 'anchor.title'
-    bitly:                 store.get 'bitly.enabled'
-    bitlyapikey:           store.get 'bitly.apiKey'
-    bitlyusername:         store.get 'bitly.username'
+    anchortarget:          anchor.target
+    anchortitle:           anchor.title
+    bitly:                 bitly.enabled
+    bitlyapikey:           bitly.apiKey
+    bitlyusername:         bitly.username
     browser:               browser.title
     browserversion:        browser.version
     contextmenu:           store.get 'contextMenu'
     cookiesenabled:        window.navigator.cookieEnabled
-    count:                 store.get 'stats.count'
-    customcount:           store.get 'stats.customCount'
+    count:                 stats.count
+    customcount:           stats.customCount
     datetime:              ->
       (text, render) ->
         new Date().format render(text) or undefined
@@ -574,9 +633,9 @@ buildStandardData = (tab, shortCallback) ->
       (text, render) ->
         decodeURIComponent render text
     # Deprecated since 1.0.0, use `anchorTarget` instead.
-    doanchortarget:        store.get 'anchor.target'
+    doanchortarget:        anchor.target
     # Deprecated since 1.0.0, use `anchorTitle` instead.
-    doanchortitle:         store.get 'anchor.title'
+    doanchortitle:         anchor.title
     encode:                ->
       (text, render) ->
         encodeURIComponent render text
@@ -591,11 +650,11 @@ buildStandardData = (tab, shortCallback) ->
       (text, render) ->
         url.fsegment parseInt render(text), 10
     fsegments:             url.fsegment()
-    googl:                 store.get 'googl.enabled'
-    googloauth:            store.get 'googl.oauth'
+    googl:                 googl.enabled
+    googloauth:            googl.oauth
     java:                  window.navigator.javaEnabled()
-    notifications:         store.get 'notifications.enabled'
-    notificationduration:  store.get('notifications.duration') * .001
+    notifications:         notifications.enabled
+    notificationduration:  notifications.duration * .001
     offline:               not window.navigator.onLine
     # Deprecated since 0.1.0.2, use `originalUrl` instead.
     originalsource:        tab.url
@@ -607,7 +666,7 @@ buildStandardData = (tab, shortCallback) ->
         url.param render text
     params:                url.param()
     popular:               ext.queryTemplate (template) ->
-      template.key is store.get 'stats.popular'
+      template.key is stats.popular
     segment:               ->
       (text, render) ->
         url.segment parseInt render(text), 10
@@ -616,23 +675,23 @@ buildStandardData = (tab, shortCallback) ->
       shortCallback?()
     shortcuts:             store.get 'shortcuts'
     title:                 title or url.attr 'source'
-    toolbarclose:          store.get 'toolbar.close'
+    toolbarclose:          toolbar.close
     # Deprecated since 1.0.0, use the inverse of `toolbarPopup` instead.
-    toolbarfeature:        not store.get 'toolbar.popup'
+    toolbarfeature:        not toolbar.popup
     # Deprecated since 1.0.0, use `toolbarStyle` instead.
-    toolbarfeaturedetails: store.get 'toolbar.style'
+    toolbarfeaturedetails: toolbar.style
     # Deprecated since 1.0.0, use `toolbarKey` instead.
-    toolbarfeaturename:    store.get 'toolbar.key'
-    toolbarkey:            store.get 'toolbar.key'
-    toolbarpopup:          store.get 'toolbar.popup'
-    toolbarstyle:          store.get 'toolbar.style'
+    toolbarfeaturename:    toolbar.key
+    toolbarkey:            toolbar.key
+    toolbarpopup:          toolbar.popup
+    toolbarstyle:          toolbar.style
     url:                   url.attr 'source'
     version:               ext.version
-    yourls:                store.get 'yourls.enabled'
-    yourlspassword:        store.get 'yourls.password'
-    yourlssignature:       store.get 'yourls.signature'
-    yourlsurl:             store.get 'yourls.url'
-    yourlsusername:        store.get 'yourls.username'
+    yourls:                yourls.enabled
+    yourlspassword:        yourls.password
+    yourlssignature:       yourls.signature
+    yourlsurl:             yourls.url
+    yourlsusername:        yourls.username
   data
 
 # HTML building functions
@@ -693,6 +752,8 @@ init_update = ->
   store.rename 'update_progress', 'updates', {}
   store.modify 'updates', (updates) ->
     updates.settings ?= []
+    # Determine whether or not the user has just installed Template.
+    isNewInstall = updates.settings.length is 0
     # Check if the settings need updated for 0.1.0.0.
     if '0.1.0.0' not in updates.settings
       # Update the settings for 0.1.0.0.
@@ -725,7 +786,7 @@ init_update = ->
 # Initialize the settings related to statistical information.
 initStatistics = ->
   store.init 'stats', {}
-  ext.updateStatistics()
+  updateStatistics()
 
 # Initialize `template` and its properties, before adding it to `templates` to
 # be persisted later.
@@ -891,16 +952,19 @@ initUrlShorteners = ->
   store.modify 'bitly', (bitly) ->
     bitly.apiKey   ?= ''
     bitly.enabled  ?= no
+    bitly.usage    ?= 0
     bitly.username ?= ''
   store.modify 'googl', (googl) ->
     googl.enabled ?= yes
     googl.oauth   ?= yes
+    googl.usage   ?= 0
   store.modify 'yourls', (yourls) ->
     yourls.enabled   ?= no
     yourls.password  ?= ''
     yourls.signature ?= ''
     yourls.url       ?= ''
     yourls.username  ?= ''
+    yourls.usage     ?= 0
 
 # Handle the conversion/removal of older version of settings that may have been
 # stored previously by `initUrlShorteners`.
@@ -949,17 +1013,22 @@ initUrlShorteners_update = ->
 # `callback` will be called with the result once it has been received from the
 # URL shortener service.
 callUrlShortener = (url, callback) ->
-  callUrlShortenerHelper (service) ->
-    name = service.name
-    sUrl = service.url()
+  service = getActiveUrlShortener()
+  # Create a runner to control the dependencies in the asynchronous processes.
+  runner = new utils.Runner()
+  if service.oauth and service.isOAuthEnabled()
+    runner.push service.oauth, 'authorize', ->
+      runner.next();
+  runner.push null, ->
+    oauth = no
+    sUrl  = service.url()
+    title = service.title
     unless sUrl
       # Should never happen... Really just a sanity check.
-      callback?(
-        message:   i18n.get 'shortener_config_error', name
-        shortener: name
+      return runner.finish
+        message:   i18n.get 'shortener_config_error', title
+        shortener: title
         success:   no
-      )
-      return
     try
       params = service.getParameters(url) or {}
       # Build the HTTP request for the URL shortener service.
@@ -968,45 +1037,36 @@ callUrlShortener = (url, callback) ->
       req.setRequestHeader 'Content-Type', service.contentType
       # Setup the OAuth header, if required.
       if service.oauth and service.isOAuthEnabled()
+        oauth = yes
         req.setRequestHeader 'Authorization',
           service.oauth.getAuthorizationHeader sUrl, service.method, params
       # Wait for the response and let the service handle it before passing the
-      # result to `callback`.
+      # result to `callback` via the runner.
       req.onreadystatechange = ->
         if req.readyState is 4
           if req.status is 200
-            callback?(
+            updateUrlShortenerUsage service.name, oauth
+            runner.finish
               shortUrl:  service.output req.responseText
-              shortener: name
+              shortener: title
               success:   yes
-            )
           else
             # Something went wrong so let's tell the user.
-            callback?(
-              message:   i18n.get 'shortener_error', name
-              shortener: name
+            runner.finish
+              message:   i18n.get 'shortener_error', title
+              shortener: title
               success:   no
-            )
       # Finally, send the HTTP request.
       req.send service.input url
     catch error
       # Aw snap! Notify the user via `callback`.
       log.error error
-      callback?(
-        message:   i18n.get 'shortener_error', name
-        shortener: name
+      runner.finish
+        message:   i18n.get 'shortener_error', title
+        shortener: title
         success:   no
-      )
-
-# Determine when `callback` is called depending on whether or not the active
-# URL Shortener supports [OAuth](http://oauth.net).
-callUrlShortenerHelper = (callback) ->
-  service = getActiveUrlShortener()
-  if service.oauth and service.isOAuthEnabled()
-    service.oauth.authorize ->
-      callback? service
-  else
-    callback? service
+  runner.run (result = {}) ->
+    callback? result
 
 # Retrieve the active URL shortener service.
 getActiveUrlShortener = ->
@@ -1110,7 +1170,6 @@ ext = window.ext =
   init: ->
     store.init
       anchor:        {}
-      log:           off
       notifications: {}
       updates:       {}
     init_update()
@@ -1132,18 +1191,23 @@ ext = window.ext =
     chrome.browserAction.onClicked.addListener (tab) ->
       onRequest
         data: key: store.get 'toolbar.key'
-        type: 'popup'
+        type: 'toolbar'
     # Add listeners for internal and external requests.
     chrome.extension.onRequest.addListener onRequest
     chrome.extension.onRequestExternal.addListener (req, sender, cb) ->
-      return cb?() if isBlacklisted sender
-      onRequest req, sender, cb
+      blocked = isBlacklisted sender
+      analytics.track 'External Requests', 'Started', sender.id,
+        if blocked then 0 else 1
+      if blocked then cb?() else onRequest req, sender, cb
     # Derive the browser and OS information.
     browser.version = getBrowserVersion()
     operatingSystem = getOperatingSystem()
     # It's nice knowing what version is running.
-    $.getJSON chrome.extension.getURL('manifest.json'), (data) =>
+    $.getJSON utils.url('manifest.json'), (data) =>
       @version = data.version
+      if isNewInstall
+        analytics.track 'Installs', 'New', @version,
+          if isProductionBuild then 1 else 0
       # Execute content scripts now that we know the version.
       executeScriptsInExistingWindows()
 
@@ -1175,20 +1239,31 @@ ext = window.ext =
     @message = ''
     @status  = no
 
-  # Update the statistical information.
-  updateStatistics: ->
-    store.modify 'stats', (stats) =>
-      # Determine which template has the greatest usage.
-      maxUsage = 0
-      utils.query @templates, no, (template) ->
-        maxUsage = template.usage if template.usage > maxUsage
-        no
-      popular = @queryTemplate (template) ->
-        template.usage is maxUsage
-      # Calculate the up-to-date statistical information.
-      stats.count       = @templates.length
-      stats.customCount = stats.count - DEFAULT_TEMPLATES.length
-      stats.popular     = popular?.key
+  # Update the context menu items to reflect the currently enabled templates.  
+  # If the context menu option has been disabled by the user, just remove all
+  # of the existing menu items.
+  updateContextMenu: ->
+    # Ensure that any previously added context menu items are removed.
+    chrome.contextMenus.removeAll =>
+      # Called whenever a menu item is clicked.  
+      # Send a self request, passing along the available information.
+      onMenuClick = (info, tab) ->
+        onRequest
+          data: info
+          type: 'menu'
+      if store.get 'contextMenu'
+        # Create and add the top-level Template menu.
+        parentId = chrome.contextMenus.create
+          contexts: ['all']
+          title:    i18n.get 'name'
+        # Create and add a sub-menu item for each enabled template.
+        for template in @templates when template.enabled
+          menuId = chrome.contextMenus.create
+            contexts: ['all']
+            onclick:  onMenuClick
+            parentId: parentId
+            title:    template.title
+          template.menuId = menuId
 
   # Update the local list of templates to reflect those persisted.  
   # It is very important that this is called whenever templates may have been
@@ -1198,7 +1273,8 @@ ext = window.ext =
     @templates.sort (a, b) ->
       a.index - b.index
     buildPopup()
-    updateContextMenu()
+    @updateContextMenu()
+    updateStatistics()
 
   # Update the toolbar/browser action depending on the current settings.
   updateToolbar: ->
@@ -1206,9 +1282,9 @@ ext = window.ext =
     key      = store.get 'toolbar.key'
     template = getTemplateWithKey key if key
     title    = i18n.get 'name'
-    if store.get('toolbar.popup') or not template
+    if not template or store.get 'toolbar.popup'
       # Use Template's details to style the browser action.
-      chrome.browserAction.setIcon  path:  chrome.extension.getURL image
+      chrome.browserAction.setIcon  path:  utils.url image
       chrome.browserAction.setTitle title: title
       # Show the popup when the browser action is clicked.
       chrome.browserAction.setPopup popup: 'pages/popup.html'
@@ -1218,7 +1294,7 @@ ext = window.ext =
         image = getImagePathForTemplate template if template.image isnt 0
         title = template.title
       # Potentially change the style of the browser action.
-      chrome.browserAction.setIcon  path:  chrome.extension.getURL image
+      chrome.browserAction.setIcon  path:  utils.url image
       chrome.browserAction.setTitle title: title
       # Disable the popup, effectively enabling the listener for
       # `chrome.browserAction.onClicked`.

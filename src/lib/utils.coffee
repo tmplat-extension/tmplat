@@ -4,9 +4,19 @@
 # For all details and documentation:  
 # <http://neocotic.com/template>
 
+# Private constants
+# -----------------
+
+# Code for Templates analytics account.
+ANALYTICS_ACCOUNT = 'UA-28812528-1'
+# Source URL of the analytics script.
+ANALYTICS_SOURCE  = 'https://ssl.google-analytics.com/ga.js'
+
 # Private variables
 # -----------------
 
+# Ensure that all logs are sent to the background pages console.
+console        = chrome.extension.getBackgroundPage().console
 # Mapping for internationalization handlers.  
 # Each handler represents an attribute (based on the property name) and is
 # called for each attribute found in the current `document`.
@@ -43,9 +53,15 @@ i18nAttributes.push key for own key of i18nHandlers
 # Selector containing the available internationalization attributes/handlers
 # which is used by `i18nProcess` to query all elements.
 i18nSelector   = "[#{i18nAttributes.join '],['}]"
+# Mapping of all timers currently being managed by `utils`.
+timings        = {}
 
 # Private functions
 # -----------------
+
+# Indicate whether or not logging is enabled for specified `level`.
+canLog = (level) ->
+  log.logger.enabled and log.logger.level >= level
 
 # Attempt to dig down in to the `root` object and stop on the parent of the
 # target property.  
@@ -94,10 +110,57 @@ tryParse = (value) ->
 tryStringify = (value) ->
   if value? then JSON.stringify value else value
 
+# Analytics setup
+# ---------------
+
+analytics = window.analytics =
+
+  # Public functions
+  # ----------------
+
+  # Add analytics to the current page.
+  add: ->
+    # Setup tracking details for analytics.
+    _gaq = window._gaq ?= []
+    _gaq.push ['_setAccount', ANALYTICS_ACCOUNT]
+    _gaq.push ['_trackPageview']
+    # Inject script to capture analytics.
+    ga = document.createElement 'script'
+    ga.async = yes
+    ga.src   = ANALYTICS_SOURCE
+    script = document.getElementsByTagName('script')[0]
+    script.parentNode.insertBefore ga, script
+
+  # Remove analytics from the current page.
+  remove: ->
+    # Delete scripts used to capture analytics.
+    scripts = document.querySelectorAll "script[src='#{ANALYTICS_SOURCE}']"
+    script.parentNode.removeChild script for script in scripts
+    # Remove tracking details for analytics.
+    delete window._gaq
+
+  # Create an event with the information provided and track it in analytics.
+  track: (category, action, label, value, nonInteraction) ->
+    if store.get 'analytics'
+      event = ['_trackEvent']
+      # Add the required information.
+      event.push category
+      event.push action
+      # Add the optional information where possible.
+      event.push label          if label?
+      event.push value          if value?
+      event.push nonInteraction if nonInteraction?
+      # Add the event to analytics.
+      _gaq = window._gaq ?= []
+      _gaq.push event
+
 # Internationalization setup
 # --------------------------
 
 i18n = window.i18n =
+
+  # Public functions
+  # ----------------
 
   # Internationalize the specified attribute of all the selected elements.
   attribute: (selector, attribute, value, subs) ->
@@ -135,58 +198,81 @@ i18n = window.i18n =
 
 log = window.log =
 
+  # Public constants
+  # ----------------
+
+  # Error logging level.
+  ERROR: 50
+
+  # Debug logging level.
+  DEBUG: 30
+
+  # Information logging level.
+  INFORMATION: 20
+
+  # Trace logging level.
+  TRACE: 10
+
+  # Warning logging level.
+  WARNING: 40
+
+  # Public functions
+  # ----------------
+
   # Output all failed `assertions`.
   assert: (assertions...) ->
-    console.assert assertion for assertion in assertions if @enabled()
+    console.assert assertion for assertion in assertions if @logger.assertions
 
   # Create/increment a counter and output its current count for all `names`.
   count: (names...) ->
-    console.count name for name in names if @enabled()
+    console.count name for name in names if canLog @DEBUG
 
   # Output all debug `entries`.
   debug: (entries...) ->
-    console.debug entry for entry in entries if @enabled()
+    console.debug entry for entry in entries if canLog @DEBUG
 
   # Display an interactive listing of the properties of all `entries`.
   dir: (entries...) ->
-    console.dir entry for entry in entries if @enabled()
-
-  # Indicate whether or not logging is enabled.
-  enabled: ->
-    store.get 'log'
+    console.dir entry for entry in entries if canLog @DEBUG
 
   # Output all error `entries`.
   error: (entries...) ->
-    console.error entry for entry in entries if @enabled()
+    console.error entry for entry in entries if canLog @ERROR
 
   # Output all informative `entries`.
   info: (entries...) ->
-    console.info entry for entry in entries if @enabled()
+    console.info entry for entry in entries if canLog @INFORMATION
+
+  # Hold the information for the current state of the logger.
+  logger: {}
 
   # Output all general `entries`.
   out: (entries...) ->
-    console.log entry for entry in entries if @enabled()
+    console.log entry for entry in entries if @logger.enabled
 
   # Start a timer for all `names`.
   time: (names...) ->
-    console.time name for name in names if @enabled()
+    console.time name for name in names if canLog @DEBUG
 
   # Stop a timer and output its elapsed time in milliseconds for all `names`.
   timeEnd: (names...) ->
-    console.timeEnd name for name in names if @enabled()
+    console.timeEnd name for name in names if canLog @DEBUG
 
   # Output a stack trace.
   trace: ->
-    console.trace() if @enabled()
+    console.trace() if @canLog @TRACE
 
   # Output all warning `entries`.
   warn: (entries...) ->
-    console.warn entry for entry in entries if @enabled()
+    console.warn entry for entry in entries if canLog @WARNING
 
 # Storage setup
 # -------------
 
 store = window.store =
+
+  # Public functions
+  # ----------------
 
   # Clear all keys from `localStorage`.
   clear: ->
@@ -275,6 +361,9 @@ store = window.store =
 
 utils = window.utils =
 
+  # Public functions
+  # ----------------
+
   # Generate a unique key based on the current time and using a randomly
   # generated hexadecimal number of the specified length.
   keyGen: (separator = '.', length = 5) ->
@@ -286,7 +375,7 @@ utils = window.utils =
       max = @repeat 'f', 'f', if length is 1 then 1 else length - 1
       min = parseInt min, 16
       max = parseInt max, 16
-      parts.push @random min max
+      parts.push @random min, max
     # Convert segments to their hexadecimal (base 16) forms.
     parts[i] = part.toString 16 for part, i in parts
     # Join all segments and transform to upper case.
@@ -309,3 +398,106 @@ utils = window.utils =
       # Repeat to the left if `count` is negative.
       str = repeatStr + str for i in [1..count*-1] if count < 0
     str
+
+  # Start a new timer for the specified `key`.  
+  # If a timer already exists for `key`, return the time difference in
+  # milliseconds.
+  time: (key) ->
+    if timings.hasOwnProperty key
+      new Date().getTime() - timings[key]
+    else
+      timings[key] = new Date().getTime()
+
+  # End the timer for the specified `key` and return the time difference in
+  # milliseconds and remove the timer.  
+  # If no timer exists for `key`, simply return `0'.
+  timeEnd: (key) ->
+    if timings.hasOwnProperty key
+      start = timings[key]
+      delete timings[key]
+      new Date().getTime() - start
+    else
+      0
+
+  # Convenient shorthand for `chrome.extension.getURL`.
+  url: ->
+    chrome.extension.getURL arguments...
+
+# `Runner` allows asynchronous code to be executed dependently in an
+# organized manner.
+class utils.Runner
+
+  # Create a new instance of `Runner`.
+  constructor: ->
+    @queue = []
+
+  # Finalize the process by resetting this `Runner` an then calling `onfinish`,
+  # if it was specified when `run` was called.  
+  # Any arguments passed in should also be passed to the registered `onfinish`
+  # handler.
+  finish: (args...) ->
+    @queue = []
+    @started = no
+    @onfinish? args...
+
+  # Remove the next item from the queue and call it.  
+  # Finish up if there are no more items in the queue.
+  next: ->
+    if @started
+      if @queue.length
+        ctx = fn = null
+        item = @queue.shift()
+        # Determine what context the function should be executed in.
+        switch typeof item.reference
+          when 'function' then fn = item.reference
+          when 'string'
+            ctx = item.context
+            fn  = ctx[item.reference]
+        # Unpack the arguments where required.
+        if typeof item.args is 'function'
+          item.args = item.args.apply null
+        fn?.apply ctx, item.args
+        return yes
+      else
+        @finish()
+    no
+
+  # Add a new item to the queue using the values provided.  
+  # `reference` can either be the name of the property on the `context` object
+  # which references the target function or the function itself. When the
+  # latter, `context` is ignored and should be `null` (not omitted). All of the
+  # remaining `args` are passed to the function when it is called during the
+  # process.
+  push: (context, reference, args...) ->
+    @queue.push
+      args:      args
+      context:   context
+      reference: reference
+
+  # Add a new item to the queue using the *packed* values provided.  
+  # This method varies from `push` since the arguments are provided in the form
+  # of a function which is called immediately before the function, which allows
+  # any dependent arguments to be correctly referenced.
+  pushPacked: (context, reference, packedArgs) ->
+    @queue.push
+      args:      packedArgs
+      context:   context
+      reference: reference
+
+  # Start the process by calling the first item in the queue and register the
+  # `onfinish` function provided.
+  run: (@onfinish) ->
+    @started = yes
+    @next()
+
+# Initialize analytics and logging.
+store.init
+  analytics: yes
+  logger:    {}
+store.modify 'logger', (logger) ->
+  logger.assertions ?= no
+  logger.enabled    ?= no
+  logger.level      ?= log.DEBUG
+  log.logger = logger
+# Add support for analytics if the user hasn't opted out.
+analytics.add() if store.get 'analytics'
