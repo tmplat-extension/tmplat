@@ -176,57 +176,6 @@
   "extension": {
     "message": "Extension"
   },
-  "help_analytics": {
-    "message": "$O_PARA$This indicates whether or not anonymous information relating to how you use $O_BOLD$Template$C_BOLD$ is collected.$C_PARA$$O_PARA$This information is only ever used to help improve user experience and will never be supplied to a 3rd party.$C_PARA$",
-    "placeholders": {
-      "c_bold": {
-        "content": "</strong>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_bold": {
-        "content": "<strong>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_anchorTarget": {
-    "message": "$O_PARA$This indicates whether or not a $O_CODE$target$C_CODE$ attribute should be included in the anchor tag when building an Anchor template.$C_PARA$$O_PARA$If included, this attribute will be populated with $O_CODE$blank$C_CODE$.$C_PARA$",
-    "placeholders": {
-      "c_code": {
-        "content": "</code>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_code": {
-        "content": "<code>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_anchorTitle": {
-    "message": "$O_PARA$This indicates whether or not a $O_CODE$title$C_CODE$ attribute should be included in the anchor tag when building an Anchor template.$C_PARA$$O_PARA$If included, this attribute will be populated with the contextual title (e.g page, frame).$C_PARA$",
-    "placeholders": {
-      "c_code": {
-        "content": "</code>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_code": {
-        "content": "<code>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
   "help_bitlyApiKey": {
     "message": "$O_PARA$The $API_ABBR$ key allows $O_BOLD$Template$C_BOLD$ to shorten links via $O_BOLD$bit.ly$C_BOLD$ on your behalf.$C_PARA$$O_PARA$$O_LINK_1$Get your API key$C_LINK$$C_PARA$",
     "placeholders": {
@@ -279,17 +228,6 @@
       }
     }
   },
-  "help_contextMenu": {
-    "message": "$O_PARA$This indicates whether or not your templates will be accessible from the right-click menu.$C_PARA$",
-    "placeholders": {
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
   "help_googlOauth": {
     "message": "$O_PARA$$O_LINK_1$OAuth$C_LINK$ is an open protocol that aims to standardize the way desktop and web applications access a user's private data. OAuth provides a mechanism for users to grant access to private data without sharing their private credentials (username/password).$C_PARA$$O_PARA$$O_BOLD$Template$C_BOLD$ uses OAuth to shorten links via $O_BOLD$goo.gl$C_BOLD$ on your behalf.$C_PARA$$O_PARA$If you have previously attempted to authorize $O_BOLD$Template$C_BOLD$ you can undo this locally by clicking the $O_EMPH$Revoke Access$C_EMPH$ button.$C_PARA$",
     "placeholders": {
@@ -313,56 +251,6 @@
       },
       "o_link_1": {
         "content": "<a href=\"http://oauth.net\" target=\"_blank\">"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_notificationDuration": {
-    "message": "$O_PARA$The time (in seconds) to display the desktop notification before automatically hiding it again.$C_PARA$$O_PARA$Enter $O_BOLD$0$C_BOLD$ to disable auto-hide functionality.$C_PARA$",
-    "placeholders": {
-      "c_bold": {
-        "content": "</strong>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_bold": {
-        "content": "<strong>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_notifications": {
-    "message": "$O_PARA$This indicates whether or not desktop notifications will appear whenever you use a template to inform you of the outcome (e.g. success, failure).$C_PARA$",
-    "placeholders": {
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_notToolbarPopup": {
-    "message": "$O_PARA$This inidicates whether or not the selected template will be activated when the toolbar icon is clicked.$C_PARA$$O_PARA$Enabling this option effectively replaces the popup that is shown by default.$C_PARA$",
-    "placeholders": {
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_shortcuts": {
-    "message": "$O_PARA$This indicates whether or not keyboard shortcuts will be recognised.$C_PARA$",
-    "placeholders": {
-      "c_para": {
-        "content": "</p>"
       },
       "o_para": {
         "content": "<p>"
@@ -405,103 +293,6 @@
       },
       "c_para": {
         "content": "</p>"
-      },
-      "o_item": {
-        "content": "<li>"
-      },
-      "o_list": {
-        "content": "<ul>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_template_title": {
-    "message": "$O_PARA$The title is displayed in context menus and the drop-down.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Doesn't have to be unique$BREAK$(but it's recommended)$C_ITEM$$O_ITEM$Can contain multiple words$C_ITEM$$O_ITEM$Can contain any characters$C_ITEM$$C_LIST$$O_PARA$This $O_EMPH$cannot$C_EMPH$ be changed for predefined templates.$C_PARA$",
-    "placeholders": {
-      "break": {
-        "content": "<br />"
-      },
-      "c_emph": {
-        "content": "</em>"
-      },
-      "c_item": {
-        "content": "</li>"
-      },
-      "c_list": {
-        "content": "</ul>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_emph": {
-        "content": "<em>"
-      },
-      "o_item": {
-        "content": "<li>"
-      },
-      "o_list": {
-        "content": "<ul>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_toolbarClose": {
-    "message": "$O_PARA$This indicates whether or not the popup will be automatically closed after clicking on one of the listed templates.$C_PARA$",
-    "placeholders": {
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_toolbarKey": {
-    "message": "$O_PARA$This template will be activated when the toolbar icon is clicked and the popup is disabled.$C_PARA$",
-    "placeholders": {
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_toolbarPopup": {
-    "message": "$O_PARA$This inidicates whether or not the standard popup will be displayed when the toolbar icon is clicked.$C_PARA$",
-    "placeholders": {
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_toolbarStyle": {
-    "message": "$O_PARA$This indicates whether or not the design of the toolbar icon will be replaced by that of the selected template.$C_PARA$$O_PARA$The following aspects of the toolbar icon will be changed;$C_PARA$$O_LIST$$O_ITEM$Hover over text will be the template's title$C_ITEM$$O_ITEM$Icon will be the template's image$BREAK$($O_EMPH$only$C_EMPH$ if it's not blank)$C_ITEM$$C_LIST$",
-    "placeholders": {
-      "break": {
-        "content": "<br />"
-      },
-      "c_emph": {
-        "content": "</em>"
-      },
-      "c_item": {
-        "content": "</li>"
-      },
-      "c_list": {
-        "content": "</ul>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_emph": {
-        "content": "<em>"
       },
       "o_item": {
         "content": "<li>"
@@ -620,53 +411,108 @@
     "message": "OAuth Redirect Page"
   },
   "opt_add_button": {
-    "message": "Add"
+    "message": "$ICON$ Add",
+    "placeholders": {
+      "icon": {
+        "content": "<i class=\"icon-plus icon-white\"></i>"
+      }
+    }
   },
   "opt_add_new_button": {
-    "message": "Add New"
+    "message": "$ICON$ Add New",
+    "placeholders": {
+      "icon": {
+        "content": "<i class=\"icon-plus icon-white\"></i>"
+      }
+    }
+  },
+  "opt_analytics_label": {
+    "message": "Analytics"
+  },
+  "opt_analytics_sub_text": {
+    "message": "This information is only ever used to help improve user experience and will never be supplied to a 3rd party"
   },
   "opt_analytics_text": {
     "message": "Send anonymous usage statistics"
   },
   "opt_anchor_header": {
-    "message": "Anchors"
+    "message": "Anchor Tags"
+  },
+  "opt_anchor_target_label": {
+    "message": "New Tab/Window"
   },
   "opt_anchor_target_text": {
-    "message": "Include $ATTRIBUTE$ attribute to open link in new window",
+    "message": "Links open in a new browser tab/window when clicked"
+  },
+  "opt_anchor_target_sub_text": {
+    "message": "Anchor tags are rendered with the attribute $O_CODE$target=\"_blank\"$C_CODE$",
     "placeholders": {
-      "attribute": {
-        "content": "<code>target</code>"
+      "c_code": {
+        "content": "</code>"
+      },
+      "o_code": {
+        "content": "<code>"
+      }
+    }
+  },
+  "opt_anchor_text": {
+    "message": "This section refers to links that are rendered by the $O_INFO$Anchor$C_INFO$ template.",
+    "placeholders": {
+      "c_info": {
+        "content": "</span>"
+      },
+      "o_info": {
+        "content": "<span class=\"label label-info\">"
+      }
+    }
+  },
+  "opt_anchor_title_label": {
+    "message": "Hover Text"
+  },
+  "opt_anchor_title_sub_text": {
+    "message": "Anchor tags are rendered with the attribute $O_CODE$title=\"{{title}}\"$C_CODE$",
+    "placeholders": {
+      "c_code": {
+        "content": "</code>"
+      },
+      "o_code": {
+        "content": "<code>"
       }
     }
   },
   "opt_anchor_title_text": {
-    "message": "Include $ATTRIBUTE$ attribute",
-    "placeholders": {
-      "attribute": {
-        "content": "<code>title</code>"
-      }
-    }
-  },
-  "opt_close_button": {
-    "message": "Close"
+    "message": "Links show the contextual title when hovered over"
   },
   "opt_config_expand_text": {
     "message": "Show"
   },
+  "opt_context_menu_label": {
+    "message": "Context Menu"
+  },
   "opt_context_menu_text": {
-    "message": "Enable the context menu"
+    "message": "Templates are accessible from the right-click menu"
   },
   "opt_deauthorize_button": {
     "message": "Revoke Access"
   },
   "opt_delete_button": {
-    "message": "Delete"
+    "message": "$ICON$ Delete",
+    "placeholders": {
+      "icon": {
+        "content": "<i class=\"icon-trash icon-white\"></i>"
+      }
+    }
   },
   "opt_errors_header": {
     "message": "The following problem(s) need to be corrected;"
   },
   "opt_export_button": {
-    "message": "Export"
+    "message": "$ICON$ Export",
+    "placeholders": {
+      "icon": {
+        "content": "<i class=\"icon-upload\"></i>"
+      }
+    }
   },
   "opt_footer": {
     "message": "&copy;$1 $AUTHOR_LINK$",
@@ -683,25 +529,56 @@
     "message": "Read help documentation"
   },
   "opt_import_button": {
-    "message": "Import"
+    "message": "$ICON$ Import",
+    "placeholders": {
+      "icon": {
+        "content": "<i class=\"icon-download\"></i>"
+      }
+    }
+  },
+  "opt_misc_header": {
+    "message": "Miscellaneous"
   },
   "opt_notification_header": {
+    "message": "Desktop Notifications"
+  },
+  "opt_notification_label": {
     "message": "Notifications"
   },
+  "opt_notification_sub_text": {
+    "message": "These will also be used to notify you of any errors that occur"
+  },
   "opt_notification_text": {
-    "message": "Enable notifications"
+    "message": "Show desktop notifications to display the outcome of using a template"
   },
-  "opt_notification_timer_text1": {
-    "message": "Auto-hide notifications after"
-  },
-  "opt_notification_timer_text2": {
+  "opt_notification_duration_add_on_text": {
     "message": "seconds"
+  },
+  "opt_notification_duration_label": {
+    "message": "Notification Duration"
+  },
+  "opt_notification_duration_sub_text": {
+    "message": "Enter $O_CODE$0$C_CODE$ to stop automatic hiding",
+    "placeholders": {
+      "c_code": {
+        "content": "</code>"
+      },
+      "o_code": {
+        "content": "<code>"
+      }
+    }
+  },
+  "opt_notification_duration_text": {
+    "message": "Automatically hide desktop notifications after this time"
   },
   "opt_or_text": {
     "message": "OR"
   },
+  "opt_shortcut_label": {
+    "message": "Keyboard Shortcuts"
+  },
   "opt_shortcut_text": {
-    "message": "Enable keyboard shortcuts"
+    "message": "Keyboard shortcuts can be used to access templates"
   },
   "opt_template_content_help": {
     "message": "Need help writing templates?"
@@ -715,8 +592,11 @@
   "opt_template_header": {
     "message": "Templates"
   },
-  "opt_template_image_text": {
+  "opt_template_image_label": {
     "message": "Image"
+  },
+  "opt_template_image_sub_text": {
+    "message": "Icon displayed in the popup or as the toolbar icon"
   },
   "opt_template_shortcut_invalid": {
     "message": "Keyboard shortcut uses invalid key"
@@ -727,32 +607,93 @@
   "opt_template_shortcut_unavailable": {
     "message": "Keyboard shortcut is already in use"
   },
+  "opt_template_title_help": {
+    "message": "The following rules apply;$O_LIST$$O_ITEM$Doesn't have to be unique$BREAK$(although it's recommended)$C_ITEM$$O_ITEM$Can contain multiple words$C_ITEM$$O_ITEM$Can contain any characters$C_ITEM$$C_LIST$",
+    "placeholders": {
+      "break": {
+        "content": "<br>"
+      },
+      "c_item": {
+        "content": "</li>"
+      },
+      "c_list": {
+        "content": "</ul>"
+      },
+      "o_item": {
+        "content": "<li>"
+      },
+      "o_list": {
+        "content": "<ul>"
+      }
+    }
+  },
   "opt_template_title_invalid": {
     "message": "Title is missing"
   },
-  "opt_template_title_text": {
+  "opt_template_title_label": {
     "message": "Title"
+  },
+  "opt_template_title_sub_text": {
+    "message": "Text displayed in context (right-click) menus and the popup"
   },
   "opt_toolbar_behaviour_header": {
     "message": "Toolbar Behaviour"
   },
-  "opt_toolbar_close_text": {
-    "message": "Hide the popup after selecting a template"
+  "opt_toolbar_behaviour_label": {
+    "message": "Action"
   },
-  "opt_toolbar_header": {
-    "message": "Toolbar"
+  "opt_toolbar_behaviour_sub_text": {
+    "message": "Configure what happens when you click the toolbar icon"
+  },
+  "opt_toolbar_close_label": {
+    "message": "Closing"
+  },
+  "opt_toolbar_close_text": {
+    "message": "Automatically close the popup after using a template"
+  },
+  "opt_toolbar_key_label": {
+    "message": "Template"
   },
   "opt_toolbar_key_text": {
-    "message": "Select the template to be activated"
+    "message": "Select the template to be used"
+  },
+  "opt_toolbar_not_popup_label": {
+    "message": "Template"
   },
   "opt_toolbar_not_popup_text": {
-    "message": "Activate the selected template when the toolbar button is clicked"
+    "message": "Use a template when the toolbar icon is clicked"
+  },
+  "opt_toolbar_popup_label": {
+    "message": "Popup"
   },
   "opt_toolbar_popup_text": {
-    "message": "Show popup when the toolbar button is clicked"
+    "message": "Show a popup when the toolbar icon is clicked"
+  },
+  "opt_toolbar_style_label": {
+    "message": "Icon Style"
+  },
+  "opt_toolbar_style_sub_text": {
+    "message": "The following aspects of the toolbar icon will be changed;$O_LIST$$O_ITEM$Hover over text will be the template's title$C_ITEM$$O_ITEM$Icon will be the template's image if it has one$C_ITEM$$C_LIST$",
+    "placeholders": {
+      "c_item": {
+        "content": "</li>"
+      },
+      "c_list": {
+        "content": "</ul>"
+      },
+      "o_item": {
+        "content": "<li>"
+      },
+      "o_list": {
+        "content": "<ul>"
+      }
+    }
   },
   "opt_toolbar_style_text": {
-    "message": "Show the template's details in the toolbar button"
+    "message": "Change the style of the toolbar icon to reflect the selected template"
+  },
+  "opt_top_button": {
+    "message": "Back to top"
   },
   "opt_url_shortener_api_key_text": {
     "message": "$API_ABBR$ Key",

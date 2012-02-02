@@ -505,9 +505,9 @@ loadTemplateSaveEvents = ->
 loadToolbar = ->
   toolbar = store.get 'toolbar'
   if toolbar.popup
-    $('#toolbarPopup').attr 'checked', 'checked'
+    $('#toolbarPopup').addClass 'active'
   else
-    $('#notToolbarPopup').attr 'checked', 'checked'
+    $('#notToolbarPopup').addClass 'active'
   $('#toolbarClose').attr 'checked', 'checked' if toolbar.close
   $('#toolbarStyle').attr 'checked', 'checked' if toolbar.style
   updateToolbarTemplates()
@@ -516,34 +516,25 @@ loadToolbar = ->
 
 # Bind the event handlers required for controlling toolbar behaviour changes.
 loadToolbarControlEvents = ->
-  radios         = $ 'input[name="toolbar_behaviour"]'
-  popupFields    = $ '#toolbarClose'
-  popupMisc      = $ '#toolbarClose_txt'
-  templateFields = $ '#toolbarKey, #toolbarStyle'
-  templateMisc   = $ '#toolbarKey_txt, #toolbarStyle_txt'
-  # Extract help images for both groups.
-  popupFields.each ->
-    popupMisc = popupMisc.add $(this).parents('div').first().find 'img'
-  templateFields.each ->
-    templateMisc = templateMisc.add $(this).parents('div').first().find 'img'
-  # Bind change event to listen for changes to the radio selection.
-  radios.change ->
-    if $('#toolbarPopup').is ':checked'
-      popupFields.removeAttr 'disabled'
-      popupMisc.removeClass  'disabled'
-      templateFields.attr    'disabled', 'disabled'
-      templateMisc.addClass  'disabled'
+  buttons     = $ '#toolbarPopup, #notToolbarPopup'
+  description = $ '#toolbarPopup_desc'
+  # Bind a click event to listen for changes to the button selection.
+  buttons.click ->
+    id = $(this).attr 'id'
+    if id is 'toolbarPopup'
+      description.text i18n.get 'opt_toolbar_popup_text'
+      $(".notToolbarPopup").hide()
+      $(".toolbarPopup").show()
     else
-      popupFields.attr          'disabled', 'disabled'
-      popupMisc.addClass        'disabled'
-      templateFields.removeAttr 'disabled'
-      templateMisc.removeClass  'disabled'
-  radios.change()
+      description.text i18n.get 'opt_toolbar_not_popup_text'
+      $(".toolbarPopup").hide()
+      $(".notToolbarPopup").show()
+  buttons.filter('.active').click()
 
 # Bind the event handlers required for persisting toolbar behaviour changes.
 loadToolbarSaveEvents = ->
-  $('input[name="toolbar_behaviour"]').change ->
-    popup = $('#toolbarPopup').is ':checked'
+  $('#toolbarPopup, #notToolbarPopup').click ->
+    popup = not $('#toolbarPopup').hasClass 'active'
     store.modify 'toolbar', (toolbar) ->
       toolbar.popup = popup
     ext.updateToolbar()
@@ -552,7 +543,7 @@ loadToolbarSaveEvents = ->
    'toolbar', (key) ->
     if key is 'key' then @val() else @is ':checked'
   , (jel, key, value) ->
-    ext.updateToolbar
+    ext.updateToolbar()
     key = key[0].toUpperCase() + key.substr 1
     if key is 'Key'
       analytics.track 'Toolbars', 'Changed', key
@@ -891,11 +882,12 @@ options = window.options =
         opt_footer: "#{new Date().getFullYear()}"
     # Bind tab selection event to all tabs.
     initialTabChange = yes
-    $('[tabify]').click ->
-      $this = $ this
-      unless $this.hasClass 'selected'
-        $this.siblings().removeClass 'selected'
-        $this.addClass 'selected'
+    $('a[tabify]').click ->
+      $this  = $ this
+      parent = $this.parent 'li'
+      unless parent.hasClass 'active'
+        parent.siblings().removeClass 'active'
+        parent.addClass 'active'
         $($this.attr 'tabify').show().siblings('.tab').hide()
         store.set 'options_active_tab', id = $this.attr 'id'
         unless initialTabChange
@@ -948,14 +940,33 @@ options = window.options =
     $('#template_help').load utils.url("pages/templates_#{locale}.html"), ->
       $('.template-section:first-child').click()
       $('.version-replace').text ext.version
+    # Ensure that form submissions don't reload the page.
+    $('form').submit ->
+      no
     # Load the current option values.
     load()
     $('#template_shortcut_modifier').html if ext.isThisPlatform 'mac'
       ext.SHORTCUT_MAC_MODIFIERS
     else
       ext.SHORTCUT_MODIFIERS
+    # Initialize all of the *goto* links.
+    $('[data-goto]').click ->
+      goto = $($(this).attr 'data-goto')
+      $(window).scrollTop if goto.length then goto.scrollTop() else 0
+    # Initialize all popovers.
+    $('[popover]').each ->
+      $this   = $ this
+      trigger = $this.attr 'data-trigger'
+      trigger = if trigger? then trigger.trim().toLowerCase() else 'hover'
+      $this.popover
+        content: ->
+          i18n.get $this.attr 'popover'
+        trigger: trigger
+      if trigger is 'manual'
+        $this.click ->
+          $this.popover 'toggle'
     # Initialize all faceboxes.
-    $('a[facebox]').click ->
+    $('[facebox]').click ->
       $.facebox div: id = $(this).attr 'facebox'
       analytics.track 'Help', 'Opened', id.substr 1
     $(document).bind 'reveal.facebox', ->

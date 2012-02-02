@@ -770,6 +770,12 @@ init_update = ->
       # Update the settings for 1.0.0.
       updates.templates = updates.features ? []
       delete updates.features
+      optionsActiveTab = store.get 'options_active_tab'
+      if optionsActiveTab?
+        store.set 'options_active_tab', switch optionsActiveTab
+          when 'features_nav' then 'templates_nav'
+          when 'toolbar_nav' then 'general_nav'
+          else optionsActiveTab
       if store.get('options_active_tab') is 'features_nav'
         store.set 'options_active_tab', 'templates_nav'
       store.modify 'anchor', (anchor) ->
