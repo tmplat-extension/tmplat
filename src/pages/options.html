@@ -19,6 +19,7 @@
       #template_shortcut {text-transform: uppercase;}
       #googlDeauthorize_btn {display: none;}
       #moveDown_btn, #moveUp_btn {display: block; margin-top: 11px;}
+      .form-vertical .control-group > label {padding-top: 5px;}
       /* TODO: Remove */
       .help {display: none;}
     </style>
@@ -202,25 +203,66 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="span4 control-group">
+                  <div class="span1 control-group">
                     <label class="control-label" for="template_title" i18n-content="opt_template_title_label"></label>
+                  </div>
+                  <div class="span3 control-group">
                     <div class="controls">
-                      <input id="template_title" class="span4 read-only" type="text" maxlength="32">
-                      <p class="help-block" i18n-content="opt_template_title_sub_text"></p>
+                      <input id="template_title" class="span3 read-only" type="text" maxlength="32">
                     </div>
                   </div>
                   <div class="span8 control-group">
-                    <a class="btn btn-info" style="margin-top: 23px" popover="opt_template_title_help" i18n-values="title:opt_template_title_label"><i class="icon-question-sign icon-white"></i></a>
+                    <a class="btn btn-info" popover="opt_template_title_help" i18n-values="title:opt_template_title_label"><i class="icon-question-sign icon-white"></i></a>
                   </div>
                 </div>
                 <div class="row">
-                  <div class="span12 control-group">
+                  <div class="span1 control-group">
                     <label class="control-label" for="template_image" i18n-content="opt_template_image_label"></label>
+                  </div>
+                  <div class="span11 control-group">
                     <div class="controls">
                       <select id="template_image" class="span2"></select>
-                      <img id="template_image_preview" width="16" height="16" />
-                      <p class="help-block" i18n-content="opt_template_image_sub_text"></p>
+                      <img id="template_image_preview" width="16" height="16">
                     </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="span1 control-group">
+                    <label class="control-label" for="template_shortcut" i18n-content="opt_template_shortcut_label"></label>
+                  </div>
+                  <div class="span3 control-group">
+                    <div class="controls">
+                      <div class="input-prepend">
+                        <span class="add-on" id="template_shortcut_modifier"></span>
+                        <input class="span1" id="template_shortcut" type="text" maxlength="1">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="span8 control-group">
+                    <a class="btn btn-info" popover="opt_template_shortcut_help" i18n-values="title:opt_template_shortcut_label"><i class="icon-question-sign icon-white"></i></a>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="span1 control-group">
+                    <label class="control-label" for="template_enabled" i18n-content="opt_template_enabled_label"></label>
+                  </div>
+                  <div class="span11 control-group">
+                    <div class="controls">
+                      <label class="checkbox">
+                        <input type="checkbox" id="template_enabled">
+                        <span i18n-content="opt_template_enabled_text"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="span4 control-group">
+                    <div class="controls">
+                      <textarea id="template_content" class="read-only span4" rows="5" spellcheck="false" i18n-values="placeholder:opt_template_content_label"></textarea>
+                    </div>
+                  </div>
+                  <div class="span8 control-group">
+                    <a class="btn btn-info" popover="opt_template_content_help" i18n-values="title:opt_template_content_label"><i class="icon-question-sign icon-white"></i></a>
                   </div>
                 </div>
                 <div class="form-actions">
@@ -239,61 +281,6 @@
                 <div class="export_con_stage1" i18n-content="confirm_export_stage1"></div>
                 <div class="export_con_stage2" i18n-content="confirm_export_stage2"></div>
               </div>
-              <fieldset>
-                <table>
-                  <tr class="template-input">
-                    <td colspan="2">
-                      <table class="no-spacing">
-                        <tr>
-                          <td>
-                            <label for="template_shortcut">
-                              <span id="template_shortcut_txt" i18n-content="opt_template_shortcut_text"></span>
-                            </label>
-                            <a facebox="#template_shortcut_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
-                            <div id="template_shortcut_help" class="help" i18n-content="help_template_shortcut"></div>
-                          </td>
-                          <td>
-                            <label>
-                              <span id="template_shortcut_modifier"></span><input id="template_shortcut" type="text" maxlength="1" size="1" />
-                            </label>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                    <td></td>
-                  </tr>
-                  <tr class="template-input">
-                    <td colspan="2">
-                      <table class="no-spacing">
-                        <tr>
-                          <td>
-                            <label for="template_enabled">
-                              <span id="template_enabled_txt" i18n-content="opt_template_enabled_text"></span>
-                            </label>
-                            <a facebox="#template_enabled_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
-                            <div id="template_enabled_help" class="help" i18n-content="help_template_enabled"></div>
-                          </td>
-                          <td>
-                            <input id="template_enabled" type="checkbox" checked />
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td colspan="3">
-                      <label>
-                        <textarea id="template_content" class="read-only" rows="5" cols="47" spellcheck="false" i18n-values="placeholder:opt_template_content_text"></textarea>
-                      </label>
-                      <div>
-                        <a id="template_help_lnk" facebox="#template_help" i18n-content="opt_template_content_help" i18n-values="title:opt_help_text"></a>
-                        <div id="template_help" class="help"></div>
-                      </div>
-                    </td>
-                  </tr>
-                </table>
-              </fieldset>
             </form>
           </div>
         </div>

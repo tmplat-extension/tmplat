@@ -279,32 +279,6 @@
       }
     }
   },
-  "help_template_shortcut": {
-    "message": "$O_PARA$The assigned keyboard shortcut which will trigger this template if/when used.$C_PARA$$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be an alphanumeric key$BREAK$(may change in the future)$C_ITEM$$O_ITEM$Doesn't have to be unique$BREAK$(but it's recommended)$C_ITEM$$O_ITEM$Where duplicated, the template with highest in the order will be activated$C_ITEM$$C_LIST$",
-    "placeholders": {
-      "break": {
-        "content": "<br />"
-      },
-      "c_item": {
-        "content": "</li>"
-      },
-      "c_list": {
-        "content": "</ul>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_item": {
-        "content": "<li>"
-      },
-      "o_list": {
-        "content": "<ul>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
   "help_yourlsCredentials": {
     "message": "$O_PARA$Both the username and password are only required if the $O_BOLD$YOURLS$C_BOLD$ installation is private $O_EMPH$and$C_EMPH$ you are $O_EMPH$not$C_EMPH$ using the $O_LINK_1$passwordless API$C_LINK$.$C_PARA$$O_PARA$$O_LINK_2$See documentation$C_LINK$$C_PARA$",
     "placeholders": {
@@ -583,11 +557,14 @@
   "opt_template_content_help": {
     "message": "Need help writing templates?"
   },
-  "opt_template_content_text": {
+  "opt_template_content_label": {
     "message": "Content"
   },
-  "opt_template_enabled_text": {
+  "opt_template_enabled_label": {
     "message": "Enabled"
+  },
+  "opt_template_enabled_text": {
+    "message": "Allow access to this template"
   },
   "opt_template_header": {
     "message": "Templates"
@@ -595,20 +572,43 @@
   "opt_template_image_label": {
     "message": "Image"
   },
-  "opt_template_image_sub_text": {
-    "message": "Icon displayed in the popup or as the toolbar icon"
+  "opt_template_shortcut_help": {
+    "message": "$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be an alphanumeric key$BREAK$(may change in the future)$C_ITEM$$O_ITEM$Doesn't have to be unique$BREAK$(but it's recommended)$C_ITEM$$O_ITEM$Where duplicated, the template with highest in the order will be activated$C_ITEM$$C_LIST$",
+    "placeholders": {
+      "break": {
+        "content": "<br />"
+      },
+      "c_item": {
+        "content": "</li>"
+      },
+      "c_list": {
+        "content": "</ul>"
+      },
+      "c_para": {
+        "content": "</p>"
+      },
+      "o_item": {
+        "content": "<li>"
+      },
+      "o_list": {
+        "content": "<ul>"
+      },
+      "o_para": {
+        "content": "<p>"
+      }
+    }
   },
   "opt_template_shortcut_invalid": {
     "message": "Keyboard shortcut uses invalid key"
   },
-  "opt_template_shortcut_text": {
+  "opt_template_shortcut_label": {
     "message": "Shortcut"
   },
   "opt_template_shortcut_unavailable": {
     "message": "Keyboard shortcut is already in use"
   },
   "opt_template_title_help": {
-    "message": "The following rules apply;$O_LIST$$O_ITEM$Doesn't have to be unique$BREAK$(although it's recommended)$C_ITEM$$O_ITEM$Can contain multiple words$C_ITEM$$O_ITEM$Can contain any characters$C_ITEM$$C_LIST$",
+    "message": "$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Doesn't have to be unique$BREAK$(although it's recommended)$C_ITEM$$O_ITEM$Can contain multiple words$C_ITEM$$O_ITEM$Can contain any characters$C_ITEM$$C_LIST$",
     "placeholders": {
       "break": {
         "content": "<br>"
@@ -619,11 +619,17 @@
       "c_list": {
         "content": "</ul>"
       },
+      "c_para": {
+        "content": "</p>"
+      },
       "o_item": {
         "content": "<li>"
       },
       "o_list": {
         "content": "<ul>"
+      },
+      "o_para": {
+        "content": "<p>"
       }
     }
   },
@@ -632,9 +638,6 @@
   },
   "opt_template_title_label": {
     "message": "Title"
-  },
-  "opt_template_title_sub_text": {
-    "message": "Text displayed in context (right-click) menus and the popup"
   },
   "opt_toolbar_behaviour_header": {
     "message": "Toolbar Behaviour"
