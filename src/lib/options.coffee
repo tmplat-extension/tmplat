@@ -184,6 +184,7 @@ loadTemplateControlEvents = ->
   templates.change ->
     $this = $ this
     opt   = $this.find 'option:selected'
+    clearErrors()
     templates.data 'quiet', 'true'
     if opt.length is 0
       # Disable all the controls as no option is selected.
@@ -254,8 +255,6 @@ loadTemplateControlEvents = ->
       templates.val([]).change()
       $('#template_title').focus()
     else
-      # Wipe any pre-existing error messages.
-      $('#errors').find('li').remove()
       # User submitted new template so check it out already.
       opt = loadTemplate
         content:  $('#template_content').val()
@@ -266,8 +265,11 @@ loadTemplateControlEvents = ->
         shortcut: $('#template_shortcut').val().trim().toUpperCase()
         title:    $('#template_title').val().trim()
         usage:    0
+      # Wipe any pre-existing error messages.
+      clearErrors()
       # Confirm that the template meets the criteria.
-      if validateTemplate opt, yes
+      errors = validateTemplate opt, yes
+      if errors.length is 0
         templates.append opt
         opt.attr 'selected', 'selected'
         updateToolbarTemplates()
@@ -275,24 +277,26 @@ loadTemplateControlEvents = ->
         saveTemplates()
         analytics.track 'Templates', 'Added', opt.text()
       else
-        # Show the error messages to the user.
-        $.facebox div: '#message'
+        # Show the error message(s) to the user.
+        showErrors errors
   # Prompt the user to confirm removal of the selected template.
   $('#delete_btn').click ->
-    $.facebox div: '#delete_con'
+    $('.delete_hdr').html i18n.get 'opt_delete_header',
+      [templates.find('option:selected').text()]
+    $('#delete_con').modal 'show'
   # Cancel the template removal process.
-  $('.delete_no_btn').live 'click', ->
-    $(document).trigger 'close.facebox'
+  $('.delete_no_btn').on 'click', ->
+    $('#delete_con').modal 'hide'
   # Finalize the template removal.
-  $('.delete_yes_btn').live 'click', ->
+  $('.delete_yes_btn').on 'click', ->
     opt = templates.find 'option:selected'
     if opt.data('readOnly') isnt 'true'
       title = opt.text()
       opt.remove()
-      templates.change().focus()
+      templates.scrollTop(0).change().focus()
       saveTemplates()
       analytics.track 'Templates', 'Deleted', title
-    $(document).trigger 'close.facebox'
+    $('#delete_con').modal 'hide'
     updateToolbarTemplates()
   # Move the selected option down once when the *Down* control is clicked.
   $('#moveDown_btn').click ->
@@ -310,6 +314,10 @@ loadTemplateControlEvents = ->
 # Bind the event handlers required for exporting templates.
 loadTemplateExportEvents = ->
   templates = $ '#templates'
+  # Restore the previous view in the export process.
+  $('.export_back_btn').on 'click', ->
+    $('.export_con_stage1').show()
+    $('.export_con_stage2').hide()
   # Prompt the user to selected the templates to be exported.
   $('#export_btn').click ->
     list = $ '.export_con_list'
@@ -325,31 +333,34 @@ loadTemplateExportEvents = ->
       list.append $ '<option/>',
         text:  opt.text()
         value: opt.val()
-    $.facebox div: '#export_con'
+    $('#export_con').modal 'show'
   # Enable/disable the continue button depending on whether or not any
   # templates are currently selected.
-  $('.export_con_list').live 'change', ->
+  $('.export_con_list').on 'change', ->
     if $(this).find('option:selected').length > 0
       $('.export_yes_btn').removeAttr 'disabled'
     else
       $('.export_yes_btn').attr 'disabled', 'disabled'
   # Copy the text area contents to the system clipboard.
-  $('.export_copy_btn').live('click', (event) ->
+  $('.export_copy_btn').on 'click', (event) ->
+    $this = $ this
     ext.copy $('.export_content').val(), yes
-    $(this).text i18n.get 'copied'
+    $this.text i18n.get 'copied'
+    $this.delay 800
+    $this.queue ->
+      $this.text i18n.get 'copy'
+      $this.dequeue()
     event.preventDefault()
-  ).live 'mouseover', ->
-    $(this).text i18n.get 'copy'
   # Deselect all of the templates in the list.
-  $('.export_deselect_all_btn').live 'click', ->
+  $('.export_deselect_all_btn').on 'click', ->
     $('.export_con_list option').removeAttr('selected').parent().focus()
     $('.export_yes_btn').attr 'disabled', 'disabled'
   # Cancel the export process.
-  $('.export_no_btn, .export_close_btn').live 'click', (event) ->
-    $(document).trigger 'close.facebox'
+  $('.export_no_btn, .export_close_btn').on 'click', (event) ->
+    $('#export_con').modal 'hide'
     event.preventDefault()
   # Prompt the user to select a file location to save the exported data.
-  $('.export_save_btn').live 'click', ->
+  $('.export_save_btn').on 'click', ->
     $this = $ this
     str   = $this.parents('.export_con_stage2').find('.export_content').val()
     # Write the contents of the text area in to a temporary file and then
@@ -365,12 +376,12 @@ loadTemplateExportEvents = ->
           builder.append str
           fileWriter.write builder.getBlob 'application/json'
   # Select all of the templates in the list.
-  $('.export_select_all_btn').live 'click', ->
+  $('.export_select_all_btn').on 'click', ->
     $('.export_con_list option').attr('selected', 'selected').parent().focus()
     $('.export_yes_btn').removeAttr 'disabled'
   # Create the exported data based on the selected templates.
-  $('.export_yes_btn').live 'click', ->
-    $this = $(this).attr 'disabled', 'disabled'
+  $('.export_yes_btn').on 'click', ->
+    $this = $ this
     items = $this.parents('.export_con_stage1').find '.export_con_list option'
     keys  = []
     items.filter(':selected').each ->
@@ -384,7 +395,7 @@ loadTemplateImportEvents = ->
   data      = null
   templates = $ '#templates'
   # Restore the previous view in the import process.
-  $('.import_back_btn').live 'click', ->
+  $('.import_back_btn').on 'click', ->
     $('.import_con_stage1').show()
     $('.import_con_stage2, .import_con_stage3').hide()
   # Prompt the user to input/load the data to be imported.
@@ -394,22 +405,23 @@ loadTemplateImportEvents = ->
     $('.import_con_stage1').show()
     $('.import_con_stage2, .import_con_stage3').hide()
     $('.import_content').val ''
-    $('.import_error').html '&nbsp;'
-    $.facebox div: '#import_con'
+    $('.import_error').html('&nbsp;').hide()
+    $('.import_file_btn').val ''
+    $('#import_con').modal 'show'
   # Enable/disable the finalize button depending on whether or not any
   # templates are currently selected.
-  $('.import_con_list').live 'change', ->
+  $('.import_con_list').on 'change', ->
     if $(this).find('option:selected').length > 0
       $('.import_final_btn').removeAttr 'disabled'
     else
       $('.import_final_btn').attr 'disabled', 'disabled'
   # Deselect all of the templates in the list.
-  $('.import_deselect_all_btn').live 'click', ->
+  $('.import_deselect_all_btn').on 'click', ->
     $('.import_con_list option').removeAttr('selected').parent().focus()
     $('.import_final_btn').attr 'disabled', 'disabled'
   # Read the contents of the loaded file in to the text area and perform simple
   # error handling.
-  $('.import_file_btn').live 'change', (event) ->
+  $('.import_file_btn').on 'change', (event) ->
     file   = event.target.files[0]
     reader = new FileReader()
     reader.onerror = (evt) ->
@@ -421,13 +433,13 @@ loadTemplateImportEvents = ->
           message = i18n.get 'error_file_aborted'
         else
           message = i18n.get 'error_file_default'
-      $('.import_error').text message
+      $('.import_error').text(message).show()
     reader.onload = (evt) ->
+      $('.import_error').html('&nbsp;').hide()
       $('.import_content').val evt.target.result
-      $('.import_error').html '&nbsp;'
     reader.readAsText file
   # Finalize the import process.
-  $('.import_final_btn').live 'click', ->
+  $('.import_final_btn').on 'click', ->
     $this = $ this
     list  = $this.parents('.import_con_stage2').find '.import_con_list'
     list.find('option:selected').each ->
@@ -438,38 +450,41 @@ loadTemplateImportEvents = ->
         templates.append opt
       else
         existingOpt.replaceWith opt
-    $(document).trigger 'close.facebox'
+    $('#import_con').modal 'hide'
     updateToolbarTemplates()
     templates.focus()
-    saveTemplates()
+    saveTemplates yes
     if data?
       analytics.track 'Templates', 'Imported', data.version,
         data.templates.length
   # Cancel the import process.
-  $('.import_no_btn, .import_close_btn').live 'click', ->
-    $(document).trigger 'close.facebox'
+  $('.import_no_btn, .import_close_btn').on 'click', ->
+    $('#import_con').modal 'hide'
   # Paste the contents of the system clipboard in to the text area.
-  $('.import_paste_btn').live('click', ->
+  $('.import_paste_btn').on 'click', ->
+    $this = $ this
     $('.import_file_btn').val ''
     $('.import_content').val ext.paste()
-    $(this).text i18n.get 'pasted'
-  ).live 'mouseover', ->
-    $(this).text i18n.get 'paste'
+    $this.text i18n.get 'pasted'
+    $this.delay 800
+    $this.queue ->
+      $this.text i18n.get 'paste'
+      $this.dequeue()
   # Select all of the templates in the list.
-  $('.import_select_all_btn').live 'click', ->
+  $('.import_select_all_btn').on 'click', ->
     $('.import_con_list option').attr('selected', 'selected').parent().focus()
     $('.import_final_btn').removeAttr 'disabled'
   # Read the imported data and attempt to extract any valid templates and list
   # the changes to user for them to check and finalize.
-  $('.import_yes_btn').live 'click', ->
+  $('.import_yes_btn').on 'click', ->
     $this = $(this).attr 'disabled', 'disabled'
     list  = $ '.import_con_list'
     str   = $this.parents('.import_con_stage1').find('.import_content').val()
-    $('.import_error').html '&nbsp;'
+    $('.import_error').html('&nbsp;').hide()
     try
       importData = createImport str
     catch error
-      $('.import_error').text error
+      $('.import_error').text(error).show()
     if importData
       data = readImport importData
       if data.templates.length is 0
@@ -491,14 +506,34 @@ loadTemplateSaveEvents = ->
     opt.data key, switch key
       when 'enabled' then "#{@is ':checked'}"
       when 'image'   then @val()
-  , saveTemplates
+  , ->
+    utils.async saveTemplates
   bindTemplateSaveEvent "#template_content, #template_shortcut,
    #template_title", 'input', (opt, key) ->
     switch key
-      when 'content'  then opt.data key, @val()
-      when 'shortcut' then opt.data key, @val().toUpperCase().trim()
-      when 'title'    then opt.text @val().trim()
-  , saveTemplates
+      when 'content' then opt.data key, @val()
+      when 'shortcut'
+        value = @val().toUpperCase().trim()
+        if value and not isShortcutValid value
+          opt.data 'error', i18n.get 'opt_template_shortcut_invalid'
+        else
+          opt.data key, value
+      when 'title'
+        value = @val().trim()
+        if value.length is 0
+          opt.data 'error', i18n.get 'opt_template_title_invalid'
+        else
+          opt.text value
+  , (jel, opt, key) ->
+    clearErrors selector = "##{jel.attr 'id'}"
+    if opt.data 'error'
+      showErrors [
+        message:  opt.data 'error'
+        selector: selector
+      ]
+      opt.removeData 'error'
+      return
+    utils.async saveTemplates
 
 # Update the toolbar behaviour section of the options page with the current
 # settings.
@@ -603,33 +638,29 @@ loadUrlShortenerSaveEvents = ->
 
 # Update the settings with the values from the template section of the options
 # page.
-saveTemplates = ->
-  # Validate all the `option` elements that represent templates.  
-  # Any validation errors encountered are added to a unordered list which
-  # should be displayed to the user at some point if `true` is returned.
-  errors    = $ '#errors'
+saveTemplates = (updateUI) ->
+  # Validate all the `option` elements that represent templates.
+  errors    = []
   templates = []
-  # Wipe any pre-existing errors.
-  errors.remove 'li'
   # Update the settings for each template based on their corresponding options.
   $('#templates option').each ->
-    passed   = no
-    template = deriveTemplate $ this
-    if validateTemplate template, no
-      templates.push template
-      passed = yes
-    else
-      # Show the user which template failed validation.
+    $this    = $ this
+    template = deriveTemplate $this
+    errors   = validateTemplate template, no
+    return templates.push template if errors.length is 0
+    # Show the user which template failed validation.
+    if updateUI
       $this.attr 'selected', 'selected'
       $('#templates').change().focus()
-    passed
+    no
   # Determine whether or not any validation errors were encountered.
-  if errors.find('li').length is 0
+  if errors.length is 0
+    clearErrors() if updateUI
     # Ensure the data for all changes to templates are persisted.
     store.set 'templates', templates
     ext.updateTemplates()
   else
-    $.facebox div: '#message'
+    showErrors errors if updateUI
 
 # Update the existing template with information extracted from the imported
 # template provided.  
@@ -694,6 +725,15 @@ updateToolbarTemplates = ->
 # Validation functions
 # --------------------
 
+# Remove all validation errors from the fields.
+clearErrors = (selector) ->
+  if selector?
+    group = $(selector).parents('.control-group').first()
+    group.removeClass('error').find('.controls .error-message').remove()
+  else
+    $('.control-group.error').removeClass 'error'
+    $('.error-message').remove()
+
 # Indicate whether or not the specified `key` is new to this instance of
 # Template.
 isKeyNew = (key, additionalKeys = []) ->
@@ -711,6 +751,14 @@ isKeyValid = (key) ->
 isShortcutValid = (shortcut) ->
   R_VALID_SHORTCUT.test shortcut
 
+# Display all of the specified `errors` against their corresponding fields.
+showErrors = (errors) ->
+  for error in errors
+    group = $(error.selector).focus().parents('.control-group').first()
+    group.addClass('error').find('.controls').append $ '<p/>',
+      class: 'error-message help-block'
+      html:  error.message
+
 # Indicate whether or not `template` contains the required fields of the
 # correct types.
 # Perform a *soft* validation without validating the values themselves, instead
@@ -725,27 +773,28 @@ validateImportedTemplate = (template) ->
   'string'  is typeof template.title    and
   'number'  is typeof template.usage
 
-# Validate the specified `object` that represents a template.  
-# Any validation errors encountered are added to a unordered list which should
-# be displayed to the user at some point if `true` is returned.
+# Validate the specified `object` that represents a template and return any
+# validation errors that are encountered.
 validateTemplate = (object, isNew) ->
-  errors   = $ '#errors'
+  errors   = []
   template = if $.isPlainObject object then object else deriveTemplate object
-  # Create a list item for the error message with the specified `name`.
-  createError = (name) ->
-    $('<li/>', html: i18n.get name).appendTo errors
   # Only validate the key and title of user-defined templates.
   unless template.readOnly
     # Only validate keys of new templates.
     if isNew and not isKeyValid template.key
-      createError 'opt_template_key_invalid'
+      errors.push message: i18n.get 'opt_template_key_invalid'
     # Title is missing but is required.
-    createError 'opt_template_title_invalid' if template.title.length is 0
+    if template.title.length is 0
+      errors.push
+        message:  i18n.get 'opt_template_title_invalid'
+        selector: '#template_title'
   # Validate whether or not the shortcut is valid.
   if template.shortcut and not isShortcutValid template.shortcut
-    createError 'opt_template_shortcut_invalid'
+    errors.push
+      message:  i18n.get 'opt_template_shortcut_invalid'
+      selector: '#template_shortcut'
   # Indicate whether or not any validation errors were encountered.
-  errors.find('li').length is 0
+  errors
 
 # Miscellaneous functions
 # -----------------------
@@ -877,6 +926,9 @@ options = window.options =
   # This will involve inserting and configuring the UI elements as well as
   # loading the current settings.
   init: ->
+    # Add support for analytics if the user hasn't opted out.
+    analytics.add() if store.get 'analytics'
+    # Begin initialization.
     i18n.init
       footer:
         opt_footer: "#{new Date().getFullYear()}"
@@ -937,6 +989,8 @@ options = window.options =
     for loc in LOCALES when loc is uiLocale
       locale = uiLocale
       break
+    $('#template_help_btn').click ->
+      $('#template_help').modal()
     $('#template_help').load utils.url("pages/templates_#{locale}.html"), ->
       $('.template-section:first-child').click()
       $('.version-replace').text ext.version

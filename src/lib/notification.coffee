@@ -7,8 +7,9 @@
 # Private variables
 # -----------------
 
-# Easily accessible reference to the extension controller.
-{ext} = chrome.extension.getBackgroundPage()
+# Easily accessible reference to analytics, the extension controller,
+# internationalization, and storage.
+{analytics, ext, i18n, store} = chrome.extension.getBackgroundPage()
 
 # Notification page setup
 # -----------------------
@@ -20,6 +21,7 @@ notification = window.notification =
 
   # Initialize the notification page.
   init: ->
+    analytics.track 'Frames', 'Displayed', 'Notification'
     result = if ext.status then 'copy_success' else 'copy_fail'
     # Style the tip and insert a relevant internationalized string depending on
     # the outcome of the copy request or the existence of an override message.

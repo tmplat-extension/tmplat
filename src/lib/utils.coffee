@@ -126,7 +126,7 @@ analytics = window.analytics =
     _gaq.push ['_trackPageview']
     # Inject script to capture analytics.
     ga = document.createElement 'script'
-    ga.async = yes
+    ga.async = 'async'
     ga.src   = ANALYTICS_SOURCE
     script = document.getElementsByTagName('script')[0]
     script.parentNode.insertBefore ga, script
@@ -364,6 +364,17 @@ utils = window.utils =
   # Public functions
   # ----------------
 
+  # Call a function asynchronously with the arguments provided and then pass
+  # the returned value to `callback` if it was specified.
+  async: (fn, args..., callback) ->
+    if callback? and typeof callback isnt 'function'
+      args.push callback
+      callback = null
+    setTimeout ->
+      result = fn args...
+      callback? result
+    , 0
+
   # Generate a unique key based on the current time and using a randomly
   # generated hexadecimal number of the specified length.
   keyGen: (separator = '.', length = 5) ->
@@ -499,5 +510,3 @@ store.modify 'logger', (logger) ->
   logger.enabled    ?= no
   logger.level      ?= log.DEBUG
   log.logger = logger
-# Add support for analytics if the user hasn't opted out.
-analytics.add() if store.get 'analytics'

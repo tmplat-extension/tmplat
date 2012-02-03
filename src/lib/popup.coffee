@@ -7,8 +7,8 @@
 # Private variables
 # -----------------
 
-# Easily accessible reference to the extension controller.
-{ext} = chrome.extension.getBackgroundPage()
+# Easily accessible reference to analytics and the extension controller.
+{analytics, ext} = chrome.extension.getBackgroundPage()
 
 # Popup page setup
 # ----------------
@@ -20,11 +20,12 @@ popup = window.popup =
 
   # Initialize the popup page.
   init: ->
+    analytics.track 'Frames', 'Displayed', 'Popup'
     # Insert the prepared HTML in to the popup's body.
     document.body.innerHTML = ext.popupHtml
     # Calculate the widest text used by the `div` elements in the popup and
     # assign it to all of the others.
-    textItems = document.getElementsByClassName 'text'
+    textItems = document.querySelectorAll '.text'
     width     = 0
     for textItem in textItems when textItem.scrollWidth > width
       width = textItem.scrollWidth

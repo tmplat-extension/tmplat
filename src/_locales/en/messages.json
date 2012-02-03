@@ -2,117 +2,6 @@
   "app_name": {
     "message": "Template Chrome Extension"
   },
-  "confirm_delete": {
-    "message": "$O_PARA$This action is $O_BOLD$permanent$C_BOLD$ and cannot be reversed.$C_PARA$$O_PARA$Do you want to continue anyway?$C_PARA$$BUTTONS$",
-    "placeholders": {
-      "buttons": {
-        "content": "<div style=\"text-align: right\"><button class=\"delete_yes_btn\">Yes</button><button class=\"delete_no_btn\">No</button></div>"
-      },
-      "c_bold": {
-        "content": "</strong>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_bold": {
-        "content": "<strong>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "confirm_export_stage1": {
-    "message": "$O_PARA$Select the template(s) you want to export;$C_PARA$$LIST$$BUTTONS$",
-    "placeholders": {
-      "buttons": {
-        "content": "<table><tr><td style=\"width: 50%\"><button class=\"export_select_all_btn\">All</button><button class=\"export_deselect_all_btn\">None</button></td><td style=\"text-align: right\"><button class=\"export_yes_btn\" disabled=\"disabled\">Continue</button><button class=\"export_no_btn\">Cancel</button></td></tr></table>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "list": {
-        "content": "<select class=\"export_con_list\" size=\"5\" multiple></select>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "confirm_export_stage2": {
-    "message": "$O_PARA$Copy or save the following locally;$C_PARA$$TEXTAREA$$BUTTONS$",
-    "placeholders": {
-      "buttons": {
-        "content": "<table><tr><td style=\"width: 50%\"><button class=\"export_save_btn\">Save As...</button><button class=\"export_copy_btn\">Copy</button></td><td style=\"text-align: right\"><button class=\"export_close_btn\">Close</button></td></tr></table>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_para": {
-        "content": "<p>"
-      },
-      "textarea": {
-        "content": "<textarea class=\"export_content\" cols=\"38\" rows=\"6\" readonly></textarea>"
-      }
-    }
-  },
-  "confirm_import_stage1": {
-    "message": "$O_PARA$Paste or upload the your exported data;$C_PARA$$TEXTAREA$$BUTTONS$",
-    "placeholders": {
-      "buttons": {
-        "content": "<table><tr><td colspan=\"2\"><span class=\"import_error\">&nbsp;</span></td></tr><tr><td colspan=\"2\"><input class=\"import_file_btn\" type=\"file\" /></td></tr><tr><td style=\"width: 50%\"><button class=\"import_paste_btn\">Paste</button></td><td style=\"text-align: right\"><button class=\"import_yes_btn\">Continue</button><button class=\"import_no_btn\">Cancel</button></td></tr></table>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "textarea": {
-        "content": "<textarea class=\"import_content\" cols=\"38\" rows=\"6\" readonly></textarea>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "confirm_import_stage2": {
-    "message": "$O_SPAN$$COUNT$ valid template(s) were found.$C_SPAN$$O_PARA$Select those to be imported;$C_PARA$$LIST$$BUTTONS$",
-    "placeholders": {
-      "buttons": {
-        "content": "<table><tr><td style=\"width: 33%\"><button class=\"import_select_all_btn\">All</button><button class=\"import_deselect_all_btn\">None</button></td><td style=\"text-align: right\"><button class=\"import_final_btn\">Import</button><button class=\"import_back_btn\">Back</button><button class=\"import_close_btn\">Close</button></td></tr></table>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "c_span": {
-        "content": "</span>"
-      },
-      "count": {
-        "content": "<span class=\"import_count\"></span>"
-      },
-      "list": {
-        "content": "<select class=\"import_con_list\" size=\"5\" multiple></select>"
-      },
-      "o_para": {
-        "content": "<p>"
-      },
-      "o_span": {
-        "content": "<span>"
-      }
-    }
-  },
-  "confirm_import_stage3": {
-    "message": "$O_SPAN$No valid templates were found.$C_SPAN$$BUTTONS$",
-    "placeholders": {
-      "buttons": {
-        "content": "<div style=\"text-align: right\"><button class=\"import_back_btn\">Back</button><button class=\"import_close_btn\">Close</button></div>"
-      },
-      "c_span": {
-        "content": "</span>"
-      },
-      "o_span": {
-        "content": "<span>"
-      }
-    }
-  },
   "copied": {
     "message": "Copied!"
   },
@@ -477,6 +366,35 @@
       }
     }
   },
+  "opt_delete_header": {
+    "message": "Delete $1"
+  },
+  "opt_delete_wizard": {
+    "message": "$O_BODY$$O_PARA$This action is $O_BOLD$permanent$C_BOLD$ and cannot be reversed.$C_PARA$$O_PARA$Do you want to continue anyway?$C_PARA$$C_BODY$$BUTTONS$",
+    "placeholders": {
+      "buttons": {
+        "content": "<div class=\"modal-footer\"><button class=\"btn btn-danger delete_no_btn\">No</button><button class=\"btn btn-primary delete_yes_btn\">Yes</button></div>"
+      },
+      "c_body": {
+        "content": "</div>"
+      },
+      "c_bold": {
+        "content": "</strong>"
+      },
+      "c_para": {
+        "content": "</p>"
+      },
+      "o_body": {
+        "content": "<div class=\"modal-body\">"
+      },
+      "o_bold": {
+        "content": "<strong>"
+      },
+      "o_para": {
+        "content": "<p>"
+      }
+    }
+  },
   "opt_errors_header": {
     "message": "The following problem(s) need to be corrected;"
   },
@@ -485,6 +403,55 @@
     "placeholders": {
       "icon": {
         "content": "<i class=\"icon-upload\"></i>"
+      }
+    }
+  },
+  "opt_export_header": {
+    "message": "Export"
+  },
+  "opt_export_wizard_1": {
+    "message": "$O_BODY$$O_PARA$Select the template(s) to be exported.$C_PARA$$LIST$$C_BODY$$BUTTONS$",
+    "placeholders": {
+      "buttons": {
+        "content": "<div class=\"modal-footer\"><div class=\"pull-left\"><button class=\"btn export_deselect_all_btn\">None</button><button class=\"btn export_select_all_btn\">All</button></div><button class=\"btn btn-primary export_yes_btn\" disabled=\"disabled\">Continue</button><button class=\"btn btn-danger export_no_btn\">Close</button></div>"
+      },
+      "c_body": {
+        "content": "</div>"
+      },
+      "c_para": {
+        "content": "</p>"
+      },
+      "list": {
+        "content": "<select class=\"export_con_list span5\" size=\"5\" multiple></select>"
+      },
+      "o_body": {
+        "content": "<div class=\"modal-body\">"
+      },
+      "o_para": {
+        "content": "<p>"
+      }
+    }
+  },
+  "opt_export_wizard_2": {
+    "message": "$O_BODY$$O_PARA$Copy or download the template data.$C_PARA$$TEXTAREA$$C_BODY$$BUTTONS$",
+    "placeholders": {
+      "buttons": {
+        "content": "<div class=\"modal-footer\"><div class=\"pull-left\"><button class=\"btn export_save_btn\">Save As...</button><button class=\"btn export_copy_btn\">Copy</button></div><button class=\"btn export_back_btn\">Back</button><button class=\"btn btn-danger export_close_btn\">Close</button></div>"
+      },
+      "c_body": {
+        "content": "</div>"
+      },
+      "c_para": {
+        "content": "</p>"
+      },
+      "o_body": {
+        "content": "<div class=\"modal-body\">"
+      },
+      "o_para": {
+        "content": "<p>"
+      },
+      "textarea": {
+        "content": "<textarea class=\"export_content span5\" rows=\"6\" readonly></textarea>"
       }
     }
   },
@@ -507,6 +474,81 @@
     "placeholders": {
       "icon": {
         "content": "<i class=\"icon-download\"></i>"
+      }
+    }
+  },
+  "opt_import_header": {
+    "message": "Import"
+  },
+  "opt_import_wizard_1": {
+    "message": "$O_BODY$$ERROR$$O_PARA$Paste or upload the template data.$C_PARA$$TEXTAREA$$C_BODY$$BUTTONS$",
+    "placeholders": {
+      "buttons": {
+        "content": "<div class=\"modal-footer\"><div class=\"pull-left\"><input class=\"import_file_btn\" type=\"file\"><button class=\"btn import_paste_btn\">Paste</button></div><button class=\"btn btn-primary import_yes_btn\">Continue</button><button class=\"btn btn-danger import_no_btn\">Close</button></div>"
+      },
+      "c_body": {
+        "content": "</div>"
+      },
+      "c_para": {
+        "content": "</p>"
+      },
+      "error": {
+        "content": "<div class=\"import_error alert alert-error\">&nbsp;</div>"
+      },
+      "textarea": {
+        "content": "<textarea class=\"import_content span5\" rows=\"6\" readonly></textarea>"
+      },
+      "o_body": {
+        "content": "<div class=\"modal-body\">"
+      },
+      "o_para": {
+        "content": "<p>"
+      }
+    }
+  },
+  "opt_import_wizard_2": {
+    "message": "$O_BODY$$O_PARA$$COUNT$ valid template(s) were found.$C_PARA$$O_PARA$Select those to be imported;$C_PARA$$LIST$$C_BODY$$BUTTONS$",
+    "placeholders": {
+      "buttons": {
+        "content": "<div class=\"modal-footer\"><div class=\"pull-left\"><button class=\"btn import_select_all_btn\">All</button><button class=\"btn import_deselect_all_btn\">None</button></div><button class=\"btn btn-primary import_final_btn\">Import</button><button class=\"btn import_back_btn\">Back</button><button class=\"btn btn-danger import_close_btn\">Close</button></div>"
+      },
+      "c_body": {
+        "content": "</div>"
+      },
+      "c_para": {
+        "content": "</p>"
+      },
+      "count": {
+        "content": "<span class=\"import_count\"></span>"
+      },
+      "list": {
+        "content": "<select class=\"import_con_list span5\" size=\"5\" multiple></select>"
+      },
+      "o_body": {
+        "content": "<div class=\"modal-body\">"
+      },
+      "o_para": {
+        "content": "<p>"
+      }
+    }
+  },
+  "opt_import_wizard_3": {
+    "message": "$O_BODY$$O_PARA$No valid templates were found.$C_PARA$$C_BODY$$BUTTONS$",
+    "placeholders": {
+      "buttons": {
+        "content": "<div class=\"modal-footer\"><button class=\"btn btn-primary import_back_btn\">Back</button><button class=\"btn btn-danger import_close_btn\">Close</button></div>"
+      },
+      "c_body": {
+        "content": "</div>"
+      },
+      "c_para": {
+        "content": "</p>"
+      },
+      "o_body": {
+        "content": "<div class=\"modal-body\">"
+      },
+      "o_para": {
+        "content": "<p>"
       }
     }
   },
@@ -573,10 +615,10 @@
     "message": "Image"
   },
   "opt_template_shortcut_help": {
-    "message": "$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be an alphanumeric key$BREAK$(may change in the future)$C_ITEM$$O_ITEM$Doesn't have to be unique$BREAK$(but it's recommended)$C_ITEM$$O_ITEM$Where duplicated, the template with highest in the order will be activated$C_ITEM$$C_LIST$",
+    "message": "$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be an alphanumeric key$C_ITEM$$O_ITEM$Doesn't have to be unique$BREAK$(but it's recommended)$C_ITEM$$O_ITEM$Where duplicated, the first template will be activated$C_ITEM$$C_LIST$",
     "placeholders": {
       "break": {
-        "content": "<br />"
+        "content": "<br>"
       },
       "c_item": {
         "content": "</li>"

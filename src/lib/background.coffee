@@ -351,6 +351,8 @@ onRequest = (request, sender, sendResponse) ->
   data             = null
   output           = null
   popup            = chrome.extension.getViews(type: 'popup')[0]
+  popupItems       = if popup then $ '#item',    popup.document else $()
+  popupLoader      = if popup then $ '#loadDiv', popup.document else $()
   shortCalled      = no
   shortPlaceholder = "short#{utils.random 1000, 99999}"
   tab              = null
@@ -377,8 +379,8 @@ onRequest = (request, sender, sendResponse) ->
     # If the popup is currently displayed, hide the template list and show a
     # loading animation.
     if popup
-      $('#item', popup.document).hide()
-      $('#loadDiv', popup.document).show()
+      popupItems.hide().delay 500
+      popupLoader.show().delay 500
     # Attempt to derive the contextual template data.
     try
       switch request.type
@@ -407,10 +409,13 @@ onRequest = (request, sender, sendResponse) ->
         # If any `short` tags are found and replaced, the URL shortener service
         # needs to be called in order to replace the placeholder with the real
         # short URL.
-        if shortCalled then runner.next() else runner.finish
-          contents: output
-          success:  yes
-          template: template
+        if shortCalled
+          runner.next()
+        else
+          runner.finish
+            contents: output
+            success:  yes
+            template: template
       else
         # Display the *empty contents* error message if the contents of the
         # template itself is empty.
@@ -463,8 +468,10 @@ onRequest = (request, sender, sendResponse) ->
         if store.get 'toolbar.close'
           popup.close()
         else
-          $('#loadDiv', popup.document).hide()
-          $('#item', popup.document).show()
+          popupLoader.queue ->
+            popupLoader.hide().dequeue()
+          popupItems.queue ->
+            popupItems.show().dequeue()
 
 # Display a desktop notification informing the user on whether or not the copy
 # request was successful.  
@@ -483,8 +490,12 @@ showNotification = ->
     if store.get 'toolbar.close'
       popup.close()
     else
-      $('#loadDiv', popup.document).hide()
-      $('#item', popup.document).show()
+      popupItems  = $ '#item',    popup.document
+      popupLoader = $ '#loadDiv', popup.document
+      popupLoader.queue ->
+        popupLoader.hide().dequeue()
+      popupItems.queue ->
+        popupItems.show().dequeue()
 
 # Update the statistical information.
 updateStatistics = ->
@@ -1174,6 +1185,9 @@ ext = window.ext =
   # This will involve initializing the settings and adding the request
   # listeners.
   init: ->
+    # Add support for analytics if the user hasn't opted out.
+    analytics.add() if store.get 'analytics'
+    # Begin initialization.
     store.init
       anchor:        {}
       notifications: {}

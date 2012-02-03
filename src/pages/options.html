@@ -7,19 +7,32 @@
     <style type="text/css">
       body {padding-top: 60px; padding-bottom: 40px;}
       a {cursor: pointer;}
-      #message {display: none;}
       .config-expand {display: none;}
       .config-expand a {cursor: pointer;}
-      /*.import_con_list, .export_con_list {width: 100%;}
-      .import_count {font-weight: bold;}
-      .import_content, .export_content {width: 100%;}
-      .import_error {color: #C00; font-style: italic;}*/
-      #template_content {resize: vertical;}
+      .import_error {margin-bottom: 8px;}
+      .import_content, .export_content {max-height: 284px;}
+      textarea {resize: vertical;}
       #template_image_preview {margin-left: 10px;}
       #template_shortcut {text-transform: uppercase;}
       #googlDeauthorize_btn {display: none;}
       #moveDown_btn, #moveUp_btn {display: block; margin-top: 11px;}
-      .form-vertical .control-group > label {padding-top: 5px;}
+      .form-vertical .control-group > label {padding-top: 6px;}
+      .modal-footer input[type="file"] {float: right; margin-left: 5px; margin-bottom: 0;}
+      .input-prepend, .input-append {margin-bottom: 0;}
+      .error-message {margin-top: 0;}
+      input[type="file"]::-webkit-file-upload-button {display: inline-block; padding: 4px 10px 4px; font-size: 13px; line-height: 18px; color: #333333; text-align: center; text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75); background-color: #fafafa; background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), color-stop(25%, #ffffff), to(#e6e6e6)); background-image: -webkit-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6); background-image: -moz-linear-gradient(top, #ffffff, #ffffff 25%, #e6e6e6); background-image: -ms-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6); background-image: -o-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6); background-image: linear-gradient(#ffffff, #ffffff 25%, #e6e6e6); background-repeat: no-repeat; filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e6e6e6', GradientType=0); border: 1px solid #ccc; border-bottom-color: #bbb; -webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px; -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2),0 1px 2px rgba(0, 0, 0, 0.05); -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2),0 1px 2px rgba(0, 0, 0, 0.05); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2),0 1px 2px rgba(0, 0, 0, 0.05); cursor: pointer; *margin-left: .3em;}
+      input[type="file"]:first-child::-webkit-file-upload-button {*margin-left: 0;}
+      input[type="file"]::-webkit-file-upload-button:hover {color: #333333; text-decoration: none; background-color: #e6e6e6; background-position: 0 -15px; -webkit-transition: background-position 0.1s linear; -moz-transition: background-position 0.1s linear; -ms-transition: background-position 0.1s linear; -o-transition: background-position 0.1s linear; transition: background-position 0.1s linear;}
+      input[type="file"]::-webkit-file-upload-button:focus {outline: thin dotted; outline: 5px auto -webkit-focus-ring-color; outline-offset: -2px;}
+      input[type="file"]:disabled::-webkit-file-upload-button {cursor: efault; background-image: none; background-color: #e6e6e6; opacity: 0.65; filter:alpha(opacity=65); -webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none;}
+      .popover-content > p > p {margin-bottom: 5px;}
+      .popover-content > p > p:last-child {margin-bottom: 0;}
+      @media (max-width: 768px) {
+        body {padding-top: 0;}
+      }
+      @media (min-width: 768px) and (max-width: 980px) {
+        body {padding-top: 0;}
+      }
       /* TODO: Remove */
       .help {display: none;}
     </style>
@@ -39,21 +52,23 @@
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
           <a class="brand" href="http://neocotic.com/template" target="_blank" i18n-content="name"></a>
-          <ul class="nav">
-            <li><a id="general_nav" tabify="#general_tab" i18n-content="opt_general_header"></a></li>
-            <li><a id="templates_nav" tabify="#templates_tab" i18n-content="opt_template_header"></a></li>
-            <li><a id="shorteners_nav" tabify="#shorteners_tab" i18n-content="opt_url_shortener_header"></a></li>
-          </ul>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li><a id="general_nav" tabify="#general_tab" i18n-content="opt_general_header"></a></li>
+              <li><a id="templates_nav" tabify="#templates_tab" i18n-content="opt_template_header"></a></li>
+              <li><a id="shorteners_nav" tabify="#shorteners_tab" i18n-content="opt_url_shortener_header"></a></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
     <div class="container">
-      <div id="message" class="alert alert-block alert-error">
-        <a class="close" data-dismiss="alert">&times;</a>
-        <h4 class="alert-heading" i18n-content="opt_errors_header"></h4>
-        <ul id="errors"></ul>
-      </div>
       <div id="general_tab" class="tab">
         <div class="row">
           <div class="span12">
@@ -101,8 +116,10 @@
                       <input class="span1" id="notificationDuration" max="60" min="0" size="1" step="1" type="number">
                       <span class="add-on" i18n-content="opt_notification_duration_add_on_text"></span>
                     </label>
-                    <span i18n-content="opt_notification_duration_text"></span>
-                    <p class="help-block" i18n-content="opt_notification_duration_sub_text"></p>
+                    <label for="notificationDuration">
+                      <span i18n-content="opt_notification_duration_text"></span>
+                      <p class="help-block" i18n-content="opt_notification_duration_sub_text"></p>
+                    </label>
                   </div>
                 </div>
               </fieldset>
@@ -193,76 +210,58 @@
             <form class="form-vertical">
               <fieldset>
                 <legend i18n-content="opt_template_header"></legend>
-                <div class="row" style="padding-top: 18px">
-                  <div class="span4 control-group">
+                <div class="row control-group" style="padding-top: 18px">
+                  <div class="span4">
                     <select class="span4" id="templates" size="5"></select>
                   </div>
-                  <div class="span8 control-group">
+                  <div class="span8">
                     <button id="moveUp_btn" class="btn"><i class="icon-arrow-up"></i></button>
                     <button id="moveDown_btn" class="btn"><i class="icon-arrow-down"></i></button>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="span1 control-group">
-                    <label class="control-label" for="template_title" i18n-content="opt_template_title_label"></label>
+                <div class="row control-group">
+                  <label class="span1 control-label" for="template_title" i18n-content="opt_template_title_label"></label>
+                  <div class="span3 controls">
+                    <input id="template_title" class="span3 read-only" type="text" maxlength="32">
                   </div>
-                  <div class="span3 control-group">
-                    <div class="controls">
-                      <input id="template_title" class="span3 read-only" type="text" maxlength="32">
-                    </div>
-                  </div>
-                  <div class="span8 control-group">
+                  <div class="span8">
                     <a class="btn btn-info" popover="opt_template_title_help" i18n-values="title:opt_template_title_label"><i class="icon-question-sign icon-white"></i></a>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="span1 control-group">
-                    <label class="control-label" for="template_image" i18n-content="opt_template_image_label"></label>
-                  </div>
-                  <div class="span11 control-group">
-                    <div class="controls">
-                      <select id="template_image" class="span2"></select>
-                      <img id="template_image_preview" width="16" height="16">
-                    </div>
+                <div class="row control-group">
+                  <label class="span1 control-label" for="template_image" i18n-content="opt_template_image_label"></label>
+                  <div class="span11 controls">
+                    <select id="template_image" class="span2"></select>
+                    <img id="template_image_preview" width="16" height="16">
                   </div>
                 </div>
-                <div class="row">
-                  <div class="span1 control-group">
-                    <label class="control-label" for="template_shortcut" i18n-content="opt_template_shortcut_label"></label>
-                  </div>
-                  <div class="span3 control-group">
-                    <div class="controls">
-                      <div class="input-prepend">
-                        <span class="add-on" id="template_shortcut_modifier"></span>
-                        <input class="span1" id="template_shortcut" type="text" maxlength="1">
-                      </div>
+                <div class="row control-group">
+                  <label class="span1 control-label" for="template_shortcut" i18n-content="opt_template_shortcut_label"></label>
+                  <div class="span3 controls">
+                    <div class="input-prepend">
+                      <span class="add-on" id="template_shortcut_modifier"></span>
+                      <input class="span1" id="template_shortcut" type="text" maxlength="1">
                     </div>
                   </div>
-                  <div class="span8 control-group">
+                  <div class="span8">
                     <a class="btn btn-info" popover="opt_template_shortcut_help" i18n-values="title:opt_template_shortcut_label"><i class="icon-question-sign icon-white"></i></a>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="span1 control-group">
-                    <label class="control-label" for="template_enabled" i18n-content="opt_template_enabled_label"></label>
-                  </div>
-                  <div class="span11 control-group">
-                    <div class="controls">
-                      <label class="checkbox">
-                        <input type="checkbox" id="template_enabled">
-                        <span i18n-content="opt_template_enabled_text"></span>
-                      </label>
-                    </div>
+                <div class="row control-group">
+                  <label class="span1 control-label" for="template_enabled" i18n-content="opt_template_enabled_label"></label>
+                  <div class="span11 controls">
+                    <label class="checkbox">
+                      <input type="checkbox" id="template_enabled">
+                      <span i18n-content="opt_template_enabled_text"></span>
+                    </label>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="span4 control-group">
-                    <div class="controls">
-                      <textarea id="template_content" class="read-only span4" rows="5" spellcheck="false" i18n-values="placeholder:opt_template_content_label"></textarea>
-                    </div>
+                <div class="row control-group">
+                  <div class="span4 controls">
+                    <textarea id="template_content" class="span4 read-only" rows="5" spellcheck="false" i18n-values="placeholder:opt_template_content_label"></textarea>
                   </div>
-                  <div class="span8 control-group">
-                    <a class="btn btn-info" popover="opt_template_content_help" i18n-values="title:opt_template_content_label"><i class="icon-question-sign icon-white"></i></a>
+                  <div class="span8">
+                    <a id="template_help_btn" class="btn btn-info"><i class="icon-question-sign icon-white"></i></a>
                   </div>
                 </div>
                 <div class="form-actions">
@@ -272,15 +271,31 @@
                   <button id="add_btn" class="btn btn-success" i18n-content="opt_add_button"></button>
                 </div>
               </fieldset>
-              <div id="import_con" class="hide">
-                <div class="import_con_stage1" i18n-content="confirm_import_stage1"></div>
-                <div class="import_con_stage2" i18n-content="confirm_import_stage2"></div>
-                <div class="import_con_stage3" i18n-content="confirm_import_stage3"></div>
+              <div id="delete_con" class="hide modal">
+                <div class="modal-header">
+                  <a class="close" data-dismiss="modal">&times;</a>
+                  <h3 class="delete_hdr"></h3>
+                </div>
+                <div i18n-content="opt_delete_wizard"></div>
               </div>
-              <div id="export_con" class="hide">
-                <div class="export_con_stage1" i18n-content="confirm_export_stage1"></div>
-                <div class="export_con_stage2" i18n-content="confirm_export_stage2"></div>
+              <div id="import_con" class="hide modal">
+                <div class="modal-header">
+                  <a class="close" data-dismiss="modal">&times;</a>
+                  <h3 i18n-content="opt_import_header"></h3>
+                </div>
+                <div class="import_con_stage1" i18n-content="opt_import_wizard_1"></div>
+                <div class="import_con_stage2" i18n-content="opt_import_wizard_2"></div>
+                <div class="import_con_stage3" i18n-content="opt_import_wizard_3"></div>
               </div>
+              <div id="export_con" class="hide modal">
+                <div class="modal-header">
+                  <a class="close" data-dismiss="modal">&times;</a>
+                  <h3 i18n-content="opt_export_header"></h3>
+                </div>
+                <div class="export_con_stage1" i18n-content="opt_export_wizard_1"></div>
+                <div class="export_con_stage2" i18n-content="opt_export_wizard_2"></div>
+              </div>
+              <div id="template_help" class="hide modal"></div>
             </form>
           </div>
         </div>
