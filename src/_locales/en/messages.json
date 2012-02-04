@@ -65,205 +65,6 @@
   "extension": {
     "message": "Extension"
   },
-  "help_bitlyApiKey": {
-    "message": "$O_PARA$The $API_ABBR$ key allows $O_BOLD$Template$C_BOLD$ to shorten links via $O_BOLD$bit.ly$C_BOLD$ on your behalf.$C_PARA$$O_PARA$$O_LINK_1$Get your API key$C_LINK$$C_PARA$",
-    "placeholders": {
-      "api_abbr": {
-        "content": "<abbr title=\"Application Programming Interface\">API</abbr>"
-      },
-      "c_bold": {
-        "content": "</strong>"
-      },
-      "c_link": {
-        "content": "</a>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_bold": {
-        "content": "<strong>"
-      },
-      "o_link_1": {
-        "content": "<a href=\"http://bit.ly/a/your_api_key\" target=\"_blank\">"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_bitlyUsername": {
-    "message": "$O_PARA$This is the username provided to you when you registered your $O_LINK_1$bit.ly account$C_LINK$.$C_PARA$$O_PARA$Haven't registered with $O_BOLD$bit.ly$C_BOLD$?$C_PARA$$O_PARA$$O_LINK_2$Sign up now$C_LINK$$C_PARA$",
-    "placeholders": {
-      "c_bold": {
-        "content": "</strong>"
-      },
-      "c_link": {
-        "content": "</a>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_bold": {
-        "content": "<strong>"
-      },
-      "o_link_1": {
-        "content": "<a href=\"http://bit.ly/a/account\" target=\"_blank\">"
-      },
-      "o_link_2": {
-        "content": "<a href=\"http://bit.ly/a/sign_up\" target=\"_blank\">"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_googlOauth": {
-    "message": "$O_PARA$$O_LINK_1$OAuth$C_LINK$ is an open protocol that aims to standardize the way desktop and web applications access a user's private data. OAuth provides a mechanism for users to grant access to private data without sharing their private credentials (username/password).$C_PARA$$O_PARA$$O_BOLD$Template$C_BOLD$ uses OAuth to shorten links via $O_BOLD$goo.gl$C_BOLD$ on your behalf.$C_PARA$$O_PARA$If you have previously attempted to authorize $O_BOLD$Template$C_BOLD$ you can undo this locally by clicking the $O_EMPH$Revoke Access$C_EMPH$ button.$C_PARA$",
-    "placeholders": {
-      "c_bold": {
-        "content": "</strong>"
-      },
-      "c_emph": {
-        "content": "</em>"
-      },
-      "c_link": {
-        "content": "</a>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_bold": {
-        "content": "<strong>"
-      },
-      "o_emph": {
-        "content": "<em>"
-      },
-      "o_link_1": {
-        "content": "<a href=\"http://oauth.net\" target=\"_blank\">"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_template_enabled": {
-    "message": "$O_PARA$This indicates whether or not it will appear in the context menu and the drop-down.$C_PARA$",
-    "placeholders": {
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_template_image": {
-    "message": "$O_PARA$This image is displayed next to the template in the drop-down.$C_PARA$",
-    "placeholders": {
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_yourlsCredentials": {
-    "message": "$O_PARA$Both the username and password are only required if the $O_BOLD$YOURLS$C_BOLD$ installation is private $O_EMPH$and$C_EMPH$ you are $O_EMPH$not$C_EMPH$ using the $O_LINK_1$passwordless API$C_LINK$.$C_PARA$$O_PARA$$O_LINK_2$See documentation$C_LINK$$C_PARA$",
-    "placeholders": {
-      "c_bold": {
-        "content": "</strong>"
-      },
-      "c_emph": {
-        "content": "</em>"
-      },
-      "c_link": {
-        "content": "</a>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_bold": {
-        "content": "<strong>"
-      },
-      "o_emph": {
-        "content": "<em>"
-      },
-      "o_link_1": {
-        "content": "<a href=\"http://code.google.com/p/yourls/wiki/PasswordlessAPI\" target=\"_blank\">"
-      },
-      "o_link_2": {
-        "content": "<a href=\"http://yourls.org/#Config\" target=\"_blank\">"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_yourlsSignature": {
-    "message": "$O_PARA$This is required if only if the $O_BOLD$YOURLS$C_BOLD$ installation is private $O_EMPH$and$C_EMPH$ you $O_EMPH$are$C_EMPH$ using the $O_LINK_1$passwordless API$C_LINK$.$C_PARA$",
-    "placeholders": {
-      "c_bold": {
-        "content": "</strong>"
-      },
-      "c_emph": {
-        "content": "</em>"
-      },
-      "c_link": {
-        "content": "</a>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_bold": {
-        "content": "<strong>"
-      },
-      "o_emph": {
-        "content": "<em>"
-      },
-      "o_link_1": {
-        "content": "<a href=\"http://code.google.com/p/yourls/wiki/PasswordlessAPI\" target=\"_blank\">"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
-  },
-  "help_yourlsUrl": {
-    "message": "$O_PARA$The $URL_ABBR$ to the $API_ABBR$ of the $O_BOLD$YOURLS$C_BOLD$ installation (e.g. $O_CODE$http://exam.pl/yourls-api.php$C_CODE$).$C_PARA$$O_PARA$$O_LINK_1$See documentation$C_LINK$$C_PARA$",
-    "placeholders": {
-      "api_abbr": {
-        "content": "<abbr title=\"Application Programming Interface\">API</abbr>"
-      },
-      "c_bold": {
-        "content": "</strong>"
-      },
-      "c_code": {
-        "content": "</code>"
-      },
-      "c_link": {
-        "content": "</a>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_bold": {
-        "content": "<strong>"
-      },
-      "o_code": {
-        "content": "<code>"
-      },
-      "o_link_1": {
-        "content": "<a href=\"http://yourls.org/#Config\" target=\"_blank\">"
-      },
-      "o_para": {
-        "content": "<p>"
-      },
-      "url_abbr": {
-        "content": "<abbr title=\"Uniform Resource Locator\">URL</abbr>"
-      }
-    }
-  },
   "name": {
     "message": "Template"
   },
@@ -740,7 +541,21 @@
   "opt_top_button": {
     "message": "Back to top"
   },
-  "opt_url_shortener_api_key_text": {
+  "opt_url_shortener_api_key_bitly_sub_text": {
+    "message": "$O_LINK$Get your $API_ABBR$ key$C_LINK$",
+    "placeholders": {
+      "api_abbr": {
+        "content": "<abbr title=\"Application Programming Interface\">API</abbr>"
+      },
+      "c_link": {
+        "content": "</a>"
+      },
+      "o_link": {
+        "content": "<a href=\"http://bit.ly/a/your_api_key\" target=\"_blank\">"
+      }
+    }
+  },
+  "opt_url_shortener_api_key_label": {
     "message": "$API_ABBR$ Key",
     "placeholders": {
       "api_abbr": {
@@ -751,25 +566,58 @@
   "opt_url_shortener_config_header": {
     "message": "Configuration"
   },
-  "opt_url_shortener_enabled_header": {
-    "message": "Enabled"
-  },
   "opt_url_shortener_header": {
     "message": "URL Shorteners"
   },
-  "opt_url_shortener_name_header": {
-    "message": "Name"
+  "opt_url_shortener_oauth_enabled_googl_help": {
+    "message": "$O_BOLD$OAuth$C_BOLD$ is an open protocol that aims to standardize the way desktop and web applications access a user's private data. OAuth provides a mechanism for users to grant access to private data without sharing their private credentials (username/password).",
+    "placeholders": {
+      "c_bold": {
+        "content": "</strong>"
+      },
+      "o_bold": {
+        "content": "<strong>"
+      }
+    }
   },
-  "opt_url_shortener_oauth_enable_text": {
-    "message": "Enable OAuth"
+  "opt_url_shortener_oauth_enabled_googl_text": {
+    "message": "Associate $O_BOLD$goo.gl$C_BOLD$ links with my account",
+    "placeholders": {
+      "c_bold": {
+        "content": "</strong>"
+      },
+      "o_bold": {
+        "content": "<strong>"
+      }
+    }
   },
-  "opt_url_shortener_password_text": {
+  "opt_url_shortener_oauth_enabled_header": {
+    "message": "OAuth"
+  },
+  "opt_url_shortener_oauth_enabled_label": {
+    "message": "OAuth"
+  },
+  "opt_url_shortener_password_label": {
     "message": "Password"
   },
-  "opt_url_shortener_signature_text": {
+  "opt_url_shortener_service_header": {
+    "message": "Service"
+  },
+  "opt_url_shortener_signature_label": {
     "message": "Signature"
   },
-  "opt_url_shortener_url_text": {
+  "opt_url_shortener_signature_yourls_sub_text": {
+    "message": "Don't know where this is? $O_LINK$Read this article$C_LINK$",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>"
+      },
+      "o_link": {
+        "content": "<a href=\"http://code.google.com/p/yourls/wiki/PasswordlessAPI\" target=\"_blank\">"
+      }
+    }
+  },
+  "opt_url_shortener_url_label": {
     "message": "$URL_ABBR$",
     "placeholders": {
       "url_abbr": {
@@ -777,8 +625,68 @@
       }
     }
   },
-  "opt_url_shortener_username_text": {
+  "opt_url_shortener_url_yourls_sub_text": {
+    "message": "For example; $O_CODE$http://exam.pl/yourls-api.php$C_CODE$",
+    "placeholders": {
+      "c_code": {
+        "content": "</code>"
+      },
+      "o_code": {
+        "content": "<code>"
+      }
+    }
+  },
+  "opt_url_shortener_username_bitly_sub_text": {
+    "message": "Haven't registered with $O_BOLD$bit.ly$C_BOLD$? $O_LINK$Sign up now$C_LINK$",
+    "placeholders": {
+      "c_bold": {
+        "content": "</strong>"
+      },
+      "c_link": {
+        "content": "</a>"
+      },
+      "o_bold": {
+        "content": "<strong>"
+      },
+      "o_link": {
+        "content": "<a href=\"http://bit.ly/a/sign_up\" target=\"_blank\">"
+      }
+    }
+  },
+  "opt_url_shortener_username_label": {
     "message": "Username"
+  },
+  "opt_url_shortener_username_yourls_help": {
+    "message": "$O_PARA$Both the username and password are only required if the $O_BOLD$YOURLS$C_BOLD$ installation is private $O_EMPH$and$C_EMPH$ you are $O_EMPH$not$C_EMPH$ using the $O_LINK_1$passwordless API$C_LINK$.$C_PARA$$O_PARA$$O_LINK_2$See documentation$C_LINK$$C_PARA$",
+    "placeholders": {
+      "c_bold": {
+        "content": "</strong>"
+      },
+      "c_emph": {
+        "content": "</em>"
+      },
+      "c_link": {
+        "content": "</a>"
+      },
+      "c_para": {
+        "content": "</p>"
+      },
+      "o_bold": {
+        "content": "<strong>"
+      },
+      "o_emph": {
+        "content": "<em>"
+      },
+      "o_link_1": {
+        "content": "<a href=\"http://code.google.com/p/yourls/wiki/PasswordlessAPI\" target=\"_blank\">"
+      },
+      "o_link_2": {
+        "content": "<a href=\"http://yourls.org/#Config\" target=\"_blank\">"
+      },
+      "o_para": {
+        "content": "<p>"
+      }
+    }
   },
   "paste": {
     "message": "Paste"

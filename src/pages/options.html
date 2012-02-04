@@ -7,19 +7,29 @@
     <style type="text/css">
       body {padding-top: 60px; padding-bottom: 40px;}
       a {cursor: pointer;}
+      .left {text-align: left;}
+      .center {text-align: center;}
+      .right {text-align: right;}
+      .top {vertical-align: top;}
+      .middle {vertical-align: middle;}
+      .bottom {vertical-align: bottom;}
       .config-expand {display: none;}
       .config-expand a {cursor: pointer;}
       .import_error {margin-bottom: 8px;}
       .import_content, .export_content {max-height: 284px;}
       textarea {resize: vertical;}
+      #template_help > .tabbable .nav {margin-bottom: 0;}
       #template_image_preview {margin-left: 10px;}
       #template_shortcut {text-transform: uppercase;}
       #googlDeauthorize_btn {display: none;}
       #moveDown_btn, #moveUp_btn {display: block; margin-top: 11px;}
-      .form-vertical .control-group > label {padding-top: 6px;}
+      .form-vertical .control-group > label, .control-label {padding-top: 6px;}
+      #shorteners_tab .form-horizontal .control-group > label {width: 100px;}
+      #shorteners_tab .form-horizontal .controls  {margin-left: 40px;}
       .modal-footer input[type="file"] {float: right; margin-left: 5px; margin-bottom: 0;}
       .input-prepend, .input-append {margin-bottom: 0;}
       .error-message {margin-top: 0;}
+      pre {overflow: auto; white-space: pre;}
       input[type="file"]::-webkit-file-upload-button {display: inline-block; padding: 4px 10px 4px; font-size: 13px; line-height: 18px; color: #333333; text-align: center; text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75); background-color: #fafafa; background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), color-stop(25%, #ffffff), to(#e6e6e6)); background-image: -webkit-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6); background-image: -moz-linear-gradient(top, #ffffff, #ffffff 25%, #e6e6e6); background-image: -ms-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6); background-image: -o-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6); background-image: linear-gradient(#ffffff, #ffffff 25%, #e6e6e6); background-repeat: no-repeat; filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e6e6e6', GradientType=0); border: 1px solid #ccc; border-bottom-color: #bbb; -webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px; -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2),0 1px 2px rgba(0, 0, 0, 0.05); -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2),0 1px 2px rgba(0, 0, 0, 0.05); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2),0 1px 2px rgba(0, 0, 0, 0.05); cursor: pointer; *margin-left: .3em;}
       input[type="file"]:first-child::-webkit-file-upload-button {*margin-left: 0;}
       input[type="file"]::-webkit-file-upload-button:hover {color: #333333; text-decoration: none; background-color: #e6e6e6; background-position: 0 -15px; -webkit-transition: background-position 0.1s linear; -moz-transition: background-position 0.1s linear; -ms-transition: background-position 0.1s linear; -o-transition: background-position 0.1s linear; transition: background-position 0.1s linear;}
@@ -27,17 +37,15 @@
       input[type="file"]:disabled::-webkit-file-upload-button {cursor: efault; background-image: none; background-color: #e6e6e6; opacity: 0.65; filter:alpha(opacity=65); -webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none;}
       .popover-content > p > p {margin-bottom: 5px;}
       .popover-content > p > p:last-child {margin-bottom: 0;}
+      .popover-inner {text-align: left;}
       @media (max-width: 768px) {
         body {padding-top: 0;}
       }
       @media (min-width: 768px) and (max-width: 980px) {
         body {padding-top: 0;}
       }
-      /* TODO: Remove */
-      .help {display: none;}
     </style>
     <script src="../vendor/jquery.min.js"></script>
-    <script src="../vendor/facebox.min.js"></script>
     <script src="../vendor/date.min.js"></script>
     <script src="../vendor/bootstrap.min.js"></script>
     <script src="../lib/utils.js"></script>
@@ -261,7 +269,7 @@
                     <textarea id="template_content" class="span4 read-only" rows="5" spellcheck="false" i18n-values="placeholder:opt_template_content_label"></textarea>
                   </div>
                   <div class="span8">
-                    <a id="template_help_btn" class="btn btn-info"><i class="icon-question-sign icon-white"></i></a>
+                    <a id="template_help_btn" class="btn btn-info" i18n-values="title:opt_help_text"><i class="icon-question-sign icon-white"></i></a>
                   </div>
                 </div>
                 <div class="form-actions">
@@ -301,151 +309,127 @@
         </div>
       </div>
       <div id="shorteners_tab" class="tab">
-        <div id="shorteners_sct" class="section">
-          <h4 id="shorteners_hdr" i18n-content="opt_url_shortener_header"></h4>
-          <div class="contents">
-            <div>
-              <table class="styled">
-                <thead>
-                  <tr>
-                    <th id="shorteners_enabled_hdr" class="center" style="width: 12%" i18n-content="opt_url_shortener_enabled_header"></th>
-                    <th id="shorteners_name_hdr" style="width: 23%" i18n-content="opt_url_shortener_name_header"></th>
-                    <th id="shorteners_config_hdr" style="width: 65%" i18n-content="opt_url_shortener_config_header"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr class="top">
-                    <td class="center"><input type="radio" name="enabled_shortener" id="bitly" /></td>
-                    <td><a href="http://bit.ly" target="_blank">bit.ly</a></td>
-                    <td>
-                      <div class="config">
-                        <div class="config-expand">
-                          <a i18n-content="opt_config_expand_text"></a>
-                        </div>
-                        <div class="config-details">
-                          <table>
-                            <tr>
-                              <td>
-                                <label for="bitlyUsername">
-                                  <span id="bitlyUsername_txt" i18n-content="opt_url_shortener_username_text"></span>
-                                </label>
-                                <a facebox="#bitlyUsername_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
-                                <div id="bitlyUsername_help" class="help" i18n-content="help_bitlyUsername"></div>
-                              </td>
-                              <td>
-                                <input type="text" id="bitlyUsername" size="28" />
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <label for="bitlyApiKey">
-                                  <span id="bitlyApiKey_txt" i18n-content="opt_url_shortener_api_key_text"></span>
-                                </label>
-                                <a facebox="#bitlyApiKey_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
-                                <div id="bitlyApiKey_help" class="help" i18n-content="help_bitlyApiKey"></div>
-                              </td>
-                              <td>
-                                <input type="password" id="bitlyApiKey" size="28" />
-                              </td>
-                            </tr>
-                          </table>
-                        </div>
+        <div class="row">
+          <div class="span12">
+            <form class="form-horizontal">
+              <fieldset>
+                <legend i18n-content="opt_url_shortener_header"></legend>
+                <div class="row" style="padding-top: 18px">
+                  <div class="span2 center">
+                    <strong i18n-content="opt_url_shortener_service_header"></strong>
+                  </div>
+                  <div class="span10">
+                    <strong i18n-content="opt_url_shortener_config_header"></strong>
+                  </div>
+                </div>
+                <div class="row control-group">
+                  <div class="span2">
+                    <div class="row control-group">
+                      <div class="span1 controls">
+                        <label class="radio">
+                          <input type="radio" name="enabled_shortener" id="bitly">
+                          <a href="http://bit.ly" target="_blank">bit.ly</a>
+                        </label>
                       </div>
-                    </td>
-                  </tr>
-                  <tr class="top">
-                    <td class="center"><input type="radio" name="enabled_shortener" id="googl" /></td>
-                    <td><a href="http://goo.gl" target="_blank">goo.gl</a></td>
-                    <td>
-                      <div class="config">
-                        <div class="config-expand">
-                          <a i18n-content="opt_config_expand_text"></a>
-                        </div>
-                        <div class="config-details">
-                          <label>
-                            <input type="checkbox" id="googlOauth" />
-                            <span id="googlOauth_txt" i18n-content="opt_url_shortener_oauth_enable_text"></span>
-                          </label>
-                          <a facebox="#googlOauth_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
-                          <div id="googlOauth_help" class="help" i18n-content="help_googlOauth"></div>
-                          <div>
-                            <button id="googlDeauthorize_btn" i18n-content="opt_deauthorize_button"></button>
-                          </div>
-                        </div>
+                    </div>
+                  </div>
+                  <div class="span10">
+                    <div class="row control-group">
+                      <label class="span1 control-label" for="bitlyUsername" i18n-content="opt_url_shortener_username_label"></label>
+                      <div class="span4 controls">
+                        <input type="text" id="bitlyUsername" class="span3">
+                        <p class="help-block" i18n-content="opt_url_shortener_username_bitly_sub_text"></p>
                       </div>
-                    </td>
-                  </tr>
-                  <tr class="top">
-                    <td class="center"><input type="radio" name="enabled_shortener" id="yourls" /></td>
-                    <td><a href="http://yourls.org" target="_blank">YOURLS</a></td>
-                    <td>
-                      <div class="config">
-                        <div class="config-expand">
-                          <a i18n-content="opt_config_expand_text"></a>
-                        </div>
-                        <div class="config-details">
-                          <table>
-                            <tr>
-                              <td>
-                                <label for="yourlsUrl">
-                                  <span id="yourlsUrl_txt" i18n-content="opt_url_shortener_url_text"></span>
-                                </label>
-                                <a facebox="#yourlsUrl_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
-                                <div id="yourlsUrl_help" class="help" i18n-content="help_yourlsUrl"></div>
-                              </td>
-                              <td>
-                                <input type="url" id="yourlsUrl" size="28" />
-                              </td>
-                            </tr>
-                            <tr>
-                              <td colspan="2" class="config-divider"></td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <label for="yourlsUsername">
-                                  <span id="yourlsUsername_txt" i18n-content="opt_url_shortener_username_text"></span>
-                                </label>
-                                <a facebox="#yourlsCredentials_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
-                                <div id="yourlsCredentials_help" class="help" i18n-content="help_yourlsCredentials"></div>
-                              </td>
-                              <td>
-                                <input type="text" id="yourlsUsername" size="28" />
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <label for="yourlsPassword">
-                                  <span id="yourlsPassword_txt" i18n-content="opt_url_shortener_password_text"></span>
-                                </label>
-                                <a facebox="#yourlsCredentials_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
-                              </td>
-                              <td>
-                                <input type="password" id="yourlsPassword" size="28" />
-                              </td>
-                            </tr>
-                            <tr>
-                              <td id="yourls_or_txt" colspan="2" class="bold center" i18n-content="opt_or_text"></td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <label for="yourlsSignature">
-                                  <span id="yourlsSignature_txt" i18n-content="opt_url_shortener_signature_text"></span>
-                                </label>
-                                <a facebox="#yourlsSignature_help" tabindex="-1" i18n-values="title:opt_help_text"><img alt="?" src="../images/help.png" /></a>
-                                <div id="yourlsSignature_help" class="help" i18n-content="help_yourlsSignature"></div>
-                              </td>
-                              <td>
-                                <input type="password" id="yourlsSignature" size="28" />
-                              </td>
-                            </tr>
-                          </table>
-                        </div>
+                    </div>
+                    <div class="row control-group">
+                      <label class="span1 control-label" for="bitlyApiKey" i18n-content="opt_url_shortener_api_key_label"></label>
+                      <div class="span4 controls">
+                        <input type="password" id="bitlyApiKey" class="span3">
+                        <p class="help-block" i18n-content="opt_url_shortener_api_key_bitly_sub_text"></p>
                       </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row control-group">
+                  <div class="span2">
+                    <div class="row control-group">
+                      <div class="span1 controls">
+                        <label class="radio">
+                          <input type="radio" name="enabled_shortener" id="googl">
+                          <a href="http://goo.gl" target="_blank">goo.gl</a>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="span10">
+                    <div class="row control-group">
+                      <label class="span1 control-label" for="googlOauth" i18n-content="opt_url_shortener_oauth_enabled_label"></label>
+                      <div class="span3 controls">
+                        <label class="checkbox">
+                          <input type="checkbox" id="googlOauth">
+                          <span i18n-content="opt_url_shortener_oauth_enabled_googl_text"></span>
+                        </label>
+                        <button class="btn" id="googlDeauthorize_btn" i18n-content="opt_deauthorize_button"></button>
+                      </div>
+                      <div class="span1">
+                        <a class="btn btn-info" popover="opt_url_shortener_oauth_enabled_googl_help" i18n-values="title:opt_url_shortener_oauth_enabled_header"><i class="icon-question-sign icon-white"></i></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row control-group">
+                  <div class="span2">
+                    <div class="row control-group">
+                      <div class="span1 controls">
+                        <label class="radio">
+                          <input type="radio" name="enabled_shortener" id="yourls">
+                          <a href="http://yourls.org" target="_blank">YOURLS</a>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="span10">
+                    <div class="row control-group">
+                      <label class="span1 control-label" for="yourlsUrl" i18n-content="opt_url_shortener_url_label"></label>
+                      <div class="span4 controls">
+                        <input type="url" id="yourlsUrl" class="span3" />
+                        <p class="help-block" i18n-content="opt_url_shortener_url_yourls_sub_text"></p>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <hr class="span6" style="margin-top: 0">
+                    </div>
+                    <div class="row control-group">
+                      <label class="span1 control-label" for="yourlsUsername" i18n-content="opt_url_shortener_username_label"></label>
+                      <div class="span4 controls">
+                        <input type="text" id="yourlsUsername" class="span3" />
+                      </div>
+                    </div>
+                    <div class="row control-group">
+                      <label class="span1 control-label" for="yourlsPassword" i18n-content="opt_url_shortener_password_label"></label>
+                      <div class="span4 controls">
+                        <input type="password" id="yourlsPassword" class="span3" />
+                      </div>
+                    </div>
+                    <div class="row control-group">
+                      <div class="span5 controls center">
+                        <strong i18n-content="opt_or_text"></strong>
+                      </div>
+                    </div>
+                    <div class="row control-group">
+                      <label class="span1 control-label" for="yourlsSignature" i18n-content="opt_url_shortener_signature_label"></label>
+                      <div class="span3 controls">
+                        <input type="password" id="yourlsSignature" class="span3" />
+                        <p class="help-block" i18n-content="opt_url_shortener_signature_yourls_sub_text"></p>
+                      </div>
+                      <div class="span1">
+                        <a class="btn btn-info" popover="opt_url_shortener_signature_yourls_help" i18n-values="title: opt_url_shortener_signature_label"><i class="icon-question-sign icon-white"></i></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+            </form>
           </div>
         </div>
       </div>

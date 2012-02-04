@@ -947,19 +947,10 @@ options = window.options =
           id = id[0].toUpperCase() + id.substr 1
           analytics.track 'Tabs', 'Changed', id
         initialTabChange = no
+        $(document.body).scrollTop 0
     # Reflect the persisted tab.
     store.init 'options_active_tab', 'general_nav'
     $("##{store.get 'options_active_tab'}").click()
-    # Bind event to the "Close" button which should simply close the current
-    # tab.
-    $('.close-btn').click ->
-      chrome.windows.getCurrent (win) ->
-        chrome.tabs.query
-          active:   yes
-          windowId: win.id
-        , (tabs) ->
-          chrome.tabs.remove tabs.map (tab) ->
-            tab.id
     # Bind event to the "Revoke Access" button which will remove the persisted
     # settings storing OAuth information for the [Google URL
     # Shortener](http://goo.gl).
@@ -994,6 +985,7 @@ options = window.options =
     $('#template_help').load utils.url("pages/templates_#{locale}.html"), ->
       $('.template-section:first-child').click()
       $('.version-replace').text ext.version
+      $('[title]').tooltip()
     # Ensure that form submissions don't reload the page.
     $('form').submit ->
       no
@@ -1019,11 +1011,3 @@ options = window.options =
       if trigger is 'manual'
         $this.click ->
           $this.popover 'toggle'
-    # Initialize all faceboxes.
-    $('[facebox]').click ->
-      $.facebox div: id = $(this).attr 'facebox'
-      analytics.track 'Help', 'Opened', id.substr 1
-    $(document).bind 'reveal.facebox', ->
-      facebox = $ '#facebox > .popup > .content'
-      facebox.css 'margin-right',
-        if facebox.find('> .template').length then '0' else ''
