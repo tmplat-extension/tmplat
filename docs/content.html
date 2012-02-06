@@ -21,7 +21,9 @@ current selection when requested.</p>             </td>             <td class="c
       <span class="k">if</span> <span class="nx">contents</span>
         <span class="nx">urls</span><span class="p">.</span><span class="nx">push</span> <span class="nx">anchor</span><span class="p">.</span><span class="nx">href</span> <span class="k">for</span> <span class="nx">anchor</span> <span class="k">in</span> <span class="nx">contents</span><span class="p">.</span><span class="nx">querySelectorAll</span> <span class="s1">&#39;a[href]&#39;</span>
     <span class="nx">sendResponse</span>
-      <span class="nv">text: </span><span class="nx">selection</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
-      <span class="nv">urls: </span><span class="nx">urls</span>
+      <span class="nv">pageHeight: </span><span class="nb">window</span><span class="p">.</span><span class="nx">innerHeight</span>
+      <span class="nv">pageWidth: </span> <span class="nb">window</span><span class="p">.</span><span class="nx">innerWidth</span>
+      <span class="nv">text: </span>      <span class="nx">selection</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+      <span class="nv">urls: </span>      <span class="nx">urls</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
