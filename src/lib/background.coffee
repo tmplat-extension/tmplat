@@ -598,8 +598,10 @@ addAdditionalData = (tab, data, callback) ->
     runner.finish response
   runner.run (result = {}) ->
     $.extend data,
-      selection:      result.text ? ''
-      selectionlinks: result.urls ? []
+      pageheight:     results.pageHeight ? 0
+      pagewidth:      results.pageWidth  ? 0
+      selection:      result.text        ? ''
+      selectionlinks: result.urls        ? []
     callback?()
 
 # Creates an object containing data based on information derived from the
@@ -674,6 +676,7 @@ buildStandardData = (tab, shortCallback) ->
     decode:                ->
       (text, render) ->
         decodeURIComponent render text
+    depth:                 window.screen.colorDepth
     # Deprecated since 1.0.0, use `anchorTarget` instead.
     doanchortarget:        anchor.target
     # Deprecated since 1.0.0, use `anchorTitle` instead.
@@ -709,6 +712,8 @@ buildStandardData = (tab, shortCallback) ->
     params:                url.param()
     popular:               ext.queryTemplate (template) ->
       template.key is stats.popular
+    screenheight:          window.screen.height
+    screenwidth:           window.screen.width
     segment:               ->
       (text, render) ->
         url.segment parseInt render(text), 10

@@ -33,5 +33,7 @@ chrome.extension.sendRequest type: 'info', (data) ->
       if contents
         urls.push anchor.href for anchor in contents.querySelectorAll 'a[href]'
     sendResponse
-      text: selection.toString()
-      urls: urls
+      pageHeight: window.innerHeight
+      pageWidth:  window.innerWidth
+      text:       selection.toString()
+      urls:       urls
