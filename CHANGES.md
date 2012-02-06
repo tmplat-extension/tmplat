@@ -1,19 +1,24 @@
 YYYY.MM.DD, Version 1.0.0
 
-* Full release!
+* **Full release!**
 * [#20](https://github.com/neocotic/template/issues/20): Add *"Revoke Access"* button to [goo.gl](http://goo.gl)'s configuration on the Options page
-* [#35](https://github.com/neocotic/template/issues/35): Tidy naming and documentation of the code
-* [#47](https://github.com/neocotic/template/issues/47): Simplify internationalization code
-* [#48](https://github.com/neocotic/template/issues/48): Add option to keep popup open after clicking a template (available in templates via the new *"toolbarPopupClose"* option tag)
-* [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeature"* template option tag and replace with the *"toolbarTemplate"* option tag
-* [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeatureDetails"* template option tag and replace with the *"toolbarTemplateDetails"* option tag
-* [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeatureName"* template option tag and replace with the *"toolbarTemplateName"* option tag
+* [#35](https://github.com/neocotic/template/issues/35): Ensure code and documentation quality and standards are high
+* [#47](https://github.com/neocotic/template/issues/47): Completely redesign and simplify the Options page
+* [#48](https://github.com/neocotic/template/issues/48): Add option to keep popup open after clicking a template (available in templates via the new *"toolbarClose"* option tag)
+* [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeature"* option tag (still available by inverting the *"toolbarPopup"* option tag)
+* [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeatureDetails"* option tag and replace with the *"toolbarStyle"* option tag
+* [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeatureName"* option tag and replace with the *"toolbarKey"* option tag
 * [#49](https://github.com/neocotic/template/issues/49): Add new *"count"* simple tag to allow access to the total number of templates
 * [#49](https://github.com/neocotic/template/issues/49): Add new *"customCount"* simple tag to allow access to the total number of custom templates (i.e. excluding predefined)
 * [#49](https://github.com/neocotic/template/issues/49): Add new *"popular"* complex tag to allow access to the details of the most popular template
 * [#49](https://github.com/neocotic/template/issues/49): Restructure template data stored in `localStorage`
 * [#52](https://github.com/neocotic/template/issues/52): Completely rewrite code in [CoffeeScript](http://coffeescript.org)
 * [#52](https://github.com/neocotic/template/issues/52): Update build process
+* [#58](https://github.com/neocotic/template/issues/58): Remove requirement of names for templates
+* [#59](https://github.com/neocotic/template/issues/59): Restructure option data stored in `localStorage`
+* [#60](https://github.com/neocotic/template/issues/60): Automically save changes on the Options page
+* [#61](https://github.com/neocotic/template/issues/61): Add new *"coords"* complex tag to access user's geolocation
+* [#62](https://github.com/neocotic/template/issues/62): Add Options link to bottom of popup (available in templates via the new *"toolbarOptions"* option tag)
 * Bug fixes and UI tweaks
 
 2011.12.22, Version 0.3.0.0
