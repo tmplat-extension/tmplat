@@ -832,8 +832,6 @@ init_update = ->
           when 'features_nav' then 'templates_nav'
           when 'toolbar_nav' then 'general_nav'
           else optionsActiveTab
-      if store.get('options_active_tab') is 'features_nav'
-        store.set 'options_active_tab', 'templates_nav'
       store.modify 'anchor', (anchor) ->
         anchor.target = store.get('doAnchorTarget') ? off
         anchor.title  = store.get('doAnchorTitle') ? off
