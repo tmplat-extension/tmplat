@@ -174,7 +174,7 @@
     "message": "$O_BODY$$O_PARA$This action is $O_BOLD$permanent$C_BOLD$ and cannot be reversed.$C_PARA$$O_PARA$Do you want to continue anyway?$C_PARA$$C_BODY$$BUTTONS$",
     "placeholders": {
       "buttons": {
-        "content": "<div class=\"modal-footer\"><button class=\"btn btn-danger delete_no_btn\">No</button><button class=\"btn btn-primary delete_yes_btn\">Yes</button></div>"
+        "content": "<div class=\"modal-footer\"><button class=\"btn btn-primary delete_yes_btn\">Yes</button><button class=\"btn btn-danger delete_no_btn\">No</button></div>"
       },
       "c_body": {
         "content": "</div>"
@@ -266,6 +266,9 @@
   },
   "opt_general_header": {
     "message": "General"
+  },
+  "opt_guide_header": {
+    "message": "Guide"
   },
   "opt_help_text": {
     "message": "Read help documentation"
@@ -397,11 +400,19 @@
   "opt_shortcut_text": {
     "message": "Keyboard shortcuts can be used to access templates"
   },
-  "opt_template_content_help": {
-    "message": "Need help writing templates?"
-  },
   "opt_template_content_label": {
     "message": "Content"
+  },
+  "opt_template_content_sub_text": {
+    "message": "Need help writing templates? Try $O_LINK$reading the guide$C_LINK$",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>"
+      },
+      "o_link": {
+        "content": "<a tabify=\"#guide_tab\">"
+      }
+    }
   },
   "opt_template_enabled_label": {
     "message": "Enabled"

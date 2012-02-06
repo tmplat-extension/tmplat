@@ -18,7 +18,7 @@
       .import_error {margin-bottom: 8px;}
       .import_content, .export_content {max-height: 284px;}
       textarea {resize: vertical;}
-      #template_help > .tabbable .nav {margin-bottom: 0;}
+      .navbar-fixed-top .brand {padding-right: 0; padding-left: 0; margin-left: 20px; float: right; font-weight: bold; color: black; text-shadow: 0 1px 0 rgba(255, 255, 255, .1), 0 0 30px rgba(255, 255, 255, .125); -webkit-transition: all .2s linear; -moz-transition: all .2s linear; transition: all .2s linear;}
       #template_image_preview {margin-left: 10px;}
       #template_shortcut {text-transform: uppercase;}
       #googlDeauthorize_btn {display: none;}
@@ -35,9 +35,11 @@
       input[type="file"]::-webkit-file-upload-button:hover {color: #333333; text-decoration: none; background-color: #e6e6e6; background-position: 0 -15px; -webkit-transition: background-position 0.1s linear; -moz-transition: background-position 0.1s linear; -ms-transition: background-position 0.1s linear; -o-transition: background-position 0.1s linear; transition: background-position 0.1s linear;}
       input[type="file"]::-webkit-file-upload-button:focus {outline: thin dotted; outline: 5px auto -webkit-focus-ring-color; outline-offset: -2px;}
       input[type="file"]:disabled::-webkit-file-upload-button {cursor: efault; background-image: none; background-color: #e6e6e6; opacity: 0.65; filter:alpha(opacity=65); -webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none;}
+      .tight-left {margin-left: 0;}
       .popover-content > p > p {margin-bottom: 5px;}
       .popover-content > p > p:last-child {margin-bottom: 0;}
       .popover-inner {text-align: left;}
+      .help {cursor: help;}
       @media (max-width: 768px) {
         body {padding-top: 0;}
       }
@@ -65,12 +67,13 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="http://neocotic.com/template" target="_blank" i18n-content="name"></a>
+          <span class="brand" i18n-content="name"></span>
           <div class="nav-collapse">
-            <ul class="nav">
+            <ul id="navigation" class="nav">
               <li><a id="general_nav" tabify="#general_tab" i18n-content="opt_general_header"></a></li>
               <li><a id="templates_nav" tabify="#templates_tab" i18n-content="opt_template_header"></a></li>
               <li><a id="shorteners_nav" tabify="#shorteners_tab" i18n-content="opt_url_shortener_header"></a></li>
+              <li><a id="guide_nav" tabify="#guide_tab"><i class="icon-question-sign icon-white"></i></a></li>
             </ul>
           </div>
         </div>
@@ -83,11 +86,11 @@
             <form class="form-horizontal">
               <fieldset>
                 <legend i18n-content="opt_anchor_header"></legend>
+                <p style="padding-top: 18px" i18n-content="opt_anchor_text"></p>
                 <div class="control-group">
-                  <p i18n-content="opt_anchor_text"></p>
                   <label class="control-label" for="anchorTitle" i18n-content="opt_anchor_title_label"></label>
                   <div class="controls">
-                    <label class="checkbox">
+                    <label class="checkbox span5 tight-left">
                       <input type="checkbox" id="anchorTitle">
                       <span i18n-content="opt_anchor_title_text"></span>
                       <p class="help-block" i18n-content="opt_anchor_title_sub_text"></p>
@@ -97,7 +100,7 @@
                 <div class="control-group">
                   <label class="control-label" for="anchorTarget" i18n-content="opt_anchor_target_label"></label>
                   <div class="controls">
-                    <label class="checkbox">
+                    <label class="checkbox span5 tight-left">
                       <input type="checkbox" id="anchorTarget">
                       <span i18n-content="opt_anchor_target_text"></span>
                       <p class="help-block" i18n-content="opt_anchor_target_sub_text"></p>
@@ -110,7 +113,7 @@
                 <div class="control-group">
                   <label class="control-label" for="notifications" i18n-content="opt_notification_label"></label>
                   <div class="controls">
-                    <label class="checkbox">
+                    <label class="checkbox span5 tight-left">
                       <input type="checkbox" id="notifications">
                       <span i18n-content="opt_notification_text"></span>
                       <p class="help-block" i18n-content="opt_notification_sub_text"></p>
@@ -120,14 +123,16 @@
                 <div class="control-group">
                   <label class="control-label" for="notificationDuration" i18n-content="opt_notification_duration_label"></label>
                   <div class="controls">
-                    <label class="input-append">
-                      <input class="span1" id="notificationDuration" max="60" min="0" size="1" step="1" type="number">
-                      <span class="add-on" i18n-content="opt_notification_duration_add_on_text"></span>
-                    </label>
-                    <label for="notificationDuration">
-                      <span i18n-content="opt_notification_duration_text"></span>
-                      <p class="help-block" i18n-content="opt_notification_duration_sub_text"></p>
-                    </label>
+                    <div class="span5 tight-left">
+                      <label class="input-append">
+                        <input class="span1" id="notificationDuration" max="60" min="0" size="1" step="1" type="number">
+                        <span class="add-on" i18n-content="opt_notification_duration_add_on_text"></span>
+                      </label>
+                      <label for="notificationDuration">
+                        <span i18n-content="opt_notification_duration_text"></span>
+                        <p class="help-block" i18n-content="opt_notification_duration_sub_text"></p>
+                      </label>
+                    </div>
                   </div>
                 </div>
               </fieldset>
@@ -148,7 +153,7 @@
                   <div class="control-group">
                     <label class="control-label" for="toolbarClose" i18n-content="opt_toolbar_close_label"></label>
                     <div class="controls">
-                      <label class="checkbox">
+                      <label class="checkbox span5 tight-left">
                         <input type="checkbox" id="toolbarClose">
                         <span i18n-content="opt_toolbar_close_text"></span>
                       </label>
@@ -159,16 +164,16 @@
                   <div class="control-group">
                     <label class="control-label" for="toolbarKey" i18n-content="opt_toolbar_key_label"></label>
                     <div class="controls">
-                      <label>
+                      <label class="span5 tight-left">
                         <select id="toolbarKey" size="1"></select>
+                        <p i18n-content="opt_toolbar_key_text"></p>
                       </label>
-                      <span i18n-content="opt_toolbar_key_text"></span>
                     </div>
                   </div>
                   <div class="control-group">
                     <label class="control-label" for="toolbarStyle" i18n-content="opt_toolbar_style_label"></label>
                     <div class="controls">
-                      <label class="checkbox">
+                      <label class="checkbox span5 tight-left">
                         <input type="checkbox" id="toolbarStyle">
                         <span i18n-content="opt_toolbar_style_text"></span>
                         <p class="help-block" i18n-content="opt_toolbar_style_sub_text"></p>
@@ -182,7 +187,7 @@
                 <div class="control-group">
                   <label class="control-label" for="contextMenu" i18n-content="opt_context_menu_label"></label>
                   <div class="controls">
-                    <label class="checkbox">
+                    <label class="checkbox span5 tight-left">
                       <input type="checkbox" id="contextMenu">
                       <span i18n-content="opt_context_menu_text"></span>
                     </label>
@@ -191,7 +196,7 @@
                 <div class="control-group">
                   <label class="control-label" for="shortcuts" i18n-content="opt_shortcut_label"></label>
                   <div class="controls">
-                    <label class="checkbox">
+                    <label class="checkbox span5 tight-left">
                       <input type="checkbox" id="shortcuts">
                       <span i18n-content="opt_shortcut_text"></span>
                     </label>
@@ -200,7 +205,7 @@
                 <div class="control-group">
                   <label class="control-label" for="analytics" i18n-content="opt_analytics_label"></label>
                   <div class="controls">
-                    <label class="checkbox">
+                    <label class="checkbox span5 tight-left">
                       <input type="checkbox" id="analytics">
                       <span i18n-content="opt_analytics_text"></span>
                       <p class="help-block" i18n-content="opt_analytics_sub_text"></p>
@@ -233,12 +238,12 @@
                     <input id="template_title" class="span3 read-only" type="text" maxlength="32">
                   </div>
                   <div class="span8">
-                    <a class="btn btn-info" popover="opt_template_title_help" i18n-values="title:opt_template_title_label"><i class="icon-question-sign icon-white"></i></a>
+                    <a class="btn btn-info help" popover="opt_template_title_help" i18n-values="title:opt_template_title_label"><i class="icon-question-sign icon-white"></i></a>
                   </div>
                 </div>
                 <div class="row control-group">
                   <label class="span1 control-label" for="template_image" i18n-content="opt_template_image_label"></label>
-                  <div class="span11 controls">
+                  <div class="span3 controls">
                     <select id="template_image" class="span2"></select>
                     <img id="template_image_preview" width="16" height="16">
                   </div>
@@ -252,12 +257,12 @@
                     </div>
                   </div>
                   <div class="span8">
-                    <a class="btn btn-info" popover="opt_template_shortcut_help" i18n-values="title:opt_template_shortcut_label"><i class="icon-question-sign icon-white"></i></a>
+                    <a class="btn btn-info help" popover="opt_template_shortcut_help" i18n-values="title:opt_template_shortcut_label"><i class="icon-question-sign icon-white"></i></a>
                   </div>
                 </div>
                 <div class="row control-group">
                   <label class="span1 control-label" for="template_enabled" i18n-content="opt_template_enabled_label"></label>
-                  <div class="span11 controls">
+                  <div class="span3 controls">
                     <label class="checkbox">
                       <input type="checkbox" id="template_enabled">
                       <span i18n-content="opt_template_enabled_text"></span>
@@ -267,9 +272,7 @@
                 <div class="row control-group">
                   <div class="span4 controls">
                     <textarea id="template_content" class="span4 read-only" rows="5" spellcheck="false" i18n-values="placeholder:opt_template_content_label"></textarea>
-                  </div>
-                  <div class="span8">
-                    <a id="template_help_btn" class="btn btn-info" i18n-values="title:opt_help_text"><i class="icon-question-sign icon-white"></i></a>
+                    <p class="help-block" i18n-content="opt_template_content_sub_text"></p>
                   </div>
                 </div>
                 <div class="form-actions">
@@ -303,7 +306,6 @@
                 <div class="export_con_stage1" i18n-content="opt_export_wizard_1"></div>
                 <div class="export_con_stage2" i18n-content="opt_export_wizard_2"></div>
               </div>
-              <div id="template_help" class="hide modal"></div>
             </form>
           </div>
         </div>
@@ -324,8 +326,8 @@
                 </div>
                 <div class="row control-group">
                   <div class="span2">
-                    <div class="row control-group">
-                      <div class="span1 controls">
+                    <div class="control-group">
+                      <div class="controls">
                         <label class="radio">
                           <input type="radio" name="enabled_shortener" id="bitly">
                           <a href="http://bit.ly" target="_blank">bit.ly</a>
@@ -334,15 +336,15 @@
                     </div>
                   </div>
                   <div class="span10">
-                    <div class="row control-group">
-                      <label class="span1 control-label" for="bitlyUsername" i18n-content="opt_url_shortener_username_label"></label>
+                    <div class="control-group">
+                      <label class="control-label" for="bitlyUsername" i18n-content="opt_url_shortener_username_label"></label>
                       <div class="span4 controls">
                         <input type="text" id="bitlyUsername" class="span3">
                         <p class="help-block" i18n-content="opt_url_shortener_username_bitly_sub_text"></p>
                       </div>
                     </div>
-                    <div class="row control-group">
-                      <label class="span1 control-label" for="bitlyApiKey" i18n-content="opt_url_shortener_api_key_label"></label>
+                    <div class="control-group">
+                      <label class="control-label" for="bitlyApiKey" i18n-content="opt_url_shortener_api_key_label"></label>
                       <div class="span4 controls">
                         <input type="password" id="bitlyApiKey" class="span3">
                         <p class="help-block" i18n-content="opt_url_shortener_api_key_bitly_sub_text"></p>
@@ -352,8 +354,8 @@
                 </div>
                 <div class="row control-group">
                   <div class="span2">
-                    <div class="row control-group">
-                      <div class="span1 controls">
+                    <div class="control-group">
+                      <div class="controls">
                         <label class="radio">
                           <input type="radio" name="enabled_shortener" id="googl">
                           <a href="http://goo.gl" target="_blank">goo.gl</a>
@@ -362,8 +364,8 @@
                     </div>
                   </div>
                   <div class="span10">
-                    <div class="row control-group">
-                      <label class="span1 control-label" for="googlOauth" i18n-content="opt_url_shortener_oauth_enabled_label"></label>
+                    <div class="control-group">
+                      <label class="control-label" for="googlOauth" i18n-content="opt_url_shortener_oauth_enabled_label"></label>
                       <div class="span3 controls">
                         <label class="checkbox">
                           <input type="checkbox" id="googlOauth">
@@ -372,15 +374,15 @@
                         <button class="btn" id="googlDeauthorize_btn" i18n-content="opt_deauthorize_button"></button>
                       </div>
                       <div class="span1">
-                        <a class="btn btn-info" popover="opt_url_shortener_oauth_enabled_googl_help" i18n-values="title:opt_url_shortener_oauth_enabled_header"><i class="icon-question-sign icon-white"></i></a>
+                        <a class="btn btn-info help" popover="opt_url_shortener_oauth_enabled_googl_help" i18n-values="title:opt_url_shortener_oauth_enabled_header"><i class="icon-question-sign icon-white"></i></a>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div class="row control-group">
                   <div class="span2">
-                    <div class="row control-group">
-                      <div class="span1 controls">
+                    <div class="control-group">
+                      <div class="controls">
                         <label class="radio">
                           <input type="radio" name="enabled_shortener" id="yourls">
                           <a href="http://yourls.org" target="_blank">YOURLS</a>
@@ -389,24 +391,24 @@
                     </div>
                   </div>
                   <div class="span10">
-                    <div class="row control-group">
-                      <label class="span1 control-label" for="yourlsUrl" i18n-content="opt_url_shortener_url_label"></label>
+                    <div class="control-group">
+                      <label class="control-label" for="yourlsUrl" i18n-content="opt_url_shortener_url_label"></label>
                       <div class="span4 controls">
                         <input type="url" id="yourlsUrl" class="span3" />
                         <p class="help-block" i18n-content="opt_url_shortener_url_yourls_sub_text"></p>
                       </div>
                     </div>
                     <div class="row">
-                      <hr class="span6" style="margin-top: 0">
+                      <hr class="span5" style="margin-top: 0">
                     </div>
-                    <div class="row control-group">
-                      <label class="span1 control-label" for="yourlsUsername" i18n-content="opt_url_shortener_username_label"></label>
+                    <div class="control-group">
+                      <label class="control-label" for="yourlsUsername" i18n-content="opt_url_shortener_username_label"></label>
                       <div class="span4 controls">
                         <input type="text" id="yourlsUsername" class="span3" />
                       </div>
                     </div>
-                    <div class="row control-group">
-                      <label class="span1 control-label" for="yourlsPassword" i18n-content="opt_url_shortener_password_label"></label>
+                    <div class="control-group">
+                      <label class="control-label" for="yourlsPassword" i18n-content="opt_url_shortener_password_label"></label>
                       <div class="span4 controls">
                         <input type="password" id="yourlsPassword" class="span3" />
                       </div>
@@ -416,18 +418,27 @@
                         <strong i18n-content="opt_or_text"></strong>
                       </div>
                     </div>
-                    <div class="row control-group">
-                      <label class="span1 control-label" for="yourlsSignature" i18n-content="opt_url_shortener_signature_label"></label>
-                      <div class="span3 controls">
+                    <div class="control-group">
+                      <label class="control-label" for="yourlsSignature" i18n-content="opt_url_shortener_signature_label"></label>
+                      <div class="span4 controls">
                         <input type="password" id="yourlsSignature" class="span3" />
                         <p class="help-block" i18n-content="opt_url_shortener_signature_yourls_sub_text"></p>
-                      </div>
-                      <div class="span1">
-                        <a class="btn btn-info" popover="opt_url_shortener_signature_yourls_help" i18n-values="title: opt_url_shortener_signature_label"><i class="icon-question-sign icon-white"></i></a>
                       </div>
                     </div>
                   </div>
                 </div>
+              </fieldset>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div id="guide_tab" class="tab">
+        <div class="row">
+          <div class="span12">
+            <form class="form-horizontal">
+              <fieldset>
+                <legend i18n-content="opt_guide_header"></legend>
+                <div id="template_help" style="padding-top: 18px"></div>
               </fieldset>
             </form>
           </div>

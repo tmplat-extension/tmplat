@@ -238,14 +238,6 @@ loadTemplateControlEvents = ->
         $('.read-only').removeAttr 'disabled'
         $('.read-only').removeAttr 'readonly'
     templates.data 'quiet', 'false'
-    # Ensure the correct arrows display in the *Up* and *Down* controls
-    # depending on whether or not the controls are currently disabled.
-    $('#moveDown_btn:not([disabled]) img').attr 'src',
-      '../images/move_down.gif'
-    $('#moveUp_btn:not([disabled]) img').attr 'src', '../images/move_up.gif'
-    $('#moveDown_btn[disabled] img').attr 'src',
-      '../images/move_down_disabled.gif'
-    $('#moveUp_btn[disabled] img').attr 'src', '../images/move_up_disabled.gif'
   templates.change()
   # Add a new order to the select based on the input values.
   $('#add_btn').click ->
@@ -506,8 +498,7 @@ loadTemplateSaveEvents = ->
     opt.data key, switch key
       when 'enabled' then "#{@is ':checked'}"
       when 'image'   then @val()
-  , ->
-    utils.async saveTemplates
+  , saveTemplates
   bindTemplateSaveEvent "#template_content, #template_shortcut,
    #template_title", 'input', (opt, key) ->
     switch key
@@ -533,7 +524,7 @@ loadTemplateSaveEvents = ->
       ]
       opt.removeData 'error'
       return
-    utils.async saveTemplates
+    saveTemplates()
 
 # Update the toolbar behaviour section of the options page with the current
 # settings.
@@ -935,13 +926,14 @@ options = window.options =
     # Bind tab selection event to all tabs.
     initialTabChange = yes
     $('a[tabify]').click ->
-      $this  = $ this
-      parent = $this.parent 'li'
+      target  = $(this).attr 'tabify'
+      nav     = $ "#navigation a[tabify='#{target}']"
+      parent  = nav.parent 'li'
       unless parent.hasClass 'active'
         parent.siblings().removeClass 'active'
         parent.addClass 'active'
-        $($this.attr 'tabify').show().siblings('.tab').hide()
-        store.set 'options_active_tab', id = $this.attr 'id'
+        $(target).show().siblings('.tab').hide()
+        store.set 'options_active_tab', id = nav.attr 'id'
         unless initialTabChange
           id = id.match(/(\S*)_nav$/)[1]
           id = id[0].toUpperCase() + id.substr 1
@@ -965,25 +957,13 @@ options = window.options =
     for key in googl.oauthKeys when store.exists key
       $('#googlDeauthorize_btn').show()
       break
-    # Bind event to template section items which will toggle the visibility of
-    # its contents.
-    $('.template-section').live 'click', ->
-      $this = $ this
-      table = $this.parents '.template-table'
-      table.find('.template-section.selected').removeClass 'selected'
-      table.find('.template-display').html(
-        $this.addClass('selected').next('.template-content').html()
-      ).scrollTop 0
     # Load template section from locale-specific file.
     locale   = DEFAULT_LOCALE
     uiLocale = i18n.get '@@ui_locale'
     for loc in LOCALES when loc is uiLocale
       locale = uiLocale
       break
-    $('#template_help_btn').click ->
-      $('#template_help').modal()
     $('#template_help').load utils.url("pages/templates_#{locale}.html"), ->
-      $('.template-section:first-child').click()
       $('.version-replace').text ext.version
       $('[title]').tooltip()
     # Ensure that form submissions don't reload the page.
@@ -997,7 +977,7 @@ options = window.options =
       ext.SHORTCUT_MODIFIERS
     # Initialize all of the *goto* links.
     $('[data-goto]').click ->
-      goto = $($(this).attr 'data-goto')
+      goto = $ $(this).attr 'data-goto'
       $(window).scrollTop if goto.length then goto.scrollTop() else 0
     # Initialize all popovers.
     $('[popover]').each ->

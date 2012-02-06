@@ -1,27 +1,23 @@
-<div class="tabbable">
-  <div class="modal-header">
-    <a class="close" data-dismiss="modal">&times;</a>
-    <h3>Writing Templates</h3>
-    <ul class="nav nav-pills">
-      <li class="active"><a data-target="#templates-introduction" data-toggle="tab">Introduction</a></li>
-      <li><a data-target="#templates-simple-values" data-toggle="tab">Simple Values</a></li>
-      <li><a data-target="#templates-complex-values" data-toggle="tab">Complex Values</a></li>
-      <li><a data-target="#templates-options" data-toggle="tab">Options</a></li>
-      <li><a data-target="#templates-functions" data-toggle="tab">Functions</a></li>
-    </ul>
-  </div>
-  <div class="modal-body tab-content">
+<div class="tabbable tabs-left row">
+  <ul class="nav nav-tabs span2">
+    <li class="active"><a data-target="#templates-introduction" data-toggle="tab">Introduction</a></li>
+    <li><a data-target="#templates-simple-values" data-toggle="tab">Simple Values</a></li>
+    <li><a data-target="#templates-complex-values" data-toggle="tab">Complex Values</a></li>
+    <li><a data-target="#templates-options" data-toggle="tab">Options</a></li>
+    <li><a data-target="#templates-functions" data-toggle="tab">Functions</a></li>
+  </ul>
+  <div class="tab-content span9">
     <div id="templates-introduction" class="tab-pane active">
       <p>
         <strong>Template</strong> uses an advanced but simple template system that
-        allows users to create and modify the content copied to the clipboard. The
-        syntax is really straight-forward the following main declaration types;
+        allows users to create and modify the content copied to the clipboard.
+        The syntax is really straight-forward the following main declaration types;
       </p>
-      <h4>Simple Tag</h4>
+      <h3>Simple Tag</h3>
       <p>
         Tags are always surrounded by curly braces like this <code>{name}</code>.
       </p>
-      <h4>Escaped Tag</h4>
+      <h3>Escaped Tag</h3>
       <p>
         By default, values are not escaped and in order to do so you must use double
         braces like <code>{{name}}</code>.
@@ -30,7 +26,7 @@
         This will escape certain characters (<code>(&amp; \ &quot; &lt; &gt;)</code>)
         so that it can be safely copied in to <abbr title="Extensible Markup Language">XML</abbr>/<abbr title="Hyper Text Markup Language">HTML</abbr>.
       </p>
-      <h4>Section</h4>
+      <h3>Section</h3>
       <p>
         Sections are always surrounded by opening and closing tags like this <code>{#name}...{/name}</code>
         and can be used in the following situations;
@@ -41,15 +37,15 @@
           <em>true</em> or simply exists if it's not a boolean value
         </li>
         <li>
-          <strong>Iterating</strong> - If the value is an array it will render the
-          section for each enumerable item of that value
+          <strong>Iterating</strong> - If the value is an array it will render
+          the section for each enumerable item of that value
         </li>
         <li>
           <strong>Functions</strong> - Renders the outcome of the function, passing
           the contents of the section as the argument
         </li>
       </ul>
-      <h4>Inverted Section</h4>
+      <h3>Inverted Section</h3>
       <p>
         Inverted sections are very similar to normal sections but their tags are
         like this <code>{^name}...{/name}</code> and can be used in the following
@@ -65,21 +61,27 @@
           an empty array or map
         </li>
       </ul>
-      <h4>Case Sensitivity</h4>
+      <h3>Case Sensitivity</h3>
       <p>
         Both tags and sections are case-insensitive, therefore <code>{name}</code>
-        will output the same as <code>{NaMe}</code>. However, sections must be opened
-        and closed using the same case (i.e. <code>{#name}...{/NaMe}</code> will
-        not work).
+        will output the same as <code>{NaMe}</code>. However, sections must be
+        opened and closed using the same case (i.e. <code>{#name}...{/NaMe}</code>
+        will not work).
       </p>
-      <h4>Notes</h4>
-      <p>
-        If you are having problems with understanding this documentation please
-        <a href="https://chrome.google.com/webstore/detail/dcjnfaoifoefmnbhhlbppaebgnccfddf" target="_blank">leave a comment here</a>
-        and I'll try to help you and take your comments on board, updating the documentation
-        if required.
-      </p>
-      <p>For more examples try looking at the predefined templates.</p>
+      <div class="well">
+        <h3>Notes</h3>
+        <p>
+          If you are having problems with understanding this guide please <a href="https://chrome.google.com/webstore/detail/dcjnfaoifoefmnbhhlbppaebgnccfddf" target="_blank">leave a comment here</a>
+          and we will try to help you and take your comments on board, updating
+          the documentation if required.
+        </p>
+        <p>
+          If you encounter any problems while using <strong>Template</strong> and/or
+          would like to see a change or addition, please <a href="https://github.com/neocotic/template/issues" target="_blank">raise an issue</a>
+          and we will have a look at it.
+        </p>
+        <p>For more examples, try looking at the predefined templates.</p>
+      </div>
     </div>
     <div id="templates-simple-values" class="tab-pane">
       <p>
@@ -116,7 +118,9 @@
           </tr>
           <tr>
             <td>directory</td>
-            <td>The directory part of the path (e.g. <em>/folder/dir/</em>)</td>
+            <td>
+              The directory part of the path (e.g. <em>/folder/dir/</em>)
+            </td>
           </tr>
           <tr>
             <td>favicon</td>
@@ -156,7 +160,9 @@
           </tr>
           <tr>
             <td>path</td>
-            <td>The path to the file (e.g. <em>/folder/dir/index.html</em>)</td>
+            <td>
+              The path to the file (e.g. <em>/folder/dir/index.html</em>)
+            </td>
           </tr>
           <tr>
             <td>port</td>
@@ -182,7 +188,8 @@
           <tr>
             <td>selection</td>
             <td>
-              The currently selected text (not available on Chrome's protected pages)
+              The currently selected text (not available on Chrome's protected
+              pages)
             </td>
           </tr>
           <tr>
@@ -287,7 +294,7 @@
           </tr>
         </tbody>
       </table>
-      <h4>Examples</h4>
+      <h3>Examples</h3>
       <p>
         These examples will be using the following <abbr title="Uniform Resource Locator">URL</abbr>;
       </p>
@@ -357,9 +364,9 @@
     </div>
     <div id="templates-options" class="tab-pane">
       <p>
-        <strong>Options</strong> are values stored by the extension to reflect user
-        preferences. These can either be accessed as simple tags or, more commonly,
-        conditional sections.
+        <strong>Options</strong> are values stored by the extension to reflect
+        user preferences. These can either be accessed as simple tags or, more
+        commonly, conditional sections.
       </p>
       <table class="table table-condensed table-bordered table-striped">
         <caption>Definitions</caption>
@@ -388,7 +395,8 @@
             <td>bitly</td>
             <td>
               Whether or not <a href="http://bit.ly" target="_blank">bit.ly</a>
-              is the enabled <abbr title="Uniform Resource Locator">URL</abbr> shortener
+              is the enabled <abbr title="Uniform Resource Locator">URL</abbr>
+              shortener
             </td>
           </tr>
           <tr>
@@ -505,7 +513,8 @@
             <td>yourls</td>
             <td>
               Whether or not <a href="http://yourls.org" target="_blank">YOURLS</a>
-              is the enabled <abbr title="Uniform Resource Locator">URL</abbr> shortener
+              is the enabled <abbr title="Uniform Resource Locator">URL</abbr>
+              shortener
             </td>
           </tr>
           <tr>
@@ -538,7 +547,7 @@
           </tr>
         </tbody>
       </table>
-      <h4>Examples</h4>
+      <h3>Examples</h3>
       <p>
         These examples will be using the following <abbr title="Uniform Resource Locator">URL</abbr>;
       </p>
@@ -624,21 +633,23 @@
           </tr>
         </tbody>
       </table>
-      <h4>Notes</h4>
-      <p>
-        The following notes apply to <span class="label">segment</span>/<span class="label">fsegment</span>;
-      </p>
-      <ul>
-        <li>
-          The count is not zero-indexed like an array (i.e. <code>{#segment}1{/segment}</code>
-          returns the first segment, not the second one)
-        </li>
-        <li>
-          The argument can be negative values, in which case it will count back
-          from the end of the path rather than forwards from the start
-        </li>
-      </ul>
-      <h4>Examples</h4>
+      <div class="well">
+        <h3>Notes</h3>
+        <p>
+          The following notes apply to <span class="label">segment</span>/<span class="label">fsegment</span>;
+        </p>
+        <ul>
+          <li>
+            The count is not zero-indexed like an array (i.e. <code>{#segment}1{/segment}</code>
+            returns the first segment, not the second one)
+          </li>
+          <li>
+            The argument can be negative values, in which case it will count back
+            from the end of the path rather than forwards from the start
+          </li>
+        </ul>
+      </div>
+      <h3>Examples</h3>
       <p>
         These examples will be using the following <abbr title="Uniform Resource Locator">URL</abbr>;
       </p>
