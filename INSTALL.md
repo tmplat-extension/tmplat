@@ -1,7 +1,7 @@
 # Build Requirements
 In order to build [Template][], you need to have the following:
 
-* [CoffeeScript][] 1.1+
+* [CoffeeScript][] 1.2+
 * [docco][] 0.3+
 * [UglifyJS][] 1.2+
 * [git][] 1.7+
