@@ -805,47 +805,42 @@ buildTemplate = (template) ->
 # Handle the conversion/removal of older version of settings that may have been
 # stored previously by `ext.init`.
 init_update = ->
-  store.rename 'update_progress', 'updates', {}
-  store.modify 'updates', (updates) ->
-    updates.settings ?= []
-    # Determine whether or not the user has just installed Template.
-    isNewInstall = updates.settings.length is 0
-    # Check if the settings need updated for 0.1.0.0.
-    if '0.1.0.0' not in updates.settings
-      # Update the settings for 0.1.0.0.
-      store.rename 'settingNotification',      'notifications',        on
-      store.rename 'settingNotificationTimer', 'notificationDuration', 3000
-      store.rename 'settingShortcut',          'shortcuts',            on
-      store.rename 'settingTargetAttr',        'doAnchorTarget',       off
-      store.rename 'settingTitleAttr',         'doAnchorTitle',        off
-      store.remove 'settingIeTabExtract',      'settingIeTabTitle'
-      # Ensure that settings are not updated for 0.1.0.0 again.
-      updates.settings.push '0.1.0.0'
-    # Check if the settings need updated for 1.0.0.
-    if '1.0.0' not in updates.settings
-      # Update the settings for 1.0.0.
-      updates.templates = updates.features ? []
-      delete updates.features
+  # Update the update progress indicator itself.
+  if store.exists 'update_progress'
+    store.modify 'updates', (updates) ->
+      progress = store.remove 'update_progress'
+      for own namespace, versions of progress
+        updates[namespace] = if versions?.length then versions.pop() else ''
+  # Create updater for the `settings` namespace.
+  updater      = new utils.Updater 'settings'
+  isNewInstall = updater.isNew
+  # Define the processes for all required updates to the `settings`
+  # namespace.
+  updater.update '0.1.0.0', ->
+    store.rename 'settingNotification',      'notifications',        on
+    store.rename 'settingNotificationTimer', 'notificationDuration', 3000
+    store.rename 'settingShortcut',          'shortcuts',            on
+    store.rename 'settingTargetAttr',        'doAnchorTarget',       off
+    store.rename 'settingTitleAttr',         'doAnchorTitle',        off
+    store.remove 'settingIeTabExtract',      'settingIeTabTitle'
+  updater.update '1.0.0', ->
+    if store.exists 'options_active_tab'
       optionsActiveTab = store.get 'options_active_tab'
-      if optionsActiveTab?
-        store.set 'options_active_tab', switch optionsActiveTab
-          when 'features_nav' then 'templates_nav'
-          when 'toolbar_nav' then 'general_nav'
-          else optionsActiveTab
-      store.modify 'anchor', (anchor) ->
-        anchor.target = store.get('doAnchorTarget') ? off
-        anchor.title  = store.get('doAnchorTitle') ? off
-      store.remove 'doAnchorTarget', 'doAnchorTitle'
-      store.set 'notifications',
-        duration: store.get('notificationDuration') ? 3000
-        enabled:  store.get('notifications') ? yes
-      store.remove 'notificationDuration'
-      # Ensure that settings are not updated for 1.0.0 again.
-      updates.settings.push '1.0.0'
+      store.set 'options_active_tab', switch optionsActiveTab
+        when 'features_nav' then 'templates_nav'
+        when 'toolbar_nav' then 'general_nav'
+        else optionsActiveTab
+    store.modify 'anchor', (anchor) ->
+      anchor.target = store.get('doAnchorTarget') ? off
+      anchor.title  = store.get('doAnchorTitle') ? off
+    store.remove 'doAnchorTarget', 'doAnchorTitle'
+    store.set 'notifications',
+      duration: store.get('notificationDuration') ? 3000
+      enabled:  store.get('notifications') ? yes
+    store.remove 'notificationDuration'
 
 # Initialize the settings related to statistical information.
 initStatistics = ->
-  store.init 'stats', {}
   updateStatistics()
 
 # Initialize `template` and its properties, before adding it to `templates` to
@@ -889,7 +884,6 @@ initTemplate = (template, templates) ->
 
 # Initialize the persisted managed templates.
 initTemplates = ->
-  store.init 'templates', []
   initTemplates_update()
   store.modify 'templates', (templates) ->
     # Initialize all default templates to ensure their properties are as
@@ -902,86 +896,76 @@ initTemplates = ->
 # Handle the conversion/removal of older version of settings that may have been
 # stored previously by `initTemplates`.
 initTemplates_update = ->
-  store.modify 'updates', (updates) ->
-    updates.templates ?= []
-    # Check if the templates need updated for 0.1.0.0.
-    if '0.1.0.0' not in updates.templates
-      # Update the templates for 0.1.0.0.
-      store.rename 'copyAnchorEnabled',  'feat__anchor_enabled',  yes
-      store.rename 'copyAnchorOrder',    'feat__anchor_index',    2
-      store.rename 'copyBBCodeEnabled',  'feat__bbcode_enabled',  no
-      store.rename 'copyBBCodeOrder',    'feat__bbcode_index',    4
-      store.rename 'copyEncodedEnabled', 'feat__encoded_enabled', yes
-      store.rename 'copyEncodedOrder',   'feat__encoded_index',   3
-      store.rename 'copyShortEnabled',   'feat__short_enabled',   yes
-      store.rename 'copyShortOrder',     'feat__short_index',     1
-      store.rename 'copyUrlEnabled',     'feat__url_enabled',     yes
-      store.rename 'copyUrlOrder',       'feat__url_index',       0
-      # Ensure that templates are not updated for 0.1.0.0 again.
-      updates.templates.push '0.1.0.0'
-    # Check if the templates need updated for 0.2.0.0.
-    if '0.2.0.0' not in updates.templates
-      # Update the templates for 0.2.0.0.
-      names = store.get('features') ? []
-      for name in names when typeof name is 'string'
-        store.rename "feat_#{name}_template", "feat_#{name}_content"
-        image = store.get "feat_#{name}_image"
-        switch typeof image
-          when 'string'
-            if image in ['', 'spacer.gif', 'spacer.png']
-              store.set "feat_#{name}_image", 0
-            else
-              for img, i in ext.IMAGES
-                oldImg = img.replace /^tmpl/, 'feat'
-                if "#{oldImg}.png" is image
-                  store.set "feat_#{name}_image", i + 1
-                  break
-          else store.set "feat_#{name}_image", 0
-      # Ensure that templates are not updated for 0.2.0.0 again.
-      updates.templates.push '0.2.0.0'
-    # Check if the templates need updated for 1.0.0.
-    if '1.0.0' not in updates.templates
-      # Update the templates for 1.0.0.
-      names              = store.remove('features') ? []
-      templates          = []
-      toolbarFeatureName = store.get 'toolbarFeatureName'
-      for name in names when typeof name is 'string'
-        image = store.remove("feat_#{name}_image") ? 0
-        image--
-        if image < 0
-          image = ''
-        else
-          for img, i in ext.IMAGES when i is image
-            image = img
-            break
-          image = '' if typeof image isnt 'string'
-        key = ext.getKeyForName name
-        if toolbarFeatureName is name
-          if store.exists 'toolbar'
-            store.modify 'toolbar', (toolbar) ->
-              toolbar.key = key
+  # Create updater for the `features` namespace and then rename it to
+  # `templates`.
+  updater = new utils.Updater 'features'
+  updater.rename 'templates'
+  # Define the processes for all required updates to the `templates` namespace.
+  updater.update '0.1.0.0', ->
+    store.rename 'copyAnchorEnabled',  'feat__anchor_enabled',  yes
+    store.rename 'copyAnchorOrder',    'feat__anchor_index',    2
+    store.rename 'copyBBCodeEnabled',  'feat__bbcode_enabled',  no
+    store.rename 'copyBBCodeOrder',    'feat__bbcode_index',    4
+    store.rename 'copyEncodedEnabled', 'feat__encoded_enabled', yes
+    store.rename 'copyEncodedOrder',   'feat__encoded_index',   3
+    store.rename 'copyShortEnabled',   'feat__short_enabled',   yes
+    store.rename 'copyShortOrder',     'feat__short_index',     1
+    store.rename 'copyUrlEnabled',     'feat__url_enabled',     yes
+    store.rename 'copyUrlOrder',       'feat__url_index',       0
+  updater.update '0.2.0.0', ->
+    names = store.get('features') ? []
+    for name in names when typeof name is 'string'
+      store.rename "feat_#{name}_template", "feat_#{name}_content"
+      image = store.get "feat_#{name}_image"
+      switch typeof image
+        when 'string'
+          if image in ['', 'spacer.gif', 'spacer.png']
+            store.set "feat_#{name}_image", 0
           else
-            store.set 'toolbar', key: key
-        templates.push
-          content:  store.remove("feat_#{name}_content")  ? ''
-          enabled:  store.remove("feat_#{name}_enabled")  ? yes
-          image:    image
-          index:    store.remove("feat_#{name}_index")    ? 0
-          key:      key
-          readOnly: store.remove("feat_#{name}_readonly") ? no
-          shortcut: store.remove("feat_#{name}_shortcut") ? ''
-          title:    store.remove("feat_#{name}_title")    ? i18n.get 'untitled'
-          usage:    0
-      store.set 'templates', templates
-      store.remove store.search(
-        /^feat_.*_(content|enabled|image|index|readonly|shortcut|title)$/
-      )...
-      # Ensure that templates are not updated for 1.0.0 again.
-      updates.templates.push '1.0.0'
+            for img, i in ext.IMAGES
+              oldImg = img.replace /^tmpl/, 'feat'
+              if "#{oldImg}.png" is image
+                store.set "feat_#{name}_image", i + 1
+                break
+        else store.set "feat_#{name}_image", 0
+  updater.update '1.0.0', ->
+    names              = store.remove('features') ? []
+    templates          = []
+    toolbarFeatureName = store.get 'toolbarFeatureName'
+    for name in names when typeof name is 'string'
+      image = store.remove("feat_#{name}_image") ? 0
+      image--
+      if image < 0
+        image = ''
+      else
+        for img, i in ext.IMAGES when i is image
+          image = img
+          break
+        image = '' if typeof image isnt 'string'
+      key = ext.getKeyForName name
+      if toolbarFeatureName is name
+        if store.exists 'toolbar'
+          store.modify 'toolbar', (toolbar) ->
+            toolbar.key = key
+        else
+          store.set 'toolbar', key: key
+      templates.push
+        content:  store.remove("feat_#{name}_content")  ? ''
+        enabled:  store.remove("feat_#{name}_enabled")  ? yes
+        image:    image
+        index:    store.remove("feat_#{name}_index")    ? 0
+        key:      key
+        readOnly: store.remove("feat_#{name}_readonly") ? no
+        shortcut: store.remove("feat_#{name}_shortcut") ? ''
+        title:    store.remove("feat_#{name}_title")    ? i18n.get 'untitled'
+        usage:    0
+    store.set 'templates', templates
+    store.remove store.search(
+      /^feat_.*_(content|enabled|image|index|readonly|shortcut|title)$/
+    )...
 
 # Initialize the settings related to the toolbar/browser action.
 initToolbar = ->
-  store.init 'toolbar', {}
   initToolbar_update()
   store.modify 'toolbar', (toolbar) ->
     toolbar.close   ?= yes
@@ -994,18 +978,15 @@ initToolbar = ->
 # Handle the conversion/removal of older version of settings that may have been
 # stored previously by `initToolbar`.
 initToolbar_update = ->
-  store.modify 'updates', (updates) ->
-    updates.toolbar ?= []
-    # Check if the toolbar settings need updated for 1.0.0.
-    if '1.0.0' not in updates.toolbar
-      # Update the toolbar settings for 1.0.0.
-      store.modify 'toolbar', (toolbar) ->
-        toolbar.popup = store.get('toolbarPopup') ? yes
-        toolbar.style = store.get('toolbarFeatureDetails') ? no
-      store.remove 'toolbarFeature',     'toolbarFeatureDetails',
-                   'toolbarFeatureName', 'toolbarPopup'
-      # Ensure that toolbar settings are not updated for 1.0.0 again.
-      updates.toolbar.push '1.0.0'
+  # Create updater for the `toolbar` namespace.
+  updater = new utils.Updater 'toolbar'
+  # Define the processes for all required updates to the `toolbar` namespace.
+  updater.update '1.0.0', ->
+    store.modify 'toolbar', (toolbar) ->
+      toolbar.popup = store.get('toolbarPopup') ? yes
+      toolbar.style = store.get('toolbarFeatureDetails') ? no
+    store.remove 'toolbarFeature',     'toolbarFeatureDetails',
+                 'toolbarFeatureName', 'toolbarPopup'
 
 # Initialize the settings related to the supported URL Shortener services.
 initUrlShorteners = ->
@@ -1034,41 +1015,35 @@ initUrlShorteners = ->
 # Handle the conversion/removal of older version of settings that may have been
 # stored previously by `initUrlShorteners`.
 initUrlShorteners_update = ->
-  store.modify 'updates', (updates) ->
-    updates.shorteners ?= []
-    # Check if the URL shorteners need updated for 0.1.0.0.
-    if '0.1.0.0' not in updates.shorteners
-      # Update the URL shorteners for 0.1.0.0.
-      store.rename 'bitlyEnabled',       'bitly',         off
-      store.rename 'bitlyXApiKey',       'bitlyApiKey',   ''
-      store.rename 'bitlyXLogin',        'bitlyUsername', ''
-      store.rename 'googleEnabled',      'googl',         on
-      store.rename 'googleOAuthEnabled', 'googlOAuth',    on
-      # Ensure that URL shorteners are not updated for 0.1.0.0 again.
-      updates.shorteners.push '0.1.0.0'
-    # Check if the URL shorteners need updated for 1.0.0.
-    if '1.0.0' not in updates.shorteners
-      # Update the URL shorteners for 1.0.0.
-      store.set 'bitly',
-        apiKey:    store.get('bitlyApiKey') ? ''
-        enabled:   store.get('bitly') ? no
-        username:  store.get('bitlyUsername') ? ''
-      store.remove 'bitlyApiKey', 'bitlyUsername'
-      store.set 'googl',
-        enabled: store.get('googl') ? yes
-        oauth:   store.get('googlOAuth') ? yes
-      store.remove 'googlOAuth'
-      yourls = store.get 'yourls'
-      store.set 'yourls',
-        enabled:   if typeof yourls is 'boolean' then yourls else no
-        password:  store.get('yourlsPassword') ? ''
-        signature: store.get('yourlsSignature') ? ''
-        url:       store.get('yourlsUrl') ? ''
-        username:  store.get('yourlsUsername') ? ''
-      store.remove 'yourlsPassword', 'yourlsSignature', 'yourlsUrl',
-                   'yourlsUsername'
-      # Ensure that URL shorteners are not updated for 1.0.0 again.
-      updates.shorteners.push '1.0.0'
+  # Create updater for the `shorteners` namespace.
+  updater = new utils.Updater 'shorteners'
+  # Define the processes for all required updates to the `shorteners`
+  # namespace.
+  updater.update '0.1.0.0', ->
+    store.rename 'bitlyEnabled',       'bitly',         off
+    store.rename 'bitlyXApiKey',       'bitlyApiKey',   ''
+    store.rename 'bitlyXLogin',        'bitlyUsername', ''
+    store.rename 'googleEnabled',      'googl',         on
+    store.rename 'googleOAuthEnabled', 'googlOAuth',    on
+  updater.update '1.0.0', ->
+    store.set 'bitly',
+      apiKey:    store.get('bitlyApiKey') ? ''
+      enabled:   store.get('bitly') ? no
+      username:  store.get('bitlyUsername') ? ''
+    store.remove 'bitlyApiKey', 'bitlyUsername'
+    store.set 'googl',
+      enabled: store.get('googl') ? yes
+      oauth:   store.get('googlOAuth') ? yes
+    store.remove 'googlOAuth'
+    yourls = store.get 'yourls'
+    store.set 'yourls',
+      enabled:   if typeof yourls is 'boolean' then yourls else no
+      password:  store.get('yourlsPassword') ? ''
+      signature: store.get('yourlsSignature') ? ''
+      url:       store.get('yourlsUrl') ? ''
+      username:  store.get('yourlsUsername') ? ''
+    store.remove 'yourlsPassword', 'yourlsSignature', 'yourlsUrl',
+                 'yourlsUsername'
 
 # URL shortener functions
 # -----------------------
@@ -1239,7 +1214,9 @@ ext = window.ext =
     store.init
       anchor:        {}
       notifications: {}
-      updates:       {}
+      stats:         {}
+      templates:     []
+      toolbar:       {}
     init_update()
     store.modify 'anchor', (anchor) ->
       anchor.target ?= off
