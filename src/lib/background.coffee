@@ -931,14 +931,14 @@ initTemplates_update = ->
         switch typeof image
           when 'string'
             if image in ['', 'spacer.gif', 'spacer.png']
-              store.set "feat_#{name}_image", -1
+              store.set "feat_#{name}_image", 0
             else
               for img, i in ext.IMAGES
                 oldImg = img.replace /^tmpl/, 'feat'
                 if "#{oldImg}.png" is image
-                  store.set "feat_#{name}_image", i
+                  store.set "feat_#{name}_image", i + 1
                   break
-          else store.set "feat_#{name}_image", -1
+          else store.set "feat_#{name}_image", 0
       # Ensure that templates are not updated for 0.2.0.0 again.
       updates.templates.push '0.2.0.0'
     # Check if the templates need updated for 1.0.0.
@@ -948,8 +948,9 @@ initTemplates_update = ->
       templates          = []
       toolbarFeatureName = store.get 'toolbarFeatureName'
       for name in names when typeof name is 'string'
-        image = store.remove("feat_#{name}_image") ? -1
-        if image is -1
+        image = store.remove("feat_#{name}_image") ? 0
+        image--
+        if image < 0
           image = ''
         else
           for img, i in ext.IMAGES when i is image
@@ -958,8 +959,11 @@ initTemplates_update = ->
           image = '' if typeof image isnt 'string'
         key = ext.getKeyForName name
         if toolbarFeatureName is name
-          store.modify 'toolbar', (toolbar) ->
-            toolbar.key = key
+          if store.exists 'toolbar'
+            store.modify 'toolbar', (toolbar) ->
+              toolbar.key = key
+          else
+            store.set 'toolbar', key: key
         templates.push
           content:  store.remove("feat_#{name}_content")  ? ''
           enabled:  store.remove("feat_#{name}_enabled")  ? yes
