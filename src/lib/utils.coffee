@@ -501,10 +501,47 @@ class utils.Runner
     @started = yes
     @next()
 
-# Initialize analytics and logging.
+# `Updater` simplifies the process of updating settings between updates.
+# Inlcuding, but not limited to, data transformations and migration.
+class utils.Updater
+
+  # Create a new instance of `Updater` for `namespace`.
+  constructor: (@namespace) ->
+    # Indicate whether or not `namespace` existed initially.
+    @isNew        = not @exists()
+    # Indicate whether or not updates should be performed on new installations.
+    @processIfNew = no
+
+  # Determine whether or not this namespace exists.
+  exists: ->
+    store.get("updates.#{@namespace}")?
+
+  # Remove this namespace.
+  remove: ->
+    store.modify 'updates', (updates) =>
+      delete updates[@namespace]
+
+  # Rename this namespace to `namespace`.
+  rename: (namespace) ->
+    store.modify 'updates', (updates) =>
+      updates[namespace] = updates[@namespace] if updates[@namespace]?
+      @remove()
+      @namespace = namespace
+
+  # Update this namespace to `version` using the `processor` provided when
+  # `version` is newer.
+  update: (version, processor) ->
+    store.modify 'updates', (updates) =>
+      updates[@namespace] ?= ''
+      if updates[@namespace] < version
+        processor?() if not @isNew or @processIfNew
+        updates[@namespace] = version
+
+# Initialize analytics, logging and updates.
 store.init
   analytics: yes
   logger:    {}
+  updates:   {}
 store.modify 'logger', (logger) ->
   logger.assertions ?= no
   logger.enabled    ?= no
