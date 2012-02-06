@@ -29,13 +29,13 @@ To run the locally built extension in [Google Chrome][] you can follow these ste
 
 1. Launch Google Chrome
 2. Bring up the extensions management page by clicking the wrench icon ![wrench](http://code.google.com/chrome/extensions/images/toolsmenu.gif) and choosing **Tools > Extensions**
-3. If **Developer mode** has a + by it, click the + to add developer information to the page (the + changes to a -, and more buttons and information appear)
-4. If any other installations of the extension exist either **Disable** or **Uninstall** them
-4. Click the **Load unpacked extension** button (a file dialog appears)
-5. In the file dialog, navigate to the extension's `bin` or `src` folder and click **OK**
+3. Ensure **Developer mode** is checked in the top right of the page
+4. **Disable** all other versions of the extension which are installed to avoid any conflicts with keyboard shortcuts
+4. Click the **Load unpacked extension...** button (a file dialog appears)
+5. In the file dialog, navigate to the extension's `bin` folder (created by `cake build`) and click **OK**
 
 [coffeescript]: http://coffeescript.org
-[docco]: https://github.com/jashkenas/docco
+[docco]: http://jashkenas.github.com/docco
 [git]: http://git-scm.com
 [google chrome]: http://www.google.com/chrome
 [node]: http://nodejs.org
