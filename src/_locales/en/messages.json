@@ -505,6 +505,17 @@
   "opt_toolbar_close_label": {
     "message": "Closing"
   },
+  "opt_toolbar_close_sub_text": {
+    "message": "This does not apply to the $O_EMPH$Options$C_EMPH$ link, which will always cause the popup to close once clicked",
+    "placeholders": {
+      "c_emph": {
+        "content": "</em>"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
+  },
   "opt_toolbar_close_text": {
     "message": "Automatically close the popup after using a template"
   },
@@ -519,6 +530,12 @@
   },
   "opt_toolbar_not_popup_text": {
     "message": "Use a template when the toolbar icon is clicked"
+  },
+  "opt_toolbar_options_label": {
+    "message": "Options Link"
+  },
+  "opt_toolbar_options_text": {
+    "message": "Display a link to the Options page at the bottom of the popup"
   },
   "opt_toolbar_popup_label": {
     "message": "Popup"
@@ -698,6 +715,9 @@
         "content": "<p>"
       }
     }
+  },
+  "options": {
+    "message": "Options"
   },
   "paste": {
     "message": "Paste"

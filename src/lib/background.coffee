@@ -387,6 +387,7 @@ onRequest = (request, sender, sendResponse) ->
         when 'menu'
           data     = buildDerivedData tab, request.data, shortCallback
           template = getTemplateWithMenuId request.data.menuItemId
+        when 'options' then selectOrCreateTab utils.url 'pages/options.html'
         when 'popup', 'toolbar'
           data     = buildStandardData tab, shortCallback
           template = getTemplateWithKey request.data.key
@@ -472,6 +473,36 @@ onRequest = (request, sender, sendResponse) ->
             popupLoader.hide().dequeue()
           popupItems.queue ->
             popupItems.show().dequeue()
+
+# Attempt to select a tab in the current window displaying a page whose
+# location begins with `url`.  
+# If no existing tab exists a new one is simply created.
+selectOrCreateTab = (url, callback) ->
+  tab      = null
+  windowId = null
+  # Create a runner to mange the asynchronous pattern.
+  runner = new utils.Runner()
+  runner.push chrome.windows, 'getCurrent', (win) ->
+    windowId = win.id
+    runner.next()
+  runner.pushPacked chrome.tabs, 'query', ->
+    [windowId: windowId, (tabs) ->
+      result = yes
+      # Try to find an existing tab.
+      for tab in tabs
+        if tab.url.indexOf(url) is 0
+          existingTab = tab
+          break
+      if existingTab?
+        # Found one! Now to select it.
+        chrome.tabs.update existingTab.id, active: yes
+        result = no
+      else
+        # Ach well, let's just create a new one.
+        chrome.tabs.create url: url, active: yes
+      runner.finish result
+    ]
+  runner.run callback
 
 # Display a desktop notification informing the user on whether or not the copy
 # request was successful.  
@@ -694,6 +725,7 @@ buildStandardData = (tab, shortCallback) ->
     # Deprecated since 1.0.0, use `toolbarKey` instead.
     toolbarfeaturename:    toolbar.key
     toolbarkey:            toolbar.key
+    toolbaroptions:        toolbar.options
     toolbarpopup:          toolbar.popup
     toolbarstyle:          toolbar.style
     url:                   url.attr 'source'
@@ -729,6 +761,18 @@ buildPopup = ->
       class: 'text'
       style: 'margin-left: 0'
       text:  i18n.get 'empty'
+  # Add a link to the options page if the user doesn't mind.
+  if store.get 'toolbar.options'
+    itemList.append $('<li/>',
+      class:       'options'
+      'data-type': 'options'
+      onclick:     'popup.sendRequest(this)'
+    ).append $('<div/>',
+      class: 'menu'
+      style: "background-image: url('../images/tmpl_tools.png')"
+    ).append $ '<span/>',
+      class: 'text'
+      text:  i18n.get 'options'
   item.append itemList
   ext.popupHtml = $('<div/>').append(loadDiv, item).html()
 
@@ -738,8 +782,9 @@ buildPopup = ->
 buildTemplate = (template) ->
   image = getImagePathForTemplate template, yes
   item  = $ '<li/>',
-    key:     template.key
-    onclick: 'popup.sendRequest(this)'
+    'data-key':  template.key
+    'data-type': 'popup'
+    onclick:     'popup.sendRequest(this)'
   menu  = $ '<div/>',
     class: 'menu'
     style: "background-image: url('#{image}')"
@@ -937,10 +982,11 @@ initToolbar = ->
   store.init 'toolbar', {}
   initToolbar_update()
   store.modify 'toolbar', (toolbar) ->
-    toolbar.close ?= yes
-    toolbar.key   ?= 'PREDEFINED.00001'
-    toolbar.popup ?= yes
-    toolbar.style ?= no
+    toolbar.close   ?= yes
+    toolbar.key     ?= 'PREDEFINED.00001'
+    toolbar.options ?= yes
+    toolbar.popup   ?= yes
+    toolbar.style   ?= no
   ext.updateToolbar()
 
 # Handle the conversion/removal of older version of settings that may have been
@@ -1302,6 +1348,7 @@ ext = window.ext =
     key      = store.get 'toolbar.key'
     template = getTemplateWithKey key if key
     title    = i18n.get 'name'
+    buildPopup()
     if not template or store.get 'toolbar.popup'
       # Use Template's details to style the browser action.
       chrome.browserAction.setIcon  path:  utils.url image

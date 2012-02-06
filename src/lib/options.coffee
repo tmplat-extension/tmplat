@@ -534,8 +534,9 @@ loadToolbar = ->
     $('#toolbarPopup').addClass 'active'
   else
     $('#notToolbarPopup').addClass 'active'
-  $('#toolbarClose').attr 'checked', 'checked' if toolbar.close
-  $('#toolbarStyle').attr 'checked', 'checked' if toolbar.style
+  $('#toolbarClose').attr   'checked', 'checked' if toolbar.close
+  $('#toolbarOptions').attr 'checked', 'checked' if toolbar.options
+  $('#toolbarStyle').attr   'checked', 'checked' if toolbar.style
   updateToolbarTemplates()
   loadToolbarControlEvents()
   loadToolbarSaveEvents()
@@ -565,8 +566,8 @@ loadToolbarSaveEvents = ->
       toolbar.popup = popup
     ext.updateToolbar()
     analytics.track 'Toolbars', 'Changed', 'Behaviour', if popup then 1 else 0
-  bindSaveEvent '#toolbarClose, #toolbarKey, #toolbarStyle', 'change',
-   'toolbar', (key) ->
+  bindSaveEvent '#toolbarClose, #toolbarKey, #toolbarOptions, #toolbarStyle',
+   'change', 'toolbar', (key) ->
     if key is 'key' then @val() else @is ':checked'
   , (jel, key, value) ->
     ext.updateToolbar()
