@@ -598,10 +598,10 @@ addAdditionalData = (tab, data, callback) ->
     runner.finish response
   runner.run (result = {}) ->
     $.extend data,
-      pageheight:     results.pageHeight ? 0
-      pagewidth:      results.pageWidth  ? 0
-      selection:      result.text        ? ''
-      selectionlinks: result.urls        ? []
+      pageheight:     result.pageHeight ? ''
+      pagewidth:      result.pageWidth  ? ''
+      selection:      result.text       ? ''
+      selectionlinks: result.urls       ? []
     callback?()
 
 # Creates an object containing data based on information derived from the
