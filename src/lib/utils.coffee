@@ -508,9 +508,7 @@ class utils.Updater
   # Create a new instance of `Updater` for `namespace`.
   constructor: (@namespace) ->
     # Indicate whether or not `namespace` existed initially.
-    @isNew        = not @exists()
-    # Indicate whether or not updates should be performed on new installations.
-    @processIfNew = no
+    @isNew = not @exists()
 
   # Determine whether or not this namespace exists.
   exists: ->
@@ -534,7 +532,7 @@ class utils.Updater
     store.modify 'updates', (updates) =>
       updates[@namespace] ?= ''
       if updates[@namespace] < version
-        processor?() if not @isNew or @processIfNew
+        processor?()
         updates[@namespace] = version
 
 # Initialize analytics, logging and updates.
