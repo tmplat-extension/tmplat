@@ -19,6 +19,7 @@
       .import_content, .export_content {max-height: 284px;}
       textarea {resize: vertical;}
       .navbar-fixed-top .brand {padding-right: 0; padding-left: 0; margin-left: 20px; float: right; font-weight: bold; color: black; text-shadow: 0 1px 0 rgba(255, 255, 255, .1), 0 0 30px rgba(255, 255, 255, .125); -webkit-transition: all .2s linear; -moz-transition: all .2s linear; transition: all .2s linear;}
+      #template_content {resize: both;}
       #template_image_preview {margin-left: 10px;}
       #template_shortcut {text-transform: uppercase;}
       #googlDeauthorize_btn {display: none;}
@@ -448,7 +449,561 @@
             <form class="form-horizontal">
               <fieldset>
                 <legend i18n-content="opt_guide_header"></legend>
-                <div id="template_help" style="padding-top: 18px"></div>
+                <div class="tabbable tabs-left row" style="padding-top: 18px">
+                  <ul class="nav nav-tabs span2">
+                    <li class="active"><a data-target="#guide_introduction" data-toggle="tab" i18n-content="opt_guide_introduction_header"></a></li>
+                    <li><a data-target="#guide_simple_values" data-toggle="tab" i18n-content="opt_guide_simple_values_header"></a></li>
+                    <li><a data-target="#guide_complex_values" data-toggle="tab" i18n-content="opt_guide_complex_values_header"></a></li>
+                    <li><a data-target="#guide_options" data-toggle="tab" i18n-content="opt_guide_options_header"></a></li>
+                    <li><a data-target="#guide_functions" data-toggle="tab" i18n-content="opt_guide_functions_header"></a></li>
+                  </ul>
+                  <div class="tab-content span9">
+                    <div id="guide_introduction" class="tab-pane active">
+                      <p i18n-content="opt_guide_introduction_text"></p>
+                      <h3 i18n-content="opt_guide_introduction_simple_tag_header"></h3>
+                      <p i18n-content="opt_guide_introduction_simple_tag_text"></p>
+                      <h3 i18n-content="opt_guide_introduction_escaped_tag_header"></h3>
+                      <p i18n-content="opt_guide_introduction_escaped_tag_text_1"></p>
+                      <p i18n-content="opt_guide_introduction_escaped_tag_text_2"></p>
+                      <h3 i18n-content="opt_guide_introduction_section_header"></h3>
+                      <p i18n-content="opt_guide_introduction_section_text"></p>
+                      <ul>
+                        <li i18n-content="opt_guide_introduction_section_conditions_text"></li>
+                        <li i18n-content="opt_guide_introduction_section_iterating_text"></li>
+                        <li i18n-content="opt_guide_introduction_section_functions_text"></li>
+                      </ul>
+                      <h3 i18n-content="opt_guide_introduction_inverted_section_header"></h3>
+                      <p i18n-content="opt_guide_introduction_inverted_section_text"></p>
+                      <ul>
+                        <li i18n-content="opt_guide_introduction_inverted_section_conditions_text"></li>
+                        <li i18n-content="opt_guide_introduction_inverted_section_iterating_text"></li>
+                      </ul>
+                      <h3 i18n-content="opt_guide_introduction_case_sensitivity_header"></h3>
+                      <p i18n-content="opt_guide_introduction_case_sensitivity_text"></p>
+                      <div class="well">
+                        <h3 i18n-content="opt_guide_notes_header"></h3>
+                        <p i18n-content="opt_guide_introduction_notes_text_1"></p>
+                        <p i18n-content="opt_guide_introduction_notes_text_2"></p>
+                        <p i18n-content="opt_guide_introduction_notes_text_3"></p>
+                      </div>
+                    </div>
+                    <div id="guide_simple_values" class="tab-pane">
+                      <p i18n-content="opt_guide_simple_values_text"></p>
+                      <table class="table table-condensed table-bordered table-striped">
+                        <caption i18n-content="opt_guide_definitions_caption"></caption>
+                        <thead>
+                          <tr>
+                            <th style="width: 25%" i18n-content="opt_guide_name_header"></th>
+                            <th i18n-content="opt_guide_description_header"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>base</td>
+                            <td i18n-content="opt_guide_simple_values_base_text"></td>
+                          </tr>
+                          <tr>
+                            <td>count</td>
+                            <td i18n-content="opt_guide_simple_values_count_text"></td>
+                          </tr>
+                          <tr>
+                            <td>customCount</td>
+                            <td i18n-content="opt_guide_simple_values_custom_count_text"></td>
+                          </tr>
+                          <tr>
+                            <td>dateTime</td>
+                            <td i18n-content="opt_guide_simple_values_date_time_text"></td>
+                          </tr>
+                          <tr>
+                            <td>depth</td>
+                            <td i18n-content="opt_guide_simple_values_depth_text"></td>
+                          </tr>
+                          <tr>
+                            <td>directory</td>
+                            <td i18n-content="opt_guide_simple_values_directory_text"></td>
+                          </tr>
+                          <tr>
+                            <td>favicon</td>
+                            <td i18n-content="opt_guide_simple_values_favicon_text"></td>
+                          </tr>
+                          <tr>
+                            <td>file</td>
+                            <td i18n-content="opt_guide_simple_values_file_text"></td>
+                          </tr>
+                          <tr>
+                            <td>fragment/anchor</td>
+                            <td i18n-content="opt_guide_simple_values_fragment_anchor_text"></td>
+                          </tr>
+                          <tr>
+                            <td>host</td>
+                            <td i18n-content="opt_guide_simple_values_host_text"></td>
+                          </tr>
+                          <tr>
+                            <td>originalTitle</td>
+                            <td i18n-content="opt_guide_simple_values_original_title_text"></td>
+                          </tr>
+                          <tr>
+                            <td>originalUrl</td>
+                            <td i18n-content="opt_guide_simple_values_original_url_text"></td>
+                          </tr>
+                          <tr>
+                            <td>pageHeight<strong>*</strong></td>
+                            <td i18n-content="opt_guide_simple_values_page_height_text"></td>
+                          </tr>
+                          <tr>
+                            <td>pageWidth<strong>*</strong></td>
+                            <td i18n-content="opt_guide_simple_values_page_width_text"></td>
+                          </tr>
+                          <tr>
+                            <td>path</td>
+                            <td i18n-content="opt_guide_simple_values_path_text"></td>
+                          </tr>
+                          <tr>
+                            <td>port</td>
+                            <td i18n-content="opt_guide_simple_values_port_text"></td>
+                          </tr>
+                          <tr>
+                            <td>protocol</td>
+                            <td i18n-content="opt_guide_simple_values_protocol_text"></td>
+                          </tr>
+                          <tr>
+                            <td>query</td>
+                            <td i18n-content="opt_guide_simple_values_query_text"></td>
+                          </tr>
+                          <tr>
+                            <td>relative</td>
+                            <td i18n-content="opt_guide_simple_values_relative_text"></td>
+                          </tr>
+                          <tr>
+                            <td>screenHeight</td>
+                            <td i18n-content="opt_guide_simple_values_screen_height_text"></td>
+                          </tr>
+                          <tr>
+                            <td>screenWidth</td>
+                            <td i18n-content="opt_guide_simple_values_screen_width_text"></td>
+                          </tr>
+                          <tr>
+                            <td>selection<strong>*</strong></td>
+                            <td i18n-content="opt_guide_simple_values_selection_text"></td>
+                          </tr>
+                          <tr>
+                            <td>short</td>
+                            <td i18n-content="opt_guide_simple_values_short_text"></td>
+                          </tr>
+                          <tr>
+                            <td>title</td>
+                            <td i18n-content="opt_guide_simple_values_title_text"></td>
+                          </tr>
+                          <tr>
+                            <td>url</td>
+                            <td i18n-content="opt_guide_simple_values_url_text"></td>
+                          </tr>
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <td colspan="2"><em i18n-content="opt_guide_protected_tag_text"></em></td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                    <div id="guide_complex_values" class="tab-pane">
+                      <p i18n-content="opt_guide_complex_values_text"></p>
+                      <table class="table table-condensed table-bordered table-striped">
+                        <caption i18n-content="opt_guide_definitions_caption"></caption>
+                        <thead>
+                          <tr>
+                            <th style="width: 25%" i18n-content="opt_guide_name_header"></th>
+                            <th style="width: 10%" i18n-content="opt_guide_type_header"></th>
+                            <th i18n-content="opt_guide_description_header"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>cookies</td>
+                            <td i18n-content="opt_guide_type_array_text"></td>
+                            <td i18n-content="opt_guide_complex_values_cookies_text"></td>
+                          </tr>
+                          <tr>
+                            <td>coords</td>
+                            <td i18n-content="opt_guide_type_map_text"></td>
+                            <td i18n-content="opt_guide_complex_values_coords_text"></td>
+                          </tr>
+                          <tr>
+                            <td>fparams</td>
+                            <td i18n-content="opt_guide_type_map_text"></td>
+                            <td i18n-content="opt_guide_complex_values_fparams_text"></td>
+                          </tr>
+                          <tr>
+                            <td>fsegments</td>
+                            <td i18n-content="opt_guide_type_array_text"></td>
+                            <td i18n-content="opt_guide_complex_values_fsegments_text"></td>
+                          </tr>
+                          <tr>
+                            <td>params</td>
+                            <td i18n-content="opt_guide_type_map_text"></td>
+                            <td i18n-content="opt_guide_complex_values_params_text"></td>
+                          </tr>
+                          <tr>
+                            <td>plugins</td>
+                            <td i18n-content="opt_guide_type_array_text"></td>
+                            <td i18n-content="opt_guide_complex_values_plugins_text"></td>
+                          </tr>
+                          <tr>
+                            <td>popular</td>
+                            <td i18n-content="opt_guide_type_map_text"></td>
+                            <td i18n-content="opt_guide_complex_values_popular_text"></td>
+                          </tr>
+                          <tr>
+                            <td>segments</td>
+                            <td i18n-content="opt_guide_type_array_text"></td>
+                            <td i18n-content="opt_guide_complex_values_segments_text"></td>
+                          </tr>
+                          <tr>
+                            <td>selectedLinks<strong>*</strong></td>
+                            <td i18n-content="opt_guide_type_array_text"></td>
+                            <td i18n-content="opt_guide_complex_values_selected_links_text"></td>
+                          </tr>
+                          <tr>
+                            <td>template</td>
+                            <td i18n-content="opt_guide_type_map_text"></td>
+                            <td i18n-content="opt_guide_complex_values_template_text"></td>
+                          </tr>
+                        </tbody>
+                        <tfoot>
+                          <tr>
+                            <td colspan="3"><em i18n-content="opt_guide_protected_tag_text"></em></td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                      <h3 i18n-content="opt_guide_examples_header"></h3>
+                      <p i18n-content="opt_guide_complex_values_examples_text_1"></p>
+                      <pre i18n-content="opt_guide_complex_values_examples_code_1"></pre>
+                      <p i18n-content="opt_guide_complex_values_examples_text_2"></p>
+                      <pre i18n-content="opt_guide_complex_values_examples_code_2"></pre>
+                      <p i18n-content="opt_guide_complex_values_examples_text_3"></p>
+                      <pre i18n-content="opt_guide_complex_values_examples_code_3"></pre>
+                      <p i18n-content="opt_guide_complex_values_examples_text_4"></p>
+                      <pre i18n-content="opt_guide_complex_values_examples_code_4"></pre>
+                      <p i18n-content="opt_guide_complex_values_examples_text_5"></p>
+                      <pre i18n-content="opt_guide_complex_values_examples_code_5"></pre>
+                      <p i18n-content="opt_guide_complex_values_examples_text_6"></p>
+                      <pre i18n-content="opt_guide_complex_values_examples_code_6"></pre>
+                      <p i18n-content="opt_guide_complex_values_examples_text_7"></p>
+                      <pre i18n-content="opt_guide_complex_values_examples_code_7"></pre>
+                      <p i18n-content="opt_guide_complex_values_examples_text_8"></p>
+                      <pre i18n-content="opt_guide_complex_values_examples_code_8"></pre>
+                      <p i18n-content="opt_guide_complex_values_examples_text_9"></p>
+                      <pre i18n-content="opt_guide_complex_values_examples_code_9"></pre>
+                    </div>
+                    <div id="guide_options" class="tab-pane">
+                      <p i18n-content="opt_guide_options_text"></p>
+                      <table class="table table-condensed table-bordered table-striped">
+                        <caption i18n-content="opt_guide_definitions_caption"></caption>
+                        <thead>
+                          <tr>
+                            <th style="width: 25%" i18n-content="opt_guide_name_header"></th>
+                            <th i18n-content="opt_guide_description_header"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>anchorTarget</td>
+                            <td i18n-content="opt_guide_options_anchor_target_text"></td>
+                          </tr>
+                          <tr>
+                            <td>anchorTitle</td>
+                            <td i18n-content="opt_guide_options_anchor_title_text"></td>
+                          </tr>
+                          <tr>
+                            <td>bitly</td>
+                            <td i18n-content="opt_guide_options_bitly_text"></td>
+                          </tr>
+                          <tr>
+                            <td>bitlyApiKey</td>
+                            <td i18n-content="opt_guide_options_bitly_api_key_text"></td>
+                          </tr>
+                          <tr>
+                            <td>bitlyUsername</td>
+                            <td i18n-content="opt_guide_options_bitly_username_text"></td>
+                          </tr>
+                          <tr>
+                            <td>browser</td>
+                            <td i18n-content="opt_guide_options_browser_text"></td>
+                          </tr>
+                          <tr>
+                            <td>browserVersion</td>
+                            <td>
+                              The current version of the browser (e.g. <em>12.0.742.122</em>)
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>contextMenu</td>
+                            <td>
+                              Whether or not the option to show the context-menu is enabled
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>cookiesEnabled</td>
+                            <td>Whether or not cookies are enabled</td>
+                          </tr>
+                          <tr>
+                            <td>googl</td>
+                            <td>
+                              Whether or not <a href="http://goo.gl" target="_blank">goo.gl</a>
+                              is the enabled <abbr title="Uniform Resource Locator">URL</abbr>
+                              shortener
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>googlOAuth</td>
+                            <td>
+                              Whether or not <a href="http://oauth.net" target="_blank">OAuth</a>
+                              is enabled for <a href="http://goo.gl" target="_blank">goo.gl</a>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>java</td>
+                            <td>
+                              Whether or not <a href="http://www.java.com" target="_blank">Java</a>
+                              is enabled
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>notificationDuration</td>
+                            <td>The number of seconds notifications are to last</td>
+                          </tr>
+                          <tr>
+                            <td>notifications</td>
+                            <td>Whether or not the option to show notifications is enabled</td>
+                          </tr>
+                          <tr>
+                            <td>offline</td>
+                            <td>Whether or not the user is currently offline</td>
+                          </tr>
+                          <tr>
+                            <td>os</td>
+                            <td>
+                              The family of the current operating system (<em>Windows</em>/<em>Mac</em>/<em>Linux</em>)
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>shortcuts</td>
+                            <td>
+                              Whether or not the option to allow keyboard shortcuts is enabled
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>toolbarClose</td>
+                            <td>
+                              Whether or not the popup is shown when the toolbar button is clicked
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>toolbarKey</td>
+                            <td>
+                              The key of the template activated when the toolbar button is clicked
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>toolbarPopup</td>
+                            <td>
+                              Whether or not the popup is closed immediately after a template is
+                              selected
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>toolbarOptions</td>
+                            <td>
+                              Whether or not the <em>Options</em> link is displayed at the bottom
+                              of the popup
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>toolbarStyle</td>
+                            <td>
+                              Whether or not the toolbar button's design is based on a template
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>version</td>
+                            <td>
+                              The installed version of <strong>Template</strong> (e.g. <em class="version-replace"></em>)
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>yourls</td>
+                            <td>
+                              Whether or not <a href="http://yourls.org" target="_blank">YOURLS</a>
+                              is the enabled <abbr title="Uniform Resource Locator">URL</abbr>
+                              shortener
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>yourlsPassword</td>
+                            <td>
+                              The password associated with your <a href="http://yourls.org" target="_blank">YOURLS</a>
+                              installation
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>yourlsSignature</td>
+                            <td>
+                              The signature associated with your <a href="http://yourls.org" target="_blank">YOURLS</a>
+                              installation (e.g. <em>3002a61584</em>)
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>yourlsUrl</td>
+                            <td>
+                              The <abbr title="Uniform Resource Locator">URL</abbr> of your <a href="http://yourls.org" target="_blank">YOURLS</a>
+                              installation (e.g. <em>http://example.com/yourls-api.php</em>)
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>yourlsUsername</td>
+                            <td>
+                              The username associated with your <a href="http://yourls.org" target="_blank">YOURLS</a>
+                              installation
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <h3 i18n-content="opt_guide_examples_header"></h3>
+                      <p>
+                        These examples will be using the following <abbr title="Uniform Resource Locator">URL</abbr>;
+                      </p>
+                      <pre>http://example.com/test/index.html</pre>
+                      <p>
+                        To include the <em>title</em> attribute in an anchor tag only if the user
+                        wants it;
+                      </p>
+                      <pre>&lt;a href=&quot;{{url}}&quot;{#anchorTitle} title=&quot;{{title}}&quot;{/anchorTitle}&gt;This is a test!&lt;/a&gt;</pre>
+                      <p>Would output the following if this option was enabled by the user;</p>
+                      <pre>&lt;a href=&quot;http://example.com/test/index.html&quot; title=&quot;Test&quot;&gt;This is a test!&lt;/a&gt;</pre>
+                      <p>
+                        However, if the user disabled this option it would output as follows;
+                      </p>
+                      <pre>&lt;a href=&quot;http://example.com/test/index.html&quot;&gt;This is a test!&lt;/a&gt;</pre>
+                    </div>
+                    <div id="guide_functions" class="tab-pane">
+                      <p>
+                        <strong>Functions</strong> can be accessed using the syntax <code>{#name}value{/name}</code>
+                        where <em>name</em> is the name of the function and <em>value</em> is the
+                        value of its argument and perform more complex operations using parameters
+                        you provide.
+                      </p>
+                      <table class="table table-condensed table-bordered table-striped">
+                        <caption>Definitions</caption>
+                        <thead>
+                          <tr>
+                            <th style="width: 25%">Name</th>
+                            <th style="width: 10%">Argument</th>
+                            <th>Description</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>cookie</td>
+                            <td i18n-content="opt_guide_argument_string_text"></td>
+                            <td>Access the value of the cookie provided</td>
+                          </tr>
+                          <tr>
+                            <td>dateTime</td>
+                            <td i18n-content="opt_guide_argument_string_text"></td>
+                            <td>
+                              Formats the current date/time using the string provided<br>(see <a href="http://php.net/manual/en/function.date.php#refsect1-function.date-parameters" target="_blank"><abbr title="Hypertext Preprocessor">PHP</abbr>'s date</a>
+                              for more details)
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>decode</td>
+                            <td i18n-content="opt_guide_argument_string_text"></td>
+                            <td>Decodes the previously encoded text provided</td>
+                          </tr>
+                          <tr>
+                            <td>encode</td>
+                            <td i18n-content="opt_guide_argument_string_text"></td>
+                            <td>
+                              Encodes the text provided so that it can be safely used in a query
+                              string
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>fparam</td>
+                            <td i18n-content="opt_guide_argument_string_text"></td>
+                            <td>
+                              Access the value of the parameter provided from within the hash fragment
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>fsegment</td>
+                            <td i18n-content="opt_guide_argument_number_text"></td>
+                            <td>
+                              Access the value of the segment provided from within the hash fragment
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>param</td>
+                            <td i18n-content="opt_guide_argument_string_text"></td>
+                            <td>Access the value of the parameter provided</td>
+                          </tr>
+                          <tr>
+                            <td>segment</td>
+                            <td i18n-content="opt_guide_argument_number_text"></td>
+                            <td>Access the value of the segment provided</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <div class="well">
+                        <h3>Notes</h3>
+                        <p>
+                          The following notes apply to <span class="label">segment</span>/<span class="label">fsegment</span>;
+                        </p>
+                        <ul>
+                          <li>
+                            The count is not zero-indexed like an array (i.e. <code>{#segment}1{/segment}</code>
+                            returns the first segment, not the second one)
+                          </li>
+                          <li>
+                            The argument can be negative values, in which case it will count back
+                            from the end of the path rather than forwards from the start
+                          </li>
+                        </ul>
+                      </div>
+                      <h3>Examples</h3>
+                      <p>
+                        These examples will be using the following <abbr title="Uniform Resource Locator">URL</abbr>;
+                      </p>
+                      <pre>http://example.com/test/index.html?foo=bar&amp;fu=baz</pre>
+                      <p>
+                        To output the current date/time in <a href="http://en.wikipedia.org/wiki/ISO_8601" target="_blank">ISO 8601</a>
+                        format you would use;
+                      </p>
+                      <pre>{#dateTime}Y-m-d\TH:i:sP{/dateTime}</pre>
+                      <p>
+                        Also, the <em>c</em> parameter would also have the same outcome.
+                      </p>
+                      <p>
+                        If you wanted to pass the whole <abbr title="Uniform Resource Locator">URL</abbr>
+                        as parameter;
+                      </p>
+                      <pre>{#encode}{url}{/encode}</pre>
+                      <p>
+                        Would escape all the characters of the <abbr title="Uniform Resource Locator">URL</abbr>
+                        and output the following;
+                      </p>
+                      <pre>http%3A%2F%2Fexample.com%2Ftest%2Findex.html%3Ffoo%3Dbar%26fu%3Dbaz</pre>
+                      <p>To access the 2nd <span class="label">segment</span>;</p>
+                      <pre>&lt;p&gt;{#segment}2{/segment}&lt;/p&gt;</pre>
+                      <p>Would output the following;</p>
+                      <pre>&lt;p&gt;index.html&lt;/p&gt;</pre>
+                      <p>However, to access the value of the <em>foo</em> parameter;</p>
+                      <pre>&lt;b&gt;{#param}foo{/param}&lt;/b&gt;</pre>
+                      <p>Would output the following;</p>
+                      <pre>&lt;b&gt;bar&lt;/b&gt;</pre>
+                    </div>
+                  </div>
+                </div>
               </fieldset>
             </form>
           </div>

@@ -21,7 +21,9 @@ YYYY.MM.DD, Version 1.0.0
 * [#62](https://github.com/neocotic/template/issues/62): Add Options link to bottom of popup (available in templates via the new *"toolbarOptions"* option tag)
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"depth"* simple tag to enable access to the colour depth of the user's screen
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"pageWidth"* and *"pageHeight"* simple tags to enable access to the dimensions of a page
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"plugins"* complex tag to enable access to the active browser plugins
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"screenWidth"* and *"screenHeight"* simple tags to enable access to the user's screen resolution
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"template"* complex tag to enable access to the activated template
 * More bug fixes and UI tweaks
 
 2011.12.22, Version 0.3.0.0

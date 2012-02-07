@@ -7,10 +7,6 @@
 # Private constants
 # -----------------
 
-# Default locale to use if no matching locales were found in `locales`.
-DEFAULT_LOCALE   = 'en'
-# Locales supported by Template.
-LOCALES          = ['en']
 # Regular expression used to validate template keys.
 R_VALID_KEY      = /^[A-Z0-9]*\.[A-Z0-9]*$/i
 # Regular expression used to validate keyboard shortcut inputs.
@@ -958,15 +954,6 @@ options = window.options =
     for key in googl.oauthKeys when store.exists key
       $('#googlDeauthorize_btn').show()
       break
-    # Load template section from locale-specific file.
-    locale   = DEFAULT_LOCALE
-    uiLocale = i18n.get '@@ui_locale'
-    for loc in LOCALES when loc is uiLocale
-      locale = uiLocale
-      break
-    $('#template_help').load utils.url("pages/templates_#{locale}.html"), ->
-      $('.version-replace').text ext.version
-      $('[title]').tooltip()
     # Ensure that form submissions don't reload the page.
     $('form').submit ->
       no
@@ -976,11 +963,9 @@ options = window.options =
       ext.SHORTCUT_MAC_MODIFIERS
     else
       ext.SHORTCUT_MODIFIERS
-    # Initialize all of the *goto* links.
-    $('[data-goto]').click ->
-      goto = $ $(this).attr 'data-goto'
-      $(window).scrollTop if goto.length then goto.scrollTop() else 0
-    # Initialize all popovers.
+    # Insert current extension version where required.
+    $('.version-replace').text ext.version
+    # Initialize all popovers, tooltips and *go-to* links.
     $('[popover]').each ->
       $this   = $ this
       trigger = $this.attr 'data-trigger'
@@ -992,3 +977,7 @@ options = window.options =
       if trigger is 'manual'
         $this.click ->
           $this.popover 'toggle'
+    $('[title]').tooltip()
+    $('[data-goto]').click ->
+      goto = $ $(this).attr 'data-goto'
+      $(window).scrollTop if goto.length then goto.scrollTop() else 0

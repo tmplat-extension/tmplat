@@ -338,6 +338,10 @@ isProtectedPage = (tab) ->
 isSpecialPage = (tab) ->
   tab.url.indexOf('chrome') is 0
 
+# Ensure `null` is returned instead of `object` if it is *empty*.
+nullIfEmpty = (object) ->
+  if $.isEmptyObject object then null else object
+
 # Listener for internal requests to the extension.  
 # External requests are also routed through here, but only after being checked
 # that they do not originate from a blacklisted extension.
@@ -405,6 +409,8 @@ onRequest = (request, sender, sendResponse) ->
         success: no
   runner.pushPacked null, addAdditionalData, ->
     [tab, data, ->
+      # To complete the data, simply extend it using `template`.
+      $.extend data, template: template
       if template.content
         output = Mustache.to_html template.content, data
         # If any `short` tags are found and replaced, the URL shortener service
@@ -600,7 +606,9 @@ addAdditionalData = (tab, data, callback) ->
     $.extend data,
       pageheight:     result.pageHeight ? ''
       pagewidth:      result.pageWidth  ? ''
+      selectedlinks:  result.urls       ? []
       selection:      result.text       ? ''
+      # Deprecated since 1.0.0, use `selectedLinks` instead.
       selectionlinks: result.urls       ? []
     callback?()
 
@@ -672,10 +680,10 @@ buildStandardData = (tab, shortCallback) ->
     customcount:           stats.customCount
     datetime:              ->
       (text, render) ->
-        new Date().format render(text) or undefined
+        new Date().format(render(text) or undefined) ? ''
     decode:                ->
       (text, render) ->
-        decodeURIComponent render text
+        decodeURIComponent(render text) ? ''
     depth:                 window.screen.colorDepth
     # Deprecated since 1.0.0, use `anchorTarget` instead.
     doanchortarget:        anchor.target
@@ -683,17 +691,17 @@ buildStandardData = (tab, shortCallback) ->
     doanchortitle:         anchor.title
     encode:                ->
       (text, render) ->
-        encodeURIComponent render text
+        encodeURIComponent(render text) ? ''
     # Deprecated since 0.1.0.2, use `encode` instead.
     encoded:               encodeURIComponent url.attr 'source'
     favicon:               tab.favIconUrl
     fparam:                ->
       (text, render) ->
-        url.fparam render text
-    fparams:               url.fparam()
+        url.fparam(render text) ? ''
+    fparams:               nullIfEmpty url.fparam()
     fsegment:              ->
       (text, render) ->
-        url.fsegment parseInt render(text), 10
+        url.fsegment(parseInt render(text), 10) ? ''
     fsegments:             url.fsegment()
     googl:                 googl.enabled
     googloauth:            googl.oauth
@@ -708,15 +716,23 @@ buildStandardData = (tab, shortCallback) ->
     os:                    operatingSystem
     param:                 ->
       (text, render) ->
-        url.param render text
-    params:                url.param()
+        url.param(render text) ? ''
+    params:                nullIfEmpty url.param()
+    plugins:               (
+      array   = []
+      plugins = (plugin.name for plugin in window.navigator.plugins)
+      plugins.sort().filter (name) ->
+        if name in array then no else
+          array.push name
+          yes
+    )
     popular:               ext.queryTemplate (template) ->
       template.key is stats.popular
     screenheight:          window.screen.height
     screenwidth:           window.screen.width
     segment:               ->
       (text, render) ->
-        url.segment parseInt render(text), 10
+        url.segment(parseInt render(text), 10) ? ''
     segments:              url.segment()
     short:                 ->
       shortCallback?()
