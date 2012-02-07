@@ -8,18 +8,21 @@ YYYY.MM.DD, Version 1.0.0
 * [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeature"* option tag (still available by inverting the *"toolbarPopup"* option tag)
 * [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeatureDetails"* option tag and replace with the *"toolbarStyle"* option tag
 * [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeatureName"* option tag and replace with the *"toolbarKey"* option tag
-* [#49](https://github.com/neocotic/template/issues/49): Add new *"count"* simple tag to allow access to the total number of templates
-* [#49](https://github.com/neocotic/template/issues/49): Add new *"customCount"* simple tag to allow access to the total number of custom templates (i.e. excluding predefined)
-* [#49](https://github.com/neocotic/template/issues/49): Add new *"popular"* complex tag to allow access to the details of the most popular template
+* [#49](https://github.com/neocotic/template/issues/49): Add new *"count"* simple tag to enable access to the total number of templates
+* [#49](https://github.com/neocotic/template/issues/49): Add new *"customCount"* simple tag to enable access to the total number of custom templates (i.e. excluding predefined)
+* [#49](https://github.com/neocotic/template/issues/49): Add new *"popular"* complex tag to enable access to the details of the most popular template
 * [#49](https://github.com/neocotic/template/issues/49): Restructure template data stored in `localStorage`
 * [#52](https://github.com/neocotic/template/issues/52): Completely rewrite code in [CoffeeScript](http://coffeescript.org)
 * [#52](https://github.com/neocotic/template/issues/52): Update build process
 * [#58](https://github.com/neocotic/template/issues/58): Remove requirement of names for templates
 * [#59](https://github.com/neocotic/template/issues/59): Restructure option data stored in `localStorage`
 * [#60](https://github.com/neocotic/template/issues/60): Automically save changes on the Options page
-* [#61](https://github.com/neocotic/template/issues/61): Add new *"coords"* complex tag to access user's geolocation
+* [#61](https://github.com/neocotic/template/issues/61): Add new *"coords"* complex tag to enable access to the user's geolocation
 * [#62](https://github.com/neocotic/template/issues/62): Add Options link to bottom of popup (available in templates via the new *"toolbarOptions"* option tag)
-* Bug fixes and UI tweaks
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"depth"* simple tag to enable access to the colour depth of the user's screen
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"pageWidth"* and *"pageHeight"* simple tags to enable access to the dimensions of a page
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"screenWidth"* and *"screenHeight"* simple tags to enable access to the user's screen resolution
+* More bug fixes and UI tweaks
 
 2011.12.22, Version 0.3.0.0
 
