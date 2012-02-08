@@ -603,13 +603,24 @@ addAdditionalData = (tab, data, callback) ->
   runner.push chrome.tabs, 'sendRequest', tab.id, {}, (response) ->
     runner.finish response
   runner.run (result = {}) ->
+    lastModified = if result.lastModified?
+      time = Date.parse result.lastModified
+      new Date time unless isNaN time
     $.extend data,
-      pageheight:     result.pageHeight ? ''
-      pagewidth:      result.pageWidth  ? ''
-      selectedlinks:  result.urls       ? []
-      selection:      result.text       ? ''
+      characterset:   result.characterSet  ? ''
+      lastmodified:   ->
+        (text, render) ->
+          lastModified?.format(render(text) or undefined) ? ''
+      links:          result.links         ? []
+      pageheight:     result.pageHeight    ? ''
+      pagewidth:      result.pageWidth     ? ''
+      referrer:       result.referrer      ? ''
+      scripts:        result.scripts       ? []
+      selectedlinks:  result.selectedLinks ? []
+      selection:      result.selection     ? ''
       # Deprecated since 1.0.0, use `selectedLinks` instead.
-      selectionlinks: result.urls       ? []
+      selectionlinks: result.selectedLinks ? []
+      stylesheets:    result.styleSheets   ? []
     callback?()
 
 # Creates an object containing data based on information derived from the
@@ -675,7 +686,7 @@ buildStandardData = (tab, shortCallback) ->
     browser:               browser.title
     browserversion:        browser.version
     contextmenu:           store.get 'contextMenu'
-    cookiesenabled:        window.navigator.cookieEnabled
+    cookiesenabled:        navigator.cookieEnabled
     count:                 stats.count
     customcount:           stats.customCount
     datetime:              ->
@@ -684,7 +695,7 @@ buildStandardData = (tab, shortCallback) ->
     decode:                ->
       (text, render) ->
         decodeURIComponent(render text) ? ''
-    depth:                 window.screen.colorDepth
+    depth:                 screen.colorDepth
     # Deprecated since 1.0.0, use `anchorTarget` instead.
     doanchortarget:        anchor.target
     # Deprecated since 1.0.0, use `anchorTitle` instead.
@@ -705,10 +716,10 @@ buildStandardData = (tab, shortCallback) ->
     fsegments:             url.fsegment()
     googl:                 googl.enabled
     googloauth:            googl.oauth
-    java:                  window.navigator.javaEnabled()
+    java:                  navigator.javaEnabled()
     notifications:         notifications.enabled
     notificationduration:  notifications.duration * .001
-    offline:               not window.navigator.onLine
+    offline:               not navigator.onLine
     # Deprecated since 0.1.0.2, use `originalUrl` instead.
     originalsource:        tab.url
     originaltitle:         tab.title or url.attr 'source'
@@ -720,16 +731,18 @@ buildStandardData = (tab, shortCallback) ->
     params:                nullIfEmpty url.param()
     plugins:               (
       array   = []
-      plugins = (plugin.name for plugin in window.navigator.plugins)
+      plugins = (plugin.name for plugin in navigator.plugins)
       plugins.sort().filter (name) ->
         if name in array then no else
           array.push name
           yes
+      array = null
+      plugins
     )
     popular:               ext.queryTemplate (template) ->
       template.key is stats.popular
-    screenheight:          window.screen.height
-    screenwidth:           window.screen.width
+    screenheight:          screen.height
+    screenwidth:           screen.width
     segment:               ->
       (text, render) ->
         url.segment(parseInt render(text), 10) ? ''
@@ -833,7 +846,7 @@ init_update = ->
       for own namespace, versions of progress
         updates[namespace] = if versions?.length then versions.pop() else ''
   # Create updater for the `settings` namespace.
-  updater      = new utils.Updater 'settings'
+  updater      = new store.Updater 'settings'
   isNewInstall = updater.isNew
   # Define the processes for all required updates to the `settings`
   # namespace.
@@ -919,7 +932,7 @@ initTemplates = ->
 initTemplates_update = ->
   # Create updater for the `features` namespace and then rename it to
   # `templates`.
-  updater = new utils.Updater 'features'
+  updater = new store.Updater 'features'
   updater.rename 'templates'
   # Define the processes for all required updates to the `templates` namespace.
   updater.update '0.1.0.0', ->
@@ -1000,7 +1013,7 @@ initToolbar = ->
 # stored previously by `initToolbar`.
 initToolbar_update = ->
   # Create updater for the `toolbar` namespace.
-  updater = new utils.Updater 'toolbar'
+  updater = new store.Updater 'toolbar'
   # Define the processes for all required updates to the `toolbar` namespace.
   updater.update '1.0.0', ->
     store.modify 'toolbar', (toolbar) ->
@@ -1037,7 +1050,7 @@ initUrlShorteners = ->
 # stored previously by `initUrlShorteners`.
 initUrlShorteners_update = ->
   # Create updater for the `shorteners` namespace.
-  updater = new utils.Updater 'shorteners'
+  updater = new store.Updater 'shorteners'
   # Define the processes for all required updates to the `shorteners`
   # namespace.
   updater.update '0.1.0.0', ->

@@ -398,6 +398,20 @@
   "opt_guide_complex_values_header": {
     "message": "Complex Values"
   },
+  "opt_guide_complex_values_links_text": {
+    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all links on the page",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
   "opt_guide_complex_values_params_text": {
     "message": "The key/value pairs of all parameters (e.g. query $O_CODE$foo=bar&amp;fu=baz$C_CODE$ contains $O_EMPH$$EXAMPLE_1$$C_EMPH$ and $O_EMPH$$EXAMPLE_2$$C_EMPH$)",
     "placeholders": {
@@ -455,6 +469,20 @@
       }
     }
   },
+  "opt_guide_complex_values_scripts_text": {
+    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all external script used by the page",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
   "opt_guide_complex_values_segments_text": {
     "message": "The segments from the $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$'s path",
     "placeholders": {
@@ -471,6 +499,20 @@
   },
   "opt_guide_complex_values_selected_links_text": {
     "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all links within the current selection",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
+  "opt_guide_complex_values_style_sheets_text": {
+    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all external $O_ABBR_1$Cascading Style Sheets$O_ABBR_2$CSS$C_ABBR$ resources used by the page",
     "placeholders": {
       "c_abbr": {
         "content": "</abbr>"
@@ -533,55 +575,32 @@
     "message": "Case Sensitivity"
   },
   "opt_guide_introduction_case_sensitivity_text": {
-    "message": "Both tags and sections are case-insensitive, therefore $O_CODE${name}$C_CODE$ will output the same as $O_CODE${NaMe}$C_CODE$. However, sections must be opened and closed using the same case (i.e. $O_CODE${#name}...{/NaMe}$C_CODE$ will not work).",
+    "message": "The names of simple tags and sections are case-insensitive, therefore $O_CODE${name}$C_CODE$ will output the same as $O_CODE${NaMe}$C_CODE$. However, sections must be opened and closed with names in the same case (i.e. $O_CODE${#name}...{/NaMe}$C_CODE$ will not work).",
     "placeholders": {
       "c_code": {
         "content": "</code>"
       },
       "o_code": {
         "content": "<code>"
-      }
-    }
-  },
-  "opt_guide_introduction_escaped_tag_header": {
-    "message": "Escaped Tag"
-  },
-  "opt_guide_introduction_escaped_tag_text_1": {
-    "message": "By default, values are not escaped and in order to do so you must use double braces like $O_CODE${{name}}$C_CODE$.",
-    "placeholders": {
-      "c_code": {
-        "content": "</code>"
-      },
-      "o_code": {
-        "content": "<code>"
-      }
-    }
-  },
-  "opt_guide_introduction_escaped_tag_text_2": {
-    "message": "This will escape certain characters ($O_CODE$(&amp; \\ &quot; &lt; &gt;)$C_CODE$) so that it can be safely copied in to $O_ABBR_1$Extensible Markup Language$O_ABBR_2$XML$C_ABBR$/$O_ABBR_1$Hyper Text Markup Language$O_ABBR_2$HTML$C_ABBR$.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>"
-      },
-      "c_code": {
-        "content": "</code>"
-      },
-      "o_code": {
-        "content": "<code>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">"
       }
     }
   },
   "opt_guide_introduction_header": {
     "message": "Introduction"
   },
+  "opt_guide_introduction_inverted_section_accessing_text": {
+    "message": "$O_BOLD$Accessing$C_BOLD$ - Only renders the contents if the value is an empty object",
+    "placeholders": {
+      "c_bold": {
+        "content": "</strong>"
+      },
+      "o_bold": {
+        "content": "<strong>"
+      }
+    }
+  },
   "opt_guide_introduction_inverted_section_conditions_text": {
-    "message": "$O_BOLD$Conditions$C_BOLD$ - Only renders the section if the value is $O_EMPH$false$C_EMPH$ or simply doesn't exist if it's not a boolean value",
+    "message": "$O_BOLD$Conditions$C_BOLD$ - Only renders the contents if the value is $O_EMPH$falsey$C_EMPH$",
     "placeholders": {
       "c_bold": {
         "content": "</strong>"
@@ -601,7 +620,7 @@
     "message": "Inverted Section"
   },
   "opt_guide_introduction_inverted_section_iterating_text": {
-    "message": "$O_BOLD$Iterating$C_BOLD$ - Only renders the section if the value is an empty array or map",
+    "message": "$O_BOLD$Iterating$C_BOLD$ - Only renders the contents if the value is an empty list",
     "placeholders": {
       "c_bold": {
         "content": "</strong>"
@@ -612,7 +631,7 @@
     }
   },
   "opt_guide_introduction_inverted_section_text": {
-    "message": "Inverted sections are very similar to normal sections but their tags are like this $O_CODE${^name}...{/name}$C_CODE$ and can be used in the following situations;",
+    "message": "Inverted sections are very similar to normal sections but are written like this $O_CODE${^name}...{/name}$C_CODE$ and can be used in for the following purposes;",
     "placeholders": {
       "c_code": {
         "content": "</code>"
@@ -659,8 +678,19 @@
   "opt_guide_introduction_notes_text_3": {
     "message": "For more examples, try looking at the predefined templates."
   },
+  "opt_guide_introduction_section_accessing_text": {
+    "message": "$O_BOLD$Accessing$C_BOLD$ - If the value is an object it will render the contents while making the properties of that object available as variables",
+    "placeholders": {
+      "c_bold": {
+        "content": "</strong>"
+      },
+      "o_bold": {
+        "content": "<strong>"
+      }
+    }
+  },
   "opt_guide_introduction_section_conditions_text": {
-    "message": "$O_BOLD$Conditions$C_BOLD$ - Only renders the section if the value is $O_EMPH$true$C_EMPH$ or simply exists if it's not a boolean value",
+    "message": "$O_BOLD$Conditions$C_BOLD$ - Only renders the contents if the value is $O_EMPH$truey$C_EMPH$",
     "placeholders": {
       "c_bold": {
         "content": "</strong>"
@@ -676,8 +706,11 @@
       }
     }
   },
-  "opt_guide_introduction_section_functions_text": {
-    "message": "$O_BOLD$Functions$C_BOLD$ - Renders the outcome of the function, passing the contents of the section as the argument",
+  "opt_guide_introduction_section_header": {
+    "message": "Section"
+  },
+  "opt_guide_introduction_section_iterating_text": {
+    "message": "$O_BOLD$Iterating$C_BOLD$ - If the value is an array it will render the contents for each enumerable item of that value",
     "placeholders": {
       "c_bold": {
         "content": "</strong>"
@@ -687,11 +720,8 @@
       }
     }
   },
-  "opt_guide_introduction_section_header": {
-    "message": "Section"
-  },
-  "opt_guide_introduction_section_iterating_text": {
-    "message": "$O_BOLD$Iterating$C_BOLD$ - If the value is an array it will render the section for each enumerable item of that value",
+  "opt_guide_introduction_section_operations_text": {
+    "message": "$O_BOLD$Operations$C_BOLD$ - Renders the outcome of the operation, passing the contents as the argument",
     "placeholders": {
       "c_bold": {
         "content": "</strong>"
@@ -702,7 +732,7 @@
     }
   },
   "opt_guide_introduction_section_text": {
-    "message": "Sections are always surrounded by opening and closing tags like this $O_CODE${#name}...{/name}$C_CODE$ and can be used in the following situations;",
+    "message": "Sections are always surrounded by opening and closing tags like this $O_CODE${#name}...{/name}$C_CODE$ and can be used for the following purposes;",
     "placeholders": {
       "c_code": {
         "content": "</code>"
@@ -715,11 +745,37 @@
   "opt_guide_introduction_simple_tag_header": {
     "message": "Simple Tag"
   },
-  "opt_guide_introduction_simple_tag_text": {
-    "message": "Tags are always surrounded by curly braces like this $O_CODE${name}$C_CODE$.",
+  "opt_guide_introduction_simple_tag_text_1": {
+    "message": "Tags are always surrounded by curly braces like this $O_CODE${name}$C_CODE$ and output the value of the named variable. If that value is undefined or $O_EMPH$falsey$C_EMPH$ it will simply be deleted.",
     "placeholders": {
       "c_code": {
         "content": "</code>"
+      },
+      "c_emph": {
+        "content": "</em>"
+      },
+      "o_code": {
+        "content": "<code>"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
+  },
+  "opt_guide_introduction_simple_tag_text_2": {
+    "message": "Values are not escaped by default and, in order to do so, you must use double braces like this $O_CODE${{name}}$C_CODE$. This will escape certain characters ($O_CODE$&amp;$C_CODE$ $O_CODE$&lt;$C_CODE$ $O_CODE$&gt;$C_CODE$ $O_CODE$&quot;$C_CODE$ $O_CODE$&#39;$C_CODE$) so that the final output can be safely copied in to $O_ABBR_1$Extensible Markup Language$O_ABBR_2$XML$C_ABBR$ and $O_ABBR_1$Hyper Text Markup Language$O_ABBR_2$HTML$C_ABBR$.",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "c_code": {
+        "content": "</code>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
       },
       "o_code": {
         "content": "<code>"
@@ -727,7 +783,7 @@
     }
   },
   "opt_guide_introduction_text": {
-    "message": "$O_BOLD$Template$C_BOLD$ uses an advanced but simple template system that allows users to create and modify the content copied to the clipboard. The syntax is really straight-forward the following main declaration types;",
+    "message": "$O_BOLD$Template$C_BOLD$ uses an advanced, yet simple, template system to allows you to create and modify the content to be copied to the clipboard. The syntax is really straight-forward and consists of the following categories;",
     "placeholders": {
       "c_bold": {
         "content": "</strong>"
@@ -828,19 +884,34 @@
       }
     }
   },
-  "opt_guide_options_browser_text": {
-    "message": "The name of the browser (i.e. $O_EMPH$Chrome$C_EMPH$)",
+  "opt_guide_options_context_menu_text": {
+    "message": "Whether or not the option to show the context (right-click) menu is enabled"
+  },
+  "opt_guide_options_googl_text": {
+    "message": "Whether or not $O_LINK_1$http://goo.gl$O_LINK_2$goo.gl$C_LINK$ is the enabled $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ shortener",
     "placeholders": {
-      "c_emph": {
-        "content": "</em>"
+      "c_abbr": {
+        "content": "</abbr>"
       },
-      "o_emph": {
-        "content": "<em>"
+      "c_link": {
+        "content": "</a>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      },
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
       }
     }
   },
   "opt_guide_options_text": {
-    "message": "$O_BOLD$Options$C_BOLD$ are values stored by the extension to reflect user preferences. These can either be accessed as simple tags or, more commonly, conditional sections.",
+    "message": "$O_BOLD$Options$C_BOLD$ are values stored by the extension to reflect user preferences. These can either be accessed as simple tags or conditional sections.",
     "placeholders": {
       "c_bold": {
         "content": "</strong>"
@@ -883,6 +954,57 @@
         "content": "<em>"
       }
     }
+  },
+  "opt_guide_simple_values_browser_text": {
+    "message": "The name of the browser (i.e. $O_EMPH$Chrome$C_EMPH$)",
+    "placeholders": {
+      "c_emph": {
+        "content": "</em>"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
+  },
+  "opt_guide_simple_values_browser_version_text": {
+    "message": "The current version of the browser (e.g. $O_EMPH$$EXAMPLE$$C_EMPH$)",
+    "placeholders": {
+      "c_emph": {
+        "content": "</em>"
+      },
+      "example": {
+        "content": "16.0.912.77"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
+  },
+  "opt_guide_simple_values_character_set_text": {
+    "message": "The $O_LINK_1$http://www.iana.org/assignments/character-sets$O_LINK_2$character set$C_LINK$ used by the page (e.g. $O_EMPH$$EXAMPLE$$C_EMPH$)",
+    "placeholders": {
+      "c_emph": {
+        "content": "</em>"
+      },
+      "c_link": {
+        "content": "</a>"
+      },
+      "example": {
+        "content": "UTF-8"
+      },
+      "o_emph": {
+        "content": "<em>"
+      },
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
+      }
+    }
+  },
+  "opt_guide_simple_values_cookies_enabled_text": {
+    "message": "Whether or not cookies are enabled"
   },
   "opt_guide_simple_values_count_text": {
     "message": "The total number of templates"
@@ -964,7 +1086,7 @@
     "message": "The entire string after the hash (#) symbol"
   },
   "opt_guide_simple_values_header": {
-    "message": "Simple Values"
+    "message": "Standard"
   },
   "opt_guide_simple_values_host_text": {
     "message": "For example; $O_EMPH$$EXAMPLE_1$$C_EMPH$, $O_EMPH$$EXAMPLE_2$$C_EMPH$",
@@ -980,6 +1102,34 @@
       },
       "o_emph": {
         "content": "<em>"
+      }
+    }
+  },
+  "opt_guide_simple_values_java_text": {
+    "message": "Whether or not $O_LINK_1$http://www.java.com$O_LINK_2$Java$C_LINK$ is enabled",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>"
+      },
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
+      }
+    }
+  },
+  "opt_guide_simple_values_last_modified_text": {
+    "message": "The last modified data/time of the page in $O_LINK_1$http://www.faqs.org/rfcs/rfc2822.html$O_LINK_2$RFC 2822$C_LINK$ format",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>"
+      },
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
       }
     }
   },
@@ -1085,6 +1235,20 @@
       }
     }
   },
+  "opt_guide_simple_values_referrer_text": {
+    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ of the referring page",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
   "opt_guide_simple_values_relative_text": {
     "message": "The relative path to the file including the query string (e.g. $O_EMPH$$EXAMPLE$$C_EMPH$)",
     "placeholders": {
@@ -1123,19 +1287,13 @@
     }
   },
   "opt_guide_simple_values_text": {
-    "message": "$O_BOLD$Simple values$c_BOLD$ can be accessed using the syntax $O_CODE${name}$C_CODE$. Undefined values simply return an empty string.",
+    "message": "$O_BOLD$Standard$c_BOLD$ variables are generally accessed using simple tags or sections (including inverted).",
     "placeholders": {
       "c_bold": {
         "content": "</strong>"
       },
-      "c_code": {
-        "content": "</code>"
-      },
       "o_bold": {
         "content": "<strong>"
-      },
-      "o_code": {
-        "content": "<code>"
       }
     }
   },

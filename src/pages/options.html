@@ -52,6 +52,10 @@
     <script src="../vendor/date.min.js"></script>
     <script src="../vendor/bootstrap.min.js"></script>
     <script src="../lib/utils.js"></script>
+    <script src="../lib/store.js"></script>
+    <script src="../lib/i18n.js"></script>
+    <script src="../lib/log.js"></script>
+    <script src="../lib/analytics.js"></script>
     <script src="../lib/options.js"></script>
     <script type="application/javascript">
       $(function () {
@@ -461,22 +465,22 @@
                     <div id="guide_introduction" class="tab-pane active">
                       <p i18n-content="opt_guide_introduction_text"></p>
                       <h3 i18n-content="opt_guide_introduction_simple_tag_header"></h3>
-                      <p i18n-content="opt_guide_introduction_simple_tag_text"></p>
-                      <h3 i18n-content="opt_guide_introduction_escaped_tag_header"></h3>
-                      <p i18n-content="opt_guide_introduction_escaped_tag_text_1"></p>
-                      <p i18n-content="opt_guide_introduction_escaped_tag_text_2"></p>
+                      <p i18n-content="opt_guide_introduction_simple_tag_text_1"></p>
+                      <p i18n-content="opt_guide_introduction_simple_tag_text_2"></p>
                       <h3 i18n-content="opt_guide_introduction_section_header"></h3>
                       <p i18n-content="opt_guide_introduction_section_text"></p>
                       <ul>
                         <li i18n-content="opt_guide_introduction_section_conditions_text"></li>
                         <li i18n-content="opt_guide_introduction_section_iterating_text"></li>
-                        <li i18n-content="opt_guide_introduction_section_functions_text"></li>
+                        <li i18n-content="opt_guide_introduction_section_accessing_text"></li>
+                        <li i18n-content="opt_guide_introduction_section_operations_text"></li>
                       </ul>
                       <h3 i18n-content="opt_guide_introduction_inverted_section_header"></h3>
                       <p i18n-content="opt_guide_introduction_inverted_section_text"></p>
                       <ul>
                         <li i18n-content="opt_guide_introduction_inverted_section_conditions_text"></li>
                         <li i18n-content="opt_guide_introduction_inverted_section_iterating_text"></li>
+                        <li i18n-content="opt_guide_introduction_inverted_section_accessing_text"></li>
                       </ul>
                       <h3 i18n-content="opt_guide_introduction_case_sensitivity_header"></h3>
                       <p i18n-content="opt_guide_introduction_case_sensitivity_text"></p>
@@ -501,6 +505,22 @@
                           <tr>
                             <td>base</td>
                             <td i18n-content="opt_guide_simple_values_base_text"></td>
+                          </tr>
+                          <tr>
+                            <td>browser</td>
+                            <td i18n-content="opt_guide_simple_values_browser_text"></td>
+                          </tr>
+                          <tr>
+                            <td>browserVersion</td>
+                            <td i18n-content="opt_guide_simple_values_browser_version_text"></td>
+                          </tr>
+                          <tr>
+                            <td>characterSet<strong>*</strong></td>
+                            <td i18n-content="opt_guide_simple_values_character_set_text"></td>
+                          </tr>
+                          <tr>
+                            <td>cookiesEnabled</td>
+                            <td i18n-content="opt_guide_simple_values_cookies_enabled_text"></td>
                           </tr>
                           <tr>
                             <td>count</td>
@@ -539,12 +559,30 @@
                             <td i18n-content="opt_guide_simple_values_host_text"></td>
                           </tr>
                           <tr>
+                            <td>java</td>
+                            <td i18n-content="opt_guide_simple_values_java_text"></td>
+                          </tr>
+                          <tr>
+                            <td>lastModified<strong>*</strong></td>
+                            <td i18n-content="opt_guide_simple_values_last_modified_text"></td>
+                          </tr>
+                          <tr>
+                            <td>offline</td>
+                            <td>Whether or not the user is currently offline</td>
+                          </tr>
+                          <tr>
                             <td>originalTitle</td>
                             <td i18n-content="opt_guide_simple_values_original_title_text"></td>
                           </tr>
                           <tr>
                             <td>originalUrl</td>
                             <td i18n-content="opt_guide_simple_values_original_url_text"></td>
+                          </tr>
+                          <tr>
+                            <td>os</td>
+                            <td>
+                              The family of the current operating system (<em>Windows</em>/<em>Mac</em>/<em>Linux</em>)
+                            </td>
                           </tr>
                           <tr>
                             <td>pageHeight<strong>*</strong></td>
@@ -569,6 +607,10 @@
                           <tr>
                             <td>query</td>
                             <td i18n-content="opt_guide_simple_values_query_text"></td>
+                          </tr>
+                          <tr>
+                            <td>referrer<strong>*</strong></td>
+                            <td i18n-content="opt_guide_simple_values_referrer_text"></td>
                           </tr>
                           <tr>
                             <td>relative</td>
@@ -597,6 +639,12 @@
                           <tr>
                             <td>url</td>
                             <td i18n-content="opt_guide_simple_values_url_text"></td>
+                          </tr>
+                          <tr>
+                            <td>version</td>
+                            <td>
+                              The installed version of <strong>Template</strong> (e.g. <em class="version-replace"></em>)
+                            </td>
                           </tr>
                         </tbody>
                         <tfoot>
@@ -639,6 +687,11 @@
                             <td i18n-content="opt_guide_complex_values_fsegments_text"></td>
                           </tr>
                           <tr>
+                            <td>links<strong>*</strong></td>
+                            <td i18n-content="opt_guide_type_array_text"></td>
+                            <td i18n-content="opt_guide_complex_values_links_text"></td>
+                          </tr>
+                          <tr>
                             <td>params</td>
                             <td i18n-content="opt_guide_type_map_text"></td>
                             <td i18n-content="opt_guide_complex_values_params_text"></td>
@@ -654,6 +707,11 @@
                             <td i18n-content="opt_guide_complex_values_popular_text"></td>
                           </tr>
                           <tr>
+                            <td>scripts<strong>*</strong></td>
+                            <td i18n-content="opt_guide_type_array_text"></td>
+                            <td i18n-content="opt_guide_complex_values_scripts_text"></td>
+                          </tr>
+                          <tr>
                             <td>segments</td>
                             <td i18n-content="opt_guide_type_array_text"></td>
                             <td i18n-content="opt_guide_complex_values_segments_text"></td>
@@ -662,6 +720,11 @@
                             <td>selectedLinks<strong>*</strong></td>
                             <td i18n-content="opt_guide_type_array_text"></td>
                             <td i18n-content="opt_guide_complex_values_selected_links_text"></td>
+                          </tr>
+                          <tr>
+                            <td>styleSheets<strong>*</strong></td>
+                            <td i18n-content="opt_guide_type_array_text"></td>
+                            <td i18n-content="opt_guide_complex_values_style_sheets_text"></td>
                           </tr>
                           <tr>
                             <td>template</td>
@@ -727,32 +790,12 @@
                             <td i18n-content="opt_guide_options_bitly_username_text"></td>
                           </tr>
                           <tr>
-                            <td>browser</td>
-                            <td i18n-content="opt_guide_options_browser_text"></td>
-                          </tr>
-                          <tr>
-                            <td>browserVersion</td>
-                            <td>
-                              The current version of the browser (e.g. <em>12.0.742.122</em>)
-                            </td>
-                          </tr>
-                          <tr>
                             <td>contextMenu</td>
-                            <td>
-                              Whether or not the option to show the context-menu is enabled
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>cookiesEnabled</td>
-                            <td>Whether or not cookies are enabled</td>
+                            <td i18n-content="opt_guide_options_context_menu_text"></td>
                           </tr>
                           <tr>
                             <td>googl</td>
-                            <td>
-                              Whether or not <a href="http://goo.gl" target="_blank">goo.gl</a>
-                              is the enabled <abbr title="Uniform Resource Locator">URL</abbr>
-                              shortener
-                            </td>
+                            <td i18n-content="opt_guide_options_googl_text"></td>
                           </tr>
                           <tr>
                             <td>googlOAuth</td>
@@ -762,29 +805,12 @@
                             </td>
                           </tr>
                           <tr>
-                            <td>java</td>
-                            <td>
-                              Whether or not <a href="http://www.java.com" target="_blank">Java</a>
-                              is enabled
-                            </td>
-                          </tr>
-                          <tr>
                             <td>notificationDuration</td>
                             <td>The number of seconds notifications are to last</td>
                           </tr>
                           <tr>
                             <td>notifications</td>
                             <td>Whether or not the option to show notifications is enabled</td>
-                          </tr>
-                          <tr>
-                            <td>offline</td>
-                            <td>Whether or not the user is currently offline</td>
-                          </tr>
-                          <tr>
-                            <td>os</td>
-                            <td>
-                              The family of the current operating system (<em>Windows</em>/<em>Mac</em>/<em>Linux</em>)
-                            </td>
                           </tr>
                           <tr>
                             <td>shortcuts</td>
@@ -805,13 +831,6 @@
                             </td>
                           </tr>
                           <tr>
-                            <td>toolbarPopup</td>
-                            <td>
-                              Whether or not the popup is closed immediately after a template is
-                              selected
-                            </td>
-                          </tr>
-                          <tr>
                             <td>toolbarOptions</td>
                             <td>
                               Whether or not the <em>Options</em> link is displayed at the bottom
@@ -819,15 +838,16 @@
                             </td>
                           </tr>
                           <tr>
-                            <td>toolbarStyle</td>
+                            <td>toolbarPopup</td>
                             <td>
-                              Whether or not the toolbar button's design is based on a template
+                              Whether or not the popup is closed immediately after a template is
+                              selected
                             </td>
                           </tr>
                           <tr>
-                            <td>version</td>
+                            <td>toolbarStyle</td>
                             <td>
-                              The installed version of <strong>Template</strong> (e.g. <em class="version-replace"></em>)
+                              Whether or not the toolbar button's design is based on a template
                             </td>
                           </tr>
                           <tr>
@@ -943,6 +963,17 @@
                             </td>
                           </tr>
                           <tr>
+                            <td>lastModified<strong>*</strong></td>
+                            <td i18n-content="opt_guide_argument_string_text"></td>
+                            <td>
+                              Formats the last modified date/time of the page using
+                              the string provided
+                              <br>
+                              (see <a href="http://php.net/manual/en/function.date.php#refsect1-function.date-parameters" target="_blank"><abbr title="Hypertext Preprocessor">PHP</abbr>'s date</a>
+                              for more details)
+                            </td>
+                          </tr>
+                          <tr>
                             <td>param</td>
                             <td i18n-content="opt_guide_argument_string_text"></td>
                             <td>Access the value of the parameter provided</td>
@@ -953,6 +984,11 @@
                             <td>Access the value of the segment provided</td>
                           </tr>
                         </tbody>
+                        <tfoot>
+                          <tr>
+                            <td colspan="3"><em i18n-content="opt_guide_protected_tag_text"></em></td>
+                          </tr>
+                        </tfoot>
                       </table>
                       <div class="well">
                         <h3>Notes</h3>

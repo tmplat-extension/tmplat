@@ -27,13 +27,18 @@ chrome.extension.sendRequest type: 'info', (data) ->
   # current selection when requested.
   chrome.extension.onRequest.addListener (request, sender, sendResponse) ->
     selection = window.getSelection()
-    urls      = []
     if selection.rangeCount > 0
       contents = selection.getRangeAt(0).cloneContents()
       if contents
-        urls.push anchor.href for anchor in contents.querySelectorAll 'a[href]'
+        links = (link.href for link in contents.querySelectorAll 'a[href]')
     sendResponse
-      pageHeight: window.innerHeight
-      pageWidth:  window.innerWidth
-      text:       selection.toString()
-      urls:       urls
+      characterSet:  document.characterSet
+      lastModified:  document.lastModified
+      links:         link.href for link in document.links when link.href?
+      pageHeight:    window.innerHeight
+      pageWidth:     window.innerWidth
+      referrer:      document.referrer
+      scripts:       script.src for script in document.scripts when script.src?
+      selectedLinks: links
+      selection:     selection.toString()
+      styleSheets:   link.href for link in document.styleSheets when link.href?

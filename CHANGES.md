@@ -19,11 +19,18 @@ YYYY.MM.DD, Version 1.0.0
 * [#60](https://github.com/neocotic/template/issues/60): Automically save changes on the Options page
 * [#61](https://github.com/neocotic/template/issues/61): Add new *"coords"* complex tag to enable access to the user's geolocation
 * [#62](https://github.com/neocotic/template/issues/62): Add Options link to bottom of popup (available in templates via the new *"toolbarOptions"* option tag)
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"characterSet"* simple tag to enable access to the [character set](http://www.iana.org/assignments/character-sets)
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"depth"* simple tag to enable access to the colour depth of the user's screen
-* [#63](https://github.com/neocotic/template/issues/63): Add new *"pageWidth"* and *"pageHeight"* simple tags to enable access to the dimensions of a page
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"lastModified"* simple tag and function to enable access to the potentially formatted last modified date/time
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"links"* complex tag to enable access to all of the links on the page
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"pageWidth"* and *"pageHeight"* simple tags to enable access to the page's dimensions
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"plugins"* complex tag to enable access to the active browser plugins
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"referrer"* simple tag to enable access to the URL of the referring page
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"screenWidth"* and *"screenHeight"* simple tags to enable access to the user's screen resolution
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"scripts"* complex tag to enable access to all of the page's external script sources
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"styleSheets"* complex tag to enable access to all of the page's external CSS stylesheet sources
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"template"* complex tag to enable access to the activated template
+* [#63](https://github.com/neocotic/template/issues/63): Rename the *"selectionLinks"* complex tag to *"selectedLinks"*
 * More bug fixes and UI tweaks
 
 2011.12.22, Version 0.3.0.0
