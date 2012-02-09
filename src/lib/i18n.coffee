@@ -47,7 +47,8 @@ handlers   =
           obj  = element
           obj  = obj[path.shift()] while obj and path.length > 1
           if obj
-            obj[path] = i18n.get value, subs
+            path = path[0]
+            obj[path] = i18n.get propExpr, subs
             process element, map if path is 'innerHTML'
         else
           element.setAttribute propName, i18n.get propExpr, subs
