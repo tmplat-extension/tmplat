@@ -30,8 +30,7 @@ getMeta = (name, csv) ->
 # Wrap the function functionality in a request for Template's extension ID and
 # current version so that it can be used to detect previous injections.
 chrome.extension.sendRequest type: 'info', (data) ->
-  isMac   = navigator.userAgent.toLowerCase().indexOf('mac') isnt -1
-  version = data.version.replace /\./g, ''
+  isMac = navigator.userAgent.toLowerCase().indexOf('mac') isnt -1
   # Only add the listeners if a previous injection isn't detected for version
   # of Template that is currently running.
   return if document.body.getAttribute(data.id) is data.version
