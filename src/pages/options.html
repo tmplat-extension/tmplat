@@ -37,6 +37,7 @@
       input[type="file"]::-webkit-file-upload-button:focus {outline: thin dotted; outline: 5px auto -webkit-focus-ring-color; outline-offset: -2px;}
       input[type="file"]:disabled::-webkit-file-upload-button {cursor: efault; background-image: none; background-color: #e6e6e6; opacity: 0.65; filter:alpha(opacity=65); -webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none;}
       .tight-left {margin-left: 0;}
+      td > .label, th > .label {padding-bottom: 0;}
       .popover-content > p > p {margin-bottom: 5px;}
       .popover-content > p > p:last-child {margin-bottom: 0;}
       .popover-inner {text-align: left;}
@@ -147,10 +148,9 @@
                   <label class="control-label" i18n-content="opt_toolbar_behaviour_label"></label>
                   <div class="controls">
                     <div class="btn-group" data-toggle="buttons-radio">
-                      <button id="toolbarPopup" class="btn" i18n-content="opt_toolbar_popup_label"></button>
-                      <button id="notToolbarPopup" class="btn" i18n-content="opt_toolbar_not_popup_label"></button>
+                      <button id="toolbarPopup" class="btn" i18n-values=".innerHTML:opt_toolbar_popup_button;title:opt_toolbar_popup_title"></button>
+                      <button id="notToolbarPopup" class="btn" i18n-values=".innerHTML:opt_toolbar_not_popup_button;title:opt_toolbar_not_popup_title"></button>
                     </div>
-                    <span id="toolbarPopup_desc"></span>
                     <p class="help-block" i18n-content="opt_toolbar_behaviour_sub_text"></p>
                   </div>
                 </div>
@@ -252,9 +252,6 @@
                   <div class="span3 controls">
                     <input id="template_title" class="span3 read-only" type="text" maxlength="32">
                   </div>
-                  <div class="span8">
-                    <a class="btn btn-info help" popover="opt_template_title_help" i18n-values="title:opt_template_title_label"><i class="icon-question-sign icon-white"></i></a>
-                  </div>
                 </div>
                 <div class="row control-group">
                   <label class="span1 control-label" for="template_image" i18n-content="opt_template_image_label"></label>
@@ -302,24 +299,94 @@
                   <a class="close" data-dismiss="modal">&times;</a>
                   <h3 class="delete_hdr"></h3>
                 </div>
-                <div i18n-content="opt_delete_wizard"></div>
+                <div class="modal-body">
+                  <p i18n-content="opt_delete_wizard_text_1"></p>
+                  <p i18n-content="opt_delete_wizard_text_2"></p>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-primary delete_yes_btn" i18n-content="opt_wizard_yes_button"></button>
+                  <button class="btn btn-danger delete_no_btn" i18n-content="opt_wizard_no_button"></button>
+                </div>
               </div>
               <div id="import_con" class="hide modal">
                 <div class="modal-header">
                   <a class="close" data-dismiss="modal">&times;</a>
-                  <h3 i18n-content="opt_import_header"></h3>
+                  <h3 i18n-content="opt_import_wizard_header"></h3>
                 </div>
-                <div class="import_con_stage1" i18n-content="opt_import_wizard_1"></div>
-                <div class="import_con_stage2" i18n-content="opt_import_wizard_2"></div>
-                <div class="import_con_stage3" i18n-content="opt_import_wizard_3"></div>
+                <div class="import_con_stage1">
+                  <div class="modal-body">
+                    <div class="import_error alert alert-error">&nbsp;</div>
+                    <p i18n-content="opt_import_wizard_stage_1_text"></p>
+                    <textarea class="import_content span5" rows="6" readonly></textarea>
+                  </div>
+                  <div class="modal-footer">
+                    <div class="pull-left">
+                      <input class="import_file_btn" type="file">
+                      <button class="btn import_paste_btn" i18n-content="opt_import_wizard_paste_button"></button>
+                    </div>
+                    <button class="btn btn-primary import_yes_btn" i18n-content="opt_wizard_continue_button"></button>
+                    <button class="btn btn-danger import_no_btn" i18n-content="opt_wizard_close_button"></button>
+                  </div>
+                </div>
+                <div class="import_con_stage2">
+                  <div class="modal-body">
+                    <p i18n-content="opt_import_wizard_stage_2_text_1"></p>
+                    <p i18n-content="opt_import_wizard_stage_2_text_2"></p>
+                    <select class="import_con_list span5" size="5" multiple></select>
+                  </div>
+                  <div class="modal-footer">
+                    <div class="pull-left">
+                      <button class="btn import_deselect_all_btn" i18n-content="opt_wizard_none_button"></button>
+                      <button class="btn import_select_all_btn" i18n-content="opt_wizard_all_button"></button>
+                    </div>
+                    <button class="btn btn-primary import_final_btn" i18n-content="opt_import_wizard_import_button"></button>
+                    <button class="btn import_back_btn" i18n-content="opt_wizard_back_button"></button>
+                    <button class="btn btn-danger import_close_btn" i18n-content="opt_wizard_close_button"></button>
+                  </div>
+                </div>
+                <div class="import_con_stage3">
+                  <div class="modal-body">
+                    <p i18n-content="opt_import_wizard_stage_3_text"></p>
+                  </div>
+                  <div class="modal-footer">
+                    <button class="btn btn-primary import_back_btn" i18n-content="opt_wizard_back_button"></button>
+                    <button class="btn btn-danger import_close_btn" i18n-content="opt_wizard_close_button"></button>
+                  </div>
+                </div>
               </div>
               <div id="export_con" class="hide modal">
                 <div class="modal-header">
                   <a class="close" data-dismiss="modal">&times;</a>
-                  <h3 i18n-content="opt_export_header"></h3>
+                  <h3 i18n-content="opt_export_wizard_header"></h3>
                 </div>
-                <div class="export_con_stage1" i18n-content="opt_export_wizard_1"></div>
-                <div class="export_con_stage2" i18n-content="opt_export_wizard_2"></div>
+                <div class="export_con_stage1">
+                  <div class="modal-body">
+                    <p i18n-content="opt_export_wizard_stage_1_text"></p>
+                    <select class="export_con_list span5" size="5" multiple></select>
+                  </div>
+                  <div class="modal-footer">
+                    <div class="pull-left">
+                      <button class="btn export_deselect_all_btn" i18n-content="opt_wizard_none_button"></button>
+                      <button class="btn export_select_all_btn" i18n-content="opt_wizard_all_button"></button>
+                    </div>
+                    <button class="btn btn-primary export_yes_btn" disabled i18n-content="opt_wizard_continue_button"></button>
+                    <button class="btn btn-danger export_no_btn" i18n-content="opt_wizard_close_button"></button>
+                  </div>
+                </div>
+                <div class="export_con_stage2">
+                  <div class="modal-body">
+                    <p i18n-content="opt_export_wizard_stage_2_text"></p>
+                    <textarea class="export_content span5" rows="6" readonly></textarea>
+                  </div>
+                  <div class="modal-footer">
+                    <div class="pull-left">
+                      <button class="btn export_save_btn" i18n-content="opt_export_wizard_save_as_button"></button>
+                      <button class="btn export_copy_btn" i18n-content="opt_export_wizard_copy_button"></button>
+                    </div>
+                    <button class="btn export_back_btn" i18n-content="opt_wizard_back_button"></button>
+                    <button class="btn btn-danger export_close_btn" i18n-content="opt_wizard_close_button"></button>
+                  </div>
+                </div>
               </div>
             </form>
           </div>
@@ -456,10 +523,10 @@
                 <div class="tabbable tabs-left row" style="padding-top: 18px">
                   <ul class="nav nav-tabs span2">
                     <li class="active"><a data-target="#guide_introduction" data-toggle="tab" i18n-content="opt_guide_introduction_header"></a></li>
-                    <li><a data-target="#guide_simple_values" data-toggle="tab" i18n-content="opt_guide_simple_values_header"></a></li>
-                    <li><a data-target="#guide_complex_values" data-toggle="tab" i18n-content="opt_guide_complex_values_header"></a></li>
+                    <li><a data-target="#guide_standard" data-toggle="tab" i18n-content="opt_guide_standard_header"></a></li>
+                    <li><a data-target="#guide_lists_objects" data-toggle="tab" i18n-content="opt_guide_lists_objects_header"></a></li>
                     <li><a data-target="#guide_options" data-toggle="tab" i18n-content="opt_guide_options_header"></a></li>
-                    <li><a data-target="#guide_functions" data-toggle="tab" i18n-content="opt_guide_functions_header"></a></li>
+                    <li><a data-target="#guide_operations" data-toggle="tab" i18n-content="opt_guide_operations_header"></a></li>
                   </ul>
                   <div class="tab-content span9">
                     <div id="guide_introduction" class="tab-pane active">
@@ -491,8 +558,8 @@
                         <p i18n-content="opt_guide_introduction_notes_text_3"></p>
                       </div>
                     </div>
-                    <div id="guide_simple_values" class="tab-pane">
-                      <p i18n-content="opt_guide_simple_values_text"></p>
+                    <div id="guide_standard" class="tab-pane">
+                      <p i18n-content="opt_guide_standard_text"></p>
                       <table class="table table-condensed table-bordered table-striped">
                         <caption i18n-content="opt_guide_definitions_caption"></caption>
                         <thead>
@@ -503,148 +570,152 @@
                         </thead>
                         <tbody>
                           <tr>
+                            <td>author<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_author_text"></td>
+                          </tr>
+                          <tr>
                             <td>base</td>
-                            <td i18n-content="opt_guide_simple_values_base_text"></td>
+                            <td i18n-content="opt_guide_standard_base_text"></td>
                           </tr>
                           <tr>
                             <td>browser</td>
-                            <td i18n-content="opt_guide_simple_values_browser_text"></td>
+                            <td i18n-content="opt_guide_standard_browser_text"></td>
                           </tr>
                           <tr>
                             <td>browserVersion</td>
-                            <td i18n-content="opt_guide_simple_values_browser_version_text"></td>
+                            <td i18n-content="opt_guide_standard_browser_version_text"></td>
                           </tr>
                           <tr>
-                            <td>characterSet<strong>*</strong></td>
-                            <td i18n-content="opt_guide_simple_values_character_set_text"></td>
+                            <td>characterSet<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_character_set_text"></td>
                           </tr>
                           <tr>
                             <td>cookiesEnabled</td>
-                            <td i18n-content="opt_guide_simple_values_cookies_enabled_text"></td>
+                            <td i18n-content="opt_guide_standard_cookies_enabled_text"></td>
                           </tr>
                           <tr>
-                            <td>count</td>
-                            <td i18n-content="opt_guide_simple_values_count_text"></td>
+                            <td>count<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_count_text"></td>
                           </tr>
                           <tr>
-                            <td>customCount</td>
-                            <td i18n-content="opt_guide_simple_values_custom_count_text"></td>
+                            <td>customCount<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_custom_count_text"></td>
                           </tr>
                           <tr>
                             <td>dateTime</td>
-                            <td i18n-content="opt_guide_simple_values_date_time_text"></td>
+                            <td i18n-content="opt_guide_standard_date_time_text"></td>
                           </tr>
                           <tr>
-                            <td>depth</td>
-                            <td i18n-content="opt_guide_simple_values_depth_text"></td>
+                            <td>depth<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_depth_text"></td>
+                          </tr>
+                          <tr>
+                            <td>description<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_description_text"></td>
                           </tr>
                           <tr>
                             <td>directory</td>
-                            <td i18n-content="opt_guide_simple_values_directory_text"></td>
+                            <td i18n-content="opt_guide_standard_directory_text"></td>
                           </tr>
                           <tr>
                             <td>favicon</td>
-                            <td i18n-content="opt_guide_simple_values_favicon_text"></td>
+                            <td i18n-content="opt_guide_standard_favicon_text"></td>
                           </tr>
                           <tr>
                             <td>file</td>
-                            <td i18n-content="opt_guide_simple_values_file_text"></td>
+                            <td i18n-content="opt_guide_standard_file_text"></td>
                           </tr>
                           <tr>
                             <td>fragment/anchor</td>
-                            <td i18n-content="opt_guide_simple_values_fragment_anchor_text"></td>
+                            <td i18n-content="opt_guide_standard_fragment_anchor_text"></td>
                           </tr>
                           <tr>
                             <td>host</td>
-                            <td i18n-content="opt_guide_simple_values_host_text"></td>
+                            <td i18n-content="opt_guide_standard_host_text"></td>
                           </tr>
                           <tr>
                             <td>java</td>
-                            <td i18n-content="opt_guide_simple_values_java_text"></td>
+                            <td i18n-content="opt_guide_standard_java_text"></td>
                           </tr>
                           <tr>
-                            <td>lastModified<strong>*</strong></td>
-                            <td i18n-content="opt_guide_simple_values_last_modified_text"></td>
+                            <td>lastModified<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_last_modified_text"></td>
                           </tr>
                           <tr>
                             <td>offline</td>
-                            <td>Whether or not the user is currently offline</td>
+                            <td i18n-content="opt_guide_standard_offline_text"></td>
                           </tr>
                           <tr>
                             <td>originalTitle</td>
-                            <td i18n-content="opt_guide_simple_values_original_title_text"></td>
+                            <td i18n-content="opt_guide_standard_original_title_text"></td>
                           </tr>
                           <tr>
                             <td>originalUrl</td>
-                            <td i18n-content="opt_guide_simple_values_original_url_text"></td>
+                            <td i18n-content="opt_guide_standard_original_url_text"></td>
                           </tr>
                           <tr>
                             <td>os</td>
-                            <td>
-                              The family of the current operating system (<em>Windows</em>/<em>Mac</em>/<em>Linux</em>)
-                            </td>
+                            <td i18n-content="opt_guide_standard_os_text"></td>
                           </tr>
                           <tr>
-                            <td>pageHeight<strong>*</strong></td>
-                            <td i18n-content="opt_guide_simple_values_page_height_text"></td>
+                            <td>pageHeight<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_page_height_text"></td>
                           </tr>
                           <tr>
-                            <td>pageWidth<strong>*</strong></td>
-                            <td i18n-content="opt_guide_simple_values_page_width_text"></td>
+                            <td>pageWidth<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_page_width_text"></td>
                           </tr>
                           <tr>
                             <td>path</td>
-                            <td i18n-content="opt_guide_simple_values_path_text"></td>
+                            <td i18n-content="opt_guide_standard_path_text"></td>
                           </tr>
                           <tr>
                             <td>port</td>
-                            <td i18n-content="opt_guide_simple_values_port_text"></td>
+                            <td i18n-content="opt_guide_standard_port_text"></td>
                           </tr>
                           <tr>
                             <td>protocol</td>
-                            <td i18n-content="opt_guide_simple_values_protocol_text"></td>
+                            <td i18n-content="opt_guide_standard_protocol_text"></td>
                           </tr>
                           <tr>
                             <td>query</td>
-                            <td i18n-content="opt_guide_simple_values_query_text"></td>
+                            <td i18n-content="opt_guide_standard_query_text"></td>
                           </tr>
                           <tr>
-                            <td>referrer<strong>*</strong></td>
-                            <td i18n-content="opt_guide_simple_values_referrer_text"></td>
+                            <td>referrer<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_referrer_text"></td>
                           </tr>
                           <tr>
                             <td>relative</td>
-                            <td i18n-content="opt_guide_simple_values_relative_text"></td>
+                            <td i18n-content="opt_guide_standard_relative_text"></td>
                           </tr>
                           <tr>
-                            <td>screenHeight</td>
-                            <td i18n-content="opt_guide_simple_values_screen_height_text"></td>
+                            <td>screenHeight<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_screen_height_text"></td>
                           </tr>
                           <tr>
-                            <td>screenWidth</td>
-                            <td i18n-content="opt_guide_simple_values_screen_width_text"></td>
+                            <td>screenWidth<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_screen_width_text"></td>
                           </tr>
                           <tr>
                             <td>selection<strong>*</strong></td>
-                            <td i18n-content="opt_guide_simple_values_selection_text"></td>
+                            <td i18n-content="opt_guide_standard_selection_text"></td>
                           </tr>
                           <tr>
                             <td>short</td>
-                            <td i18n-content="opt_guide_simple_values_short_text"></td>
+                            <td i18n-content="opt_guide_standard_short_text"></td>
                           </tr>
                           <tr>
                             <td>title</td>
-                            <td i18n-content="opt_guide_simple_values_title_text"></td>
+                            <td i18n-content="opt_guide_standard_title_text"></td>
                           </tr>
                           <tr>
                             <td>url</td>
-                            <td i18n-content="opt_guide_simple_values_url_text"></td>
+                            <td i18n-content="opt_guide_standard_url_text"></td>
                           </tr>
                           <tr>
                             <td>version</td>
-                            <td>
-                              The installed version of <strong>Template</strong> (e.g. <em class="version-replace"></em>)
-                            </td>
+                            <td i18n-content="opt_guide_standard_version_text" id="version_definition"></td>
                           </tr>
                         </tbody>
                         <tfoot>
@@ -653,9 +724,18 @@
                           </tr>
                         </tfoot>
                       </table>
+                      <h3 i18n-content="opt_guide_examples_header"></h3>
+                      <p i18n-content="opt_guide_standard_examples_text_1"></p>
+                      <pre i18n-content="opt_guide_standard_examples_code_1"></pre>
+                      <p i18n-content="opt_guide_standard_examples_text_2"></p>
+                      <pre i18n-content="opt_guide_standard_examples_code_2"></pre>
+                      <p i18n-content="opt_guide_standard_examples_text_3"></p>
+                      <pre i18n-content="opt_guide_standard_examples_code_3"></pre>
+                      <p i18n-content="opt_guide_standard_examples_text_4"></p>
+                      <pre i18n-content="opt_guide_standard_examples_code_4"></pre>
                     </div>
-                    <div id="guide_complex_values" class="tab-pane">
-                      <p i18n-content="opt_guide_complex_values_text"></p>
+                    <div id="guide_lists_objects" class="tab-pane">
+                      <p i18n-content="opt_guide_lists_objects_text"></p>
                       <table class="table table-condensed table-bordered table-striped">
                         <caption i18n-content="opt_guide_definitions_caption"></caption>
                         <thead>
@@ -668,68 +748,73 @@
                         <tbody>
                           <tr>
                             <td>cookies</td>
-                            <td i18n-content="opt_guide_type_array_text"></td>
-                            <td i18n-content="opt_guide_complex_values_cookies_text"></td>
+                            <td i18n-content="opt_guide_type_list_text"></td>
+                            <td i18n-content="opt_guide_lists_objects_cookies_text"></td>
                           </tr>
                           <tr>
-                            <td>coords</td>
-                            <td i18n-content="opt_guide_type_map_text"></td>
-                            <td i18n-content="opt_guide_complex_values_coords_text"></td>
+                            <td>coords<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_type_object_text"></td>
+                            <td i18n-content="opt_guide_lists_objects_coords_text"></td>
                           </tr>
                           <tr>
                             <td>fparams</td>
-                            <td i18n-content="opt_guide_type_map_text"></td>
-                            <td i18n-content="opt_guide_complex_values_fparams_text"></td>
+                            <td i18n-content="opt_guide_type_object_text"></td>
+                            <td i18n-content="opt_guide_lists_objects_fparams_text"></td>
                           </tr>
                           <tr>
                             <td>fsegments</td>
-                            <td i18n-content="opt_guide_type_array_text"></td>
-                            <td i18n-content="opt_guide_complex_values_fsegments_text"></td>
+                            <td i18n-content="opt_guide_type_list_text"></td>
+                            <td i18n-content="opt_guide_lists_objects_fsegments_text"></td>
                           </tr>
                           <tr>
-                            <td>links<strong>*</strong></td>
-                            <td i18n-content="opt_guide_type_array_text"></td>
-                            <td i18n-content="opt_guide_complex_values_links_text"></td>
+                            <td>keywords<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_type_list_text"></td>
+                            <td i18n-content="opt_guide_lists_objects_keywords_text"></td>
+                          </tr>
+                          <tr>
+                            <td>links<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_type_list_text"></td>
+                            <td i18n-content="opt_guide_lists_objects_links_text"></td>
                           </tr>
                           <tr>
                             <td>params</td>
-                            <td i18n-content="opt_guide_type_map_text"></td>
-                            <td i18n-content="opt_guide_complex_values_params_text"></td>
+                            <td i18n-content="opt_guide_type_object_text"></td>
+                            <td i18n-content="opt_guide_lists_objects_params_text"></td>
                           </tr>
                           <tr>
-                            <td>plugins</td>
-                            <td i18n-content="opt_guide_type_array_text"></td>
-                            <td i18n-content="opt_guide_complex_values_plugins_text"></td>
+                            <td>plugins<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_type_list_text"></td>
+                            <td i18n-content="opt_guide_lists_objects_plugins_text"></td>
                           </tr>
                           <tr>
-                            <td>popular</td>
-                            <td i18n-content="opt_guide_type_map_text"></td>
-                            <td i18n-content="opt_guide_complex_values_popular_text"></td>
+                            <td>popular<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_type_object_text"></td>
+                            <td i18n-content="opt_guide_lists_objects_popular_text"></td>
                           </tr>
                           <tr>
-                            <td>scripts<strong>*</strong></td>
-                            <td i18n-content="opt_guide_type_array_text"></td>
-                            <td i18n-content="opt_guide_complex_values_scripts_text"></td>
+                            <td>scripts<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_type_list_text"></td>
+                            <td i18n-content="opt_guide_lists_objects_scripts_text"></td>
                           </tr>
                           <tr>
                             <td>segments</td>
-                            <td i18n-content="opt_guide_type_array_text"></td>
-                            <td i18n-content="opt_guide_complex_values_segments_text"></td>
+                            <td i18n-content="opt_guide_type_list_text"></td>
+                            <td i18n-content="opt_guide_lists_objects_segments_text"></td>
                           </tr>
                           <tr>
                             <td>selectedLinks<strong>*</strong></td>
-                            <td i18n-content="opt_guide_type_array_text"></td>
-                            <td i18n-content="opt_guide_complex_values_selected_links_text"></td>
+                            <td i18n-content="opt_guide_type_list_text"></td>
+                            <td i18n-content="opt_guide_lists_objects_selected_links_text"></td>
                           </tr>
                           <tr>
-                            <td>styleSheets<strong>*</strong></td>
-                            <td i18n-content="opt_guide_type_array_text"></td>
-                            <td i18n-content="opt_guide_complex_values_style_sheets_text"></td>
+                            <td>styleSheets<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_type_list_text"></td>
+                            <td i18n-content="opt_guide_lists_objects_style_sheets_text"></td>
                           </tr>
                           <tr>
-                            <td>template</td>
-                            <td i18n-content="opt_guide_type_map_text"></td>
-                            <td i18n-content="opt_guide_complex_values_template_text"></td>
+                            <td>template<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_type_object_text"></td>
+                            <td i18n-content="opt_guide_lists_objects_template_text"></td>
                           </tr>
                         </tbody>
                         <tfoot>
@@ -739,24 +824,24 @@
                         </tfoot>
                       </table>
                       <h3 i18n-content="opt_guide_examples_header"></h3>
-                      <p i18n-content="opt_guide_complex_values_examples_text_1"></p>
-                      <pre i18n-content="opt_guide_complex_values_examples_code_1"></pre>
-                      <p i18n-content="opt_guide_complex_values_examples_text_2"></p>
-                      <pre i18n-content="opt_guide_complex_values_examples_code_2"></pre>
-                      <p i18n-content="opt_guide_complex_values_examples_text_3"></p>
-                      <pre i18n-content="opt_guide_complex_values_examples_code_3"></pre>
-                      <p i18n-content="opt_guide_complex_values_examples_text_4"></p>
-                      <pre i18n-content="opt_guide_complex_values_examples_code_4"></pre>
-                      <p i18n-content="opt_guide_complex_values_examples_text_5"></p>
-                      <pre i18n-content="opt_guide_complex_values_examples_code_5"></pre>
-                      <p i18n-content="opt_guide_complex_values_examples_text_6"></p>
-                      <pre i18n-content="opt_guide_complex_values_examples_code_6"></pre>
-                      <p i18n-content="opt_guide_complex_values_examples_text_7"></p>
-                      <pre i18n-content="opt_guide_complex_values_examples_code_7"></pre>
-                      <p i18n-content="opt_guide_complex_values_examples_text_8"></p>
-                      <pre i18n-content="opt_guide_complex_values_examples_code_8"></pre>
-                      <p i18n-content="opt_guide_complex_values_examples_text_9"></p>
-                      <pre i18n-content="opt_guide_complex_values_examples_code_9"></pre>
+                      <p i18n-content="opt_guide_lists_objects_examples_text_1"></p>
+                      <pre i18n-content="opt_guide_lists_objects_examples_code_1"></pre>
+                      <p i18n-content="opt_guide_lists_objects_examples_text_2"></p>
+                      <pre i18n-content="opt_guide_lists_objects_examples_code_2"></pre>
+                      <p i18n-content="opt_guide_lists_objects_examples_text_3"></p>
+                      <pre i18n-content="opt_guide_lists_objects_examples_code_3"></pre>
+                      <p i18n-content="opt_guide_lists_objects_examples_text_4"></p>
+                      <pre i18n-content="opt_guide_lists_objects_examples_code_4"></pre>
+                      <p i18n-content="opt_guide_lists_objects_examples_text_5"></p>
+                      <pre i18n-content="opt_guide_lists_objects_examples_code_5"></pre>
+                      <p i18n-content="opt_guide_lists_objects_examples_text_6"></p>
+                      <pre i18n-content="opt_guide_lists_objects_examples_code_6"></pre>
+                      <p i18n-content="opt_guide_lists_objects_examples_text_7"></p>
+                      <pre i18n-content="opt_guide_lists_objects_examples_code_7"></pre>
+                      <p i18n-content="opt_guide_lists_objects_examples_text_8"></p>
+                      <pre i18n-content="opt_guide_lists_objects_examples_code_8"></pre>
+                      <p i18n-content="opt_guide_lists_objects_examples_text_9"></p>
+                      <pre i18n-content="opt_guide_lists_objects_examples_code_9"></pre>
                     </div>
                     <div id="guide_options" class="tab-pane">
                       <p i18n-content="opt_guide_options_text"></p>
@@ -799,189 +884,128 @@
                           </tr>
                           <tr>
                             <td>googlOAuth</td>
-                            <td>
-                              Whether or not <a href="http://oauth.net" target="_blank">OAuth</a>
-                              is enabled for <a href="http://goo.gl" target="_blank">goo.gl</a>
-                            </td>
+                            <td i18n-content="opt_guide_options_googl_oauth_text"></td>
                           </tr>
                           <tr>
                             <td>notificationDuration</td>
-                            <td>The number of seconds notifications are to last</td>
+                            <td i18n-content="opt_guide_options_notification_duration_text"></td>
                           </tr>
                           <tr>
                             <td>notifications</td>
-                            <td>Whether or not the option to show notifications is enabled</td>
+                            <td i18n-content="opt_guide_options_notifications_text"></td>
                           </tr>
                           <tr>
                             <td>shortcuts</td>
-                            <td>
-                              Whether or not the option to allow keyboard shortcuts is enabled
-                            </td>
+                            <td i18n-content="opt_guide_options_shortcuts_text"></td>
                           </tr>
                           <tr>
-                            <td>toolbarClose</td>
-                            <td>
-                              Whether or not the popup is shown when the toolbar button is clicked
-                            </td>
+                            <td>toolbarClose<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_options_toolbar_close_text"></td>
                           </tr>
                           <tr>
-                            <td>toolbarKey</td>
-                            <td>
-                              The key of the template activated when the toolbar button is clicked
-                            </td>
+                            <td>toolbarKey<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_options_toolbar_key_text"></td>
                           </tr>
                           <tr>
-                            <td>toolbarOptions</td>
-                            <td>
-                              Whether or not the <em>Options</em> link is displayed at the bottom
-                              of the popup
-                            </td>
+                            <td>toolbarOptions<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_options_toolbar_options_text"></td>
                           </tr>
                           <tr>
-                            <td>toolbarPopup</td>
-                            <td>
-                              Whether or not the popup is closed immediately after a template is
-                              selected
-                            </td>
+                            <td>toolbarPopup<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_options_toolbar_popup_text"></td>
                           </tr>
                           <tr>
-                            <td>toolbarStyle</td>
-                            <td>
-                              Whether or not the toolbar button's design is based on a template
-                            </td>
+                            <td>toolbarStyle<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_options_toolbar_style_text"></td>
                           </tr>
                           <tr>
                             <td>yourls</td>
-                            <td>
-                              Whether or not <a href="http://yourls.org" target="_blank">YOURLS</a>
-                              is the enabled <abbr title="Uniform Resource Locator">URL</abbr>
-                              shortener
-                            </td>
+                            <td i18n-content="opt_guide_options_yourls_text"></td>
                           </tr>
                           <tr>
                             <td>yourlsPassword</td>
-                            <td>
-                              The password associated with your <a href="http://yourls.org" target="_blank">YOURLS</a>
-                              installation
-                            </td>
+                            <td i18n-content="opt_guide_options_yourls_password_text"></td>
                           </tr>
                           <tr>
                             <td>yourlsSignature</td>
-                            <td>
-                              The signature associated with your <a href="http://yourls.org" target="_blank">YOURLS</a>
-                              installation (e.g. <em>3002a61584</em>)
-                            </td>
+                            <td i18n-content="opt_guide_options_yourls_signature_text"></td>
                           </tr>
                           <tr>
                             <td>yourlsUrl</td>
-                            <td>
-                              The <abbr title="Uniform Resource Locator">URL</abbr> of your <a href="http://yourls.org" target="_blank">YOURLS</a>
-                              installation (e.g. <em>http://example.com/yourls-api.php</em>)
-                            </td>
+                            <td i18n-content="opt_guide_options_yourls_url_text"></td>
                           </tr>
                           <tr>
                             <td>yourlsUsername</td>
-                            <td>
-                              The username associated with your <a href="http://yourls.org" target="_blank">YOURLS</a>
-                              installation
-                            </td>
+                            <td i18n-content="opt_guide_options_yourls_username_text"></td>
                           </tr>
                         </tbody>
                       </table>
                       <h3 i18n-content="opt_guide_examples_header"></h3>
-                      <p>
-                        These examples will be using the following <abbr title="Uniform Resource Locator">URL</abbr>;
-                      </p>
-                      <pre>http://example.com/test/index.html</pre>
-                      <p>
-                        To include the <em>title</em> attribute in an anchor tag only if the user
-                        wants it;
-                      </p>
-                      <pre>&lt;a href=&quot;{{url}}&quot;{#anchorTitle} title=&quot;{{title}}&quot;{/anchorTitle}&gt;This is a test!&lt;/a&gt;</pre>
-                      <p>Would output the following if this option was enabled by the user;</p>
-                      <pre>&lt;a href=&quot;http://example.com/test/index.html&quot; title=&quot;Test&quot;&gt;This is a test!&lt;/a&gt;</pre>
-                      <p>
-                        However, if the user disabled this option it would output as follows;
-                      </p>
-                      <pre>&lt;a href=&quot;http://example.com/test/index.html&quot;&gt;This is a test!&lt;/a&gt;</pre>
+                      <p i18n-content="opt_guide_options_examples_text_1"></p>
+                      <pre i18n-content="opt_guide_options_examples_code_1"></pre>
+                      <p i18n-content="opt_guide_options_examples_text_2"></p>
+                      <pre i18n-content="opt_guide_options_examples_code_2"></pre>
+                      <p i18n-content="opt_guide_options_examples_text_3"></p>
+                      <pre i18n-content="opt_guide_options_examples_code_3"></pre>
+                      <p i18n-content="opt_guide_options_examples_text_4"></p>
+                      <pre i18n-content="opt_guide_options_examples_code_4"></pre>
                     </div>
-                    <div id="guide_functions" class="tab-pane">
-                      <p>
-                        <strong>Functions</strong> can be accessed using the syntax <code>{#name}value{/name}</code>
-                        where <em>name</em> is the name of the function and <em>value</em> is the
-                        value of its argument and perform more complex operations using parameters
-                        you provide.
-                      </p>
+                    <div id="guide_operations" class="tab-pane">
+                      <p i18n-content="opt_guide_operations_text"></p>
                       <table class="table table-condensed table-bordered table-striped">
-                        <caption>Definitions</caption>
+                        <caption i18n-content="opt_guide_definitions_caption"></caption>
                         <thead>
                           <tr>
-                            <th style="width: 25%">Name</th>
-                            <th style="width: 10%">Argument</th>
-                            <th>Description</th>
+                            <th style="width: 25%" i18n-content="opt_guide_name_header"></th>
+                            <th style="width: 10%" i18n-content="opt_guide_argument_header"></th>
+                            <th i18n-content="opt_guide_description_header"></th>
                           </tr>
                         </thead>
                         <tbody>
                           <tr>
                             <td>cookie</td>
-                            <td i18n-content="opt_guide_argument_string_text"></td>
-                            <td>Access the value of the cookie provided</td>
+                            <td i18n-content="opt_guide_argument_text_text"></td>
+                            <td i18n-content="opt_guide_operations_cookie_text"></td>
                           </tr>
                           <tr>
                             <td>dateTime</td>
-                            <td i18n-content="opt_guide_argument_string_text"></td>
-                            <td>
-                              Formats the current date/time using the string provided<br>(see <a href="http://php.net/manual/en/function.date.php#refsect1-function.date-parameters" target="_blank"><abbr title="Hypertext Preprocessor">PHP</abbr>'s date</a>
-                              for more details)
-                            </td>
+                            <td i18n-content="opt_guide_argument_text_text"></td>
+                            <td i18n-content="opt_guide_operations_date_time_text"></td>
                           </tr>
                           <tr>
                             <td>decode</td>
-                            <td i18n-content="opt_guide_argument_string_text"></td>
-                            <td>Decodes the previously encoded text provided</td>
+                            <td i18n-content="opt_guide_argument_text_text"></td>
+                            <td i18n-content="opt_guide_operations_decode_text"></td>
                           </tr>
                           <tr>
                             <td>encode</td>
-                            <td i18n-content="opt_guide_argument_string_text"></td>
-                            <td>
-                              Encodes the text provided so that it can be safely used in a query
-                              string
-                            </td>
+                            <td i18n-content="opt_guide_argument_text_text"></td>
+                            <td i18n-content="opt_guide_operations_encode_text"></td>
                           </tr>
                           <tr>
                             <td>fparam</td>
-                            <td i18n-content="opt_guide_argument_string_text"></td>
-                            <td>
-                              Access the value of the parameter provided from within the hash fragment
-                            </td>
+                            <td i18n-content="opt_guide_argument_text_text"></td>
+                            <td i18n-content="opt_guide_operations_fparam_text"></td>
                           </tr>
                           <tr>
                             <td>fsegment</td>
                             <td i18n-content="opt_guide_argument_number_text"></td>
-                            <td>
-                              Access the value of the segment provided from within the hash fragment
-                            </td>
+                            <td i18n-content="opt_guide_operations_fsegment_text"></td>
                           </tr>
                           <tr>
-                            <td>lastModified<strong>*</strong></td>
-                            <td i18n-content="opt_guide_argument_string_text"></td>
-                            <td>
-                              Formats the last modified date/time of the page using
-                              the string provided
-                              <br>
-                              (see <a href="http://php.net/manual/en/function.date.php#refsect1-function.date-parameters" target="_blank"><abbr title="Hypertext Preprocessor">PHP</abbr>'s date</a>
-                              for more details)
-                            </td>
+                            <td>lastModified<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_argument_text_text"></td>
+                            <td i18n-content="opt_guide_operations_last_modified_text"></td>
                           </tr>
                           <tr>
                             <td>param</td>
-                            <td i18n-content="opt_guide_argument_string_text"></td>
-                            <td>Access the value of the parameter provided</td>
+                            <td i18n-content="opt_guide_argument_text_text"></td>
+                            <td i18n-content="opt_guide_operations_param_text"></td>
                           </tr>
                           <tr>
                             <td>segment</td>
                             <td i18n-content="opt_guide_argument_number_text"></td>
-                            <td>Access the value of the segment provided</td>
+                            <td i18n-content="opt_guide_operations_segment_text"></td>
                           </tr>
                         </tbody>
                         <tfoot>
@@ -991,52 +1015,30 @@
                         </tfoot>
                       </table>
                       <div class="well">
-                        <h3>Notes</h3>
-                        <p>
-                          The following notes apply to <span class="label">segment</span>/<span class="label">fsegment</span>;
-                        </p>
+                        <h3 i18n-content="opt_guide_notes_header"></h3>
+                        <p i18n-content="opt_guide_operations_notes_text_1"></p>
                         <ul>
-                          <li>
-                            The count is not zero-indexed like an array (i.e. <code>{#segment}1{/segment}</code>
-                            returns the first segment, not the second one)
-                          </li>
-                          <li>
-                            The argument can be negative values, in which case it will count back
-                            from the end of the path rather than forwards from the start
-                          </li>
+                          <li i18n-content="opt_guide_operations_notes_text_2"></li>
+                          <li i18n-content="opt_guide_operations_notes_text_3"></li>
                         </ul>
                       </div>
-                      <h3>Examples</h3>
-                      <p>
-                        These examples will be using the following <abbr title="Uniform Resource Locator">URL</abbr>;
-                      </p>
-                      <pre>http://example.com/test/index.html?foo=bar&amp;fu=baz</pre>
-                      <p>
-                        To output the current date/time in <a href="http://en.wikipedia.org/wiki/ISO_8601" target="_blank">ISO 8601</a>
-                        format you would use;
-                      </p>
-                      <pre>{#dateTime}Y-m-d\TH:i:sP{/dateTime}</pre>
-                      <p>
-                        Also, the <em>c</em> parameter would also have the same outcome.
-                      </p>
-                      <p>
-                        If you wanted to pass the whole <abbr title="Uniform Resource Locator">URL</abbr>
-                        as parameter;
-                      </p>
-                      <pre>{#encode}{url}{/encode}</pre>
-                      <p>
-                        Would escape all the characters of the <abbr title="Uniform Resource Locator">URL</abbr>
-                        and output the following;
-                      </p>
-                      <pre>http%3A%2F%2Fexample.com%2Ftest%2Findex.html%3Ffoo%3Dbar%26fu%3Dbaz</pre>
-                      <p>To access the 2nd <span class="label">segment</span>;</p>
-                      <pre>&lt;p&gt;{#segment}2{/segment}&lt;/p&gt;</pre>
-                      <p>Would output the following;</p>
-                      <pre>&lt;p&gt;index.html&lt;/p&gt;</pre>
-                      <p>However, to access the value of the <em>foo</em> parameter;</p>
-                      <pre>&lt;b&gt;{#param}foo{/param}&lt;/b&gt;</pre>
-                      <p>Would output the following;</p>
-                      <pre>&lt;b&gt;bar&lt;/b&gt;</pre>
+                      <h3 i18n-content="opt_guide_examples_header"></h3>
+                      <p i18n-content="opt_guide_operations_examples_text_1"></p>
+                      <pre i18n-content="opt_guide_operations_examples_code_1"></pre>
+                      <p i18n-content="opt_guide_operations_examples_text_2"></p>
+                      <pre i18n-content="opt_guide_operations_examples_code_2"></pre>
+                      <p i18n-content="opt_guide_operations_examples_text_3"></p>
+                      <pre i18n-content="opt_guide_operations_examples_code_3"></pre>
+                      <p i18n-content="opt_guide_operations_examples_text_4"></p>
+                      <pre i18n-content="opt_guide_operations_examples_code_4"></pre>
+                      <p i18n-content="opt_guide_operations_examples_text_5"></p>
+                      <pre i18n-content="opt_guide_operations_examples_code_5"></pre>
+                      <p i18n-content="opt_guide_operations_examples_text_6"></p>
+                      <pre i18n-content="opt_guide_operations_examples_code_6"></pre>
+                      <p i18n-content="opt_guide_operations_examples_text_7"></p>
+                      <pre i18n-content="opt_guide_operations_examples_code_7"></pre>
+                      <p i18n-content="opt_guide_operations_examples_text_8"></p>
+                      <pre i18n-content="opt_guide_operations_examples_code_8"></pre>
                     </div>
                   </div>
                 </div>
