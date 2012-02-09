@@ -269,7 +269,7 @@ loadTemplateControlEvents = ->
         showErrors errors
   # Prompt the user to confirm removal of the selected template.
   $('#delete_btn').click ->
-    $('.delete_hdr').html i18n.get 'opt_delete_header',
+    $('.delete_hdr').html i18n.get 'opt_delete_wizard_header',
       [templates.find('option:selected').text()]
     $('#delete_con').modal 'show'
   # Cancel the template removal process.
@@ -333,10 +333,10 @@ loadTemplateExportEvents = ->
   $('.export_copy_btn').on 'click', (event) ->
     $this = $ this
     ext.copy $('.export_content').val(), yes
-    $this.text i18n.get 'copied'
+    $this.text i18n.get 'opt_export_wizard_copy_alt_button'
     $this.delay 800
     $this.queue ->
-      $this.text i18n.get 'copy'
+      $this.text i18n.get 'opt_export_wizard_copy_button'
       $this.dequeue()
     event.preventDefault()
   # Deselect all of the templates in the list.
@@ -453,10 +453,10 @@ loadTemplateImportEvents = ->
     $this = $ this
     $('.import_file_btn').val ''
     $('.import_content').val ext.paste()
-    $this.text i18n.get 'pasted'
+    $this.text i18n.get 'opt_import_wizard_paste_alt_button'
     $this.delay 800
     $this.queue ->
-      $this.text i18n.get 'paste'
+      $this.text i18n.get 'opt_import_wizard_paste_button'
       $this.dequeue()
   # Select all of the templates in the list.
   $('.import_select_all_btn').on 'click', ->
@@ -539,19 +539,16 @@ loadToolbar = ->
 
 # Bind the event handlers required for controlling toolbar behaviour changes.
 loadToolbarControlEvents = ->
-  buttons     = $ '#toolbarPopup, #notToolbarPopup'
-  description = $ '#toolbarPopup_desc'
+  buttons = $ '#toolbarPopup, #notToolbarPopup'
   # Bind a click event to listen for changes to the button selection.
   buttons.click ->
-    id = $(this).attr 'id'
-    if id is 'toolbarPopup'
-      description.text i18n.get 'opt_toolbar_popup_text'
-      $(".notToolbarPopup").hide()
-      $(".toolbarPopup").show()
-    else
-      description.text i18n.get 'opt_toolbar_not_popup_text'
-      $(".toolbarPopup").hide()
-      $(".notToolbarPopup").show()
+    switch $(this).attr 'id'
+      when 'notToolbarPopup'
+        $('.toolbarPopup').hide()
+        $('.notToolbarPopup').show()
+      when 'toolbarPopup'
+        $('.notToolbarPopup').hide()
+        $('.toolbarPopup').show()
   buttons.filter('.active').click()
 
 # Bind the event handlers required for persisting toolbar behaviour changes.
@@ -920,6 +917,8 @@ options = window.options =
     i18n.init
       footer:
         opt_footer: "#{new Date().getFullYear()}"
+      version_definition:
+        opt_guide_standard_version_text: ext.version
     # Bind tab selection event to all tabs.
     initialTabChange = yes
     $('a[tabify]').click ->
@@ -963,8 +962,6 @@ options = window.options =
       ext.SHORTCUT_MAC_MODIFIERS
     else
       ext.SHORTCUT_MODIFIERS
-    # Insert current extension version where required.
-    $('.version-replace').text ext.version
     # Initialize all popovers, tooltips and *go-to* links.
     $('[popover]').each ->
       $this   = $ this
