@@ -4,33 +4,36 @@ YYYY.MM.DD, Version 1.0.0
 * [#20](https://github.com/neocotic/template/issues/20): Add *"Revoke Access"* button to [goo.gl](http://goo.gl)'s configuration on the Options page
 * [#35](https://github.com/neocotic/template/issues/35): Ensure code and documentation quality and standards are high
 * [#47](https://github.com/neocotic/template/issues/47): Completely redesign and simplify the Options page
-* [#48](https://github.com/neocotic/template/issues/48): Add option to keep popup open after clicking a template (available in templates via the new *"toolbarClose"* option tag)
-* [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeature"* option tag (still available by inverting the *"toolbarPopup"* option tag)
-* [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeatureDetails"* option tag and replace with the *"toolbarStyle"* option tag
-* [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeatureName"* option tag and replace with the *"toolbarKey"* option tag
-* [#49](https://github.com/neocotic/template/issues/49): Add new *"count"* simple tag to enable access to the total number of templates
-* [#49](https://github.com/neocotic/template/issues/49): Add new *"customCount"* simple tag to enable access to the total number of custom templates (i.e. excluding predefined)
-* [#49](https://github.com/neocotic/template/issues/49): Add new *"popular"* complex tag to enable access to the details of the most popular template
+* [#48](https://github.com/neocotic/template/issues/48): Add option to keep popup open after clicking a template (available in templates via the new *"toolbarClose"* option)
+* [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeature"* option (still available by inverting the *"toolbarPopup"* option)
+* [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeatureDetails"* option and replace with the *"toolbarStyle"* option
+* [#48](https://github.com/neocotic/template/issues/48): Deprecate the *"toolbarFeatureName"* option and replace with the *"toolbarKey"* option
+* [#49](https://github.com/neocotic/template/issues/49): Add new *"count"* standard variable to enable access to the total number of templates
+* [#49](https://github.com/neocotic/template/issues/49): Add new *"customCount"* standard variable to enable access to the total number of custom templates (i.e. excluding predefined)
+* [#49](https://github.com/neocotic/template/issues/49): Add new *"popular"* object to enable access to the details of the most popular template
 * [#49](https://github.com/neocotic/template/issues/49): Restructure template data stored in `localStorage`
 * [#52](https://github.com/neocotic/template/issues/52): Completely rewrite code in [CoffeeScript](http://coffeescript.org)
 * [#52](https://github.com/neocotic/template/issues/52): Update build process
 * [#58](https://github.com/neocotic/template/issues/58): Remove requirement of names for templates
 * [#59](https://github.com/neocotic/template/issues/59): Restructure option data stored in `localStorage`
 * [#60](https://github.com/neocotic/template/issues/60): Automically save changes on the Options page
-* [#61](https://github.com/neocotic/template/issues/61): Add new *"coords"* complex tag to enable access to the user's geolocation
-* [#62](https://github.com/neocotic/template/issues/62): Add Options link to bottom of popup (available in templates via the new *"toolbarOptions"* option tag)
-* [#63](https://github.com/neocotic/template/issues/63): Add new *"characterSet"* simple tag to enable access to the [character set](http://www.iana.org/assignments/character-sets)
-* [#63](https://github.com/neocotic/template/issues/63): Add new *"depth"* simple tag to enable access to the colour depth of the user's screen
-* [#63](https://github.com/neocotic/template/issues/63): Add new *"lastModified"* simple tag and function to enable access to the potentially formatted last modified date/time
-* [#63](https://github.com/neocotic/template/issues/63): Add new *"links"* complex tag to enable access to all of the links on the page
-* [#63](https://github.com/neocotic/template/issues/63): Add new *"pageWidth"* and *"pageHeight"* simple tags to enable access to the page's dimensions
-* [#63](https://github.com/neocotic/template/issues/63): Add new *"plugins"* complex tag to enable access to the active browser plugins
-* [#63](https://github.com/neocotic/template/issues/63): Add new *"referrer"* simple tag to enable access to the URL of the referring page
-* [#63](https://github.com/neocotic/template/issues/63): Add new *"screenWidth"* and *"screenHeight"* simple tags to enable access to the user's screen resolution
-* [#63](https://github.com/neocotic/template/issues/63): Add new *"scripts"* complex tag to enable access to all of the page's external script sources
-* [#63](https://github.com/neocotic/template/issues/63): Add new *"styleSheets"* complex tag to enable access to all of the page's external CSS stylesheet sources
-* [#63](https://github.com/neocotic/template/issues/63): Add new *"template"* complex tag to enable access to the activated template
-* [#63](https://github.com/neocotic/template/issues/63): Rename the *"selectionLinks"* complex tag to *"selectedLinks"*
+* [#61](https://github.com/neocotic/template/issues/61): Add new *"coords"* object to enable access to the user's geolocation
+* [#62](https://github.com/neocotic/template/issues/62): Add Options link to bottom of popup (available in templates via the new *"toolbarOptions"* option)
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"author"* standard variable to enable access to the author from the page's meta information
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"characterSet"* standard variable to enable access to the [character set](http://www.iana.org/assignments/character-sets)
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"description"* standard variable to enable access to the description from the page's meta information
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"depth"* standard variable to enable access to the colour depth of the user's screen
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"keywords"* list to enable iteration over the keywords from the page's meta information
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"lastModified"* standard variable and operation to enable access to the potentially formatted last modified date/time
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"links"* list to enable iteration over all of the links on the page
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"pageWidth"* and *"pageHeight"* standard variables to enable access to the page's dimensions
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"plugins"* list to enable iteration over the active browser plugins
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"referrer"* standard variable to enable access to the URL of the referring page
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"screenWidth"* and *"screenHeight"* standard variables to enable access to the user's screen resolution
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"scripts"* list to enable iteration over all of the page's external script sources
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"styleSheets"* list to enable iteration over all of the page's external CSS stylesheet sources
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"template"* object to enable access to the activated template
+* [#63](https://github.com/neocotic/template/issues/63): Rename the *"selectionLinks"* list to *"selectedLinks"*
 * More bug fixes and UI tweaks
 
 2011.12.22, Version 0.3.0.0
