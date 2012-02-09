@@ -607,7 +607,10 @@ addAdditionalData = (tab, data, callback) ->
       time = Date.parse result.lastModified
       new Date time unless isNaN time
     $.extend data,
+      author:         result.author        ? ''
       characterset:   result.characterSet  ? ''
+      description:    result.description   ? ''
+      keywords:       result.keywords      ? []
       lastmodified:   ->
         (text, render) ->
           lastModified?.format(render(text) or undefined) ? ''
@@ -781,7 +784,7 @@ buildPopup = ->
   loadDiv  = $ '<div id="loadDiv"/>'
   loadDiv.append [
     $ '<img src="../images/loading.gif"/>'
-    $ '<div/>', text: i18n.get 'shortening'
+    $ '<div/>', text: i18n.get 'please_wait'
   ]...
   # Generate the HTML for each template.
   for template in ext.templates when template.enabled
