@@ -2,12 +2,6 @@
   "app_name": {
     "message": "Template Chrome Extension"
   },
-  "copied": {
-    "message": "Copied!"
-  },
-  "copy": {
-    "message": "Copy"
-  },
   "copy_anchor": {
     "message": "Anchor"
   },
@@ -167,34 +161,27 @@
       }
     }
   },
-  "opt_delete_header": {
-    "message": "Delete $1"
-  },
-  "opt_delete_wizard": {
-    "message": "$O_BODY$$O_PARA$This action is $O_BOLD$permanent$C_BOLD$ and cannot be reversed.$C_PARA$$O_PARA$Do you want to continue anyway?$C_PARA$$C_BODY$$BUTTONS$",
+  "opt_delete_wizard_header": {
+    "message": "Delete $TEMPLATE$",
     "placeholders": {
-      "buttons": {
-        "content": "<div class=\"modal-footer\"><button class=\"btn btn-primary delete_yes_btn\">Yes</button><button class=\"btn btn-danger delete_no_btn\">No</button></div>"
-      },
-      "c_body": {
-        "content": "</div>"
-      },
+      "template": {
+        "content": "$1"
+      }
+    }
+  },
+  "opt_delete_wizard_text_1": {
+    "message": "This action is $O_BOLD$permanent$C_BOLD$ and cannot be reversed.",
+    "placeholders": {
       "c_bold": {
         "content": "</strong>"
       },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_body": {
-        "content": "<div class=\"modal-body\">"
-      },
       "o_bold": {
         "content": "<strong>"
-      },
-      "o_para": {
-        "content": "<p>"
       }
     }
+  },
+  "opt_delete_wizard_text_2": {
+    "message": "Do you want to continue anyway?"
   },
   "opt_errors_header": {
     "message": "The following problem(s) need to be corrected;"
@@ -207,60 +194,41 @@
       }
     }
   },
-  "opt_export_header": {
+  "opt_export_wizard_copy_alt_button": {
+    "message": "Copied!"
+  },
+  "opt_export_wizard_copy_button": {
+    "message": "Copy"
+  },
+  "opt_export_wizard_header": {
     "message": "Export"
   },
-  "opt_export_wizard_1": {
-    "message": "$O_BODY$$O_PARA$Select the template(s) to be exported.$C_PARA$$LIST$$C_BODY$$BUTTONS$",
-    "placeholders": {
-      "buttons": {
-        "content": "<div class=\"modal-footer\"><div class=\"pull-left\"><button class=\"btn export_deselect_all_btn\">None</button><button class=\"btn export_select_all_btn\">All</button></div><button class=\"btn btn-primary export_yes_btn\" disabled=\"disabled\">Continue</button><button class=\"btn btn-danger export_no_btn\">Close</button></div>"
-      },
-      "c_body": {
-        "content": "</div>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "list": {
-        "content": "<select class=\"export_con_list span5\" size=\"5\" multiple></select>"
-      },
-      "o_body": {
-        "content": "<div class=\"modal-body\">"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
+  "opt_export_wizard_save_as_button": {
+    "message": "Save As..."
   },
-  "opt_export_wizard_2": {
-    "message": "$O_BODY$$O_PARA$Copy or download the template data.$C_PARA$$TEXTAREA$$C_BODY$$BUTTONS$",
-    "placeholders": {
-      "buttons": {
-        "content": "<div class=\"modal-footer\"><div class=\"pull-left\"><button class=\"btn export_save_btn\">Save As...</button><button class=\"btn export_copy_btn\">Copy</button></div><button class=\"btn export_back_btn\">Back</button><button class=\"btn btn-danger export_close_btn\">Close</button></div>"
-      },
-      "c_body": {
-        "content": "</div>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_body": {
-        "content": "<div class=\"modal-body\">"
-      },
-      "o_para": {
-        "content": "<p>"
-      },
-      "textarea": {
-        "content": "<textarea class=\"export_content span5\" rows=\"6\" readonly></textarea>"
-      }
-    }
+  "opt_export_wizard_stage_1_text": {
+    "message": "Select the template(s) to be exported."
+  },
+  "opt_export_wizard_stage_2_text": {
+    "message": "Copy or download the template data."
   },
   "opt_footer": {
-    "message": "&copy;$1 $AUTHOR_LINK$",
+    "message": "&copy;$YEAR$ $O_LINK_1$http://neocotic.com$O_LINK_2$$NAME$$C_LINK$",
     "placeholders": {
-      "author_link": {
-        "content": "<a href=\"http://neocotic.com\" target=\"_blank\">Alasdair Mercer</a>"
+      "c_link": {
+        "content": "</a>"
+      },
+      "name": {
+        "content": "Alasdair Mercer"
+      },
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
+      },
+      "year": {
+        "content": "$1"
       }
     }
   },
@@ -273,288 +241,8 @@
   "opt_guide_argument_number_text": {
     "message": "Number"
   },
-  "opt_guide_argument_string_text": {
+  "opt_guide_argument_text_text": {
     "message": "Text"
-  },
-  "opt_guide_complex_values_cookies_text": {
-    "message": "The names of all cookies associated with the page"
-  },
-  "opt_guide_complex_values_coords_text": {
-    "message": "The properties of your current physical location (e.g. $O_EMPH$$EXAMPLE_1$$C_EMPH$, $O_EMPH$$EXAMPLE_2$$C_EMPH$ and many more)",
-    "placeholders": {
-      "c_emph": {
-        "content": "</em>"
-      },
-      "example_1": {
-        "content": "latitude"
-      },
-      "example_2": {
-        "content": "longitude"
-      },
-      "o_emph": {
-        "content": "<em>"
-      }
-    }
-  },
-  "opt_guide_complex_values_examples_code_1": {
-    "message": "http://example.com/test/index.html?foo=bar&amp;fu=baz"
-  },
-  "opt_guide_complex_values_examples_code_2": {
-    "message": "&lt;ol&gt;\n{#segments}\n  &lt;li&gt;{.}&lt;/li&gt;\n{/segments}\n&lt;/ol&gt;"
-  },
-  "opt_guide_complex_values_examples_code_3": {
-    "message": "&lt;ol&gt;\n  &lt;li&gt;test&lt;/li&gt;\n  &lt;li&gt;index.html&lt;/li&gt;\n&lt;/ol&gt;"
-  },
-  "opt_guide_complex_values_examples_code_4": {
-    "message": "{#params}&lt;p&gt;foo is &quot;{foo}&quot; and fu is &quot;{fu}&quot;.&lt;/p&gt;{/params}\n{^params}&lt;p&gt;No parameters!&lt;/p&gt;{/params}"
-  },
-  "opt_guide_complex_values_examples_code_5": {
-    "message": "&lt;p&gt;foo is &quot;bar&quot; and fu is &quot;baz&quot;.&lt;/p&gt;"
-  },
-  "opt_guide_complex_values_examples_code_6": {
-    "message": "&lt;p&gt;No parameters!&lt;/p&gt;"
-  },
-  "opt_guide_complex_values_examples_code_7": {
-    "message": "&lt;ul&gt;\n{#cookies}\n  &lt;li&gt;&lt;strong&gt;{.}:&lt;/strong&gt; {#cookie}{.}{/cookie}&lt;/li&gt;\n{/cookies}\n&lt;/ul&gt;"
-  },
-  "opt_guide_complex_values_examples_code_8": {
-    "message": "&lt;ul&gt;\n  &lt;li&gt;&lt;strong&gt;JSESSIONID:&lt;/strong&gt; 2pkffy9ivmpfwntf12y6o4cgu&lt;/li&gt;\n  &lt;li&gt;&lt;strong&gt;__utmc:&lt;/strong&gt; 224978569&lt;/li&gt;\n&lt;/ul&gt;"
-  },
-  "opt_guide_complex_values_examples_code_9": {
-    "message": "{#coords}\n&lt;iframe width=&quot;425&quot; height=&quot;350&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot; marginheight=&quot;0&quot; marginwidth=&quot;0&quot; src=&quot;http://maps.google.com/maps?ll={latitude},{longitude}&output=embed&quot;>&lt;/iframe&gt;\n&lt;br&gt;\n&lt;small&gt;&lt;a href=&quot;http://maps.google.com/maps?ll={latitude},{longitude}&source=embed&quot;>View Larger Map&lt;/a&gt;&lt;/small&gt;\n{/coords}"
-  },
-  "opt_guide_complex_values_examples_text_1": {
-    "message": "These examples will be using the following $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$;",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">"
-      }
-    }
-  },
-  "opt_guide_complex_values_examples_text_2": {
-    "message": "Using an array, you can do the following to iterate over all the $O_LABEL$segments$C_LABEL$;",
-    "placeholders": {
-      "c_label": {
-        "content": "</span>"
-      },
-      "o_label": {
-        "content": "<span class=\"label\">"
-      }
-    }
-  },
-  "opt_guide_complex_values_examples_text_3": {
-    "message": "Would output the following;"
-  },
-  "opt_guide_complex_values_examples_text_4": {
-    "message": "However, when the iterating over a map you access each item in a single section as follows;"
-  },
-  "opt_guide_complex_values_examples_text_5": {
-    "message": "Would output the following;"
-  },
-  "opt_guide_complex_values_examples_text_6": {
-    "message": "However, if the query string was empty it would output;"
-  },
-  "opt_guide_complex_values_examples_text_7": {
-    "message": "Using the following you can access the name and values of all available cookies;"
-  },
-  "opt_guide_complex_values_examples_text_8": {
-    "message": "This will output in something like the following;"
-  },
-  "opt_guide_complex_values_examples_text_9": {
-    "message": "If you would like to embed a map of your current location you can use something like the this;"
-  },
-  "opt_guide_complex_values_fparams_text": {
-    "message": "The key/value pairs of all parameters within the hash fragment (e.g. fragment $O_CODE$foo=bar&amp;fu=baz$C_CODE$ contains $O_EMPH$$EXAMPLE_1$$C_EMPH$ and $O_EMPH$$EXAMPLE_2$$C_EMPH$)",
-    "placeholders": {
-      "c_code": {
-        "content": "</code>"
-      },
-      "c_emph": {
-        "content": "</em>"
-      },
-      "example_1": {
-        "content": "foo"
-      },
-      "example_2": {
-        "content": "fu"
-      },
-      "o_code": {
-        "content": "<code>"
-      },
-      "o_emph": {
-        "content": "<em>"
-      }
-    }
-  },
-  "opt_guide_complex_values_fsegments_text": {
-    "message": "The segments from the hash fragment's path"
-  },
-  "opt_guide_complex_values_header": {
-    "message": "Complex Values"
-  },
-  "opt_guide_complex_values_links_text": {
-    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all links on the page",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">"
-      }
-    }
-  },
-  "opt_guide_complex_values_params_text": {
-    "message": "The key/value pairs of all parameters (e.g. query $O_CODE$foo=bar&amp;fu=baz$C_CODE$ contains $O_EMPH$$EXAMPLE_1$$C_EMPH$ and $O_EMPH$$EXAMPLE_2$$C_EMPH$)",
-    "placeholders": {
-      "c_code": {
-        "content": "</code>"
-      },
-      "c_emph": {
-        "content": "</em>"
-      },
-      "example_1": {
-        "content": "foo"
-      },
-      "example_2": {
-        "content": "fu"
-      },
-      "o_code": {
-        "content": "<code>"
-      },
-      "o_emph": {
-        "content": "<em>"
-      }
-    }
-  },
-  "opt_guide_complex_values_plugins_text": {
-    "message": "The names of all enabled browser plugins (e.g. $O_EMPH$$EXAMPLE$$C_EMPH$)",
-    "placeholders": {
-      "c_emph": {
-        "content": "</em>"
-      },
-      "example": {
-        "content": "Shockwave Flash"
-      },
-      "o_emph": {
-        "content": "<em>"
-      }
-    }
-  },
-  "opt_guide_complex_values_popular_text": {
-    "message": "The properties of your most popular template (e.g. $O_EMPH$$EXAMPLE_1$$C_EMPH$, $O_EMPH$$EXAMPLE_2$$C_EMPH$, $O_EMPH$$EXAMPLE_3$$C_EMPH$ and many more)",
-    "placeholders": {
-      "c_emph": {
-        "content": "</em>"
-      },
-      "example_1": {
-        "content": "title"
-      },
-      "example_2": {
-        "content": "content"
-      },
-      "example_3": {
-        "content": "shortcut"
-      },
-      "o_emph": {
-        "content": "<em>"
-      }
-    }
-  },
-  "opt_guide_complex_values_scripts_text": {
-    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all external script used by the page",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">"
-      }
-    }
-  },
-  "opt_guide_complex_values_segments_text": {
-    "message": "The segments from the $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$'s path",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">"
-      }
-    }
-  },
-  "opt_guide_complex_values_selected_links_text": {
-    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all links within the current selection",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">"
-      }
-    }
-  },
-  "opt_guide_complex_values_style_sheets_text": {
-    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all external $O_ABBR_1$Cascading Style Sheets$O_ABBR_2$CSS$C_ABBR$ resources used by the page",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">"
-      }
-    }
-  },
-  "opt_guide_complex_values_template_text": {
-    "message": "The properties of the activated template (e.g. $O_EMPH$$EXAMPLE_1$$C_EMPH$, $O_EMPH$$EXAMPLE_2$$C_EMPH$, $O_EMPH$$EXAMPLE_3$$C_EMPH$ and many more)",
-    "placeholders": {
-      "c_emph": {
-        "content": "</em>"
-      },
-      "example_1": {
-        "content": "title"
-      },
-      "example_2": {
-        "content": "image"
-      },
-      "example_3": {
-        "content": "usage"
-      },
-      "o_emph": {
-        "content": "<em>"
-      }
-    }
-  },
-  "opt_guide_complex_values_text": {
-    "message": "$O_BOLD$Complex values$C_BOLD$ are either arrays containing strings or maps of key/value pairs.",
-    "placeholders": {
-      "c_bold": {
-        "content": "</strong>"
-      },
-      "o_bold": {
-        "content": "<strong>"
-      }
-    }
   },
   "opt_guide_definitions_caption": {
     "message": "Definitions"
@@ -564,9 +252,6 @@
   },
   "opt_guide_examples_header": {
     "message": "Examples"
-  },
-  "opt_guide_functions_header": {
-    "message": "Functions"
   },
   "opt_guide_header": {
     "message": "Guide"
@@ -679,7 +364,7 @@
     "message": "For more examples, try looking at the predefined templates."
   },
   "opt_guide_introduction_section_accessing_text": {
-    "message": "$O_BOLD$Accessing$C_BOLD$ - If the value is an object it will render the contents while making the properties of that object available as variables",
+    "message": "$O_BOLD$Accessing$C_BOLD$ - If the value is an object it will render the contents while exposing the properties of that object as variables",
     "placeholders": {
       "c_bold": {
         "content": "</strong>"
@@ -763,7 +448,7 @@
     }
   },
   "opt_guide_introduction_simple_tag_text_2": {
-    "message": "Values are not escaped by default and, in order to do so, you must use double braces like this $O_CODE${{name}}$C_CODE$. This will escape certain characters ($O_CODE$&amp;$C_CODE$ $O_CODE$&lt;$C_CODE$ $O_CODE$&gt;$C_CODE$ $O_CODE$&quot;$C_CODE$ $O_CODE$&#39;$C_CODE$) so that the final output can be safely copied in to $O_ABBR_1$Extensible Markup Language$O_ABBR_2$XML$C_ABBR$ and $O_ABBR_1$Hyper Text Markup Language$O_ABBR_2$HTML$C_ABBR$.",
+    "message": "Values are not escaped by default and, in order to do so, you must use double braces like this $O_CODE${{name}}$C_CODE$. This will escape $O_CODE$&amp;$C_CODE$ $O_CODE$&lt;$C_CODE$ $O_CODE$&gt;$C_CODE$ $O_CODE$&quot;$C_CODE$ $O_CODE$&#39;$C_CODE$ characters so that the final output can be safely copied in to $O_ABBR_1$Extensible Markup Language$O_ABBR_2$XML$C_ABBR$ and $O_ABBR_1$Hyper Text Markup Language$O_ABBR_2$HTML$C_ABBR$.",
     "placeholders": {
       "c_abbr": {
         "content": "</abbr>"
@@ -793,11 +478,535 @@
       }
     }
   },
+  "opt_guide_lists_objects_cookies_text": {
+    "message": "The names of all cookies associated with the page"
+  },
+  "opt_guide_lists_objects_coords_text": {
+    "message": "The properties of your current physical location (e.g. $O_EMPH$$EXAMPLE_1$$C_EMPH$, $O_EMPH$$EXAMPLE_2$$C_EMPH$ and many more)",
+    "placeholders": {
+      "c_emph": {
+        "content": "</em>"
+      },
+      "example_1": {
+        "content": "latitude"
+      },
+      "example_2": {
+        "content": "longitude"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
+  },
+  "opt_guide_lists_objects_examples_code_1": {
+    "message": "http://example.com/test/index.html?foo=bar&amp;fu=baz"
+  },
+  "opt_guide_lists_objects_examples_code_2": {
+    "message": "Follow the breadcrumbs;\n{#segments}\n &bull; {.}\n{/segments}"
+  },
+  "opt_guide_lists_objects_examples_code_3": {
+    "message": "Follow the breadcrumbs;\n &bull; test\n &bull; index.html"
+  },
+  "opt_guide_lists_objects_examples_code_4": {
+    "message": "{#params}foo is &quot;{foo}&quot; and fu is &quot;{fu}&quot;.{/params}\n{^params}No parameters could be found!{/params}"
+  },
+  "opt_guide_lists_objects_examples_code_5": {
+    "message": "foo is &quot;bar&quot; and fu is &quot;baz&quot;."
+  },
+  "opt_guide_lists_objects_examples_code_6": {
+    "message": "No parameters could be found!"
+  },
+  "opt_guide_lists_objects_examples_code_7": {
+    "message": "The site has following information stored;\n{#cookies}\n &bull; {.} = &quot;{#cookie}{.}{/cookie}&quot;\n{/cookies}"
+  },
+  "opt_guide_lists_objects_examples_code_8": {
+    "message": "The site has following information stored;\n &bull; JSESSIONID = &quot;2pkffy9ivmpfwntf12y6o4cgu&quot;\n &bull; __utmc = &quot;224978569&quot;"
+  },
+  "opt_guide_lists_objects_examples_code_9": {
+    "message": "{#coords}\n&lt;iframe width=&quot;425&quot; height=&quot;350&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot; marginheight=&quot;0&quot; marginwidth=&quot;0&quot; src=&quot;http://maps.google.com/maps?ll={latitude},{longitude}&output=embed&quot;>&lt;/iframe&gt;\n&lt;br&gt;\n&lt;small&gt;&lt;a href=&quot;http://maps.google.com/maps?ll={latitude},{longitude}&source=embed&quot;>View Larger Map&lt;/a&gt;&lt;/small&gt;\n{/coords}"
+  },
+  "opt_guide_lists_objects_examples_text_1": {
+    "message": "These examples will be using the following $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$;",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
+  "opt_guide_lists_objects_examples_text_2": {
+    "message": "As it's a list, you can do the following to iterate over all the $O_LABEL$segments$C_LABEL$;",
+    "placeholders": {
+      "c_label": {
+        "content": "</span>"
+      },
+      "o_label": {
+        "content": "<span class=\"label\">"
+      }
+    }
+  },
+  "opt_guide_lists_objects_examples_text_3": {
+    "message": "Would output the following;"
+  },
+  "opt_guide_lists_objects_examples_text_4": {
+    "message": "In order to access the properties of an object it couldn't be any easier than this;"
+  },
+  "opt_guide_lists_objects_examples_text_5": {
+    "message": "This would output the following;"
+  },
+  "opt_guide_lists_objects_examples_text_6": {
+    "message": "However, if the query string was empty it would output this instead;"
+  },
+  "opt_guide_lists_objects_examples_text_7": {
+    "message": "Using the following you can access the name and values of all available cookies;"
+  },
+  "opt_guide_lists_objects_examples_text_8": {
+    "message": "This will output in something like the following;"
+  },
+  "opt_guide_lists_objects_examples_text_9": {
+    "message": "If you would like to embed a map of your current location (e.g. in a blog post) try the following snippet;"
+  },
+  "opt_guide_lists_objects_fparams_text": {
+    "message": "The key/value pairs of all parameters within the hash fragment (e.g. fragment $O_CODE$foo=bar&amp;fu=baz$C_CODE$ contains $O_EMPH$$EXAMPLE_1$$C_EMPH$ and $O_EMPH$$EXAMPLE_2$$C_EMPH$)",
+    "placeholders": {
+      "c_code": {
+        "content": "</code>"
+      },
+      "c_emph": {
+        "content": "</em>"
+      },
+      "example_1": {
+        "content": "foo"
+      },
+      "example_2": {
+        "content": "fu"
+      },
+      "o_code": {
+        "content": "<code>"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
+  },
+  "opt_guide_lists_objects_fsegments_text": {
+    "message": "The segments from the hash fragment's path"
+  },
+  "opt_guide_lists_objects_header": {
+    "message": "Lists &amp; Objects"
+  },
+  "opt_guide_lists_objects_keywords_text": {
+    "message": "The keywords from the page's meta information"
+  },
+  "opt_guide_lists_objects_links_text": {
+    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all links on the page",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
+  "opt_guide_lists_objects_params_text": {
+    "message": "The key/value pairs of all parameters (e.g. query $O_CODE$foo=bar&amp;fu=baz$C_CODE$ contains $O_EMPH$$EXAMPLE_1$$C_EMPH$ and $O_EMPH$$EXAMPLE_2$$C_EMPH$)",
+    "placeholders": {
+      "c_code": {
+        "content": "</code>"
+      },
+      "c_emph": {
+        "content": "</em>"
+      },
+      "example_1": {
+        "content": "foo"
+      },
+      "example_2": {
+        "content": "fu"
+      },
+      "o_code": {
+        "content": "<code>"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
+  },
+  "opt_guide_lists_objects_plugins_text": {
+    "message": "The names of all enabled browser plugins (e.g. $O_EMPH$$EXAMPLE$$C_EMPH$)",
+    "placeholders": {
+      "c_emph": {
+        "content": "</em>"
+      },
+      "example": {
+        "content": "Shockwave Flash"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
+  },
+  "opt_guide_lists_objects_popular_text": {
+    "message": "The properties of your most popular template (e.g. $O_EMPH$$EXAMPLE_1$$C_EMPH$, $O_EMPH$$EXAMPLE_2$$C_EMPH$, $O_EMPH$$EXAMPLE_3$$C_EMPH$ and many more)",
+    "placeholders": {
+      "c_emph": {
+        "content": "</em>"
+      },
+      "example_1": {
+        "content": "title"
+      },
+      "example_2": {
+        "content": "content"
+      },
+      "example_3": {
+        "content": "shortcut"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
+  },
+  "opt_guide_lists_objects_scripts_text": {
+    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all external script used by the page",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
+  "opt_guide_lists_objects_segments_text": {
+    "message": "The segments from the $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$'s path",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
+  "opt_guide_lists_objects_selected_links_text": {
+    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all links within the current selection",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
+  "opt_guide_lists_objects_style_sheets_text": {
+    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all external $O_ABBR_1$Cascading Style Sheets$O_ABBR_2$CSS$C_ABBR$ resources used by the page",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
+  "opt_guide_lists_objects_template_text": {
+    "message": "The properties of the activated template (e.g. $O_EMPH$$EXAMPLE_1$$C_EMPH$, $O_EMPH$$EXAMPLE_2$$C_EMPH$, $O_EMPH$$EXAMPLE_3$$C_EMPH$ and many more)",
+    "placeholders": {
+      "c_emph": {
+        "content": "</em>"
+      },
+      "example_1": {
+        "content": "title"
+      },
+      "example_2": {
+        "content": "image"
+      },
+      "example_3": {
+        "content": "usage"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
+  },
+  "opt_guide_lists_objects_text": {
+    "message": "$O_BOLD$Lists &amp; Objects$C_BOLD$ are generally accessed using sections (including inverted) to iterate over and access properties respectively. However, simple tags can be used to output the contents of a list in $O_ABBR_1$Comma-Separated Values$O_ABBR_2$CSV$C_ABBR$ format.",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "c_bold": {
+        "content": "</strong>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      },
+      "o_bold": {
+        "content": "<strong>"
+      }
+    }
+  },
   "opt_guide_name_header": {
     "message": "Name"
   },
+  "opt_guide_new_text": {
+    "message": "New"
+  },
   "opt_guide_notes_header": {
     "message": "Notes"
+  },
+  "opt_guide_operations_cookie_text": {
+    "message": "Get the value for the cookie with the name provided"
+  },
+  "opt_guide_operations_date_time_text": {
+    "message": "Format the current date &amp; time using the pattern provided$BREAK$(see $O_LINK_1$http://php.net/manual/en/function.date.php#refsect1-function.date-parameters$O_LINK_2$$O_ABBR_1$Hypertext Preprocessor$O_ABBR_2$PHP$C_ABBR$s date$C_LINK$ for more details)",
+    "placeholders": {
+      "break": {
+        "content": "<br>"
+      },
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "c_link": {
+        "content": "</a>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      },
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
+      }
+    }
+  },
+  "opt_guide_operations_decode_text": {
+    "message": "Decode the previously encoded text provided"
+  },
+  "opt_guide_operations_encode_text": {
+    "message": "Encode the text provided so that it can be safely used in a query string"
+  },
+  "opt_guide_operations_examples_code_1": {
+    "message": "http://example.com/test/index.html?foo=bar&amp;fu=baz"
+  },
+  "opt_guide_operations_examples_code_2": {
+    "message": "Today is {#dateTime}Y-m-d\\TH:i:sP{/dateTime}."
+  },
+  "opt_guide_operations_examples_code_3": {
+    "message": "http://example.com/something.do?url={#encode}{url}{/encode}"
+  },
+  "opt_guide_operations_examples_code_4": {
+    "message": "http://example.com/something.do?url=http%3A%2F%2Fexample.com%2Ftest%2Findex.html%3Ffoo%3Dbar%26fu%3Dbaz"
+  },
+  "opt_guide_operations_examples_code_5": {
+    "message": "I am currently viewing &quot;{#segment}-1{/segment}&quot;."
+  },
+  "opt_guide_operations_examples_code_6": {
+    "message": "I am currently viewing &quot;index.html&quot;."
+  },
+  "opt_guide_operations_examples_code_7": {
+    "message": "The value of foo is &quot;{#param}foo{/param}&quot;."
+  },
+  "opt_guide_operations_examples_code_8": {
+    "message": "The value of foo is &quot;bar&quot;."
+  },
+  "opt_guide_operations_examples_text_1": {
+    "message": "These examples will be using the following $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$;",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
+  "opt_guide_operations_examples_text_2": {
+    "message": "To output the current date &amp; time in $O_LINK_1$http://en.wikipedia.org/wiki/ISO_8601$O_LINK_2$ISO 8601$C_LINK$ format you would use;",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>"
+      },
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
+      }
+    }
+  },
+  "opt_guide_operations_examples_text_3": {
+    "message": "Also, the $O_EMPH$c$C_EMPH$ parameter would also have the same outcome in this case. If you wanted to safely pass the whole $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ as a parameter in a query string;",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "c_emph": {
+        "content": "</em>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
+  },
+  "opt_guide_operations_examples_text_4": {
+    "message": "This escapes all of the necessary characters within $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ and outputs the following;",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
+  "opt_guide_operations_examples_text_5": {
+    "message": "To access the last segment of the $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$'s path;",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
+  "opt_guide_operations_examples_text_6": {
+    "message": "Would render the following output;"
+  },
+  "opt_guide_operations_examples_text_7": {
+    "message": "Accessing the value of the $O_EMPH$foo$C_EMPH$ parameter is as simple as the following;",
+    "placeholders": {
+      "c_emph": {
+        "content": "</em>"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
+  },
+  "opt_guide_operations_examples_text_8": {
+    "message": "This would cause the following output to be rendered;"
+  },
+  "opt_guide_operations_fparam_text": {
+    "message": "Get the value of the parameter provided from within the hash fragment"
+  },
+  "opt_guide_operations_fsegment_text": {
+    "message": "Get the segment at the index provided from within the hash fragment"
+  },
+  "opt_guide_operations_header": {
+    "message": "Operations"
+  },
+  "opt_guide_operations_last_modified_text": {
+    "message": "Format the last modified date &amp; time of the page using the pattern provided$BREAK$(see $O_LINK_1$http://php.net/manual/en/function.date.php#refsect1-function.date-parameters$O_LINK_2$$O_ABBR_1$Hypertext Preprocessor$O_ABBR_2$PHP$C_ABBR$s date$C_LINK$ for more details)",
+    "placeholders": {
+      "break": {
+        "content": "<br>"
+      },
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "c_link": {
+        "content": "</a>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      },
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
+      }
+    }
+  },
+  "opt_guide_operations_notes_text_1": {
+    "message": "The following notes only apply to $O_LABEL$segment$C_LABEL$ and $O_LABEL$fsegment$C_LABEL$ operations;",
+    "placeholders": {
+      "c_label": {
+        "content": "</span>"
+      },
+      "o_label": {
+        "content": "<span class=\"label\">"
+      }
+    }
+  },
+  "opt_guide_operations_notes_text_2": {
+    "message": "The count is not zero-indexed like an array (e.g. $O_CODE${#segment}1{/segment}$C_CODE$ returns the first segment)",
+    "placeholders": {
+      "c_code": {
+        "content": "</code>"
+      },
+      "o_code": {
+        "content": "<code>"
+      }
+    }
+  },
+  "opt_guide_operations_notes_text_3": {
+    "message": "The argument can be negative values, in which case it will count back from the end of the path rather than forwards from the start"
+  },
+  "opt_guide_operations_param_text": {
+    "message": "Get the value of the parameter provided"
+  },
+  "opt_guide_operations_segment_text": {
+    "message": "Get the segment at the index provided"
+  },
+  "opt_guide_operations_text": {
+    "message": "$O_BOLD$Operations$C_BOLD$ are performed using sections, accepting its rendered contents as an argument.",
+    "placeholders": {
+      "c_bold": {
+        "content": "</strong>"
+      },
+      "o_bold": {
+        "content": "<strong>"
+      }
+    }
   },
   "opt_guide_options_header": {
     "message": "Options"
@@ -814,7 +1023,7 @@
     }
   },
   "opt_guide_options_anchor_title_text": {
-    "message": "Whether or not the option to include the anchor tags $O_EMPH$target$C_EMPH$ attribute is enabled",
+    "message": "Whether or not the option to include the anchor tags $O_EMPH$title$C_EMPH$ attribute is enabled",
     "placeholders": {
       "c_emph": {
         "content": "</em>"
@@ -887,6 +1096,63 @@
   "opt_guide_options_context_menu_text": {
     "message": "Whether or not the option to show the context (right-click) menu is enabled"
   },
+  "opt_guide_options_examples_code_1": {
+    "message": "http://example.com/test/index.html"
+  },
+  "opt_guide_options_examples_code_2": {
+    "message": "&lt;a href=&quot;{{url}}&quot;{#anchorTitle} title=&quot;{{title}}&quot;{/anchorTitle}&gt;This is a test!&lt;/a&gt;"
+  },
+  "opt_guide_options_examples_code_3": {
+    "message": "&lt;a href=&quot;http://example.com/test/index.html&quot; title=&quot;Test&quot;&gt;This is a test!&lt;/a&gt;"
+  },
+  "opt_guide_options_examples_code_4": {
+    "message": "&lt;a href=&quot;http://example.com/test/index.html&quot;&gt;This is a test!&lt;/a&gt;"
+  },
+  "opt_guide_options_examples_text_1": {
+    "message": "These examples will be using the following $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$;",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
+  "opt_guide_options_examples_text_2": {
+    "message": "To include the $O_EMPH$title$C_EMPH$ attribute in an anchor tag only if you have enabled the corresponding option;",
+    "placeholders": {
+      "c_emph": {
+        "content": "</em>"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
+  },
+  "opt_guide_options_examples_text_3": {
+    "message": "This would output the following if you've enabled the option;"
+  },
+  "opt_guide_options_examples_text_4": {
+    "message": "However, if you have disabled the option it will output this;"
+  },
+  "opt_guide_options_googl_oauth_text": {
+    "message": "Whether or not $O_LINK_1$http://oauth.net$O_LINK_2$OAuth$C_LINK$ is enabled for $O_LINK_1$http://goo.gl$O_LINK_2$goo.gl$C_LINK$",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>"
+      },
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
+      }
+    }
+  },
   "opt_guide_options_googl_text": {
     "message": "Whether or not $O_LINK_1$http://goo.gl$O_LINK_2$goo.gl$C_LINK$ is the enabled $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ shortener",
     "placeholders": {
@@ -910,14 +1176,152 @@
       }
     }
   },
+  "opt_guide_options_notification_duration_text": {
+    "message": "The number of seconds desktop notifications are displayed for"
+  },
+  "opt_guide_options_notifications_text": {
+    "message": "Whether or not the option to show desktop notifications is enabled"
+  },
+  "opt_guide_options_shortcuts_text": {
+    "message": "Whether or not the option to allow keyboard shortcuts is enabled"
+  },
   "opt_guide_options_text": {
-    "message": "$O_BOLD$Options$C_BOLD$ are values stored by the extension to reflect user preferences. These can either be accessed as simple tags or conditional sections.",
+    "message": "$O_BOLD$Options$C_BOLD$ are variables that represent your current $O_BOLD$Template$C_BOLD$ settings and are generally accessed in the same way as standard variables.",
     "placeholders": {
       "c_bold": {
         "content": "</strong>"
       },
       "o_bold": {
         "content": "<strong>"
+      }
+    }
+  },
+  "opt_guide_options_toolbar_close_text": {
+    "message": "Whether or not the popup is closed immediately after a template is selected"
+  },
+  "opt_guide_options_toolbar_key_text": {
+    "message": "The unique key of the template activated when the toolbar button is clicked"
+  },
+  "opt_guide_options_toolbar_options_text": {
+    "message": "Whether or not the $O_EMPH$Options$C_EMPH$ link is displayed at the bottom of the popup",
+    "placeholders": {
+      "c_emph": {
+        "content": "</em>"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
+  },
+  "opt_guide_options_toolbar_popup_text": {
+    "message": "Whether or not the popup is shown when the toolbar button is clicked"
+  },
+  "opt_guide_options_toolbar_style_text": {
+    "message": "Whether or not the toolbar button's design is based on a template"
+  },
+  "opt_guide_options_yourls_password_text": {
+    "message": "The password for the $O_LINK_1$http://yourls.org$O_LINK_2$YOURLS$C_LINK$ service",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>"
+      },
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
+      }
+    }
+  },
+  "opt_guide_options_yourls_signature_text": {
+    "message": "The signature for the $O_LINK_1$http://yourls.org$O_LINK_2$YOURLS$C_LINK$ service (e.g. $O_EMPH$$EXAMPLE$$C_EMPH$)",
+    "placeholders": {
+      "c_emph": {
+        "content": "</em>"
+      },
+      "c_link": {
+        "content": "</a>"
+      },
+      "example": {
+        "content": "3002a61584"
+      },
+      "o_emph": {
+        "content": "<em>"
+      },
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
+      }
+    }
+  },
+  "opt_guide_options_yourls_text": {
+    "message": "Whether or not $O_LINK_1$http://yourls.org$O_LINK_2$YOURLS$C_LINK$ is the enabled $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ shortener",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "c_link": {
+        "content": "</a>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      },
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
+      }
+    }
+  },
+  "opt_guide_options_yourls_url_text": {
+    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ of the $O_LINK_1$http://yourls.org$O_LINK_2$YOURLS$C_LINK$ service (e.g. $O_EMPH$$EXAMPLE$$C_EMPH$)",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "c_emph": {
+        "content": "</em>"
+      },
+      "c_link": {
+        "content": "</a>"
+      },
+      "example": {
+        "content": "http://example.com/yourls-api.php"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      },
+      "o_emph": {
+        "content": "<em>"
+      },
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
+      }
+    }
+  },
+  "opt_guide_options_yourls_username_text": {
+    "message": "The username for the $O_LINK_1$http://yourls.org$O_LINK_2$YOURLS$C_LINK$ service",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>"
+      },
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
       }
     }
   },
@@ -941,7 +1345,10 @@
       }
     }
   },
-  "opt_guide_simple_values_base_text": {
+  "opt_guide_standard_author_text": {
+    "message": "The author from the page's meta information"
+  },
+  "opt_guide_standard_base_text": {
     "message": "The base domain (e.g. $O_EMPH$$EXAMPLE$$C_EMPH$)",
     "placeholders": {
       "c_emph": {
@@ -955,7 +1362,7 @@
       }
     }
   },
-  "opt_guide_simple_values_browser_text": {
+  "opt_guide_standard_browser_text": {
     "message": "The name of the browser (i.e. $O_EMPH$Chrome$C_EMPH$)",
     "placeholders": {
       "c_emph": {
@@ -966,7 +1373,7 @@
       }
     }
   },
-  "opt_guide_simple_values_browser_version_text": {
+  "opt_guide_standard_browser_version_text": {
     "message": "The current version of the browser (e.g. $O_EMPH$$EXAMPLE$$C_EMPH$)",
     "placeholders": {
       "c_emph": {
@@ -980,7 +1387,7 @@
       }
     }
   },
-  "opt_guide_simple_values_character_set_text": {
+  "opt_guide_standard_character_set_text": {
     "message": "The $O_LINK_1$http://www.iana.org/assignments/character-sets$O_LINK_2$character set$C_LINK$ used by the page (e.g. $O_EMPH$$EXAMPLE$$C_EMPH$)",
     "placeholders": {
       "c_emph": {
@@ -1003,17 +1410,17 @@
       }
     }
   },
-  "opt_guide_simple_values_cookies_enabled_text": {
+  "opt_guide_standard_cookies_enabled_text": {
     "message": "Whether or not cookies are enabled"
   },
-  "opt_guide_simple_values_count_text": {
+  "opt_guide_standard_count_text": {
     "message": "The total number of templates"
   },
-  "opt_guide_simple_values_custom_count_text": {
+  "opt_guide_standard_custom_count_text": {
     "message": "The total number of user-defined templates"
   },
-  "opt_guide_simple_values_date_time_text": {
-    "message": "The current date/time in $O_LINK_1$http://www.faqs.org/rfcs/rfc2822.html$O_LINK_2$RFC 2822$C_LINK$ format",
+  "opt_guide_standard_date_time_text": {
+    "message": "The current date &amp; time in $O_LINK_1$http://www.faqs.org/rfcs/rfc2822.html$O_LINK_2$RFC 2822$C_LINK$ format",
     "placeholders": {
       "c_link": {
         "content": "</a>"
@@ -1026,7 +1433,7 @@
       }
     }
   },
-  "opt_guide_simple_values_depth_text": {
+  "opt_guide_standard_depth_text": {
     "message": "The colour depth in bits (e.g. $O_EMPH$$EXAMPLE$$C_EMPH$)",
     "placeholders": {
       "c_emph": {
@@ -1040,7 +1447,10 @@
       }
     }
   },
-  "opt_guide_simple_values_directory_text": {
+  "opt_guide_standard_description_text": {
+    "message": "The description from the page's meta information"
+  },
+  "opt_guide_standard_directory_text": {
     "message": "The directory part of the path (e.g. $O_EMPH$$EXAMPLE$$C_EMPH$)",
     "placeholders": {
       "c_emph": {
@@ -1054,7 +1464,42 @@
       }
     }
   },
-  "opt_guide_simple_values_favicon_text": {
+  "opt_guide_standard_examples_code_1": {
+    "message": "http://example.com/test/index.html"
+  },
+  "opt_guide_standard_examples_code_2": {
+    "message": "Title:\n{title}\nDescription:\n{#description}{description}{/description}\n{^description}N/A{/description}"
+  },
+  "opt_guide_standard_examples_code_3": {
+    "message": "Title:\nTest\nDescription:\nThis is a test!"
+  },
+  "opt_guide_standard_examples_code_4": {
+    "message": "Title:\nTest\nDescription:\nN/A"
+  },
+  "opt_guide_standard_examples_text_1": {
+    "message": "These examples will be using the following $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$;",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
+  "opt_guide_standard_examples_text_2": {
+    "message": "A great of example of using standard variables is showing the title of the current page along with its meta description, where possible;"
+  },
+  "opt_guide_standard_examples_text_3": {
+    "message": "If the page contains a meta description this would output something like this;"
+  },
+  "opt_guide_standard_examples_text_4": {
+    "message": "Otherwise, you can expect to the see the following;"
+  },
+  "opt_guide_standard_favicon_text": {
     "message": "The whole $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ of the page's favicon",
     "placeholders": {
       "c_abbr": {
@@ -1068,7 +1513,7 @@
       }
     }
   },
-  "opt_guide_simple_values_file_text": {
+  "opt_guide_standard_file_text": {
     "message": "The basename of the file (e.g. $O_EMPH$$EXAMPLE$$C_EMPH$)",
     "placeholders": {
       "c_emph": {
@@ -1082,13 +1527,13 @@
       }
     }
   },
-  "opt_guide_simple_values_fragment_anchor_text": {
+  "opt_guide_standard_fragment_anchor_text": {
     "message": "The entire string after the hash (#) symbol"
   },
-  "opt_guide_simple_values_header": {
+  "opt_guide_standard_header": {
     "message": "Standard"
   },
-  "opt_guide_simple_values_host_text": {
+  "opt_guide_standard_host_text": {
     "message": "For example; $O_EMPH$$EXAMPLE_1$$C_EMPH$, $O_EMPH$$EXAMPLE_2$$C_EMPH$",
     "placeholders": {
       "c_emph": {
@@ -1105,7 +1550,7 @@
       }
     }
   },
-  "opt_guide_simple_values_java_text": {
+  "opt_guide_standard_java_text": {
     "message": "Whether or not $O_LINK_1$http://www.java.com$O_LINK_2$Java$C_LINK$ is enabled",
     "placeholders": {
       "c_link": {
@@ -1119,8 +1564,8 @@
       }
     }
   },
-  "opt_guide_simple_values_last_modified_text": {
-    "message": "The last modified data/time of the page in $O_LINK_1$http://www.faqs.org/rfcs/rfc2822.html$O_LINK_2$RFC 2822$C_LINK$ format",
+  "opt_guide_standard_last_modified_text": {
+    "message": "The last modified date &amp; time of the page in $O_LINK_1$http://www.faqs.org/rfcs/rfc2822.html$O_LINK_2$RFC 2822$C_LINK$ format",
     "placeholders": {
       "c_link": {
         "content": "</a>"
@@ -1133,7 +1578,10 @@
       }
     }
   },
-  "opt_guide_simple_values_original_title_text": {
+  "opt_guide_standard_offline_text": {
+    "message": "Whether or not you are currently offline"
+  },
+  "opt_guide_standard_original_title_text": {
     "message": "The original title of the page (may be different than $O_LABEL$title$C_LABEL$ if a supported extension was detected and the value of $O_LABEL$title$C_LABEL$ was extracted from this)",
     "placeholders": {
       "c_label": {
@@ -1144,7 +1592,7 @@
       }
     }
   },
-  "opt_guide_simple_values_original_url_text": {
+  "opt_guide_standard_original_url_text": {
     "message": "The original whole $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ being parsed (may be different than $O_LABEL$url$C_LABEL$ if a supported extension was detected and the value of $O_LABEL$url$C_LABEL$ was extracted from this)",
     "placeholders": {
       "c_abbr": {
@@ -1164,13 +1612,24 @@
       }
     }
   },
-  "opt_guide_simple_values_page_height_text": {
+  "opt_guide_standard_os_text": {
+    "message": "The family of your operating system (i.e. $O_EMPH$Windows$C_EMPH$, $O_EMPH$Mac$C_EMPH$, $O_EMPH$Linux$C_EMPH$)",
+    "placeholders": {
+      "c_emph": {
+        "content": "</em>"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
+  },
+  "opt_guide_standard_page_height_text": {
     "message": "The height of the page"
   },
-  "opt_guide_simple_values_page_width_text": {
+  "opt_guide_standard_page_width_text": {
     "message": "The width of the page"
   },
-  "opt_guide_simple_values_path_text": {
+  "opt_guide_standard_path_text": {
     "message": "The path to the file (e.g. $O_EMPH$$EXAMPLE$$C_EMPH$)",
     "placeholders": {
       "c_emph": {
@@ -1184,7 +1643,7 @@
       }
     }
   },
-  "opt_guide_simple_values_port_text": {
+  "opt_guide_standard_port_text": {
     "message": "For example; $O_EMPH$$EXAMPLE_1$$C_EMPH$, $O_EMPH$$EXAMPLE_2$$C_EMPH$",
     "placeholders": {
       "c_emph": {
@@ -1201,7 +1660,7 @@
       }
     }
   },
-  "opt_guide_simple_values_protocol_text": {
+  "opt_guide_standard_protocol_text": {
     "message": "For example; $O_EMPH$$EXAMPLE_1$$C_EMPH$, $O_EMPH$$EXAMPLE_2$$C_EMPH$, $O_EMPH$$EXAMPLE_3$$C_EMPH$",
     "placeholders": {
       "c_emph": {
@@ -1221,7 +1680,7 @@
       }
     }
   },
-  "opt_guide_simple_values_query_text": {
+  "opt_guide_standard_query_text": {
     "message": "The entire query string if it exists (e.g. $O_EMPH$$EXAMPLE$$C_EMPH$)",
     "placeholders": {
       "c_emph": {
@@ -1235,7 +1694,7 @@
       }
     }
   },
-  "opt_guide_simple_values_referrer_text": {
+  "opt_guide_standard_referrer_text": {
     "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ of the referring page",
     "placeholders": {
       "c_abbr": {
@@ -1249,7 +1708,7 @@
       }
     }
   },
-  "opt_guide_simple_values_relative_text": {
+  "opt_guide_standard_relative_text": {
     "message": "The relative path to the file including the query string (e.g. $O_EMPH$$EXAMPLE$$C_EMPH$)",
     "placeholders": {
       "c_emph": {
@@ -1263,16 +1722,16 @@
       }
     }
   },
-  "opt_guide_simple_values_screen_height_text": {
+  "opt_guide_standard_screen_height_text": {
     "message": "The height of the screen"
   },
-  "opt_guide_simple_values_screen_width_text": {
+  "opt_guide_standard_screen_width_text": {
     "message": "The width of the screen"
   },
-  "opt_guide_simple_values_selection_text": {
+  "opt_guide_standard_selection_text": {
     "message": "The currently selected text"
   },
-  "opt_guide_simple_values_short_text": {
+  "opt_guide_standard_short_text": {
     "message": "The whole $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ being parsed (shortened via the active $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ shortener)",
     "placeholders": {
       "c_abbr": {
@@ -1286,8 +1745,8 @@
       }
     }
   },
-  "opt_guide_simple_values_text": {
-    "message": "$O_BOLD$Standard$c_BOLD$ variables are generally accessed using simple tags or sections (including inverted).",
+  "opt_guide_standard_text": {
+    "message": "$O_BOLD$Standard$c_BOLD$ variables are generally accessed using simple tags. However, sections (including inverted) can also be used to add conditions.",
     "placeholders": {
       "c_bold": {
         "content": "</strong>"
@@ -1297,7 +1756,7 @@
       }
     }
   },
-  "opt_guide_simple_values_title_text": {
+  "opt_guide_standard_title_text": {
     "message": "The title of the page or $O_LABEL$url$C_LABEL$ if the title could not be detected (e.g. page had not finished loading)",
     "placeholders": {
       "c_label": {
@@ -1308,7 +1767,7 @@
       }
     }
   },
-  "opt_guide_simple_values_url_text": {
+  "opt_guide_standard_url_text": {
     "message": "The whole $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ being parsed",
     "placeholders": {
       "c_abbr": {
@@ -1322,14 +1781,34 @@
       }
     }
   },
-  "opt_guide_type_array_text": {
-    "message": "Array"
+  "opt_guide_standard_version_text": {
+    "message": "The installed version of $O_BOLD$Template$C_BOLD$ (i.e. $O_EMPH$$VERSION$$C_EMPH$)",
+    "placeholders": {
+      "c_bold": {
+        "content": "</strong>"
+      },
+      "c_emph": {
+        "content": "</em>"
+      },
+      "o_bold": {
+        "content": "<strong>"
+      },
+      "o_emph": {
+        "content": "<em>"
+      },
+      "version": {
+        "content": "$1"
+      }
+    }
   },
   "opt_guide_type_header": {
     "message": "Type"
   },
-  "opt_guide_type_map_text": {
-    "message": "Map"
+  "opt_guide_type_list_text": {
+    "message": "List"
+  },
+  "opt_guide_type_object_text": {
+    "message": "Object"
   },
   "opt_help_text": {
     "message": "Read help documentation"
@@ -1342,80 +1821,34 @@
       }
     }
   },
-  "opt_import_header": {
+  "opt_import_wizard_header": {
     "message": "Import"
   },
-  "opt_import_wizard_1": {
-    "message": "$O_BODY$$ERROR$$O_PARA$Paste or upload the template data.$C_PARA$$TEXTAREA$$C_BODY$$BUTTONS$",
-    "placeholders": {
-      "buttons": {
-        "content": "<div class=\"modal-footer\"><div class=\"pull-left\"><input class=\"import_file_btn\" type=\"file\"><button class=\"btn import_paste_btn\">Paste</button></div><button class=\"btn btn-primary import_yes_btn\">Continue</button><button class=\"btn btn-danger import_no_btn\">Close</button></div>"
-      },
-      "c_body": {
-        "content": "</div>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "error": {
-        "content": "<div class=\"import_error alert alert-error\">&nbsp;</div>"
-      },
-      "textarea": {
-        "content": "<textarea class=\"import_content span5\" rows=\"6\" readonly></textarea>"
-      },
-      "o_body": {
-        "content": "<div class=\"modal-body\">"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
+  "opt_import_wizard_import_button": {
+    "message": "Import"
   },
-  "opt_import_wizard_2": {
-    "message": "$O_BODY$$O_PARA$$COUNT$ valid template(s) were found.$C_PARA$$O_PARA$Select those to be imported;$C_PARA$$LIST$$C_BODY$$BUTTONS$",
+  "opt_import_wizard_paste_alt_button": {
+    "message": "Pasted!"
+  },
+  "opt_import_wizard_paste_button": {
+    "message": "Paste"
+  },
+  "opt_import_wizard_stage_1_text": {
+    "message": "Paste or upload the template data."
+  },
+  "opt_import_wizard_stage_2_text_1": {
+    "message": "$COUNT$ valid template(s) were found.",
     "placeholders": {
-      "buttons": {
-        "content": "<div class=\"modal-footer\"><div class=\"pull-left\"><button class=\"btn import_select_all_btn\">All</button><button class=\"btn import_deselect_all_btn\">None</button></div><button class=\"btn btn-primary import_final_btn\">Import</button><button class=\"btn import_back_btn\">Back</button><button class=\"btn btn-danger import_close_btn\">Close</button></div>"
-      },
-      "c_body": {
-        "content": "</div>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
       "count": {
         "content": "<span class=\"import_count\"></span>"
-      },
-      "list": {
-        "content": "<select class=\"import_con_list span5\" size=\"5\" multiple></select>"
-      },
-      "o_body": {
-        "content": "<div class=\"modal-body\">"
-      },
-      "o_para": {
-        "content": "<p>"
       }
     }
   },
-  "opt_import_wizard_3": {
-    "message": "$O_BODY$$O_PARA$No valid templates were found.$C_PARA$$C_BODY$$BUTTONS$",
-    "placeholders": {
-      "buttons": {
-        "content": "<div class=\"modal-footer\"><button class=\"btn btn-primary import_back_btn\">Back</button><button class=\"btn btn-danger import_close_btn\">Close</button></div>"
-      },
-      "c_body": {
-        "content": "</div>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_body": {
-        "content": "<div class=\"modal-body\">"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
+  "opt_import_wizard_stage_2_text_2": {
+    "message": "Select those to be imported;"
+  },
+  "opt_import_wizard_stage_3_text": {
+    "message": "No valid templates were found."
   },
   "opt_misc_header": {
     "message": "Miscellaneous"
@@ -1488,7 +1921,7 @@
     "message": "Image"
   },
   "opt_template_shortcut_help": {
-    "message": "$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Must be an alphanumeric key$C_ITEM$$O_ITEM$Doesn't have to be unique$BREAK$(but it's recommended)$C_ITEM$$O_ITEM$Where duplicated, the first template will be activated$C_ITEM$$C_LIST$",
+    "message": "$O_PARA$The following rules apply to this field;$C_PARA$$O_LIST$$O_ITEM$Must be an alphanumeric key$C_ITEM$$O_ITEM$Where duplicated, the first template will be activated$C_ITEM$$C_LIST$",
     "placeholders": {
       "break": {
         "content": "<br>"
@@ -1521,32 +1954,6 @@
   },
   "opt_template_shortcut_unavailable": {
     "message": "Keyboard shortcut is already in use"
-  },
-  "opt_template_title_help": {
-    "message": "$O_PARA$The following rules apply;$C_PARA$$O_LIST$$O_ITEM$Doesn't have to be unique$BREAK$(although it's recommended)$C_ITEM$$O_ITEM$Can contain multiple words$C_ITEM$$O_ITEM$Can contain any characters$C_ITEM$$C_LIST$",
-    "placeholders": {
-      "break": {
-        "content": "<br>"
-      },
-      "c_item": {
-        "content": "</li>"
-      },
-      "c_list": {
-        "content": "</ul>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_item": {
-        "content": "<li>"
-      },
-      "o_list": {
-        "content": "<ul>"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
   },
   "opt_template_title_invalid": {
     "message": "Title is missing"
@@ -1586,10 +1993,10 @@
   "opt_toolbar_key_text": {
     "message": "Select the template to be used"
   },
-  "opt_toolbar_not_popup_label": {
+  "opt_toolbar_not_popup_button": {
     "message": "Template"
   },
-  "opt_toolbar_not_popup_text": {
+  "opt_toolbar_not_popup_title": {
     "message": "Use a template when the toolbar icon is clicked"
   },
   "opt_toolbar_options_label": {
@@ -1598,10 +2005,10 @@
   "opt_toolbar_options_text": {
     "message": "Display a link to the Options page at the bottom of the popup"
   },
-  "opt_toolbar_popup_label": {
+  "opt_toolbar_popup_button": {
     "message": "Popup"
   },
-  "opt_toolbar_popup_text": {
+  "opt_toolbar_popup_title": {
     "message": "Show a popup when the toolbar icon is clicked"
   },
   "opt_toolbar_style_label": {
@@ -1631,24 +2038,39 @@
     "message": "Back to top"
   },
   "opt_url_shortener_api_key_bitly_sub_text": {
-    "message": "$O_LINK$Get your $API_ABBR$ key$C_LINK$",
+    "message": "$O_LINK_1$http://bit.ly/a/your_api_key$O_LINK_2$Get your $O_ABBR_1$Application Programming Interface$O_ABBR_2$API$C_ABBR$ key$C_LINK$",
     "placeholders": {
-      "api_abbr": {
-        "content": "<abbr title=\"Application Programming Interface\">API</abbr>"
+      "c_abbr": {
+        "content": "</abbr>"
       },
       "c_link": {
         "content": "</a>"
       },
-      "o_link": {
-        "content": "<a href=\"http://bit.ly/a/your_api_key\" target=\"_blank\">"
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      },
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
       }
     }
   },
   "opt_url_shortener_api_key_label": {
-    "message": "$API_ABBR$ Key",
+    "message": "$O_ABBR_1$Application Programming Interface$O_ABBR_2$API$C_ABBR$ Key",
     "placeholders": {
-      "api_abbr": {
-        "content": "<abbr title=\"Application Programming Interface\">API</abbr>"
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
       }
     }
   },
@@ -1696,21 +2118,30 @@
     "message": "Signature"
   },
   "opt_url_shortener_signature_yourls_sub_text": {
-    "message": "Don't know where this is? $O_LINK$Read this article$C_LINK$",
+    "message": "Don't know where this is? $O_LINK_1$http://code.google.com/p/yourls/wiki/PasswordlessAPI$O_LINK_2$Read this article$C_LINK$",
     "placeholders": {
       "c_link": {
         "content": "</a>"
       },
-      "o_link": {
-        "content": "<a href=\"http://code.google.com/p/yourls/wiki/PasswordlessAPI\" target=\"_blank\">"
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
       }
     }
   },
   "opt_url_shortener_url_label": {
-    "message": "$URL_ABBR$",
+    "message": "$O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$",
     "placeholders": {
-      "url_abbr": {
-        "content": "<abbr title=\"Uniform Resource Locator\">URL</abbr>"
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
       }
     }
   },
@@ -1726,7 +2157,7 @@
     }
   },
   "opt_url_shortener_username_bitly_sub_text": {
-    "message": "Haven't registered with $O_BOLD$bit.ly$C_BOLD$? $O_LINK$Sign up now$C_LINK$",
+    "message": "Haven't registered with $O_BOLD$bit.ly$C_BOLD$? $O_LINK_1$http://bit.ly/a/sign_up$O_LINK_2$Sign up now$C_LINK$",
     "placeholders": {
       "c_bold": {
         "content": "</strong>"
@@ -1737,63 +2168,59 @@
       "o_bold": {
         "content": "<strong>"
       },
-      "o_link": {
-        "content": "<a href=\"http://bit.ly/a/sign_up\" target=\"_blank\">"
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
       }
     }
   },
   "opt_url_shortener_username_label": {
     "message": "Username"
   },
-  "opt_url_shortener_username_yourls_help": {
-    "message": "$O_PARA$Both the username and password are only required if the $O_BOLD$YOURLS$C_BOLD$ installation is private $O_EMPH$and$C_EMPH$ you are $O_EMPH$not$C_EMPH$ using the $O_LINK_1$passwordless API$C_LINK$.$C_PARA$$O_PARA$$O_LINK_2$See documentation$C_LINK$$C_PARA$",
-    "placeholders": {
-      "c_bold": {
-        "content": "</strong>"
-      },
-      "c_emph": {
-        "content": "</em>"
-      },
-      "c_link": {
-        "content": "</a>"
-      },
-      "c_para": {
-        "content": "</p>"
-      },
-      "o_bold": {
-        "content": "<strong>"
-      },
-      "o_emph": {
-        "content": "<em>"
-      },
-      "o_link_1": {
-        "content": "<a href=\"http://code.google.com/p/yourls/wiki/PasswordlessAPI\" target=\"_blank\">"
-      },
-      "o_link_2": {
-        "content": "<a href=\"http://yourls.org/#Config\" target=\"_blank\">"
-      },
-      "o_para": {
-        "content": "<p>"
-      }
-    }
+  "opt_wizard_all_button": {
+    "message": "All"
+  },
+  "opt_wizard_back_button": {
+    "message": "Back"
+  },
+  "opt_wizard_close_button": {
+    "message": "Close"
+  },
+  "opt_wizard_continue_button": {
+    "message": "Continue"
+  },
+  "opt_wizard_no_button": {
+    "message": "No"
+  },
+  "opt_wizard_none_button": {
+    "message": "None"
+  },
+  "opt_wizard_yes_button": {
+    "message": "Yes"
   },
   "options": {
     "message": "Options"
   },
-  "paste": {
-    "message": "Paste"
-  },
-  "pasted": {
-    "message": "Pasted!"
+  "please_wait": {
+    "message": "Please wait..."
   },
   "shortener_config_error": {
-    "message": "Configuration problem found with $1"
+    "message": "Configuration problem found with $SERVICE$",
+    "placeholders": {
+      "service": {
+        "content": "$1"
+      }
+    }
   },
   "shortener_error": {
-    "message": "Could not get a successful response from $1"
-  },
-  "shortening": {
-    "message": "Please wait..."
+    "message": "Could not get a successful response from $SERVICE$",
+    "placeholders": {
+      "service": {
+        "content": "$1"
+      }
+    }
   },
   "tmpl_auction": {
     "message": "Auction"
