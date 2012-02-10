@@ -31,7 +31,7 @@ utils = window.utils =
 
   # Generate a unique key based on the current time and using a randomly
   # generated hexadecimal number of the specified length.
-  keyGen: (separator = '.', length = 5) ->
+  keyGen: (separator = '.', length = 5, prefix = '', upperCase = yes) ->
     parts  = []
     # Populate the segment(s) to attempt uniquity.
     parts.push new Date().getTime()
@@ -43,8 +43,10 @@ utils = window.utils =
       parts.push @random min, max
     # Convert segments to their hexadecimal (base 16) forms.
     parts[i] = part.toString 16 for part, i in parts
-    # Join all segments and transform to upper case.
-    parts.join(separator).toUpperCase()
+    # Join all segments using `separator` and append to the `prefix` before
+    # potentially transforming it to upper case.
+    key = prefix + parts.join separator
+    if upperCase then key.toUpperCase() else key.toLowerCase()
 
   # Retrieve the first entity/all entities that pass the specified `filter`.
   query: (entities, singular, filter) ->
@@ -105,29 +107,30 @@ class utils.Runner
     @started = no
     @onfinish? args...
 
-  # Remove the next item from the queue and call it.  
-  # Finish up if there are no more items in the queue.
-  next: ->
+  # Remove the next task from the queue and call it.  
+  # Finish up if there are no more tasks in the queue, ensuring any `args` are
+  # passed along to `onfinish`.
+  next: (args...) ->
     if @started
       if @queue.length
         ctx = fn = null
-        item = @queue.shift()
+        task = @queue.shift()
         # Determine what context the function should be executed in.
-        switch typeof item.reference
-          when 'function' then fn = item.reference
+        switch typeof task.reference
+          when 'function' then fn = task.reference
           when 'string'
-            ctx = item.context
-            fn  = ctx[item.reference]
+            ctx = task.context
+            fn  = ctx[task.reference]
         # Unpack the arguments where required.
-        if typeof item.args is 'function'
-          item.args = item.args.apply null
-        fn?.apply ctx, item.args
+        if typeof task.args is 'function'
+          task.args = task.args.apply null
+        fn?.apply ctx, task.args
         return yes
       else
-        @finish()
+        @finish args...
     no
 
-  # Add a new item to the queue using the values provided.  
+  # Add a new task to the queue using the values provided.  
   # `reference` can either be the name of the property on the `context` object
   # which references the target function or the function itself. When the
   # latter, `context` is ignored and should be `null` (not omitted). All of the
@@ -139,7 +142,7 @@ class utils.Runner
       context:   context
       reference: reference
 
-  # Add a new item to the queue using the *packed* values provided.  
+  # Add a new task to the queue using the *packed* values provided.  
   # This method varies from `push` since the arguments are provided in the form
   # of a function which is called immediately before the function, which allows
   # any dependent arguments to be correctly referenced.
@@ -149,8 +152,12 @@ class utils.Runner
       context:   context
       reference: reference
 
-  # Start the process by calling the first item in the queue and register the
+  # Start the process by calling the first task in the queue and register the
   # `onfinish` function provided.
   run: (@onfinish) ->
     @started = yes
     @next()
+
+  # Remove the specified number of tasks from the front of the queue.
+  skip: (count = 1) ->
+    @queue.splice 0, count
