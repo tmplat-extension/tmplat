@@ -34,6 +34,8 @@ YYYY.MM.DD, Version 1.0.0
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"styleSheets"* list to enable iteration over all of the page's external CSS stylesheet sources
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"template"* object to enable access to the activated template
 * [#63](https://github.com/neocotic/template/issues/63): Rename the *"selectionLinks"* list to *"selectedLinks"*
+* [#63](https://github.com/neocotic/template/issues/64): Replace the *"short"* standard variable with a new *"shorten"* operation
+* [#63](https://github.com/neocotic/template/issues/65): Allow access to object properties through dot notation
 * More bug fixes and UI tweaks
 
 2011.12.22, Version 0.3.0.0
