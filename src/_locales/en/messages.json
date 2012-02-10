@@ -2,15 +2,6 @@
   "app_name": {
     "message": "Template Chrome Extension"
   },
-  "copy_anchor": {
-    "message": "Anchor"
-  },
-  "copy_bbcode": {
-    "message": "BBCode"
-  },
-  "copy_encoded": {
-    "message": "Encoded"
-  },
   "copy_fail": {
     "message": "Template could not be copied"
   },
@@ -23,16 +14,25 @@
   "copy_fail_uri": {
     "message": "URL is not properly encoded"
   },
-  "copy_markdown": {
-    "message": "Markdown"
-  },
-  "copy_short": {
-    "message": "Short"
-  },
   "copy_success": {
     "message": "Template has been successfully copied"
   },
-  "copy_url": {
+  "default_template_anchor": {
+    "message": "Anchor"
+  },
+  "default_template_bbcode": {
+    "message": "BBCode"
+  },
+  "default_template_encoded": {
+    "message": "Encoded"
+  },
+  "default_template_markdown": {
+    "message": "Markdown"
+  },
+  "default_template_short": {
+    "message": "Short"
+  },
+  "default_template_url": {
     "message": "URL"
   },
   "description": {
@@ -997,6 +997,20 @@
   "opt_guide_operations_segment_text": {
     "message": "Get the segment at the index provided"
   },
+  "opt_guide_operations_shorten_text": {
+    "message": "Shorten the $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ provided using the active $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ shortener",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
   "opt_guide_operations_text": {
     "message": "$O_BOLD$Operations$C_BOLD$ are performed using sections, accepting its rendered contents as an argument.",
     "placeholders": {
@@ -1731,20 +1745,6 @@
   "opt_guide_standard_selection_text": {
     "message": "The currently selected text"
   },
-  "opt_guide_standard_short_text": {
-    "message": "The whole $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ being parsed (shortened via the active $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ shortener)",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">"
-      }
-    }
-  },
   "opt_guide_standard_text": {
     "message": "$O_BOLD$Standard$c_BOLD$ variables are generally accessed using simple tags. However, sections (including inverted) can also be used to add conditions.",
     "placeholders": {
@@ -2207,15 +2207,26 @@
     "message": "Please wait..."
   },
   "shortener_config_error": {
-    "message": "Configuration problem found with $SERVICE$",
+    "message": "$SERVICE$ has not been configured correctly",
     "placeholders": {
       "service": {
         "content": "$1"
       }
     }
   },
+  "shortener_detailed_error": {
+    "message": "$SERVICE$ experienced a problem while shortening $URL$",
+    "placeholders": {
+      "service": {
+        "content": "$1"
+      },
+      "url": {
+        "content": "$2"
+      }
+    }
+  },
   "shortener_error": {
-    "message": "Could not get a successful response from $SERVICE$",
+    "message": "$SERVICE$ experienced a problem",
     "placeholders": {
       "service": {
         "content": "$1"
