@@ -19,17 +19,17 @@ DEFAULT_TEMPLATES = [
     key:      'PREDEFINED.00001'
     readOnly: yes
     shortcut: 'U'
-    title:    i18n.get 'copy_url'
+    title:    i18n.get 'default_template_url'
     usage:    0
   ,
-    content:  '{short}'
+    content:  '{#shorten}{url}{/shorten}'
     enabled:  yes
     image:    'tmpl_link'
     index:    1
     key:      'PREDEFINED.00002'
     readOnly: yes
     shortcut: 'S'
-    title:    i18n.get 'copy_short'
+    title:    i18n.get 'default_template_short'
     usage:    0
   ,
     content:  "<a href=\"{{url}}\"{#anchorTarget}
@@ -41,7 +41,7 @@ DEFAULT_TEMPLATES = [
     key:      'PREDEFINED.00003'
     readOnly: yes
     shortcut: 'A'
-    title:    i18n.get 'copy_anchor'
+    title:    i18n.get 'default_template_anchor'
     usage:    0
   ,
     content:  '{#encode}{url}{/encode}'
@@ -51,7 +51,7 @@ DEFAULT_TEMPLATES = [
     key:      'PREDEFINED.00004'
     readOnly: yes
     shortcut: 'E'
-    title:    i18n.get 'copy_encoded'
+    title:    i18n.get 'default_template_encoded'
     usage:    0
   ,
     content:  '[url={url}]{title}[/url]'
@@ -61,7 +61,7 @@ DEFAULT_TEMPLATES = [
     key:      'PREDEFINED.00005'
     readOnly: yes
     shortcut: 'B'
-    title:    i18n.get 'copy_bbcode'
+    title:    i18n.get 'default_template_bbcode'
     usage:    0
   ,
     content:  '[{title}]({url})'
@@ -71,7 +71,7 @@ DEFAULT_TEMPLATES = [
     key:      'PREDEFINED.00006'
     readOnly: yes
     shortcut: 'M'
-    title:    i18n.get 'copy_markdown'
+    title:    i18n.get 'default_template_markdown'
     usage:    0
 ]
 # Extension ID being used by Template.
@@ -89,6 +89,8 @@ OPERATING_SYSTEMS = [
   substring: 'Linux'
   title:     'Linux'
 ]
+# Regular expression used to perform simple URL validation.
+R_VALID_URL       = /^https?:\/\/\S+\.\S+/i
 # Extension ID of the production version of Template.
 REAL_EXTENSION_ID = 'dcjnfaoifoefmnbhhlbppaebgnccfddf'
 # List of URL shortener services supported by Template.
@@ -352,16 +354,15 @@ onRequest = (request, sender, sendResponse) ->
   # Info requests are simple, just send some useful information back. Done!
   if request.type in ['info', 'version']
     return sendResponse? id: EXTENSION_ID, version: ext.version
-  data             = null
-  output           = null
-  popup            = chrome.extension.getViews(type: 'popup')[0]
-  popupItems       = if popup then $ '#item',    popup.document else $()
-  popupLoader      = if popup then $ '#loadDiv', popup.document else $()
-  shortCalled      = no
-  shortPlaceholder = "short#{utils.random 1000, 99999}"
-  tab              = null
-  template         = null
-  windowId         = null
+  data        = null
+  output      = null
+  popup       = chrome.extension.getViews(type: 'popup')[0]
+  popupItems  = if popup then $ '#item',    popup.document else $()
+  popupLoader = if popup then $ '#loadDiv', popup.document else $()
+  shortenMap  = {}
+  tab         = null
+  template    = null
+  windowId    = null
   # Create a runner to manage this asynchronous mess.
   runner = new utils.Runner()
   runner.push chrome.windows, 'getCurrent', (win) ->
@@ -373,13 +374,25 @@ onRequest = (request, sender, sendResponse) ->
       runner.next()
     ]
   runner.push null, ->
-    # Called whenever the `short` tag is found to indicate that the URL needs
-    # shortened.  
-    # Replace the `short` tag with the unique placeholder so that it can be
-    # rendered again later with the short URL.
-    shortCallback = ->
-      shortCalled = yes
-      "{#{shortPlaceholder}}"
+    # Called whenever the `shorten` (or previously `short`) tag is found to
+    # indicate that a URL needs shortened.  
+    # Replace the tag with the unique placeholder so that it can be rendered
+    # again later with the short URL.
+    shortCallback = (text, render) ->
+      text = if text then render text else @url
+      url  = text.trim()
+      # If `url` doesn't appear to be a valid URL so just return the rendered
+      # `text`.
+      return text unless R_VALID_URL.test url
+      placeholder = key for own key, value of shortenMap when value is url
+      unless placeholder?
+        placeholder = utils.keyGen '', null, 's', no
+        shortenMap[placeholder] = url
+        # Sections are re-rendered so the context must have a property for the
+        # placeholder the replaces itself with itself so that it still when it
+        # comes to replacing with the shortened URL.
+        @[placeholder] = "{#{placeholder}}"
+      "{#{placeholder}}"
     # If the popup is currently displayed, hide the template list and show a
     # loading animation.
     if popup
@@ -413,16 +426,16 @@ onRequest = (request, sender, sendResponse) ->
       $.extend data, template: template
       if template.content
         output = Mustache.to_html template.content, data
-        # If any `short` tags are found and replaced, the URL shortener service
-        # needs to be called in order to replace the placeholder with the real
-        # short URL.
-        if shortCalled
-          runner.next()
-        else
+        # If any `shorten` (or old `short`) tags are found and replaced, the
+        # URL shortener service needs to be called in order to replace any
+        # placeholders with their corresponding short URL.
+        if $.isEmptyObject shortenMap
           runner.finish
             contents: output
             success:  yes
             template: template
+        else
+          runner.next()
       else
         # Display the *empty contents* error message if the contents of the
         # template itself is empty.
@@ -431,24 +444,22 @@ onRequest = (request, sender, sendResponse) ->
           success:  yes
           template: template
     ]
-  runner.pushPacked null, callUrlShortener, ->
-    [data.url, (response) ->
-      if response.success and response.shortUrl
-        # Short URL was successfully returned so re-render the output.
-        newData = {}
-        newData[shortPlaceholder] = response.shortUrl
-        runner.finish
-          contents: Mustache.to_html output, newData
-          success:  yes
-          template: template
-      else
-        # Aw man, something went wrong. Let the user down gently.
-        response.message ?= i18n.get 'shortener_error', response.shortener
-        runner.finish
-          message:  response.message
-          success:  no
-          template: template
-    ]
+  runner.push null, callUrlShortener, shortenMap, (response) ->
+    if response.success
+      updateUrlShortenerUsage response.service.name, response.oauth
+      # Request to the URL shortener service was successful so re-render the
+      # output.
+      runner.finish
+        contents: Mustache.to_html output, shortenMap
+        success:  yes
+        template: template
+    else
+      # Aw man, something went wrong. Let the user down gently.
+      response.message ?= i18n.get 'shortener_error', response.service.title
+      runner.finish
+        message:  response.message
+        success:  no
+        template: template
   runner.run (result) ->
     type  = request.type[0].toUpperCase() + request.type.substr 1
     value = request.data.key.charCodeAt 0 if request.type is 'shortcut'
@@ -750,9 +761,12 @@ buildStandardData = (tab, shortCallback) ->
       (text, render) ->
         url.segment(parseInt render(text), 10) ? ''
     segments:              url.segment()
+    # Deprecated since 1.0.0, use `shorten` instead.
     short:                 ->
-      shortCallback?()
+      shortCallback
     shortcuts:             store.get 'shortcuts'
+    shorten:               ->
+      shortCallback
     title:                 title or url.attr 'source'
     toolbarclose:          toolbar.close
     # Deprecated since 1.0.0, use the inverse of `toolbarPopup` instead.
@@ -1085,65 +1099,62 @@ initUrlShorteners_update = ->
 # URL shortener functions
 # -----------------------
 
-# Call the active URL shortener service for `url` in order to obtain the
-# relevant short URL.  
-# `callback` will be called with the result once it has been received from the
-# URL shortener service.
-callUrlShortener = (url, callback) ->
-  service = getActiveUrlShortener()
+# Call the active URL shortener service for each URL in `map` in order to
+# obtain their corresponding short URLs.  
+# `callback` will be called with the result once all URLs have been shortened
+# or an error is encountered.
+callUrlShortener = (map, callback) ->
+  service  = getActiveUrlShortener()
+  title    = service.title
+  endpoint = service.url()
+  # Ensure the service URL exists in case it is user-defined (e.g. YOURLS).
+  unless endpoint
+    return callback
+      message: i18n.get 'shortener_config_error', title
+      service: service
+      success: no
   # Create a runner to control the dependencies in the asynchronous processes.
   runner = new utils.Runner()
-  if service.oauth and service.isOAuthEnabled()
+  if service.oauth? and service.isOAuthEnabled()
     runner.push service.oauth, 'authorize', ->
-      runner.next();
-  runner.push null, ->
-    oauth = no
-    sUrl  = service.url()
-    title = service.title
-    unless sUrl
-      # Should never happen... Really just a sanity check.
-      return runner.finish
-        message:   i18n.get 'shortener_config_error', title
-        shortener: title
-        success:   no
-    try
-      params = service.getParameters(url) or {}
-      # Build the HTTP request for the URL shortener service.
-      req = new XMLHttpRequest()
-      req.open service.method, "#{sUrl}?#{$.param params}", yes
-      req.setRequestHeader 'Content-Type', service.contentType
-      # Setup the OAuth header, if required.
-      if service.oauth and service.isOAuthEnabled()
-        oauth = yes
-        req.setRequestHeader 'Authorization',
-          service.oauth.getAuthorizationHeader sUrl, service.method, params
-      # Wait for the response and let the service handle it before passing the
-      # result to `callback` via the runner.
-      req.onreadystatechange = ->
-        if req.readyState is 4
-          if req.status is 200
-            updateUrlShortenerUsage service.name, oauth
-            runner.finish
-              shortUrl:  service.output req.responseText
-              shortener: title
-              success:   yes
-          else
-            # Something went wrong so let's tell the user.
-            runner.finish
-              message:   i18n.get 'shortener_error', title
-              shortener: title
-              success:   no
-      # Finally, send the HTTP request.
-      req.send service.input url
-    catch error
-      # Aw snap! Notify the user via `callback`.
-      log.error error
-      runner.finish
-        message:   i18n.get 'shortener_error', title
-        shortener: title
-        success:   no
+      runner.next()
+  for own placeholder, url of map
+    do (placeholder, url) ->
+      runner.push null, ->
+        oauth  = no
+        params = service.getParameters(url) or {}
+        # Build the HTTP request for the URL shortener service.
+        xhr = new XMLHttpRequest()
+        xhr.open service.method, "#{endpoint}?#{$.param params}", yes
+        xhr.setRequestHeader 'Content-Type', service.contentType
+        # Setup OAuth for the request when required.
+        if service.oauth and service.isOAuthEnabled()
+          oauth = yes
+          xhr.setRequestHeader 'Authorization',
+            service.oauth.getAuthorizationHeader(endpoint,
+              service.method, params)
+        xhr.onreadystatechange = ->
+          # Wait for the response and let the service handle it before passing
+          # the result to `callback` via the runner.
+          if xhr.readyState is 4
+            if xhr.status is 200
+              map[placeholder] = service.output xhr.responseText
+              runner.next
+                oauth:   oauth
+                success: yes
+            else
+              # Something went wrong so let's tell the user.
+              runner.finish
+                message: i18n.get 'shortener_detailed_error', [title, url]
+                success: no
+        # Finally, send the HTTP request.
+        xhr.send service.input url
   runner.run (result = {}) ->
-    callback? result
+    callback
+      message: result.message
+      oauth:   result.oauth
+      service: service
+      success: result.success
 
 # Retrieve the active URL shortener service.
 getActiveUrlShortener = ->
