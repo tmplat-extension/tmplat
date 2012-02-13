@@ -183,24 +183,19 @@ loadTemplateControlEvents = ->
     clearErrors()
     templates.data 'quiet', 'true'
     if opt.length is 0
-      # Disable all the controls as no option is selected.
+      # Reset all controls and fields as no option is selected.
       lastSelectedTemplate = {}
       i18n.content '#add_btn', 'opt_add_button'
       $('#moveUp_btn, #moveDown_btn').attr 'disabled', 'disabled'
-      $('.read-only, .read-only-always').removeAttr 'disabled'
-      $('.read-only, .read-only-always').removeAttr 'readonly'
+      $('.read-only').removeAttr 'readonly'
       $('#delete_btn').attr 'disabled', 'disabled'
-      $('#template_content').val ''
+      $('#template_content, #template_shortcut, #template_title').val ''
       $('#template_enabled').attr 'checked', 'checked'
-      $('#template_image option').first().attr 'selected', 'selected'
+      $('#template_image option:first-child').attr 'selected', 'selected'
       $('#template_image').change()
-      $('#template_shortcut').val ''
-      $('#template_title').val ''
     else
       # An option is selected; start cooking.
       i18n.content '#add_btn', 'opt_add_new_button'
-      $('.read-only-always').attr 'disabled', 'disabled'
-      $('.read-only-always').attr 'readonly', 'readonly'
       # Disable the *Up* control since the selected option is at the top of the
       # list.
       if opt.is ':first-child'
@@ -216,7 +211,7 @@ loadTemplateControlEvents = ->
       # Update the fields and controls to reflect selected option.
       imgOpt = $ "#template_image option[value='#{opt.data 'image'}']"
       if imgOpt.length is 0
-        $('#template_image option').first().attr 'selected', 'selected'
+        $('#template_image option:first-child').attr 'selected', 'selected'
       else
         imgOpt.attr 'selected', 'selected'
       $('#template_content').val opt.data 'content'
@@ -228,10 +223,8 @@ loadTemplateControlEvents = ->
       else
         $('#template_enabled').removeAttr 'checked'
       if opt.data('readOnly') is 'true'
-        $('.read-only').attr 'disabled', 'disabled'
         $('.read-only').attr 'readonly', 'readonly'
       else
-        $('.read-only').removeAttr 'disabled'
         $('.read-only').removeAttr 'readonly'
     templates.data 'quiet', 'false'
   templates.change()
