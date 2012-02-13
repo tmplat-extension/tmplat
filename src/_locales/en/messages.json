@@ -270,11 +270,31 @@
       }
     }
   },
+  "opt_guide_introduction_dot_notation_header": {
+    "message": "Dot Notation"
+  },
+  "opt_guide_introduction_dot_notation_text": {
+    "message": "Nested properties of objects can also be accessed using dot notation like $O_CODE${name.nested}$C_CODE$ which would get the $O_EMPH$nested$C_EMPH$ property of the $O_EMPH$name$C_EMPH$ object. These expressions can be even chained to access properties of nested properties and so on.",
+    "placeholders": {
+      "c_code": {
+        "content": "</code>"
+      },
+      "c_emph": {
+        "content": "</em>"
+      },
+      "o_code": {
+        "content": "<code>"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
+  },
   "opt_guide_introduction_header": {
     "message": "Introduction"
   },
-  "opt_guide_introduction_inverted_section_accessing_text": {
-    "message": "$O_BOLD$Accessing$C_BOLD$ - Only renders the contents if the value is an empty object",
+  "opt_guide_introduction_inverted_section_access_text": {
+    "message": "$O_BOLD$Access$C_BOLD$ - Only renders the contents if the value is an empty object",
     "placeholders": {
       "c_bold": {
         "content": "</strong>"
@@ -363,8 +383,8 @@
   "opt_guide_introduction_notes_text_3": {
     "message": "For more examples, try looking at the predefined templates."
   },
-  "opt_guide_introduction_section_accessing_text": {
-    "message": "$O_BOLD$Accessing$C_BOLD$ - If the value is an object it will render the contents while exposing the properties of that object as variables",
+  "opt_guide_introduction_section_access_text": {
+    "message": "$O_BOLD$Access$C_BOLD$ - If the value is an object it will render the contents while exposing the properties of that object as variables",
     "placeholders": {
       "c_bold": {
         "content": "</strong>"
@@ -502,10 +522,10 @@
     "message": "http://example.com/test/index.html?foo=bar&amp;fu=baz"
   },
   "opt_guide_lists_objects_examples_code_2": {
-    "message": "Follow the breadcrumbs;\n{#segments}\n &bull; {.}\n{/segments}"
+    "message": "Follow the breadcrumbs;\n{#segments}\n * {.}\n{/segments}"
   },
   "opt_guide_lists_objects_examples_code_3": {
-    "message": "Follow the breadcrumbs;\n &bull; test\n &bull; index.html"
+    "message": "Follow the breadcrumbs;\n * test\n * index.html"
   },
   "opt_guide_lists_objects_examples_code_4": {
     "message": "{#params}foo is &quot;{foo}&quot; and fu is &quot;{fu}&quot;.{/params}\n{^params}No parameters could be found!{/params}"
@@ -514,15 +534,18 @@
     "message": "foo is &quot;bar&quot; and fu is &quot;baz&quot;."
   },
   "opt_guide_lists_objects_examples_code_6": {
-    "message": "No parameters could be found!"
+    "message": "foo is &quot;{params.foo}&quot; and fu is &quot;{params.fu}&quot;."
   },
   "opt_guide_lists_objects_examples_code_7": {
-    "message": "The site has following information stored;\n{#cookies}\n &bull; {.} = &quot;{#cookie}{.}{/cookie}&quot;\n{/cookies}"
+    "message": "No parameters could be found!"
   },
   "opt_guide_lists_objects_examples_code_8": {
-    "message": "The site has following information stored;\n &bull; JSESSIONID = &quot;2pkffy9ivmpfwntf12y6o4cgu&quot;\n &bull; __utmc = &quot;224978569&quot;"
+    "message": "The site has following information stored;\n{#cookies}\n * {.} = &quot;{#cookie}{.}{/cookie}&quot;\n{/cookies}"
   },
   "opt_guide_lists_objects_examples_code_9": {
+    "message": "The site has following information stored;\n * JSESSIONID = &quot;2pkffy9ivmpfwntf12y6o4cgu&quot;\n * __utmc = &quot;224978569&quot;"
+  },
+  "opt_guide_lists_objects_examples_code_10": {
     "message": "{#coords}\n&lt;iframe width=&quot;425&quot; height=&quot;350&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot; marginheight=&quot;0&quot; marginwidth=&quot;0&quot; src=&quot;http://maps.google.com/maps?ll={latitude},{longitude}&output=embed&quot;>&lt;/iframe&gt;\n&lt;br&gt;\n&lt;small&gt;&lt;a href=&quot;http://maps.google.com/maps?ll={latitude},{longitude}&source=embed&quot;>View Larger Map&lt;/a&gt;&lt;/small&gt;\n{/coords}"
   },
   "opt_guide_lists_objects_examples_text_1": {
@@ -560,15 +583,18 @@
     "message": "This would output the following;"
   },
   "opt_guide_lists_objects_examples_text_6": {
-    "message": "However, if the query string was empty it would output this instead;"
+    "message": "Alternatively, this could be achieved using dot notation as follows;"
   },
   "opt_guide_lists_objects_examples_text_7": {
-    "message": "Using the following you can access the name and values of all available cookies;"
+    "message": "However, if the query string was empty it would output this instead;"
   },
   "opt_guide_lists_objects_examples_text_8": {
-    "message": "This will output in something like the following;"
+    "message": "Using the following you can access the name and values of all available cookies;"
   },
   "opt_guide_lists_objects_examples_text_9": {
+    "message": "This will output in something like the following;"
+  },
+  "opt_guide_lists_objects_examples_text_10": {
     "message": "If you would like to embed a map of your current location (e.g. in a blog post) try the following snippet;"
   },
   "opt_guide_lists_objects_fparams_text": {
@@ -751,7 +777,7 @@
     }
   },
   "opt_guide_lists_objects_text": {
-    "message": "$O_BOLD$Lists &amp; Objects$C_BOLD$ are generally accessed using sections (including inverted) to iterate over and access properties respectively. However, simple tags can be used to output the contents of a list in $O_ABBR_1$Comma-Separated Values$O_ABBR_2$CSV$C_ABBR$ format.",
+    "message": "$O_BOLD$Lists &amp; Objects$C_BOLD$ are generally accessed using sections (including inverted) to iterate over and access properties respectively. However, simple tags can be used to output the contents of a list or the properties of an object in $O_ABBR_1$Comma-Separated Values$O_ABBR_2$CSV$C_ABBR$ format.",
     "placeholders": {
       "c_abbr": {
         "content": "</abbr>"
@@ -1153,8 +1179,8 @@
   "opt_guide_options_examples_text_4": {
     "message": "However, if you have disabled the option it will output this;"
   },
-  "opt_guide_options_googl_oauth_text": {
-    "message": "Whether or not $O_LINK_1$http://oauth.net$O_LINK_2$OAuth$C_LINK$ is enabled for $O_LINK_1$http://goo.gl$O_LINK_2$goo.gl$C_LINK$",
+  "opt_guide_options_googl_account_text": {
+    "message": "Whether or not you are currently logged in to your $O_LINK_1$http://goo.gl$O_LINK_2$goo.gl$C_LINK$ account",
     "placeholders": {
       "c_link": {
         "content": "</a>"
@@ -2037,6 +2063,17 @@
   "opt_top_button": {
     "message": "Back to top"
   },
+  "opt_url_shortener_account_label": {
+    "message": "Account"
+  },
+  "opt_url_shortener_account_sub_text": {
+    "message": "Associate links shortened by $MARKER$ with your account",
+    "placeholders": {
+      "marker": {
+        "content": "<strong i18n-content=\"$1\"></strong>"
+      }
+    }
+  },
   "opt_url_shortener_api_key_bitly_sub_text": {
     "message": "$O_LINK_1$http://bit.ly/a/your_api_key$O_LINK_2$Get your $O_ABBR_1$Application Programming Interface$O_ABBR_2$API$C_ABBR$ key$C_LINK$",
     "placeholders": {
@@ -2080,33 +2117,11 @@
   "opt_url_shortener_header": {
     "message": "URL Shorteners"
   },
-  "opt_url_shortener_oauth_enabled_googl_help": {
-    "message": "$O_BOLD$OAuth$C_BOLD$ is an open protocol that aims to standardize the way desktop and web applications access a user's private data. OAuth provides a mechanism for users to grant access to private data without sharing their private credentials (username/password).",
-    "placeholders": {
-      "c_bold": {
-        "content": "</strong>"
-      },
-      "o_bold": {
-        "content": "<strong>"
-      }
-    }
+  "opt_url_shortener_login_button": {
+    "message": "Login"
   },
-  "opt_url_shortener_oauth_enabled_googl_text": {
-    "message": "Associate $O_BOLD$goo.gl$C_BOLD$ links with my account",
-    "placeholders": {
-      "c_bold": {
-        "content": "</strong>"
-      },
-      "o_bold": {
-        "content": "<strong>"
-      }
-    }
-  },
-  "opt_url_shortener_oauth_enabled_header": {
-    "message": "OAuth"
-  },
-  "opt_url_shortener_oauth_enabled_label": {
-    "message": "OAuth"
+  "opt_url_shortener_logout_button": {
+    "message": "Logout"
   },
   "opt_url_shortener_password_label": {
     "message": "Password"
@@ -2206,6 +2221,9 @@
   "please_wait": {
     "message": "Please wait..."
   },
+  "shortener_bitly": {
+    "message": "bit.ly"
+  },
   "shortener_config_error": {
     "message": "$SERVICE$ has not been configured correctly",
     "placeholders": {
@@ -2232,6 +2250,12 @@
         "content": "$1"
       }
     }
+  },
+  "shortener_googl": {
+    "message": "goo.gl"
+  },
+  "shortener_yourls": {
+    "message": "YOURLS"
   },
   "tmpl_auction": {
     "message": "Auction"
