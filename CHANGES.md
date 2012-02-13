@@ -38,6 +38,7 @@ YYYY.MM.DD, Version 1.0.0
 * [#64](https://github.com/neocotic/template/issues/64): Deprecate the *"short"* standard variable and replace with the new *"shorten"* operation
 * [#65](https://github.com/neocotic/template/issues/65): Allow easier access to object properties using dot notation
 * [#66](https://github.com/neocotic/template/issues/66): Fix bug where some variables are not case-insensitive
+* [#67](https://github.com/neocotic/template/issues/67): Fix bug where overwriting an existing file during the export process can corrupt the file
 * More bug fixes and UI tweaks
 
 2011.12.22, Version 0.3.0.0
