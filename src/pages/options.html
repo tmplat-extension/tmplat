@@ -22,7 +22,6 @@
       #template_content {resize: both;}
       #template_image_preview {margin-left: 10px;}
       #template_shortcut {text-transform: uppercase;}
-      #googlDeauthorize_btn {display: none;}
       #moveDown_btn, #moveUp_btn {display: block; margin-top: 11px;}
       .form-vertical .control-group > label, .control-label {padding-top: 6px;}
       #shorteners_tab .form-horizontal .control-group > label {width: 100px;}
@@ -412,7 +411,7 @@
                       <div class="controls">
                         <label class="radio">
                           <input type="radio" name="enabled_shortener" id="bitly">
-                          <a href="http://bit.ly" target="_blank">bit.ly</a>
+                          <a href="http://bit.ly" target="_blank" i18n-content="shortener_bitly"></a>
                         </label>
                       </div>
                     </div>
@@ -440,23 +439,17 @@
                       <div class="controls">
                         <label class="radio">
                           <input type="radio" name="enabled_shortener" id="googl">
-                          <a href="http://goo.gl" target="_blank">goo.gl</a>
+                          <a href="http://goo.gl" target="_blank" i18n-content="shortener_googl"></a>
                         </label>
                       </div>
                     </div>
                   </div>
                   <div class="span10">
                     <div class="control-group">
-                      <label class="control-label" for="googlOauth" i18n-content="opt_url_shortener_oauth_enabled_label"></label>
+                      <label class="control-label" for="googlAccount" i18n-content="opt_url_shortener_account_label"></label>
                       <div class="span3 controls">
-                        <label class="checkbox">
-                          <input type="checkbox" id="googlOauth">
-                          <span i18n-content="opt_url_shortener_oauth_enabled_googl_text"></span>
-                        </label>
-                        <button class="btn" id="googlDeauthorize_btn" i18n-content="opt_deauthorize_button"></button>
-                      </div>
-                      <div class="span1">
-                        <a class="btn btn-info help" popover="opt_url_shortener_oauth_enabled_googl_help" i18n-values="title:opt_url_shortener_oauth_enabled_header"><i class="icon-question-sign icon-white"></i></a>
+                        <button class="btn" id="googlAccount"></button>
+                        <p id="googlAccountHelp" class="help-block" i18n-values=".innerHTML:opt_url_shortener_account_sub_text"></p>
                       </div>
                     </div>
                   </div>
@@ -467,7 +460,7 @@
                       <div class="controls">
                         <label class="radio">
                           <input type="radio" name="enabled_shortener" id="yourls">
-                          <a href="http://yourls.org" target="_blank">YOURLS</a>
+                          <a href="http://yourls.org" target="_blank" i18n-content="shortener_yourls"></a>
                         </label>
                       </div>
                     </div>
@@ -539,7 +532,7 @@
                       <ul>
                         <li i18n-content="opt_guide_introduction_section_conditions_text"></li>
                         <li i18n-content="opt_guide_introduction_section_iterating_text"></li>
-                        <li i18n-content="opt_guide_introduction_section_accessing_text"></li>
+                        <li i18n-content="opt_guide_introduction_section_access_text"></li>
                         <li i18n-content="opt_guide_introduction_section_operations_text"></li>
                       </ul>
                       <h3 i18n-content="opt_guide_introduction_inverted_section_header"></h3>
@@ -547,8 +540,10 @@
                       <ul>
                         <li i18n-content="opt_guide_introduction_inverted_section_conditions_text"></li>
                         <li i18n-content="opt_guide_introduction_inverted_section_iterating_text"></li>
-                        <li i18n-content="opt_guide_introduction_inverted_section_accessing_text"></li>
+                        <li i18n-content="opt_guide_introduction_inverted_section_access_text"></li>
                       </ul>
+                      <h3 i18n-content="opt_guide_introduction_dot_notation_header"></h3>
+                      <p i18n-content="opt_guide_introduction_dot_notation_text"></p>
                       <h3 i18n-content="opt_guide_introduction_case_sensitivity_header"></h3>
                       <p i18n-content="opt_guide_introduction_case_sensitivity_text"></p>
                       <div class="well">
@@ -838,6 +833,8 @@
                       <pre i18n-content="opt_guide_lists_objects_examples_code_8"></pre>
                       <p i18n-content="opt_guide_lists_objects_examples_text_9"></p>
                       <pre i18n-content="opt_guide_lists_objects_examples_code_9"></pre>
+                      <p i18n-content="opt_guide_lists_objects_examples_text_10"></p>
+                      <pre i18n-content="opt_guide_lists_objects_examples_code_10"></pre>
                     </div>
                     <div id="guide_options" class="tab-pane">
                       <p i18n-content="opt_guide_options_text"></p>
@@ -879,8 +876,8 @@
                             <td i18n-content="opt_guide_options_googl_text"></td>
                           </tr>
                           <tr>
-                            <td>googlOAuth</td>
-                            <td i18n-content="opt_guide_options_googl_oauth_text"></td>
+                            <td>googlAccount<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_options_googl_account_text"></td>
                           </tr>
                           <tr>
                             <td>notificationDuration</td>
