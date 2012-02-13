@@ -1,7 +1,8 @@
 YYYY.MM.DD, Version 1.0.0
 
 * **Full release!**
-* [#20](https://github.com/neocotic/template/issues/20): Add *"Revoke Access"* button to [goo.gl](http://goo.gl)'s configuration on the Options page
+* [#20](https://github.com/neocotic/template/issues/20): Add *"Login"*/*"Logout"* button to [goo.gl](http://goo.gl)'s configuration on the Options page
+* [#20](https://github.com/neocotic/template/issues/20): Deprecate the *"googlOAuth"* option and replace with the new *"googlAccount"* option
 * [#35](https://github.com/neocotic/template/issues/35): Ensure code and documentation quality and standards are high
 * [#47](https://github.com/neocotic/template/issues/47): Completely redesign and simplify the Options page
 * [#48](https://github.com/neocotic/template/issues/48): Add option to keep popup open after clicking a template (available in templates via the new *"toolbarClose"* option)
@@ -11,11 +12,11 @@ YYYY.MM.DD, Version 1.0.0
 * [#49](https://github.com/neocotic/template/issues/49): Add new *"count"* standard variable to enable access to the total number of templates
 * [#49](https://github.com/neocotic/template/issues/49): Add new *"customCount"* standard variable to enable access to the total number of custom templates (i.e. excluding predefined)
 * [#49](https://github.com/neocotic/template/issues/49): Add new *"popular"* object to enable access to the details of the most popular template
-* [#49](https://github.com/neocotic/template/issues/49): Restructure template data stored in `localStorage`
+* [#49](https://github.com/neocotic/template/issues/49): Reorganize template data stored in `localStorage`
 * [#52](https://github.com/neocotic/template/issues/52): Completely rewrite code in [CoffeeScript](http://coffeescript.org)
 * [#52](https://github.com/neocotic/template/issues/52): Update build process
 * [#58](https://github.com/neocotic/template/issues/58): Remove requirement of names for templates
-* [#59](https://github.com/neocotic/template/issues/59): Restructure option data stored in `localStorage`
+* [#59](https://github.com/neocotic/template/issues/59): Reorganize option data stored in `localStorage`
 * [#60](https://github.com/neocotic/template/issues/60): Automically save changes on the Options page
 * [#61](https://github.com/neocotic/template/issues/61): Add new *"coords"* object to enable access to the user's geolocation
 * [#62](https://github.com/neocotic/template/issues/62): Add Options link to bottom of popup (available in templates via the new *"toolbarOptions"* option)
@@ -33,9 +34,10 @@ YYYY.MM.DD, Version 1.0.0
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"scripts"* list to enable iteration over all of the page's external script sources
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"styleSheets"* list to enable iteration over all of the page's external CSS stylesheet sources
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"template"* object to enable access to the activated template
-* [#63](https://github.com/neocotic/template/issues/63): Rename the *"selectionLinks"* list to *"selectedLinks"*
-* [#63](https://github.com/neocotic/template/issues/64): Replace the *"short"* standard variable with a new *"shorten"* operation
-* [#63](https://github.com/neocotic/template/issues/65): Allow access to object properties through dot notation
+* [#63](https://github.com/neocotic/template/issues/63): Deprecate the *"selectionLinks"* list and replace with the new *"selectedLinks"* list
+* [#64](https://github.com/neocotic/template/issues/64): Deprecate the *"short"* standard variable and replace with the new *"shorten"* operation
+* [#65](https://github.com/neocotic/template/issues/65): Allow easier access to object properties using dot notation
+* [#66](https://github.com/neocotic/template/issues/66): Fix bug where some variables are not case-insensitive
 * More bug fixes and UI tweaks
 
 2011.12.22, Version 0.3.0.0
