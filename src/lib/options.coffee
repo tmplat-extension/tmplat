@@ -582,13 +582,45 @@ loadUrlShorteners = ->
     yes
   $('#bitlyApiKey').val bitly.apiKey
   $('#bitlyUsername').val bitly.username
-  $('#googlOauth').attr 'checked', 'checked' if googl.oauth
   $('#yourlsPassword').val yourls.password
   $('#yourlsSignature').val yourls.signature
   $('#yourlsUrl').val yourls.url
   $('#yourlsUsername').val yourls.username
+  loadUrlShortenerAccounts()
   loadUrlShortenerControlEvents()
   loadUrlShortenerSaveEvents()
+
+# Update the accounts in the URL shorteners section of the options pages with
+# current state of their OAuth objects.
+loadUrlShortenerAccounts = ->
+  login  = i18n.get 'opt_url_shortener_login_button'
+  logout = i18n.get 'opt_url_shortener_logout_button'
+  # Retrieve all URL shortener services that use OAuth and iterate over the
+  # results.
+  shorteners = ext.queryUrlShortener (shortener) ->
+    shortener.oauth?
+  , no
+  for shortener in shorteners
+    do (shortener) ->
+      button = $ "##{shortener.name}Account"
+      # Bind the event handler required for logging in and out of accounts.
+      button.click ->
+        $this = $(this).attr 'disabled', 'disabled'
+        switch $this.text()
+          when login
+            shortener.oauth.authorize ->
+              if shortener.oauth.hasToken()
+                $this.text logout
+                analytics.track 'Shorteners', 'Login', shortener.title
+              else
+                $this.text login
+              $this.removeAttr 'disabled'
+          when logout
+            shortener.oauth.clearTokens()
+            $this.text(login).removeAttr 'disabled'
+            analytics.track 'Shorteners', 'Logout', shortener.title
+      # Reflect the current login state in the button.
+      button.text if shortener.oauth.hasToken() then logout else login
 
 # Bind the event handlers required for controlling URL shortener configuration
 # changes.
@@ -609,11 +641,6 @@ loadUrlShortenerSaveEvents = ->
         analytics.track 'Shorteners', 'Enabled', shortener.title
   bindSaveEvent '#bitlyApiKey, #bitlyUsername', 'input', 'bitly', ->
     @val().trim()
-  bindSaveEvent '#googlOauth', 'change', 'googl', ->
-    @is ':checked'
-  , (jel, key, value) ->
-    analytics.track 'Shorteners', 'Changed', 'goo.gl OAuth',
-      if value then 1 else 0
   bindSaveEvent "#yourlsPassword, #yourlsSignature, #yourlsUrl,
    #yourlsUsername", 'input', 'yourls', ->
     @val().trim()
@@ -917,6 +944,8 @@ options = window.options =
     i18n.init
       footer:
         opt_footer: "#{new Date().getFullYear()}"
+      googlAccountHelp:
+        opt_url_shortener_account_sub_text: 'shortener_googl'
       version_definition:
         opt_guide_standard_version_text: ext.version
     # Bind tab selection event to all tabs.
@@ -939,20 +968,6 @@ options = window.options =
     # Reflect the persisted tab.
     store.init 'options_active_tab', 'general_nav'
     $("##{store.get 'options_active_tab'}").click()
-    # Bind event to the "Revoke Access" button which will remove the persisted
-    # settings storing OAuth information for the [Google URL
-    # Shortener](http://goo.gl).
-    googl = ext.queryUrlShortener (shortener) ->
-      shortener.name is 'googl'
-    $('#googlDeauthorize_btn').click ->
-      store.remove key for key in googl.oauthKeys
-      $(this).hide()
-      analytics.track 'Shorteners', 'Deauthorized', googl.title
-    # Only show the "Revoke Access" button if Template has previously been
-    # authorized by the [Google URL Shortener](http://goo.gl).
-    for key in googl.oauthKeys when store.exists key
-      $('#googlDeauthorize_btn').show()
-      break
     # Ensure that form submissions don't reload the page.
     $('form').submit ->
       no
