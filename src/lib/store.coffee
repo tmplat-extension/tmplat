@@ -147,7 +147,7 @@ class store.Updater
   rename: (namespace) ->
     store.modify 'updates', (updates) =>
       updates[namespace] = updates[@namespace] if updates[@namespace]?
-      @remove()
+      delete updates[@namespace]
       @namespace = namespace
 
   # Update this namespace to `version` using the `processor` provided when
