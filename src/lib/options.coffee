@@ -350,12 +350,17 @@ loadTemplateExportEvents = ->
       fs.root.getFile 'export.json', create: yes, (fileEntry) ->
         fileEntry.createWriter (fileWriter) ->
           builder = new WebKitBlobBuilder()
+          done    = no
+          builder.append str
           fileWriter.onerror = (error) ->
             log.error error
           fileWriter.onwriteend = ->
-            window.location.href = fileEntry.toURL()
-          builder.append str
-          fileWriter.write builder.getBlob 'application/json'
+            if done
+              window.location.href = fileEntry.toURL()
+            else
+              done = yes
+              fileWriter.write builder.getBlob 'application/json'
+          fileWriter.truncate 0
   # Select all of the templates in the list.
   $('.export_select_all_btn').on 'click', ->
     $('.export_con_list option').attr('selected', 'selected').parent().focus()
