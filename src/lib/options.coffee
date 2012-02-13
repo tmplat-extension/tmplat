@@ -187,8 +187,8 @@ loadTemplateControlEvents = ->
       lastSelectedTemplate = {}
       i18n.content '#add_btn', 'opt_add_button'
       $('#moveUp_btn, #moveDown_btn').attr 'disabled', 'disabled'
-      $('.read-only').removeAttr 'readonly'
-      $('#delete_btn').attr 'disabled', 'disabled'
+      $('.toggle-disabled').attr 'disabled', 'disabled'
+      $('.toggle-readonly').removeAttr 'readonly'
       $('#template_content, #template_shortcut, #template_title').val ''
       $('#template_enabled').attr 'checked', 'checked'
       $('#template_image option:first-child').attr 'selected', 'selected'
@@ -223,9 +223,11 @@ loadTemplateControlEvents = ->
       else
         $('#template_enabled').removeAttr 'checked'
       if opt.data('readOnly') is 'true'
-        $('.read-only').attr 'readonly', 'readonly'
+        $('.toggle-disabled').attr  'disabled', 'disabled'
+        $('.toggle-readonly').attr 'readonly', 'readonly'
       else
-        $('.read-only').removeAttr 'readonly'
+        $('.toggle-disabled').removeAttr  'disabled'
+        $('.toggle-readonly').removeAttr 'readonly'
     templates.data 'quiet', 'false'
   templates.change()
   # Add a new order to the select based on the input values.
@@ -685,10 +687,12 @@ updateImportedTemplate = (template, existing) ->
     # Only allow valid titles.
     existing.title = template.title if 0 < template.title.length <= 32
   existing.enabled = template.enabled
-  # Only allow existing images.
-  existing.image = template.image if template.image in ext.IMAGES
-  # Only allow valid keyboard shortcuts.
-  existing.shortcut = template.shortcut if isShortcutValid template.shortcut
+  # Only allow existing images or *None*.
+  if template.image is '' or template.image in ext.IMAGES
+    existing.image = template.image
+  # Only allow valid keyboard shortcuts or *empty*.
+  if template.shortcut is '' or isShortcutValid template.shortcut
+    existing.shortcut = template.shortcut
   existing.usage = template.usage
   existing
 
