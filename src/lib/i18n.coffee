@@ -35,23 +35,23 @@ handlers   =
   # Replace the value of the properties and/or attributes of `element` with the
   # messages looked up for their corresponding values.
   'i18n-values':  (element, value, map) ->
-    subs  = subst element, value, map
     parts = value.replace(/\s/g, '').split ';'
     for part in parts
       prop = part.match /^([^:]+):(.+)$/
       if prop
         propName = prop[1]
         propExpr = prop[2]
+        propSubs = subst element, propExpr, map
         if propName.indexOf('.') is 0
           path = propName.slice(1).split '.'
           obj  = element
           obj  = obj[path.shift()] while obj and path.length > 1
           if obj
             path = path[0]
-            obj[path] = i18n.get propExpr, subs
+            obj[path] = i18n.get propExpr, propSubs
             process element, map if path is 'innerHTML'
         else
-          element.setAttribute propName, i18n.get propExpr, subs
+          element.setAttribute propName, i18n.get propExpr, propSubs
 # List of internationalization attributes/handlers available.
 attributes = []
 attributes.push key for own key of handlers
