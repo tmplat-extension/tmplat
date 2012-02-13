@@ -249,7 +249,7 @@
                 <div class="row control-group">
                   <label class="span1 control-label" for="template_title" i18n-content="opt_template_title_label"></label>
                   <div class="span3 controls">
-                    <input id="template_title" class="span3 read-only" type="text" maxlength="32">
+                    <input id="template_title" class="span3 toggle-readonly" type="text" maxlength="32">
                   </div>
                 </div>
                 <div class="row control-group">
@@ -282,14 +282,14 @@
                 </div>
                 <div class="row control-group">
                   <div class="span4 controls">
-                    <textarea id="template_content" class="span4 read-only" rows="5" spellcheck="false" i18n-values="placeholder:opt_template_content_label"></textarea>
+                    <textarea id="template_content" class="span4 toggle-readonly" rows="5" spellcheck="false" i18n-values="placeholder:opt_template_content_label"></textarea>
                     <p class="help-block" i18n-content="opt_template_content_sub_text"></p>
                   </div>
                 </div>
                 <div class="form-actions">
                   <button id="import_btn" class="btn" i18n-content="opt_import_button"></button>
                   <button id="export_btn" class="btn" i18n-content="opt_export_button"></button>
-                  <button id="delete_btn" class="btn btn-danger read-only" i18n-content="opt_delete_button"></button>
+                  <button id="delete_btn" class="btn btn-danger toggle-disabled" i18n-content="opt_delete_button"></button>
                   <button id="add_btn" class="btn btn-success" i18n-content="opt_add_button"></button>
                 </div>
               </fieldset>
