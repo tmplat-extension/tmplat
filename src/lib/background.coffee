@@ -89,6 +89,8 @@ OPERATING_SYSTEMS = [
   substring: 'Linux'
   title:     'Linux'
 ]
+# Regular expression used to detect upper case characters.
+R_UPPER_CASE      = /[A-Z]+/
 # Regular expression used to perform simple URL validation.
 R_VALID_URL       = /^https?:\/\/\S+\.\S+/i
 # Extension ID of the production version of Template.
@@ -118,7 +120,7 @@ SHORTENERS        = [
   name: 'bitly'
   output: (resp) ->
     JSON.parse(resp).data.url
-  title: 'bit.ly'
+  title: i18n.get 'shortener_bitly'
   url: ->
     'http://api.bitly.com/v3/shorten'
 ,
@@ -132,8 +134,6 @@ SHORTENERS        = [
     JSON.stringify longUrl: url
   isEnabled: ->
     store.get 'googl.enabled'
-  isOAuthEnabled: ->
-    store.get 'googl.oauth'
   method: 'POST'
   name: 'googl'
   oauth: ChromeExOAuth.initBackgroundPage
@@ -144,13 +144,9 @@ SHORTENERS        = [
     consumer_secret: 'anonymous'
     request_url:     'https://www.google.com/accounts/OAuthGetRequestToken'
     scope:           'https://www.googleapis.com/auth/urlshortener'
-  oauthKeys: [
-    'oauth_tokenhttps://www.googleapis.com/auth/urlshortener'
-    'oauth_token_secrethttps://www.googleapis.com/auth/urlshortener'
-  ]
   output: (resp) ->
     JSON.parse(resp).id
-  title: 'goo.gl'
+  title: i18n.get 'shortener_googl'
   url: ->
     'https://www.googleapis.com/urlshortener/v1/url'
 ,
@@ -178,7 +174,7 @@ SHORTENERS        = [
   name: 'yourls'
   output: (resp) ->
     JSON.parse(resp).shorturl
-  title: 'YOURLS'
+  title: i18n.get 'shortener_yourls'
   url: ->
     store.get 'yourls.url'
 ]
@@ -422,6 +418,8 @@ onRequest = (request, sender, sendResponse) ->
         success: no
   runner.pushPacked null, addAdditionalData, ->
     [tab, data, ->
+      # Ensure all properties of `data` are lower case.
+      transformData data
       # To complete the data, simply extend it using `template`.
       $.extend data, template: template
       if template.content
@@ -711,14 +709,17 @@ buildStandardData = (tab, shortCallback) ->
         decodeURIComponent(render text) ? ''
     depth:                 screen.colorDepth
     # Deprecated since 1.0.0, use `anchorTarget` instead.
-    doanchortarget:        anchor.target
+    doanchortarget:        ->
+      @anchortarget
     # Deprecated since 1.0.0, use `anchorTitle` instead.
-    doanchortitle:         anchor.title
+    doanchortitle:         ->
+      @anchortitle
     encode:                ->
       (text, render) ->
         encodeURIComponent(render text) ? ''
     # Deprecated since 0.1.0.2, use `encode` instead.
-    encoded:               encodeURIComponent url.attr 'source'
+    encoded:               ->
+      encodeURIComponent @url
     favicon:               tab.favIconUrl
     fparam:                ->
       (text, render) ->
@@ -729,13 +730,20 @@ buildStandardData = (tab, shortCallback) ->
         url.fsegment(parseInt render(text), 10) ? ''
     fsegments:             url.fsegment()
     googl:                 googl.enabled
-    googloauth:            googl.oauth
+    googlaccount:          ->
+      shortener = ext.queryUrlShortener (shortener) ->
+        shortener.name is 'googl'
+      shortener.oauth.hasToken()
+    # Deprecated since 1.0.0, use `googlAccount` instead.
+    googloauth:            ->
+      @googlaccount()
     java:                  navigator.javaEnabled()
     notifications:         notifications.enabled
     notificationduration:  notifications.duration * .001
     offline:               not navigator.onLine
     # Deprecated since 0.1.0.2, use `originalUrl` instead.
-    originalsource:        tab.url
+    originalsource:        ->
+      @originalurl
     originaltitle:         tab.title or url.attr 'source'
     originalurl:           tab.url
     os:                    operatingSystem
@@ -763,18 +771,21 @@ buildStandardData = (tab, shortCallback) ->
     segments:              url.segment()
     # Deprecated since 1.0.0, use `shorten` instead.
     short:                 ->
-      shortCallback
+      @shorten()
     shortcuts:             store.get 'shortcuts'
     shorten:               ->
       shortCallback
     title:                 title or url.attr 'source'
     toolbarclose:          toolbar.close
     # Deprecated since 1.0.0, use the inverse of `toolbarPopup` instead.
-    toolbarfeature:        not toolbar.popup
+    toolbarfeature:        ->
+      not @toolbarpopup
     # Deprecated since 1.0.0, use `toolbarStyle` instead.
-    toolbarfeaturedetails: toolbar.style
+    toolbarfeaturedetails: ->
+      @toolbarstyle
     # Deprecated since 1.0.0, use `toolbarKey` instead.
-    toolbarfeaturename:    toolbar.key
+    toolbarfeaturename:    ->
+      @toolbarkey
     toolbarkey:            toolbar.key
     toolbaroptions:        toolbar.options
     toolbarpopup:          toolbar.popup
@@ -787,6 +798,13 @@ buildStandardData = (tab, shortCallback) ->
     yourlsurl:             yourls.url
     yourlsusername:        yourls.username
   data
+
+# Ensure there is a lower case variant of all properties of `data`, optionally
+# removing the original non-lower-case property.
+transformData = (data, deleteOld) ->
+  for own prop, value of data when R_UPPER_CASE.test prop
+    data[prop.toLowerCase()] = value
+    delete data[prop] if deleteOld
 
 # HTML building functions
 # -----------------------
@@ -1053,7 +1071,6 @@ initUrlShorteners = ->
     bitly.username ?= ''
   store.modify 'googl', (googl) ->
     googl.enabled ?= yes
-    googl.oauth   ?= yes
     googl.usage   ?= 0
   store.modify 'yourls', (yourls) ->
     yourls.enabled   ?= no
@@ -1084,7 +1101,6 @@ initUrlShorteners_update = ->
     store.remove 'bitlyApiKey', 'bitlyUsername'
     store.set 'googl',
       enabled: store.get('googl') ? yes
-      oauth:   store.get('googlOAuth') ? yes
     store.remove 'googlOAuth'
     yourls = store.get 'yourls'
     store.set 'yourls',
@@ -1105,8 +1121,8 @@ initUrlShorteners_update = ->
 # or an error is encountered.
 callUrlShortener = (map, callback) ->
   service  = getActiveUrlShortener()
-  title    = service.title
   endpoint = service.url()
+  title    = service.title
   # Ensure the service URL exists in case it is user-defined (e.g. YOURLS).
   unless endpoint
     return callback
@@ -1115,21 +1131,17 @@ callUrlShortener = (map, callback) ->
       success: no
   # Create a runner to control the dependencies in the asynchronous processes.
   runner = new utils.Runner()
-  if service.oauth? and service.isOAuthEnabled()
-    runner.push service.oauth, 'authorize', ->
-      runner.next()
   for own placeholder, url of map
     do (placeholder, url) ->
       runner.push null, ->
-        oauth  = no
+        oauth  = !!service.oauth?.hasToken()
         params = service.getParameters(url) or {}
         # Build the HTTP request for the URL shortener service.
         xhr = new XMLHttpRequest()
         xhr.open service.method, "#{endpoint}?#{$.param params}", yes
         xhr.setRequestHeader 'Content-Type', service.contentType
         # Setup OAuth for the request when required.
-        if service.oauth and service.isOAuthEnabled()
-          oauth = yes
+        if oauth
           xhr.setRequestHeader 'Authorization',
             service.oauth.getAuthorizationHeader(endpoint,
               service.method, params)
@@ -1145,7 +1157,7 @@ callUrlShortener = (map, callback) ->
             else
               # Something went wrong so let's tell the user.
               runner.finish
-                message: i18n.get 'shortener_detailed_error', [title, url]
+                message: i18n.get('shortener_detailed_error', [title, url])
                 success: no
         # Finally, send the HTTP request.
         xhr.send service.input url
@@ -1317,13 +1329,13 @@ ext = window.ext =
     result
 
   # Retrieve the first template that passes the specified `filter`.
-  queryTemplate: (filter) ->
-    utils.query @templates, yes, filter
+  queryTemplate: (filter, singular = yes) ->
+    utils.query @templates, singular, filter
 
   # Retrieve the first URL shortener service that passes the specified
   # `filter`.
-  queryUrlShortener: (filter) ->
-    utils.query SHORTENERS, yes, filter
+  queryUrlShortener: (filter, singular = yes) ->
+    utils.query SHORTENERS, singular, filter
 
   # Reset the message and status associated with the current copy request.  
   # This should be called when a copy request is completed regardless of its
