@@ -3,15 +3,12 @@
   <head>
     <meta charset="UTF-8">
     <style type="text/css">
-      body {background-color: white; color: #333; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 13px; margin: 0;}
-      #tip {margin: 10px;}
-      #tip a {color: #2A5DB0; float: right; text-decoration: underline;}
-      .copy_fail {color: #CC0000;}
-      .copy_success {color: #006600;}
+      body {direction: ltr;}
+      #icon {float: left; height: 32px; width: 32px;}
+      #title {font-family: helvetica, arial, sans-serif; font-size: 13px; font-weight: bold; margin-left: 38px;}
+      #description {font-family: helvetica, arial, sans-serif; font-size: 13px; margin-left: 38px;}
     </style>
     <script src="../lib/notification.js"></script>
   </head>
-  <body onload="notification.init()">
-    <div id="tip"></div>
-  </body>
+  <body onload="notification.init()"></body>
 </html>
