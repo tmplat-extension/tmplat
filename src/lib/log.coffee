@@ -103,7 +103,7 @@ log = window.log =
 class log.StackTrace
 
   # Create a new instance of `StackTrace` for the `caller`.
-  constructor: (caller) ->
+  constructor: (caller = log.StackTrace) ->
     # Create the stack trace and assign it to a new `stack` property.
     Error.captureStackTrace this, caller
 
