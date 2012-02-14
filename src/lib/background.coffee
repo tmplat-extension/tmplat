@@ -412,9 +412,9 @@ onRequest = (request, sender, sendResponse) ->
       # Oops! Something went wrong so we should probably let the user know.
       runner.finish
         message: i18n.get if error instanceof URIError
-          'copy_fail_uri'
+          'result_bad_uri_description'
         else
-          'copy_fail_error'
+          'result_bad_error_description'
         success: no
   runner.pushPacked null, addAdditionalData, ->
     [tab, data, ->
@@ -466,13 +466,20 @@ onRequest = (request, sender, sendResponse) ->
       # Ensure that the user is notified if they have attempted to copy an
       # empty string to the system clipboard.
       if result.success and not result.contents
-        result.message = i18n.get 'copy_fail_empty'
+        result.message = i18n.get 'result_bad_empty_description',
+          result.template.title
         result.success = no
       if result.success
+        ext.notification.title       = i18n.get 'result_good_title'
+        ext.notification.titleStyle  = 'color: #050'
+        ext.notification.description = result.message ?
+          i18n.get 'result_good_description', result.template.title
         ext.copy result.contents
       else
-        ext.message = result.message
-        ext.status  = no
+        ext.notification.title       = i18n.get 'result_bad_title'
+        ext.notification.titleStyle  = 'color: #A00'
+        ext.notification.description = result.message ?
+          i18n.get 'result_bad_description', result.template.title
         showNotification()
       if result.template?
         updateTemplateUsage result.template.key
@@ -1216,18 +1223,21 @@ ext = window.ext =
   # Public variables
   # ----------------
 
-  # Override message displayed in notifications.  
-  # This should be reset to an empty string after every copy request.
-  message: ''
+  # Information specifying what should be displaying in the notification.  
+  # This should be reset after every copy request.
+  notification:
+    description:      ''
+    descriptionStyle: ''
+    html:             ''
+    icon:             utils.url '../images/icon_48.png'
+    iconStyle:        ''
+    title:            ''
+    titleStyle:       ''
 
   # Pre-prepared HTML for the popup to be populated using.  
   # This should be updated whenever templates are changed/updated in any way as
   # this is generated to improve performance and load times of the popup frame.
   popupHtml: ''
-
-  # Indicate whether or not the current copy request was a success.  
-  # This should be reset to `false` after every copy request.
-  status: no
 
   # Local copy of templates being used, ordered to match that specified by the
   # user.
@@ -1243,13 +1253,10 @@ ext = window.ext =
   # All successful copy requests should, at some point, call this function.  
   # If `str` is empty the contents of the system clipboard will not change.
   copy: (str, hidden) ->
-    result  = no
     sandbox = $('#sandbox').val(str).select()
-    result  = document.execCommand 'copy'
+    document.execCommand 'copy'
     sandbox.val ''
-    unless hidden
-      @status = result
-      showNotification()
+    showNotification() unless hidden
 
   # Attempt to retrieve the key of the template with the specified `name`.  
   # Since only the names of predefined templates are known, return a newly
@@ -1337,12 +1344,19 @@ ext = window.ext =
   queryUrlShortener: (filter, singular = yes) ->
     utils.query SHORTENERS, singular, filter
 
-  # Reset the message and status associated with the current copy request.  
+  # Reset the notification information associated with the current copy
+  # request.  
   # This should be called when a copy request is completed regardless of its
   # outcome.
   reset: ->
-    @message = ''
-    @status  = no
+    @notification =
+      description:      ''
+      descriptionStyle: ''
+      html:             ''
+      icon:             utils.url '../images/icon_48.png'
+      iconStyle:        ''
+      title:            ''
+      titleStyle:       ''
 
   # Update the context menu items to reflect the currently enabled templates.  
   # If the context menu option has been disabled by the user, just remove all
