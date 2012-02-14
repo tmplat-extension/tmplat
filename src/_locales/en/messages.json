@@ -2,21 +2,6 @@
   "app_name": {
     "message": "Template Chrome Extension"
   },
-  "copy_fail": {
-    "message": "Template could not be copied"
-  },
-  "copy_fail_empty": {
-    "message": "Empty templates cannot be copied"
-  },
-  "copy_fail_error": {
-    "message": "An error occurred when collecting page information"
-  },
-  "copy_fail_uri": {
-    "message": "URL is not properly encoded"
-  },
-  "copy_success": {
-    "message": "Template has been successfully copied"
-  },
   "default_template_anchor": {
     "message": "Anchor"
   },
@@ -2220,6 +2205,42 @@
   },
   "please_wait": {
     "message": "Please wait..."
+  },
+  "result_bad_description": {
+    "message": "$TEMPLATE$ could not be copied",
+    "placeholders": {
+      "template": {
+        "content": "$1"
+      }
+    }
+  },
+  "result_bad_empty_description": {
+    "message": "$TEMPLATE$ output was empty",
+    "placeholders": {
+      "template": {
+        "content": "$1"
+      }
+    }
+  },
+  "result_bad_error_description": {
+    "message": "An error occurred while collecting information"
+  },
+  "result_bad_uri_description": {
+    "message": "The URL is not properly encoded"
+  },
+  "result_bad_title": {
+    "message": "Sorry!"
+  },
+  "result_good_description": {
+    "message": "$TEMPLATE$ has been copied",
+    "placeholders": {
+      "template": {
+        "content": "$1"
+      }
+    }
+  },
+  "result_good_title": {
+    "message": "Success!"
   },
   "shortener_bitly": {
     "message": "bit.ly"
