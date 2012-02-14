@@ -7,19 +7,21 @@
 # Private variables
 # -----------------
 
-# Easily accessible reference to analytics and the extension controller.
-{analytics, ext} = chrome.extension.getBackgroundPage()
+# Easily accessible reference to analytics, logging, and the extension
+# controller.
+{analytics, ext, log} = chrome.extension.getBackgroundPage()
 
 # Popup page setup
 # ----------------
 
-popup = window.popup =
+popup = window.popup = new class Popup
 
   # Public functions
   # ----------------
 
   # Initialize the popup page.
   init: ->
+    log.trace()
     analytics.track 'Frames', 'Displayed', 'Popup'
     # Insert the prepared HTML in to the popup's body.
     document.body.innerHTML = ext.popupHtml
@@ -30,9 +32,13 @@ popup = window.popup =
     for textItem in textItems when textItem.scrollWidth > width
       width = textItem.scrollWidth
     textItem.style.width = "#{width}px" for textItem in textItems
+    log.debug "Widest textual item in popup is #{width}px"
 
   # Send a request to the background page using the information provided.
   sendRequest: (item) ->
-    chrome.extension.sendRequest
+    log.trace()
+    request =
       data: key: item.getAttribute 'data-key'
       type: item.getAttribute 'data-type'
+    log.debug request
+    chrome.extension.sendRequest request
