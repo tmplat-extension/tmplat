@@ -22,6 +22,7 @@ popup = window.popup = new class Popup
   # Initialize the popup page.
   init: ->
     log.trace()
+    log.info 'Initializing the popup'
     analytics.track 'Frames', 'Displayed', 'Popup'
     # Insert the prepared HTML in to the popup's body.
     document.body.innerHTML = ext.popupHtml
