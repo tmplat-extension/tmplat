@@ -8,12 +8,11 @@
 # -----------------
 
 # Define the different logging levels privately first.
-DEBUG       = 30
-ERROR       = 50
-INFORMATION = 20
 TRACE       = 10
+INFORMATION = 20
+DEBUG       = 30
 WARNING     = 40
-
+ERROR       = 50
 
 # Private variables
 # -----------------
@@ -26,7 +25,7 @@ WARNING     = 40
 
 # Determine whether or not logging is enabled for the specified `level`.
 loggable = (level) ->
-  log.logger.enabled and level >= log.logger.level
+  log.config.enabled and level >= log.config.level
 
 # Logging setup
 # -------------
@@ -37,17 +36,17 @@ log = window.log =
   # ----------------
 
   # Expose the available logging levels.
-  DEBUG:       DEBUG
-  ERROR:       ERROR
-  INFORMATION: INFORMATION
   TRACE:       TRACE
+  INFORMATION: INFORMATION
+  DEBUG:       DEBUG
   WARNING:     WARNING
+  ERROR:       ERROR
 
   # Public variables
   # ----------------
 
-  # Hold the information for the current state of the logger.
-  logger:
+  # Hold the current conguration for the logger.
+  config:
     assertions: no
     enabled:    no
     level:      DEBUG
@@ -57,7 +56,7 @@ log = window.log =
 
   # Output all failed `assertions`.
   assert: (assertions...) ->
-    console.assert assertion for assertion in assertions if @logger.assertions
+    console.assert assertion for assertion in assertions if @config.assertions
 
   # Create/increment a counter and output its current count for all `names`.
   count: (names...) ->
@@ -81,7 +80,7 @@ log = window.log =
 
   # Output all general `entries`.
   out: (entries...) ->
-    console.log entry for entry in entries if @logger.enabled
+    console.log entry for entry in entries if @config.enabled
 
   # Start a timer for all `names`.
   time: (names...) ->
@@ -92,12 +91,26 @@ log = window.log =
     console.timeEnd name for name in names if loggable DEBUG
 
   # Output a stack trace.
-  trace: ->
-    console.trace() if loggable TRACE
+  trace: (caller = @trace) ->
+    console.log new @StackTrace(caller).stack if loggable TRACE
 
   # Output all warning `entries`.
   warn: (entries...) ->
     console.warn entry for entry in entries if loggable WARNING
+
+# `StackTrace` allows the current stack trace to be retrieved in the easiest
+# way possible.
+class log.StackTrace
+
+  # Create a new instance of `StackTrace` for the `caller`.
+  constructor: (caller) ->
+    # Create the stack trace and assign it to a new `stack` property.
+    Error.captureStackTrace this, caller
+
+  # Override the default `toString` implementation to provide a cleaner stack
+  # trace.
+  toString: ->
+    'StackTrace'
 
 # Initialize logging.
 if store?
@@ -106,4 +119,4 @@ if store?
     logger.assertions ?= no
     logger.enabled    ?= no
     logger.level      ?= DEBUG
-    log.logger = logger
+    log.config = logger
