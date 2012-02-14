@@ -43,6 +43,17 @@ store = window.store =
   # Public functions
   # ----------------
 
+  # Create a backup string containing all the information contained within
+  # `localStorage`.  
+  # The data should be formatted as a JSON string and then encoded to ensure
+  # that it can easily be copied from/pasted to the console.  
+  # The string created may contain sensitive user data in plain text if they
+  # have provided any to the extension.
+  backup: ->
+    data = {}
+    data[key] = value for own key, value of localStorage
+    encodeURIComponent JSON.stringify data
+
   # Clear all keys from `localStorage`.
   clear: ->
     delete localStorage[key] for own key of localStorage
@@ -106,6 +117,13 @@ store = window.store =
       @remove oldKey
     else
       @set newKey, defaultValue
+
+  # Restore `localStorage` with data from the backup string provided.  
+  # The string should be decoded and then parsed as a JSON string in order to
+  # process the data.
+  restore: (str) ->
+    data = JSON.parse decodeURIComponent str
+    localStorage[key] = value for own key, value of data
 
   # Search `localStorage` for all keys that match the specified regular
   # expression.
