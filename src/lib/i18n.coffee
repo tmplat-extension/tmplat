@@ -83,7 +83,7 @@ subst = (element, value, map) ->
 # Internationalization setup
 # --------------------------
 
-i18n = window.i18n =
+i18n = window.i18n = new class Internationalization extends utils.Class
 
   # Public variables
   # ----------------
@@ -155,7 +155,7 @@ i18n = window.i18n =
   locale: ->
     @manager.locale arguments...
 
-# Customization
+# Configuration
 # -------------
 
 # Reconfigure the internationalization manager to work for Chrome extensions.  
