@@ -35,12 +35,16 @@
       input[type="file"]::-webkit-file-upload-button:hover {color: #333333; text-decoration: none; background-color: #e6e6e6; background-position: 0 -15px; -webkit-transition: background-position 0.1s linear; -moz-transition: background-position 0.1s linear; -ms-transition: background-position 0.1s linear; -o-transition: background-position 0.1s linear; transition: background-position 0.1s linear;}
       input[type="file"]::-webkit-file-upload-button:focus {outline: thin dotted; outline: 5px auto -webkit-focus-ring-color; outline-offset: -2px;}
       input[type="file"]:disabled::-webkit-file-upload-button {cursor: efault; background-image: none; background-color: #e6e6e6; opacity: 0.65; filter:alpha(opacity=65); -webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none;}
-      .tight-left {margin-left: 0;}
       td > .label, th > .label {padding-bottom: 0;}
       .popover-content > p > p {margin-bottom: 5px;}
       .popover-content > p > p:last-child {margin-bottom: 0;}
       .popover-inner {text-align: left;}
       .help {cursor: help;}
+      .tight {margin: 0;}
+      .tight-top {margin-top: 0;}
+      .tight-right {margin-right: 0;}
+      .tight-bottom {margin-bottom: 0;}
+      .tight-left {margin-left: 0;}
       @media (max-width: 768px) {
         body {padding-top: 0;}
       }
@@ -78,7 +82,8 @@
               <li><a id="general_nav" tabify="#general_tab" i18n-content="opt_general_header"></a></li>
               <li><a id="templates_nav" tabify="#templates_tab" i18n-content="opt_template_header"></a></li>
               <li><a id="shorteners_nav" tabify="#shorteners_tab" i18n-content="opt_url_shortener_header"></a></li>
-              <li><a id="guide_nav" tabify="#guide_tab"><i class="icon-question-sign icon-white"></i></a></li>
+              <li><a id="guide_nav" tabify="#guide_tab" data-placement="bottom" i18n-values="title:opt_guide_header"><i class="icon-question-sign icon-white"></i></a></li>
+              <li><a id="tools_nav" data-placement="bottom" i18n-values="title:opt_tools_header"><i class="icon-cog icon-white"></i></a></li>
             </ul>
           </div>
         </div>
@@ -129,7 +134,7 @@
                   <label class="control-label" for="notificationDuration" i18n-content="opt_notification_duration_label"></label>
                   <div class="controls">
                     <div class="span5 tight-left">
-                      <label class="input-append">
+                      <label class="input-append" style="margin-bottom: 5px">
                         <input class="span1" id="notificationDuration" max="60" min="0" size="1" step="1" type="number">
                         <span class="add-on" i18n-content="opt_notification_duration_add_on_text"></span>
                       </label>
@@ -178,9 +183,9 @@
                   <div class="control-group">
                     <label class="control-label" for="toolbarKey" i18n-content="opt_toolbar_key_label"></label>
                     <div class="controls">
-                      <label class="span5 tight-left">
+                      <label class="span5 tight-bottom tight-left">
                         <select id="toolbarKey" size="1"></select>
-                        <p i18n-content="opt_toolbar_key_text"></p>
+                        <p class="tight-bottom" i18n-content="opt_toolbar_key_text"></p>
                       </label>
                     </div>
                   </div>
@@ -197,16 +202,28 @@
                 </div>
               </fieldset>
               <fieldset>
-                <legend i18n-content="opt_misc_header"></legend>
+                <legend i18n-content="opt_menu_header"></legend>
                 <div class="control-group">
-                  <label class="control-label" for="contextMenu" i18n-content="opt_context_menu_label"></label>
+                  <label class="control-label" for="menuEnabled" i18n-content="opt_menu_enabled_label"></label>
                   <div class="controls">
                     <label class="checkbox span5 tight-left">
-                      <input type="checkbox" id="contextMenu">
-                      <span i18n-content="opt_context_menu_text"></span>
+                      <input type="checkbox" id="menuEnabled">
+                      <span i18n-content="opt_menu_enabled_text"></span>
                     </label>
                   </div>
                 </div>
+                <div class="control-group">
+                  <label class="control-label" for="menuOptions" i18n-content="opt_menu_options_label"></label>
+                  <div class="controls">
+                    <label class="checkbox span5 tight-left">
+                      <input type="checkbox" id="menuOptions">
+                      <span i18n-content="opt_menu_options_text"></span>
+                    </label>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend i18n-content="opt_misc_header"></legend>
                 <div class="control-group">
                   <label class="control-label" for="shortcuts" i18n-content="opt_shortcut_label"></label>
                   <div class="controls">
@@ -260,15 +277,15 @@
                   </div>
                 </div>
                 <div class="row control-group">
-                  <label class="span1 control-label" for="template_shortcut" i18n-content="opt_template_shortcut_label"></label>
+                  <label class="span1 control-label" for="template_shortcut">
+                    <span i18n-content="opt_template_shortcut_label"></span>
+                    <a class="help" popover="opt_template_shortcut_help" i18n-values="title:opt_template_shortcut_label"><i class="icon-question-sign"></i></a>
+                  </label>
                   <div class="span3 controls">
                     <div class="input-prepend">
                       <span class="add-on" id="template_shortcut_modifier"></span>
                       <input class="span1" id="template_shortcut" type="text" maxlength="1">
                     </div>
-                  </div>
-                  <div class="span8">
-                    <a class="btn btn-info help" popover="opt_template_shortcut_help" i18n-values="title:opt_template_shortcut_label"><i class="icon-question-sign icon-white"></i></a>
                   </div>
                 </div>
                 <div class="row control-group">
@@ -868,16 +885,20 @@
                             <td i18n-content="opt_guide_options_bitly_username_text"></td>
                           </tr>
                           <tr>
-                            <td>contextMenu</td>
-                            <td i18n-content="opt_guide_options_context_menu_text"></td>
-                          </tr>
-                          <tr>
                             <td>googl</td>
                             <td i18n-content="opt_guide_options_googl_text"></td>
                           </tr>
                           <tr>
                             <td>googlAccount<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
                             <td i18n-content="opt_guide_options_googl_account_text"></td>
+                          </tr>
+                          <tr>
+                            <td>menu<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_options_menu_text"></td>
+                          </tr>
+                          <tr>
+                            <td>menuOptions<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_options_menu_options_text"></td>
                           </tr>
                           <tr>
                             <td>notificationDuration</td>
@@ -1050,6 +1071,45 @@
         <p class="pull-right"><a data-goto="top" i18n-content="opt_top_button"></a></p>
         <p id="footer" i18n-content="opt_footer"></p>
       </footer>
+      <div id="tools_wizard" class="hide modal">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">&times;</a>
+          <h3 i18n-content="opt_tools_header"></h3>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal">
+            <p i18n-content="opt_tools_text"></p>
+            <fieldset>
+              <legend>
+                <span i18n-content="opt_logger_header"></span>
+                <a class="help" popover="opt_logger_help" i18n-values="title:opt_logger_header" style="font-size: 13px; line-height: 18px"><i class="icon-question-sign"></i></a>
+              </legend>
+              <div class="control-group">
+                <label class="control-label" for="loggerEnabled" i18n-content="opt_logger_enabled_label"></label>
+                <div class="controls">
+                  <label class="checkbox span3 tight-left">
+                    <input type="checkbox" id="loggerEnabled">
+                    <span i18n-content="opt_logger_enabled_text"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label" for="loggerLevel" i18n-content="opt_logger_level_label"></label>
+                <div class="controls">
+                  <label class="span3 tight-left">
+                    <select id="loggerLevel" size="1"></select>
+                    <p class="tight-bottom" i18n-content="opt_logger_level_text"></p>
+                    <p class="help-block" i18n-content="opt_logger_level_sub_text"></p>
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-danger tools_close_btn" i18n-content="opt_wizard_close_button"></button>
+        </div>
+      </div>
     </div>
   </body>
 </html>
