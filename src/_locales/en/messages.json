@@ -129,12 +129,6 @@
   "opt_config_expand_text": {
     "message": "Show"
   },
-  "opt_context_menu_label": {
-    "message": "Context Menu"
-  },
-  "opt_context_menu_text": {
-    "message": "Templates are accessible from the right-click menu"
-  },
   "opt_deauthorize_button": {
     "message": "Revoke Access"
   },
@@ -1118,8 +1112,19 @@
       }
     }
   },
-  "opt_guide_options_context_menu_text": {
+  "opt_guide_options_menu_text": {
     "message": "Whether or not the option to show the context (right-click) menu is enabled"
+  },
+  "opt_guide_options_menu_options_text": {
+    "message": "Whether or not the $O_EMPH$Options$C_EMPH$ item is displayed at the bottom of the context (right-click) menu",
+    "placeholders": {
+      "c_emph": {
+        "content": "</em>"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
   },
   "opt_guide_options_examples_code_1": {
     "message": "http://example.com/test/index.html"
@@ -1861,6 +1866,83 @@
   "opt_import_wizard_stage_3_text": {
     "message": "No valid templates were found."
   },
+  "opt_logger_enabled_label": {
+    "message": "Enabled"
+  },
+  "opt_logger_enabled_text": {
+    "message": "Output logs to the JavaScript console"
+  },
+  "opt_logger_header": {
+    "message": "Logging"
+  },
+  "opt_logger_help": {
+    "message": "$O_PARA$Follow these steps if you would like to view the logs;$C_PARA$$O_LIST$$O_ITEM$Bring up the extensions management page by clicking the wrench icon and choosing $O_BOLD$Tools > Extensions$C_BOLD$$C_ITEM$$O_ITEM$Ensure $O_BOLD$Developer mode$C_BOLD$ is checked in the top right of the page$C_ITEM$$O_ITEM$Expand the listing for $O_BOLD$Template$C_BOLD$ and click the $O_BOLD$pages/background.html$C_BOLD$ link$C_ITEM$$O_ITEM$Select the $O_BOLD$Console$C_BOLD$ tab in the new $O_BOLD$Developer Tools$C_BOLD$ window$C_ITEM$$C_LIST$",
+    "placeholders": {
+      "c_bold": {
+        "content": "</strong>"
+      },
+      "c_item": {
+        "content": "</li>"
+      },
+      "c_list": {
+        "content": "</ol>"
+      },
+      "c_para": {
+        "content": "</p>"
+      },
+      "o_bold": {
+        "content": "<strong>"
+      },
+      "o_item": {
+        "content": "<li>"
+      },
+      "o_list": {
+        "content": "<ol>"
+      },
+      "o_para": {
+        "content": "<p>"
+      }
+    }
+  },
+  "opt_logger_level_debug_text": {
+    "message": "Debug"
+  },
+  "opt_logger_level_error_text": {
+    "message": "Error (Highest)"
+  },
+  "opt_logger_level_information_text": {
+    "message": "Information"
+  },
+  "opt_logger_level_label": {
+    "message": "Level"
+  },
+  "opt_logger_level_sub_text": {
+    "message": "Only logs at this level or above will be shown"
+  },
+  "opt_logger_level_text": {
+    "message": "Select the level of logging to be performed"
+  },
+  "opt_logger_level_trace_text": {
+    "message": "Trace (Lowest)"
+  },
+  "opt_logger_level_warning_text": {
+    "message": "Warning"
+  },
+  "opt_menu_header": {
+    "message": "Context Menu"
+  },
+  "opt_menu_enabled_label": {
+    "message": "Right-Click"
+  },
+  "opt_menu_enabled_text": {
+    "message": "Templates are accessible from the context menu"
+  },
+  "opt_menu_options_label": {
+    "message": "Options Link"
+  },
+  "opt_menu_options_text": {
+    "message": "Display an item to open the Options page at the bottom of the menu"
+  },
   "opt_misc_header": {
     "message": "Miscellaneous"
   },
@@ -2044,6 +2126,12 @@
   },
   "opt_toolbar_style_text": {
     "message": "Change the style of the toolbar icon to reflect the selected template"
+  },
+  "opt_tools_header": {
+    "message": "Developer Tools"
+  },
+  "opt_tools_text": {
+    "message": "These settings are normally only used during development but can also be used to create debug information to provide developers with if you're experiencing an issue."
   },
   "opt_top_button": {
     "message": "Back to top"
