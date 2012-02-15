@@ -25,6 +25,7 @@ R_VALID_SHORTCUT = /[A-Z0-9]/i
 # `selector` that, when triggered, modifies the underlying `option` with the
 # value returned by `evaluate`.
 bindSaveEvent = (selector, type, option, evaluate, callback) ->
+  log.trace()
   $(selector).on type, ->
     $this = $ this
     key   = ''
@@ -39,6 +40,7 @@ bindSaveEvent = (selector, type, option, evaluate, callback) ->
 # `selector` that, when triggered, manipulates the selected template `option`
 # element via `assign`.
 bindTemplateSaveEvent = (selector, type, assign, callback) ->
+  log.trace()
   $(selector).on type, ->
     $this     = $ this
     key       = ''
@@ -52,23 +54,43 @@ bindTemplateSaveEvent = (selector, type, assign, callback) ->
 
 # Update the options page with the values from the current settings.
 load = ->
-  $('#analytics').attr    'checked', 'checked' if store.get 'analytics'
+  log.trace()
   anchor = store.get 'anchor'
+  menu   = store.get 'menu'
+  $('#analytics').attr    'checked', 'checked' if store.get 'analytics'
   $('#anchorTarget').attr 'checked', 'checked' if anchor.target
   $('#anchorTitle').attr  'checked', 'checked' if anchor.title
-  $('#contextMenu').attr  'checked', 'checked' if store.get 'contextMenu'
+  $('#menuEnabled').attr  'checked', 'checked' if menu.enabled
+  $('#menuOptions').attr  'checked', 'checked' if menu.options
   $('#shortcuts').attr    'checked', 'checked' if store.get 'shortcuts'
+  loadControlEvents()
   loadSaveEvents()
-  loadImages()
-  loadTemplates()
   loadNotifications()
   loadToolbar()
+  loadDeveloperTools()
+  loadImages()
+  loadTemplates()
   loadUrlShorteners()
+
+# Bind the event handlers required for controlling general changes.
+loadControlEvents = ->
+  log.trace()
+  $('#menuEnabled').change(->
+    controlGroup = $('#menuOptions').parents('.control-group').first()
+    if $(this).is ':checked' then controlGroup.show() else controlGroup.hide()
+  ).change()
+
+# Update the developer tools section of the options page with the current
+# settings.
+loadDeveloperTools = ->
+  log.trace()
+  loadLogger()
 
 # Create an `option` element for each available template image.  
 # Each element is inserted in to the `select` element containing template
 # images on the options page.
 loadImages = ->
+  log.trace()
   imagePreview = $ '#template_image_preview'
   images       = $ '#template_image'
   sorted       = (image for image in ext.IMAGES).sort()
@@ -91,9 +113,42 @@ loadImages = ->
       title: opt.text()
   images.change()
 
+# Update the logging section of the options page with the current settings.
+loadLogger = ->
+  log.trace()
+  logger = store.get 'logger'
+  $('#loggerEnabled').attr 'checked', 'checked' if logger.enabled
+  loggerLevel = $ '#loggerLevel'
+  loggerLevel.find('option').remove()
+  for level in log.LEVELS
+    option = $ '<option/>',
+      text:  i18n.get "opt_logger_level_#{level.name}_text"
+      value: level.value
+    option.attr 'selected', 'selected' if level.value is logger.level
+    loggerLevel.append option
+  # Ensure debug level is selected if configuration currently matches none.
+  unless loggerLevel.find('option[selected]').length
+    loggerLevel.find("option[value='#{log.DEBUG}']").attr 'selected',
+      'selected'
+  loadLoggerSaveEvents()
+
+# Bind the event handlers required for persisting logging changes.
+loadLoggerSaveEvents = ->
+  log.trace()
+  bindSaveEvent '#loggerEnabled, #loggerLevel', 'change', 'logger', (key) ->
+    value = if key is 'level' then @val() else @is ':checked'
+    log.debug "Changing logging #{key} to '#{value}'"
+    value
+  , (jel, key, value) ->
+    logger = store.get 'logger'
+    chrome.extension.getBackgroundPage().log.config = log.config = logger
+    analytics.track 'Logging', 'Changed', key[0].toUpperCase() + key.substr(1),
+      if typeof value is 'number' then value else Number value
+
 # Update the notification section of the options page with the current
 # settings.
 loadNotifications = ->
+  log.trace()
   notifications = store.get 'notifications'
   $('#notifications').attr 'checked', 'checked' if notifications.enabled
   $('#notificationDuration').val if notifications.duration > 0
@@ -104,22 +159,29 @@ loadNotifications = ->
 
 # Bind the event handlers required for persisting notification changes.
 loadNotificationSaveEvents = ->
+  log.trace()
   $('#notificationDuration').on 'input', ->
     store.modify 'notifications', (notifications) =>
-      seconds = $(this).val()
-      seconds = if seconds? then parseInt(seconds, 10) * 1000 else 0
-      notifications.duration = seconds
-      analytics.track 'Notifications', 'Changed', 'Duration', seconds
+      ms = $(this).val()
+      ms = if ms? then parseInt(ms, 10) * 1000 else 0
+      log.debug "Changing notification duration to #{ms} milliseconds"
+      notifications.duration = ms
+      analytics.track 'Notifications', 'Changed', 'Duration', ms
   $('#notifications').change ->
     store.modify 'notifications', (notifications) =>
-      notifications.enabled = $(this).is ':checked'
+      enabled = $(this).is ':checked'
+      log.debug "Changing notifications to '#{enabled}'"
+      notifications.enabled = enabled
       analytics.track 'Notifications', 'Changed', 'Enabled',
-        if notifications.enabled then 1 else 0
+        if enabled then 1 else 0
 
 # Bind the event handlers required for persisting general changes.
 loadSaveEvents = ->
+  log.trace()
   $('#analytics').change ->
-    if $(this).is ':checked'
+    enabled = $(this).is ':checked'
+    log.debug "Changing analytics to '#{enabled}'"
+    if enabled
       store.set 'analytics', yes
       chrome.extension.getBackgroundPage().analytics.add()
       analytics.add()
@@ -129,23 +191,30 @@ loadSaveEvents = ->
       analytics.remove()
       chrome.extension.getBackgroundPage().analytics.remove()
       store.set 'analytics', no
-  bindSaveEvent '#anchorTarget, #anchorTitle', 'change', 'anchor', ->
-    @is ':checked'
+  bindSaveEvent '#anchorTarget, #anchorTitle', 'change', 'anchor', (key) ->
+    value = @is ':checked'
+    log.debug "Changing anchor #{key} to '#{value}'"
+    value
   , (jel, key, value) ->
     key = key[0].toUpperCase() + key.substr 1
-    analytics.track 'Anchors', 'Changed', key, if value then 1 else 0
-  $('#contextMenu').change ->
-    store.set 'contextMenu', contextMenu = $(this).is ':checked'
+    analytics.track 'Anchors', 'Changed', key, Number value
+  bindSaveEvent '#menuEnabled, #menuOptions', 'change', 'menu', (key) ->
+    value = @is ':checked'
+    log.debug "Changing context menu #{key} to '#{value}'"
+    value
+  , (jel, key, value) ->
     ext.updateContextMenu()
-    analytics.track 'General', 'Changed', 'Context Menu',
-      if contextMenu then 1 else 0
+    key = key[0].toUpperCase() + key.substr 1
+    analytics.track 'Context Menu', 'Changed', key, Number value
   $('#shortcuts').change ->
-    store.set 'shortcuts', shortcuts = $(this).is ':checked'
-    analytics.track 'General', 'Changed', 'Keyboard Shortcuts',
-      if shortcuts then 1 else 0
+    enabled = $(this).is ':checked'
+    log.debug "Changing keyboard shortcuts to '#{enabled}'"
+    store.set 'shortcuts', enabled
+    analytics.track 'General', 'Changed', 'Keyboard Shortcuts', Number enabled
 
 # Update the templates section of the options page with the current settings.
 loadTemplates = ->
+  log.trace()
   templates = $ '#templates'
   # Start from a clean slate.
   templates.remove 'option'
@@ -161,20 +230,23 @@ loadTemplates = ->
 # The element returned should then be inserted in to the `select` element that
 # is managing the templates on the options page.
 loadTemplate = (template) ->
-  opt = $ '<option/>',
+  log.trace()
+  log.debug 'Creating an option for the following template...', template
+  option = $ '<option/>',
     text:  template.title
     value: template.key
-  opt.data 'content',  template.content
-  opt.data 'enabled',  "#{template.enabled}"
-  opt.data 'image',    template.image
-  opt.data 'readOnly', "#{template.readOnly}"
-  opt.data 'shortcut', template.shortcut
-  opt.data 'usage',    "#{template.usage}"
-  opt
+  option.data 'content',  template.content
+  option.data 'enabled',  "#{template.enabled}"
+  option.data 'image',    template.image
+  option.data 'readOnly', "#{template.readOnly}"
+  option.data 'shortcut', template.shortcut
+  option.data 'usage',    "#{template.usage}"
+  option
 
 # Bind the event handlers required for controlling the templates.
 loadTemplateControlEvents = ->
-  templates            = $ '#templates'
+  log.trace()
+  templates = $ '#templates'
   # Whenever the selected option changes we want all the controls to represent
   # the current selection (where possible).
   templates.change ->
@@ -253,6 +325,7 @@ loadTemplateControlEvents = ->
       # Confirm that the template meets the criteria.
       errors = validateTemplate opt, yes
       if errors.length is 0
+        log.debug 'Adding the following option...', opt
         templates.append opt
         opt.attr 'selected', 'selected'
         updateToolbarTemplates()
@@ -265,7 +338,7 @@ loadTemplateControlEvents = ->
   # Prompt the user to confirm removal of the selected template.
   $('#delete_btn').click ->
     $('.delete_hdr').html i18n.get 'opt_delete_wizard_header',
-      [templates.find('option:selected').text()]
+      templates.find('option:selected').text()
     $('#delete_con').modal 'show'
   # Cancel the template removal process.
   $('.delete_no_btn').on 'click', ->
@@ -278,6 +351,7 @@ loadTemplateControlEvents = ->
       opt.remove()
       templates.scrollTop(0).change().focus()
       saveTemplates()
+      log.debug "Deleted #{title} template"
       analytics.track 'Templates', 'Deleted', title
     $('#delete_con').modal 'hide'
     updateToolbarTemplates()
@@ -296,13 +370,16 @@ loadTemplateControlEvents = ->
 
 # Bind the event handlers required for exporting templates.
 loadTemplateExportEvents = ->
+  log.trace()
   templates = $ '#templates'
   # Restore the previous view in the export process.
   $('.export_back_btn').on 'click', ->
+    log.info 'Going back to previous export stage'
     $('.export_con_stage1').show()
     $('.export_con_stage2').hide()
   # Prompt the user to selected the templates to be exported.
   $('#export_btn').click ->
+    log.info 'Launching export wizard'
     list = $ '.export_con_list'
     list.find('option').remove()
     updateTemplate templates.find 'option:selected'
@@ -380,14 +457,17 @@ loadTemplateExportEvents = ->
 
 # Bind the event handlers required for importing templates.
 loadTemplateImportEvents = ->
+  log.trace()
   data      = null
   templates = $ '#templates'
   # Restore the previous view in the import process.
   $('.import_back_btn').on 'click', ->
+    log.info 'Going back to previous import stage'
     $('.import_con_stage1').show()
     $('.import_con_stage2, .import_con_stage3').hide()
   # Prompt the user to input/load the data to be imported.
   $('#import_btn').click ->
+    log.info 'Launching import wizard'
     updateTemplate templates.find 'option:selected'
     templates.val([]).change()
     $('.import_con_stage1').show()
@@ -421,10 +501,13 @@ loadTemplateImportEvents = ->
           message = i18n.get 'error_file_aborted'
         else
           message = i18n.get 'error_file_default'
+      log.error message
       $('.import_error').text(message).show()
     reader.onload = (evt) ->
+      result = evt.target.result
+      log.debug 'Following contents were read from the file...', result
       $('.import_error').html('&nbsp;').hide()
-      $('.import_content').val evt.target.result
+      $('.import_content').val result
     reader.readAsText file
   # Finalize the import process.
   $('.import_final_btn').on 'click', ->
@@ -472,6 +555,7 @@ loadTemplateImportEvents = ->
     try
       importData = createImport str
     catch error
+      log.error error
       $('.import_error').text(error).show()
     if importData
       data = readImport importData
@@ -489,11 +573,14 @@ loadTemplateImportEvents = ->
 
 # Bind the event handlers required for persisting template changes.
 loadTemplateSaveEvents = ->
+  log.trace()
   bindTemplateSaveEvent '#template_enabled, #template_image', 'change',
    (opt, key) ->
-    opt.data key, switch key
+    value = switch key
       when 'enabled' then "#{@is ':checked'}"
       when 'image'   then @val()
+    log.debug "Changing template #{key} to '#{value}'"
+    opt.data key, value
   , saveTemplates
   bindTemplateSaveEvent "#template_content, #template_shortcut,
    #template_title", 'input', (opt, key) ->
@@ -504,6 +591,7 @@ loadTemplateSaveEvents = ->
         if value and not isShortcutValid value
           opt.data 'error', i18n.get 'opt_template_shortcut_invalid'
         else
+          log.debug "Changing template #{key} to '#{value}'"
           opt.data key, value
       when 'title'
         value = @val().trim()
@@ -525,6 +613,7 @@ loadTemplateSaveEvents = ->
 # Update the toolbar behaviour section of the options page with the current
 # settings.
 loadToolbar = ->
+  log.trace()
   toolbar = store.get 'toolbar'
   if toolbar.popup
     $('#toolbarPopup').addClass 'active'
@@ -539,6 +628,7 @@ loadToolbar = ->
 
 # Bind the event handlers required for controlling toolbar behaviour changes.
 loadToolbarControlEvents = ->
+  log.trace()
   buttons = $ '#toolbarPopup, #notToolbarPopup'
   # Bind a click event to listen for changes to the button selection.
   buttons.click ->
@@ -553,15 +643,19 @@ loadToolbarControlEvents = ->
 
 # Bind the event handlers required for persisting toolbar behaviour changes.
 loadToolbarSaveEvents = ->
+  log.trace()
   $('#toolbarPopup, #notToolbarPopup').click ->
     popup = not $('#toolbarPopup').hasClass 'active'
     store.modify 'toolbar', (toolbar) ->
       toolbar.popup = popup
     ext.updateToolbar()
+    log.debug "Toolbar popup enabled: #{popup}"
     analytics.track 'Toolbars', 'Changed', 'Behaviour', if popup then 1 else 0
   bindSaveEvent '#toolbarClose, #toolbarKey, #toolbarOptions, #toolbarStyle',
    'change', 'toolbar', (key) ->
-    if key is 'key' then @val() else @is ':checked'
+    value = if key is 'key' then @val() else @is ':checked'
+    log.debug "Changing toolbar #{key} to '#{value}'"
+    value
   , (jel, key, value) ->
     ext.updateToolbar()
     key = key[0].toUpperCase() + key.substr 1
@@ -573,6 +667,7 @@ loadToolbarSaveEvents = ->
 # Update the URL shorteners section of the options page with the current
 # settings.
 loadUrlShorteners = ->
+  log.trace()
   bitly  = store.get 'bitly'
   googl  = store.get 'googl'
   yourls = store.get 'yourls'
@@ -593,6 +688,7 @@ loadUrlShorteners = ->
 # Update the accounts in the URL shorteners section of the options pages with
 # current state of their OAuth objects.
 loadUrlShortenerAccounts = ->
+  log.trace()
   login  = i18n.get 'opt_url_shortener_login_button'
   logout = i18n.get 'opt_url_shortener_logout_button'
   # Retrieve all URL shortener services that use OAuth and iterate over the
@@ -608,7 +704,10 @@ loadUrlShortenerAccounts = ->
         $this = $(this).attr 'disabled', 'disabled'
         switch $this.text()
           when login
+            log.debug "Attempting to authorize #{shortener.name}"
             shortener.oauth.authorize ->
+              log.debug "Authorization response for #{shortener.name}...",
+                arguments
               if shortener.oauth.hasToken()
                 $this.text logout
                 analytics.track 'Shorteners', 'Login', shortener.title
@@ -616,6 +715,7 @@ loadUrlShortenerAccounts = ->
                 $this.text login
               $this.removeAttr 'disabled'
           when logout
+            log.debug "Removing authorization for #{shortener.name}"
             shortener.oauth.clearTokens()
             $this.text(login).removeAttr 'disabled'
             analytics.track 'Shorteners', 'Logout', shortener.title
@@ -625,6 +725,7 @@ loadUrlShortenerAccounts = ->
 # Bind the event handlers required for controlling URL shortener configuration
 # changes.
 loadUrlShortenerControlEvents = ->
+  log.trace()
   $('.config-expand a').click ->
     $this = $ this
     $this.parents('.config-expand').first().hide()
@@ -633,11 +734,13 @@ loadUrlShortenerControlEvents = ->
 # Bind the event handlers required for persisting URL shortener configuration
 # changes.
 loadUrlShortenerSaveEvents = ->
+  log.trace()
   $('input[name="enabled_shortener"]').change ->
     store.modify 'bitly', 'googl', 'yourls', (data, key) ->
       if data.enabled = $("##{key}").is ':checked'
         shortener = ext.queryUrlShortener (shortener) ->
           shortener.name is key
+        log.debug "Enabling #{shortener.title} URL shortener"
         analytics.track 'Shorteners', 'Enabled', shortener.title
   bindSaveEvent '#bitlyApiKey, #bitlyUsername', 'input', 'bitly', ->
     @val().trim()
@@ -651,6 +754,7 @@ loadUrlShortenerSaveEvents = ->
 # Update the settings with the values from the template section of the options
 # page.
 saveTemplates = (updateUI) ->
+  log.trace()
   # Validate all the `option` elements that represent templates.
   errors    = []
   templates = []
@@ -681,6 +785,9 @@ saveTemplates = (updateUI) ->
 # Protected properties will only be updated if `existing` is not read-only and
 # the replacement value is valid.
 updateImportedTemplate = (template, existing) ->
+  log.trace()
+  log.debug 'Updating existing template with the following imported data...',
+    template
   # Ensure that read-only templates are protected.
   unless existing.readOnly
     existing.content = template.content
@@ -694,22 +801,26 @@ updateImportedTemplate = (template, existing) ->
   if template.shortcut is '' or isShortcutValid template.shortcut
     existing.shortcut = template.shortcut
   existing.usage = template.usage
+  log.debug 'Updated the following template...', existing
   existing
 
 # Update the specified `option` element that represents a template with the
 # values taken from the available input fields.
-updateTemplate = (opt) ->
-  if opt.length
-    opt.data 'content',  $('#template_content').val()
-    opt.data 'enabled',  String $('#template_enabled').is ':checked'
-    opt.data 'image',    $('#template_image option:selected').val()
-    opt.data 'shortcut', $('#template_shortcut').val().trim().toUpperCase()
-    opt.text $('#template_title').val().trim()
-  opt
+updateTemplate = (option) ->
+  log.trace()
+  if option.length
+    option.data 'content',  $('#template_content').val()
+    option.data 'enabled',  String $('#template_enabled').is ':checked'
+    option.data 'image',    $('#template_image option:selected').val()
+    option.data 'shortcut', $('#template_shortcut').val().trim().toUpperCase()
+    option.text $('#template_title').val().trim()
+  log.debug 'Updated the following option with field values...', option
+  option
 
 # Update the selection of templates in the toolbar behaviour section to reflect
 # those available in the templates section.
 updateToolbarTemplates = ->
+  log.trace()
   templates               = []
   toolbarKey              = store.get 'toolbar.key'
   toolbarTemplates        = $ '#toolbarKey'
@@ -741,16 +852,21 @@ updateToolbarTemplates = ->
 
 # Remove all validation errors from the fields.
 clearErrors = (selector) ->
+  log.trace()
   if selector?
+    log.debug "Clearing displayed validation errors for '#{selector}'"
     group = $(selector).parents('.control-group').first()
     group.removeClass('error').find('.controls .error-message').remove()
   else
+    log.debug 'Clearing all displayed validation errors'
     $('.control-group.error').removeClass 'error'
     $('.error-message').remove()
 
 # Indicate whether or not the specified `key` is new to this instance of
 # Template.
 isKeyNew = (key, additionalKeys = []) ->
+  log.trace()
+  log.debug "Checking if template key '#{key}' is new"
   available = yes
   $('#templates option').each ->
     available = no if $(this).val() is key
@@ -758,15 +874,21 @@ isKeyNew = (key, additionalKeys = []) ->
 
 # Indicate whether or not the specified `key` is valid.
 isKeyValid = (key) ->
+  log.trace()
+  log.debug "Validating template key '#{key}'"
   R_VALID_KEY.test key
 
 # Indicate whether or not the specified keyboard `shortcut` is valid for use by
 # a template.
 isShortcutValid = (shortcut) ->
+  log.trace()
+  log.debug "Validating keyboard shortcut '#{shortcut}'"
   R_VALID_SHORTCUT.test shortcut
 
 # Display all of the specified `errors` against their corresponding fields.
 showErrors = (errors) ->
+  log.trace()
+  log.debug 'Creating an alert for the following errors...', errors
   for error in errors
     group = $(error.selector).focus().parents('.control-group').first()
     group.addClass('error').find('.controls').append $ '<p/>',
@@ -778,6 +900,8 @@ showErrors = (errors) ->
 # Perform a *soft* validation without validating the values themselves, instead
 # only their existence.
 validateImportedTemplate = (template) ->
+  log.trace()
+  log.debug 'Validating property types of the following template...', template
   'object'  is typeof template          and
   'string'  is typeof template.content  and
   'boolean' is typeof template.enabled  and
@@ -790,8 +914,10 @@ validateImportedTemplate = (template) ->
 # Validate the specified `object` that represents a template and return any
 # validation errors that are encountered.
 validateTemplate = (object, isNew) ->
+  log.trace()
   errors   = []
   template = if $.isPlainObject object then object else deriveTemplate object
+  log.debug 'Validating the following template...', template
   # Only validate the key and title of user-defined templates.
   unless template.readOnly
     # Only validate keys of new templates.
@@ -808,6 +934,7 @@ validateTemplate = (object, isNew) ->
       message:  i18n.get 'opt_template_shortcut_invalid'
       selector: '#template_shortcut'
   # Indicate whether or not any validation errors were encountered.
+  log.debug 'Following validation errors were found...', errors
   errors
 
 # Miscellaneous functions
@@ -819,6 +946,8 @@ validateTemplate = (object, isNew) ->
 # Other than the key, any invalid fields will not be copied to the new template
 # which will instead use the preferred default value for those fields.
 addImportedTemplate = (template) ->
+  log.trace()
+  log.debug 'Creating a new template with the following details...', template
   if isKeyValid template.key
     newTemplate =
       content:  template.content
@@ -836,10 +965,13 @@ addImportedTemplate = (template) ->
       newTemplate.shortcut = template.shortcut
     # Only allow valid titles.
     newTemplate.title = template.title if 0 < template.title.length <= 32
+  log.debug 'Following template was created...', newTemplate
   newTemplate
 
 # Create a JSON string to export the templates with the specified `keys`.
 createExport = (keys) ->
+  log.trace()
+  log.debug 'Creating an export string for the following keys...', keys
   data =
     templates: []
     version:   ext.version
@@ -847,23 +979,29 @@ createExport = (keys) ->
     data.templates.push deriveTemplate $ "#templates option[value='#{key}']"
   if data.templates.length
     analytics.track 'Templates', 'Exported', ext.version, data.templates.length
+  log.debug 'Following export data has been created...', data
   JSON.stringify data
 
 # Create a JSON object from the imported string specified.
 createImport = (str) ->
+  log.trace()
+  log.debug 'Parsing the following import string...', str
   data = {}
   try
     data = JSON.parse str
   catch error
     throw i18n.get 'error_import_data'
   if not $.isArray(data.templates) or data.templates.length is 0 or
-     typeof data.version isnt 'string'
+      typeof data.version isnt 'string'
     throw i18n.get 'error_import_invalid'
+  log.debug 'Following data was created from the string...', data
   data
 
 # Create a template with the information derived from the specified `option` 
 # element.
 deriveTemplate = (option) ->
+  log.trace()
+  log.debug 'Deriving a template from the following option...', option
   if option.length > 0
     template =
       content:  option.data 'content'
@@ -875,13 +1013,8 @@ deriveTemplate = (option) ->
       shortcut: option.data 'shortcut'
       title:    option.text()
       usage:    parseInt option.data('usage'), 10
+  log.debug 'Following template was derived from the option...', template
   template
-
-# Determine which icon within the `icons` specified has the smallest
-# dimensions.
-getSmallestIcon = (icons) ->
-  icon = ico for ico in icons when not icon or ico.size < icon.size
-  icon
 
 # Read the imported data created by `createImport` and extract all of the
 # imported templates that appear to be valid.  
@@ -891,6 +1024,8 @@ getSmallestIcon = (icons) ->
 # When creating a new template, any invalid properties will be replaced with
 # their default values.
 readImport = (importData) ->
+  log.trace()
+  log.debug 'Importing the following data...', importData
   data = templates: []
   keys = []
   for template in importData.templates
@@ -926,12 +1061,13 @@ readImport = (importData) ->
             existing = updateImportedTemplate template, existing
             data.templates.push existing
             keys.push existing.key
+  log.debug 'Following data was derived from that imported...', data
   data
 
 # Options page setup
 # ------------------
 
-options = window.options =
+options = window.options = new class Options extends utils.Class
 
   # Public functions
   # ----------------
@@ -940,6 +1076,8 @@ options = window.options =
   # This will involve inserting and configuring the UI elements as well as
   # loading the current settings.
   init: ->
+    log.trace()
+    log.info 'Initializing the options page'
     # Add support for analytics if the user hasn't opted out.
     analytics.add() if store.get 'analytics'
     # Begin initialization.
@@ -964,12 +1102,20 @@ options = window.options =
         unless initialTabChange
           id = id.match(/(\S*)_nav$/)[1]
           id = id[0].toUpperCase() + id.substr 1
+          log.debug "Changing tab to #{id}"
           analytics.track 'Tabs', 'Changed', id
         initialTabChange = no
         $(document.body).scrollTop 0
     # Reflect the persisted tab.
     store.init 'options_active_tab', 'general_nav'
-    $("##{store.get 'options_active_tab'}").click()
+    optionsActiveTab = store.get 'options_active_tab'
+    $("##{optionsActiveTab}").click()
+    log.debug "Initially displaying tab for #{optionsActiveTab}"
+    # Bind Developer Tools wizard events to their corresponding elements.
+    $('#tools_nav').click ->
+      $('#tools_wizard').modal 'show'
+    $('.tools_close_btn').click ->
+      $('#tools_wizard').modal 'hide'
     # Ensure that form submissions don't reload the page.
     $('form').submit ->
       no
@@ -991,7 +1137,12 @@ options = window.options =
       if trigger is 'manual'
         $this.click ->
           $this.popover 'toggle'
-    $('[title]').tooltip()
+    $('[title]').each ->
+      $this     = $ this
+      placement = $this.attr 'data-placement'
+      placement = if placement? then placement.trim().toLowerCase() else 'top'
+      $this.tooltip placement: placement
     $('[data-goto]').click ->
       goto = $ $(this).attr 'data-goto'
+      log.debug "Relocating view to include '#{goto}'"
       $(window).scrollTop if goto.length then goto.scrollTop() else 0
