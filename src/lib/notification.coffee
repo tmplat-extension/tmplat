@@ -7,9 +7,9 @@
 # Private variables
 # -----------------
 
-# Easily accessible reference to analytics, logging, storage, and the extension
-# controller.
-{analytics, ext, log, store} = chrome.extension.getBackgroundPage()
+# Easily accessible reference to analytics, logging, storage, utilities, and
+# the extension controller.
+{analytics, ext, log, store, utils} = chrome.extension.getBackgroundPage()
 
 # Private functions
 # -----------------
@@ -49,7 +49,7 @@ buildContents = ->
 # Notification page setup
 # -----------------------
 
-notification = window.notification =
+notification = window.notification = new class Notification extends utils.Class
 
   # Public functions
   # ----------------
