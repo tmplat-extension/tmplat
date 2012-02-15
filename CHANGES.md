@@ -19,7 +19,9 @@ YYYY.MM.DD, Version 1.0.0
 * [#59](https://github.com/neocotic/template/issues/59): Reorganize option data stored in `localStorage`
 * [#60](https://github.com/neocotic/template/issues/60): Automically save changes on the Options page
 * [#61](https://github.com/neocotic/template/issues/61): Add new *"coords"* object to enable access to the user's geolocation
+* [#62](https://github.com/neocotic/template/issues/62): Add Options link to bottom of context menu (available in templates via the new *"menuOptions"* option)
 * [#62](https://github.com/neocotic/template/issues/62): Add Options link to bottom of popup (available in templates via the new *"toolbarOptions"* option)
+* [#62](https://github.com/neocotic/template/issues/62): Deprecate the *"contextMenu"* option and replace with the new *"menu"* option
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"author"* standard variable to enable access to the author from the page's meta information
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"characterSet"* standard variable to enable access to the [character set](http://www.iana.org/assignments/character-sets)
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"description"* standard variable to enable access to the description from the page's meta information
@@ -39,6 +41,9 @@ YYYY.MM.DD, Version 1.0.0
 * [#65](https://github.com/neocotic/template/issues/65): Allow easier access to object properties using dot notation
 * [#66](https://github.com/neocotic/template/issues/66): Fix bug where some variables are not case-insensitive
 * [#67](https://github.com/neocotic/template/issues/67): Fix bug where overwriting an existing file during the export process can corrupt the file
+* [#68](https://github.com/neocotic/template/issues/68): Simplify debugging and testing by adding a new Developer Tools section to the Options page
+* [#69](https://github.com/neocotic/template/issues/69): Redesign desktop notifications
+* [#70](https://github.com/neocotic/template/issues/70): Redesign *Please wait...* animation in popup
 * More bug fixes and UI tweaks
 
 2011.12.22, Version 0.3.0.0
