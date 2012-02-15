@@ -35,10 +35,10 @@ tryParse = (value) ->
 tryStringify = (value) ->
   if value? then JSON.stringify value else value
 
-# Storage setup
-# -------------
+# Store setup
+# -----------
 
-store = window.store =
+store = window.store = new class Store extends utils.Class
 
   # Public functions
   # ----------------
@@ -143,9 +143,12 @@ store = window.store =
         localStorage[keys] = tryStringify value
         oldValue
 
+# Public classes
+# --------------
+
 # `Updater` simplifies the process of updating settings between updates.
 # Inlcuding, but not limited to, data transformations and migration.
-class store.Updater
+class store.Updater extends utils.Class
 
   # Create a new instance of `Updater` for `namespace`.
   constructor: (@namespace) ->
@@ -176,6 +179,9 @@ class store.Updater
       if updates[@namespace] < version
         processor?()
         updates[@namespace] = version
+
+# Configuration
+# -------------
 
 # Initialize updates.
 store.init 'updates', {}
