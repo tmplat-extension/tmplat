@@ -15,7 +15,7 @@ ANALYTICS_SOURCE  = 'https://ssl.google-analytics.com/ga.js'
 # Analytics setup
 # ---------------
 
-analytics = window.analytics =
+analytics = window.analytics = new class Analytics extends utils.Class
 
   # Public functions
   # ----------------
@@ -59,6 +59,9 @@ analytics = window.analytics =
       # Add the event to analytics.
       _gaq = window._gaq ?= []
       _gaq.push event
+
+# Configuration
+# -------------
 
 # Initialize analytics.
 store?.init 'analytics', yes
