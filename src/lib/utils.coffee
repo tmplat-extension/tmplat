@@ -4,6 +4,17 @@
 # For all details and documentation:  
 # <http://neocotic.com/template>
 
+# Private classes
+# ---------------
+
+# `Class` makes for more readable logs etc. as it overrides `toString` to
+# output the name of the implementing class.
+class Class
+
+  # Override the default `toString` implementation to provide a cleaner output.
+  toString: ->
+    @constructor.name
+
 # Private variables
 # -----------------
 
@@ -13,7 +24,7 @@ timings = {}
 # Utilities setup
 # ---------------
 
-utils = window.utils =
+utils = window.utils = new class Utils extends Class
 
   # Public functions
   # ----------------
@@ -90,9 +101,15 @@ utils = window.utils =
   url: ->
     chrome.extension.getURL arguments...
 
+# Public classes
+# --------------
+
+# Objects within the extension should extend this class wherever possible.
+utils.Class = Class
+
 # `Runner` allows asynchronous code to be executed dependently in an
 # organized manner.
-class utils.Runner
+class utils.Runner extends utils.Class
 
   # Create a new instance of `Runner`.
   constructor: ->
