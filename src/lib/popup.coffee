@@ -7,14 +7,14 @@
 # Private variables
 # -----------------
 
-# Easily accessible reference to analytics, logging, and the extension
-# controller.
-{analytics, ext, log} = chrome.extension.getBackgroundPage()
+# Easily accessible reference to analytics, logging, utilities, and the
+# extension controller.
+{analytics, ext, log, utils} = chrome.extension.getBackgroundPage()
 
 # Popup page setup
 # ----------------
 
-popup = window.popup = new class Popup
+popup = window.popup = new class Popup extends utils.Class
 
   # Public functions
   # ----------------
@@ -41,5 +41,6 @@ popup = window.popup = new class Popup
     request =
       data: key: item.getAttribute 'data-key'
       type: item.getAttribute 'data-type'
-    log.debug request
+    log.debug 'Sending the following request to the extension controller',
+      request
     chrome.extension.sendRequest request
