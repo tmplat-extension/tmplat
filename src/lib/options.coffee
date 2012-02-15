@@ -65,12 +65,12 @@ load = ->
   $('#shortcuts').attr    'checked', 'checked' if store.get 'shortcuts'
   loadControlEvents()
   loadSaveEvents()
-  loadNotifications()
-  loadToolbar()
-  loadDeveloperTools()
   loadImages()
   loadTemplates()
+  loadNotifications()
+  loadToolbar()
   loadUrlShorteners()
+  loadDeveloperTools()
 
 # Bind the event handlers required for controlling general changes.
 loadControlEvents = ->
