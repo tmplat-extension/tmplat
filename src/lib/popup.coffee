@@ -34,6 +34,8 @@ popup = window.popup = new class Popup extends utils.Class
       width = textItem.scrollWidth
     textItem.style.width = "#{width}px" for textItem in textItems
     log.debug "Widest textual item in popup is #{width}px"
+    width = document.querySelector('#itemList li').scrollWidth
+    document.querySelector('#loadDiv .progress').style.width = "#{width + 2}px"
 
   # Send a request to the background page using the information provided.
   sendRequest: (item) ->

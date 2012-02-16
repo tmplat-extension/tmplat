@@ -373,15 +373,23 @@ onRequest = (request, sender, sendResponse) ->
   # Info requests are simple, just send some useful information back. Done!
   if request.type in ['info', 'version']
     return sendResponse? id: EXTENSION_ID, version: ext.version
-  data        = null
-  output      = null
-  popup       = chrome.extension.getViews(type: 'popup')[0]
-  popupItems  = if popup then $ '#item',    popup.document else $()
-  popupLoader = if popup then $ '#loadDiv', popup.document else $()
-  shortenMap  = {}
-  tab         = null
-  template    = null
-  windowId    = null
+  data          = null
+  output        = null
+  popup         = chrome.extension.getViews(type: 'popup')[0]
+  popupItems    = if popup then $ '#item',    popup.document else $()
+  popupLoader   = if popup then $ '#loadDiv', popup.document else $()
+  popupProgress = popupLoader.find '.progress'
+  shortenMap    = {}
+  tab           = null
+  template      = null
+  windowId      = null
+  # Update the progress bar to display the specified `percent`.
+  updateProgress = (percent) ->
+    if percent?
+      popupProgress.removeClass('progress-striped').find('.bar').css 'width',
+        "#{percent}%"
+    else
+      popupProgress.addClass 'progress-striped'
   # Create a runner to manage this asynchronous mess.
   runner = new utils.Runner()
   runner.push chrome.windows, 'getCurrent', (win) ->
@@ -419,8 +427,9 @@ onRequest = (request, sender, sendResponse) ->
     # If the popup is currently displayed, hide the template list and show a
     # loading animation.
     if popup
-      popupItems.hide().delay 500
-      popupLoader.show().delay 500
+      updateProgress 0
+      popupItems.hide().delay 800
+      popupLoader.show().delay 800
     # Attempt to derive the contextual template data.
     try
       switch request.type
@@ -434,6 +443,7 @@ onRequest = (request, sender, sendResponse) ->
         when 'shortcut'
           data     = buildStandardData tab, shortCallback
           template = getTemplateWithShortcut request.data.key
+      updateProgress 20
       if data? and template? then runner.next() else runner.finish()
     catch error
       log.error error
@@ -446,6 +456,7 @@ onRequest = (request, sender, sendResponse) ->
         success: no
   runner.pushPacked null, addAdditionalData, ->
     [tab, data, ->
+      updateProgress 40
       # Ensure all properties of `data` are lower case.
       transformData data
       # To complete the data, simply extend it using `template`.
@@ -453,6 +464,7 @@ onRequest = (request, sender, sendResponse) ->
       log.debug "Using the following data to render #{template.title}...", data
       if template.content
         output = Mustache.to_html template.content, data
+        updateProgress 60
         log.debug 'Following string is the rendered result...', output
         # If any `shorten` (or old `short`) tags are found and replaced, the
         # URL shortener service needs to be called in order to replace any
@@ -463,6 +475,7 @@ onRequest = (request, sender, sendResponse) ->
             success:  yes
             template: template
         else
+          updateProgress()
           runner.next()
       else
         # Display the *empty contents* error message if the contents of the
@@ -474,6 +487,7 @@ onRequest = (request, sender, sendResponse) ->
     ]
   runner.push null, callUrlShortener, shortenMap, (response) ->
     log.info 'URL shortener service was called one or more times'
+    updateProgress 80
     if response.success
       updateUrlShortenerUsage response.service.name, response.oauth
       # Request to the URL shortener service was successful so re-render the
@@ -496,6 +510,7 @@ onRequest = (request, sender, sendResponse) ->
     type  = request.type[0].toUpperCase() + request.type.substr 1
     value = request.data.key.charCodeAt 0 if request.type is 'shortcut'
     analytics.track 'Requests', 'Processed', type, value
+    updateProgress 100
     if result?
       # Ensure that the user is notified if they have attempted to copy an
       # empty string to the system clipboard.
@@ -865,10 +880,11 @@ buildPopup = ->
   item     = $ '<div id="item"/>'
   itemList = $ '<ul id="itemList"/>'
   loadDiv  = $ '<div id="loadDiv"/>'
-  loadDiv.append [
-    $ '<img src="../images/loading.gif"/>'
-    $ '<div/>', text: i18n.get 'please_wait'
-  ]...
+  loadDiv.append $('<div/>',
+    class: 'progress progress-info active'
+  ).append $ '<div/>',
+    class: 'bar'
+    style: 'width: 100%'
   # Generate the HTML for each template.
   for template in ext.templates when template.enabled
     itemList.append buildTemplate template

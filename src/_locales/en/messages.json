@@ -2291,9 +2291,6 @@
   "options": {
     "message": "Options"
   },
-  "please_wait": {
-    "message": "Please wait..."
-  },
   "result_bad_description": {
     "message": "$TEMPLATE$ could not be copied",
     "placeholders": {
