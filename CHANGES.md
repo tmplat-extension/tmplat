@@ -1,4 +1,4 @@
-YYYY.MM.DD, Version 1.0.0
+2012.01.16, Version 1.0.0
 
 * **Full release!**
 * [#20](https://github.com/neocotic/template/issues/20): Add *"Login"*/*"Logout"* button to [goo.gl](http://goo.gl)'s configuration on the Options page
