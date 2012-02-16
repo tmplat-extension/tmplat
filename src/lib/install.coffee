@@ -11,12 +11,9 @@
 # the ID in use.
 chrome.extension.sendRequest type: 'info', (data) ->
   # Names of the classes to be removed from the targeted elements.
-  classes = [
-    'chrome_install_button'
-    'primary'
-  ]
+  classes = ['chrome_install_button', 'btn-primary', 'primary']
   # Disable all "Install" links on the homepage for Template.
-  for anchor in document.querySelectorAll "a.#{classes[0]}[href$=#{data.id}]"
-    anchor.className += ' disabled'
-    anchor.innerText  = 'Installed'
-    anchor.className  = anchor.className.replace cls, '' for cls in classes
+  for link in document.querySelectorAll "a.#{classes[0]}[href$=#{data.id}]"
+    link.innerText = 'Installed'
+    link.classList.add 'disabled'
+    link.classList.remove cls for cls in classes
