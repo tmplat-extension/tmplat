@@ -29,7 +29,8 @@ popup = window.popup = new class Popup extends utils.Class
     # Calculate the widest text used by the `div` elements in the popup and
     # assign it to all of the others.
     items = document.querySelectorAll '.text'
-    width = item.scrollWidth for item in items when item.scrollWidth > width
+    for item in items when not width? or item.scrollWidth > width
+      width = item.scrollWidth
     item.style.width = "#{width}px" for item in items
     log.debug "Widest textual item in popup is #{width}px"
     width = document.querySelector('#itemList li').scrollWidth
