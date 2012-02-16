@@ -8,9 +8,7 @@ In order to build [Template][], you need to have the following:
 
 *Earlier versions might work, but have not been tested.*
 
-1. Install [git][]
-2. Install [Node](http://nodejs.org/#download)
-3. Using [npm][] install [CoffeeScript][], [docco][], [UglifyJS][], and all their dependencies
+It is recommended to install all except [git][] using [npm][] along with [node.js][] as it really simplifies their installation as it also installs their dependencies.
 
 # Building
 Follow these steps to build [Template][];
@@ -38,7 +36,7 @@ To run the locally built extension in [Google Chrome][] you can follow these ste
 [docco]: http://jashkenas.github.com/docco
 [git]: http://git-scm.com
 [google chrome]: http://www.google.com/chrome
-[node]: http://nodejs.org
+[node.js]: http://nodejs.org
 [npm]: http://npmjs.org
 [template]: http://neocotic.com/template
 [uglifyjs]: https://github.com/mishoo/UglifyJS
