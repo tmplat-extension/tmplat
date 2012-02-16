@@ -89,6 +89,9 @@ OPERATING_SYSTEMS = [
   substring: 'Linux'
   title:     'Linux'
 ]
+# Milliseconds before the popup automatically resets or closes, depending on
+# user preferences.
+POPUP_DELAY       = 600
 # Regular expression used to detect upper case characters.
 R_UPPER_CASE      = /[A-Z]+/
 # Regular expression used to perform simple URL validation.
@@ -348,21 +351,19 @@ onRequest = (request, sender, sendResponse) ->
   # Don't allow shortcut requests when shortcuts are disabled.
   if request.type is 'shortcut' and not store.get 'shortcuts'
     return sendResponse?()
+  # Select or create a tab for the Options page.
+  if request.type is 'options'
+    selectOrCreateTab utils.url 'pages/options.html'
+    return sendResponse?()
   # Info requests are simple, just send some useful information back. Done!
   if request.type in ['info', 'version']
     return sendResponse? id: EXTENSION_ID, version: ext.version
-  data          = null
-  output        = null
-  popup         = chrome.extension.getViews(type: 'popup')[0]
-  popupItems    = if popup then $ '#item',    popup.document else $()
-  popupLoader   = if popup then $ '#loadDiv', popup.document else $()
-  popupProgress = popupLoader.find '.progress .bar'
-  shortenMap    = {}
-  tab           = null
-  template      = null
-  windowId      = null
-  # Update the progress bar to display the specified `percent`.
-  updateProgress = (percent = 0) -> popupProgress.css 'width', "#{percent}%"
+  data       = null
+  output     = null
+  shortenMap = {}
+  tab        = null
+  template   = null
+  windowId   = null
   # Create a runner to manage this asynchronous mess.
   runner = new utils.Runner()
   runner.push chrome.windows, 'getCurrent', (win) ->
@@ -399,17 +400,13 @@ onRequest = (request, sender, sendResponse) ->
       "{#{placeholder}}"
     # If the popup is currently displayed, hide the template list and show a
     # loading animation.
-    if popup
-      updateProgress 0
-      popupItems.hide().delay 800
-      popupLoader.show().delay 800
+    updateProgress null, on
     # Attempt to derive the contextual template data.
     try
       switch request.type
         when 'menu'
           data     = buildDerivedData tab, request.data, shortCallback
           template = getTemplateWithMenuId request.data.menuItemId
-        when 'options' then selectOrCreateTab utils.url 'pages/options.html'
         when 'popup', 'toolbar'
           data     = buildStandardData tab, shortCallback
           template = getTemplateWithKey request.data.key
@@ -508,17 +505,7 @@ onRequest = (request, sender, sendResponse) ->
         updateTemplateUsage result.template.key
         updateStatistics()
     else
-      # Close the popup if it's still open and the user wants it closed.
-      # Otherwise, reset the popup so that it can be used further.
-      if popup
-        if store.get 'toolbar.close'
-          popup.close()
-        else
-          popupLoader.queue ->
-            popupLoader.hide().dequeue()
-            popupProgress.css 'width', '0px'
-          popupItems.queue ->
-            popupItems.show().dequeue()
+      updateProgress null, off
     log.debug "Finished handling #{type} request"
 
 # Attempt to select a tab in the current window displaying a page whose
@@ -566,19 +553,38 @@ showNotification = ->
     ).show()
   else
     ext.reset()
-  # Close the popup if it's still open and the user wants it closed. Otherwise,
-  # reset the popup so that it can be used further.
-  if popup = chrome.extension.getViews(type: 'popup')[0]
-    if store.get 'toolbar.close'
-      popup.close()
+  updateProgress null, off
+
+# Update the popup UI state to reflect the progress of the current request.  
+# Ignore `percent` if `toggle` is specified; otherwise update the percentage on
+# the progress bar and reset the delay timer.  
+# `toggle` can be used to show the progress bar or reset/close the popup.
+updateProgress = (percent, toggle) ->
+  log.trace()
+  popup       = $ chrome.extension.getViews(type: 'popup')[0]
+  item        = if popup.length then $ '#item',    popup[0].document else $()
+  loadDiv     = if popup.length then $ '#loadDiv', popup[0].document else $()
+  progressBar = loadDiv.find '.progress .bar'
+  # Update the progress bar to display the specified `percent`.
+  if toggle?
+    if toggle
+      progressBar.css 'width', '0%'
+      popup.delay          POPUP_DELAY
+      item.hide().delay    POPUP_DELAY
+      loadDiv.show().delay POPUP_DELAY
     else
-      popupItems  = $ '#item',    popup.document
-      popupLoader = $ '#loadDiv', popup.document
-      popupLoader.queue ->
-        popupLoader.hide().dequeue()
-        popupLoader.find('.progress .bar').css 'width', '0px'
-      popupItems.queue ->
-        popupItems.show().dequeue()
+      if store.get 'toolbar.close'
+        popup.queue -> popup.dequeue()[0]?.close()
+      else
+        loadDiv.queue ->
+          loadDiv.hide().dequeue()
+          progressBar.css 'width', '0%'
+        item.queue -> item.show().dequeue()
+  else if percent?
+    popup.dequeue().delay   POPUP_DELAY
+    item.dequeue().delay    POPUP_DELAY
+    loadDiv.dequeue().delay POPUP_DELAY
+    progressBar.css 'width', "#{percent}%"
 
 # Update the statistical information.
 updateStatistics = ->
