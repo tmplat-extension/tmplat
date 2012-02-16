@@ -98,7 +98,7 @@ REAL_EXTENSION_ID = 'dcjnfaoifoefmnbhhlbppaebgnccfddf'
 # List of URL shortener services supported by Template.
 SHORTENERS        = [
   # Setup [bitly](http://bit.ly).
-  contentType: 'application/x-www-form-urlencoded'
+  contentType:   'application/x-www-form-urlencoded'
   getParameters: (url) ->
     bitly  = store.get 'bitly'
     params =
@@ -110,33 +110,24 @@ SHORTENERS        = [
       params.x_apiKey = bitly.apiKey
       params.x_login  = bitly.username
     params
-  getUsage: ->
-    store.get 'bitly.usage'
-  input: ->
-    null
-  isEnabled: ->
-    store.get 'bitly.enabled'
-  method: 'GET'
-  name: 'bitly'
-  output: (resp) ->
-    JSON.parse(resp).data.url
-  title: i18n.get 'shortener_bitly'
-  url: ->
-    'http://api.bitly.com/v3/shorten'
+  getUsage:      -> store.get 'bitly.usage'
+  input:         -> null
+  isEnabled:     -> store.get 'bitly.enabled'
+  method:        'GET'
+  name:          'bitly'
+  output:        (resp) -> JSON.parse(resp).data.url
+  title:         i18n.get 'shortener_bitly'
+  url:           -> 'http://api.bitly.com/v3/shorten'
 ,
   # Setup [Google URL Shortener](http://goo.gl).
-  contentType: 'application/json'
-  getParameters: ->
-    key: 'AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY'
-  getUsage: ->
-    store.get 'googl.usage'
-  input: (url) ->
-    JSON.stringify longUrl: url
-  isEnabled: ->
-    store.get 'googl.enabled'
-  method: 'POST'
-  name: 'googl'
-  oauth: ChromeExOAuth.initBackgroundPage
+  contentType:   'application/json'
+  getParameters: -> key: 'AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY'
+  getUsage:      -> store.get 'googl.usage'
+  input:         (url) -> JSON.stringify longUrl: url
+  isEnabled:     -> store.get 'googl.enabled'
+  method:        'POST'
+  name:          'googl'
+  oauth:         ChromeExOAuth.initBackgroundPage
     access_url:      'https://www.google.com/accounts/OAuthGetAccessToken'
     app_name:        i18n.get 'app_name'
     authorize_url:   'https://www.google.com/accounts/OAuthAuthorizeToken'
@@ -144,14 +135,12 @@ SHORTENERS        = [
     consumer_secret: 'anonymous'
     request_url:     'https://www.google.com/accounts/OAuthGetRequestToken'
     scope:           'https://www.googleapis.com/auth/urlshortener'
-  output: (resp) ->
-    JSON.parse(resp).id
-  title: i18n.get 'shortener_googl'
-  url: ->
-    'https://www.googleapis.com/urlshortener/v1/url'
+  output:        (resp) -> JSON.parse(resp).id
+  title:         i18n.get 'shortener_googl'
+  url:           -> 'https://www.googleapis.com/urlshortener/v1/url'
 ,
   # Setup [YOURLS](http://yourls.org).
-  contentType: 'application/json'
+  contentType:   'application/json'
   getParameters: (url) ->
     params =
       action: 'shorturl'
@@ -164,31 +153,26 @@ SHORTENERS        = [
     else if yourls.signature
       params.signature = yourls.signature
     params
-  getUsage: ->
-    store.get 'yourls.usage'
-  input: ->
-    null
-  isEnabled: ->
-    store.get 'yourls.enabled'
-  method: 'POST'
-  name: 'yourls'
-  output: (resp) ->
-    JSON.parse(resp).shorturl
-  title: i18n.get 'shortener_yourls'
-  url: ->
-    store.get 'yourls.url'
+  getUsage:      -> store.get 'yourls.usage'
+  input:         -> null
+  isEnabled:     -> store.get 'yourls.enabled'
+  method:        'POST'
+  name:          'yourls'
+  output:        (resp) -> JSON.parse(resp).shorturl
+  title:         i18n.get 'shortener_yourls'
+  url:           -> store.get 'yourls.url'
 ]
 # List of extensions supported by Template and used for compatibility purposes.
 SUPPORT           = [
   # Setup [IE Tab](http://ietab.net).
-  id: 'hehijbfgiekmjfkfjpbkbammjbdenadd'
+  id:    'hehijbfgiekmjfkfjpbkbammjbdenadd'
   title: (title) ->
     str = 'IE: '
     if title
       idx   = title.indexOf str
       title = title.substring idx + str.length if idx isnt -1
     title
-  url: (url) ->
+  url:   (url) ->
     str = 'iecontainer.html#url='
     if url
       idx = url.indexOf str
@@ -196,10 +180,9 @@ SUPPORT           = [
     url
 ,
   # Setup [IE Tab Classic](http://goo.gl/u7Cau).
-  id: 'miedgcmlgpmdagojnnbemlkgidepfjfi'
-  title: (title) ->
-    title
-  url: (url) ->
+  id:    'miedgcmlgpmdagojnnbemlkgidepfjfi'
+  title: (title) -> title
+  url:   (url) ->
     str = 'ie.html#'
     if url
       idx = url.indexOf str
@@ -207,10 +190,9 @@ SUPPORT           = [
     url
 ,
   # Setup [IE Tab Multi (Enhance)](http://iblogbox.com/chrome/ietab).
-  id: 'fnfnbeppfinmnjnjhedifcfllpcfgeea'
-  title: (title) ->
-    title
-  url: (url) ->
+  id:    'fnfnbeppfinmnjnjhedifcfllpcfgeea'
+  title: (title) -> title
+  url:   (url) ->
     str = 'navigate.html?chromeurl='
     if url
       idx = url.indexOf str
@@ -222,10 +204,9 @@ SUPPORT           = [
     url
 ,
   # Setup [Mozilla Gecko Tab](http://iblogbox.com/chrome/geckotab).
-  id: 'icoloanbecehinobmflpeglknkplbfbm'
-  title: (title) ->
-    title
-  url: (url) ->
+  id:    'icoloanbecehinobmflpeglknkplbfbm'
+  title: (title) -> title
+  url:   (url) ->
     str = 'navigate.html?chromeurl='
     if url
       idx = url.indexOf str
@@ -263,19 +244,18 @@ executeScriptsInExistingWindows = ->
   runner.push chrome.windows, 'getAll', null, (windows) ->
     log.info 'Retrieved the following windows...', windows
     for win in windows
-      do (win) ->
-        runner.push chrome.tabs, 'query', windowId: win.id, (tabs) ->
-          log.info 'Retrieved the following tabs...', tabs
-          # Check tabs are not displaying a *protected* page (i.e. one that
-          # will cause an error if an attempt is made to execute content
-          # scripts).
-          for tab in tabs when not isProtectedPage tab
-            chrome.tabs.executeScript tab.id, file: 'lib/content.js'
-            # Only execute inline installation content script for tabs
-            # displaying a page on Template's homepage domain.
-            if tab.url.indexOf(HOMEPAGE_DOMAIN) isnt -1
-              chrome.tabs.executeScript tab.id, file: 'lib/install.js'
-          runner.next()
+      do (win) -> runner.push chrome.tabs, 'query', windowId: win.id, (tabs) ->
+        log.info 'Retrieved the following tabs...', tabs
+        # Check tabs are not displaying a *protected* page (i.e. one that
+        # will cause an error if an attempt is made to execute content
+        # scripts).
+        for tab in tabs when not isProtectedPage tab
+          chrome.tabs.executeScript tab.id, file: 'lib/content.js'
+          # Only execute inline installation content script for tabs
+          # displaying a page on Template's homepage domain.
+          if tab.url.indexOf(HOMEPAGE_DOMAIN) isnt -1
+            chrome.tabs.executeScript tab.id, file: 'lib/install.js'
+        runner.next()
     runner.next()
   runner.run()
 
@@ -311,14 +291,12 @@ getOperatingSystem = ->
 # Attempt to retrieve the template with the specified `key`.
 getTemplateWithKey = (key) ->
   log.trace()
-  ext.queryTemplate (template) ->
-    template.key is key
+  ext.queryTemplate (template) -> template.key is key
 
 # Attempt to retrieve the template with the specified `menuId`.
 getTemplateWithMenuId = (menuId) ->
   log.trace()
-  ext.queryTemplate (template) ->
-    template.menuId is menuId
+  ext.queryTemplate (template) -> template.menuId is menuId
 
 # Attempt to retrieve the template with the specified keyboard `shortcut`.  
 # Exclude disabled templates from this query.
@@ -384,8 +362,7 @@ onRequest = (request, sender, sendResponse) ->
   template      = null
   windowId      = null
   # Update the progress bar to display the specified `percent`.
-  updateProgress = (percent = 0) ->
-    popupProgress.css 'width', "#{percent}%"
+  updateProgress = (percent = 0) -> popupProgress.css 'width', "#{percent}%"
   # Create a runner to manage this asynchronous mess.
   runner = new utils.Runner()
   runner.push chrome.windows, 'getCurrent', (win) ->
@@ -417,7 +394,7 @@ onRequest = (request, sender, sendResponse) ->
         # Sections are re-rendered so the context must have a property for the
         # placeholder the replaces itself with itself so that it still when it
         # comes to replacing with the shortened URL.
-        @[placeholder] = "{#{placeholder}}"
+        this[placeholder] = "{#{placeholder}}"
       log.debug "Replacing shorten tag with #{placeholder} placeholder"
       "{#{placeholder}}"
     # If the popup is currently displayed, hide the template list and show a
@@ -614,8 +591,7 @@ updateStatistics = ->
     utils.query ext.templates, no, (template) ->
       maxUsage = template.usage if template.usage > maxUsage
       no
-    popular = ext.queryTemplate (template) ->
-      template.usage is maxUsage
+    popular = ext.queryTemplate (template) -> template.usage is maxUsage
     # Calculate the up-to-date statistical information.
     stats.count       = ext.templates.length
     stats.customCount = stats.count - DEFAULT_TEMPLATES.length
@@ -630,19 +606,16 @@ updateTemplateUsage = (key) ->
     break
   store.set 'templates', ext.templates
   log.info "Used #{template.title} template"
-  analytics.track 'Templates', 'Used', template.title,
-    if template.readOnly then 1 else 0
+  analytics.track 'Templates', 'Used', template.title, Number template.readOnly
 
 # Increment the usage for the URL shortener service with the specified `name`
 # and persist the changes.
 updateUrlShortenerUsage = (name, oauth) ->
   log.trace()
-  store.modify name, (shortener) ->
-    shortener.usage++
-  shortener = ext.queryUrlShortener (shortener) ->
-    shortener.name is name
+  store.modify name, (shortener) -> shortener.usage++
+  shortener = ext.queryUrlShortener (shortener) -> shortener.name is name
   log.info "Used #{shortener.title} URL shortener"
-  analytics.track 'Shorteners', 'Used', shortener.title, if oauth then 1 else 0
+  analytics.track 'Shorteners', 'Used', shortener.title, Number oauth
 
 # Data functions
 # --------------
@@ -664,17 +637,18 @@ addAdditionalData = (tab, data, callback) ->
     runner.next()
   runner.push chrome.cookies, 'getAll', url: data.url, (cookies = []) ->
     log.debug 'Retrieved the followign cookies...', cookies
-    names = []
-    # Extract the names of each cookie.
-    names.push cookie.name for cookie in cookies
     $.extend data,
-      cookie:  ->
-        (text, render) ->
-          name = render text
-          # Attempt to find the value for the cookie name.
-          return cookie.value for cookie in cookies when cookie.name is name
-          ''
-      cookies: names
+      cookie:  -> (text, render) ->
+        # Attempt to find the value for the cookie name.
+        name = render text
+        return cookie.value for cookie in cookies when cookie.name is name
+        ''
+      cookies: (
+        names = []
+        for cookie in cookies when cookie.name not in names
+          names.push cookie.name
+        names
+      )
     # Try to prevent pages hanging because content script should not have been
     # executed.
     if isProtectedPage tab then runner.finish() else runner.next()
@@ -691,9 +665,8 @@ addAdditionalData = (tab, data, callback) ->
       characterset:   result.characterSet  ? ''
       description:    result.description   ? ''
       keywords:       result.keywords      ? []
-      lastmodified:   ->
-        (text, render) ->
-          lastModified?.format(render(text) or undefined) ? ''
+      lastmodified:   -> (text, render) ->
+        lastModified?.format(render(text) or undefined) ? ''
       links:          result.links         ? []
       pageheight:     result.pageHeight    ? ''
       pagewidth:      result.pageWidth     ? ''
@@ -712,15 +685,14 @@ buildDerivedData = (tab, onClickData, shortCallback) ->
   log.trace()
   data =
     title: tab.title
-    url:   ''
-  if onClickData.linkUrl
-    data.url = onClickData.linkUrl
-  else if onClickData.srcUrl
-    data.url = onClickData.srcUrl
-  else if onClickData.frameUrl
-    data.url = onClickData.frameUrl
-  else
-    data.url = onClickData.pageUrl
+    url:   if onClickData.linkUrl
+        onClickData.linkUrl
+      else if onClickData.srcUrl
+        onClickData.srcUrl
+      else if onClickData.frameUrl
+        onClickData.frameUrl
+      else
+        onClickData.pageUrl
   buildStandardData data, shortCallback
 
 # Construct a data object based on information extracted from `tab`.  
@@ -799,9 +771,9 @@ buildStandardData = (tab, shortCallback) ->
     fsegments:             url.fsegment()
     googl:                 googl.enabled
     googlaccount:          ->
-      shortener = ext.queryUrlShortener (shortener) ->
+      ext.queryUrlShortener((shortener) ->
         shortener.name is 'googl'
-      shortener.oauth.hasToken()
+      ).oauth.hasToken()
     # Deprecated since 1.0.0, use `googlAccount` instead.
     googloauth:            -> @googlaccount()
     java:                  navigator.javaEnabled()
@@ -1095,8 +1067,7 @@ initTemplates_update = ->
       key = ext.getKeyForName name
       if toolbarFeatureName is name
         if store.exists 'toolbar'
-          store.modify 'toolbar', (toolbar) ->
-            toolbar.key = key
+          store.modify 'toolbar', (toolbar) -> toolbar.key = key
         else
           store.set 'toolbar', key: key
       templates.push
@@ -1223,54 +1194,48 @@ callUrlShortener = (map, callback) ->
   # Create a runner to control the dependencies in the asynchronous processes.
   runner = new utils.Runner()
   for own placeholder, url of map
-    do (placeholder, url) ->
-      runner.push null, ->
-        oauth  = !!service.oauth?.hasToken()
-        params = service.getParameters(url) or {}
-        # Build the HTTP request for the URL shortener service.
-        xhr = new XMLHttpRequest()
-        xhr.open service.method, "#{endpoint}?#{$.param params}", yes
-        xhr.setRequestHeader 'Content-Type', service.contentType
-        # Setup OAuth for the request when required.
-        if oauth
-          xhr.setRequestHeader 'Authorization',
-            service.oauth.getAuthorizationHeader(endpoint,
-              service.method, params)
-        xhr.onreadystatechange = ->
-          # Wait for the response and let the service handle it before passing
-          # the result to `callback` via the runner.
-          if xhr.readyState is 4
-            if xhr.status is 200
-              map[placeholder] = service.output xhr.responseText
-              runner.next
-                oauth:   oauth
-                success: yes
-            else
-              # Something went wrong so let's tell the user.
-              runner.finish
-                message: i18n.get('shortener_detailed_error', [title, url])
-                success: no
-        # Finally, send the HTTP request.
-        xhr.send service.input url
-  runner.run (result = {}) ->
-    callback
-      message: result.message
-      oauth:   result.oauth
-      service: service
-      success: result.success
+    do (placeholder, url) -> runner.push null, ->
+      oauth  = !!service.oauth?.hasToken()
+      params = service.getParameters(url) or {}
+      # Build the HTTP request for the URL shortener service.
+      xhr = new XMLHttpRequest()
+      xhr.open service.method, "#{endpoint}?#{$.param params}", yes
+      xhr.setRequestHeader 'Content-Type', service.contentType
+      # Setup OAuth for the request when required.
+      if oauth
+        xhr.setRequestHeader 'Authorization',
+          service.oauth.getAuthorizationHeader(endpoint,
+            service.method, params)
+      xhr.onreadystatechange = ->
+        # Wait for the response and let the service handle it before passing
+        # the result to `callback` via the runner.
+        if xhr.readyState is 4
+          if xhr.status is 200
+            map[placeholder] = service.output xhr.responseText
+            runner.next oauth: oauth, success: yes
+          else
+            # Something went wrong so let's tell the user.
+            runner.finish
+              message: i18n.get('shortener_detailed_error', [title, url])
+              success: no
+      # Finally, send the HTTP request.
+      xhr.send service.input url
+  runner.run (result = {}) -> callback
+    message: result.message
+    oauth:   result.oauth
+    service: service
+    success: result.success
 
 # Retrieve the active URL shortener service.
 getActiveUrlShortener = ->
   log.trace()
   # Attempt to lookup enabled URL shortener service.
-  shortener = ext.queryUrlShortener (shortener) ->
-    shortener.isEnabled()
+  shortener = ext.queryUrlShortener (shortener) -> shortener.isEnabled()
   unless shortener?
     # Should never reach here but we'll return goo.gl service by default after
     # ensuring it's the active URL shortener service from now on to save some
     # time in the future.
-    store.modify 'googl', (googl) ->
-      googl.enabled = yes
+    store.modify 'googl', (googl) -> googl.enabled = yes
     shortener = getActiveUrlShortener()
   log.debug "Getting details for #{shortener.title} URL shortener"
   shortener
@@ -1396,17 +1361,15 @@ ext = window.ext = new class Extension extends utils.Class
     initUrlShorteners()
     # Add listener for toolbar/browser action clicks.  
     # This listener will be ignored whenever the popup is enabled.
-    chrome.browserAction.onClicked.addListener (tab) ->
-      onRequest
-        data: key: store.get 'toolbar.key'
-        type: 'toolbar'
+    chrome.browserAction.onClicked.addListener (tab) -> onRequest
+      data: key: store.get 'toolbar.key'
+      type: 'toolbar'
     # Add listeners for internal and external requests.
     chrome.extension.onRequest.addListener onRequest
     chrome.extension.onRequestExternal.addListener (req, sender, cb) ->
-      blocked = isBlacklisted sender.id
-      analytics.track 'External Requests', 'Started', sender.id,
-        if blocked then 0 else 1
-      if blocked
+      block = isBlacklisted sender.id
+      analytics.track 'External Requests', 'Started', sender.id, Number !block
+      if block
         log.debug "Blocking external request from #{sender.id}"
         cb?()
       else
@@ -1419,8 +1382,7 @@ ext = window.ext = new class Extension extends utils.Class
     $.getJSON utils.url('manifest.json'), (data) =>
       @version = data.version
       if isNewInstall
-        analytics.track 'Installs', 'New', @version,
-          if isProductionBuild then 1 else 0
+        analytics.track 'Installs', 'New', @version, Number isProductionBuild
       # Execute content scripts now that we know the version.
       executeScriptsInExistingWindows()
 
@@ -1513,8 +1475,7 @@ ext = window.ext = new class Extension extends utils.Class
   updateTemplates: ->
     log.trace()
     @templates = store.get 'templates'
-    @templates.sort (a, b) ->
-      a.index - b.index
+    @templates.sort (a, b) -> a.index - b.index
     buildPopup()
     @updateContextMenu()
     updateStatistics()
