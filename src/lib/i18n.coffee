@@ -53,8 +53,7 @@ handlers   =
         else
           element.setAttribute propName, i18n.get propExpr, propSubs
 # List of internationalization attributes/handlers available.
-attributes = []
-attributes.push key for own key of handlers
+attributes = (key for own key of handlers)
 # Selector containing the available internationalization attributes/handlers
 # which is used by `process` to query all elements.
 selector   = "[#{attributes.join '],['}]"
@@ -63,11 +62,10 @@ selector   = "[#{attributes.join '],['}]"
 # -----------------
 
 # Find all elements to be localized and call their corresponding handler(s).
-process = (node, map) ->
-  for element in node.querySelectorAll selector
-    for name in attributes
-      attribute = element.getAttribute name
-      handlers[name] element, attribute, map if attribute?
+process = (node, map) -> for element in node.querySelectorAll selector
+  for name in attributes
+    attribute = element.getAttribute name
+    handlers[name] element, attribute, map if attribute?
 
 # Find an array of substitution strings using the element's ID and the message
 # key as the mapping.
@@ -96,10 +94,8 @@ i18n = window.i18n = new class Internationalization extends utils.Class
         for sub, i in substitutions
           message = message.replace new RegExp("\\$#{i + 1}", 'g'), sub
       message
-    langs: ->
-      []
-    locale: ->
-      navigator.language
+    langs: -> []
+    locale: -> navigator.language
     node: document
 
   # Default container for localized messages.
@@ -111,22 +107,16 @@ i18n = window.i18n = new class Internationalization extends utils.Class
   # Localize the specified `attribute` of all the selected elements.
   attribute: (selector, attribute, name, subs) ->
     elements = @manager.node.querySelectorAll selector
-    # Ensure the substitution string(s) are in an array.
-    subs = [subs] if typeof subs is 'string'
     element.setAttribute attribute, @get name, subs for element in elements
 
   # Localize the contents of all the selected elements.
   content: (selector, name, subs) ->
     elements = @manager.node.querySelectorAll selector
-    # Ensure the substitution string(s) are in an array.
-    subs = [subs] if typeof subs is 'string'
     element.innerHTML = @get name, subs for element in elements
 
   # Add localized `option` elements to the selected elements.
   options: (selector, name, subs) ->
     elements = @manager.node.querySelectorAll selector
-    # Ensure the substitution string(s) are in an array.
-    subs = [subs] if typeof subs is 'string'
     for element in elements
       values = @get name, subs
       for value in values
@@ -139,32 +129,25 @@ i18n = window.i18n = new class Internationalization extends utils.Class
         element.appendChild option
 
   # Get the localized message.
-  get: ->
-    @manager.get arguments...
+  get: -> @manager.get arguments...
 
   # Localize all relevant elements within the managed node (`document` by
   # default).
-  init: (map) ->
-    process @manager.node, map
+  init: (map) -> process @manager.node, map
 
   # Retrieve the accepted languages.
-  langs: ->
-    @manager.langs arguments...
+  langs: -> @manager.langs arguments...
 
   # Retrieve the current locale.
-  locale: ->
-    @manager.locale arguments...
+  locale: -> @manager.locale arguments...
 
 # Configuration
 # -------------
 
 # Reconfigure the internationalization manager to work for Chrome extensions.  
 # Convenient shorthand for `chrome.i18n.getMessage`.
-i18n.manager.get = ->
-  chrome.i18n.getMessage arguments...
+i18n.manager.get = -> chrome.i18n.getMessage arguments...
 # Convenient shorthand for `chrome.i18n.getAcceptLanguages`.
-i18n.manager.langs = ->
-  chrome.i18n.getAcceptLanguages arguments...
+i18n.manager.langs = -> chrome.i18n.getAcceptLanguages arguments...
 # Parse the predefined `@@ui_locale` message.
-i18n.manager.locale = ->
-  i18n.get('@@ui_locale').replace '_', '-'
+i18n.manager.locale = -> i18n.get('@@ui_locale').replace '_', '-'
