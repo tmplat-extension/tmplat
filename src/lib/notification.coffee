@@ -69,7 +69,4 @@ notification = window.notification = new class Notification extends utils.Class
     # if the user enabled the corresponding option; otherwise it should stay
     # open until it is closed manually by the user.
     duration = store.get 'notifications.duration'
-    if duration > 0
-      setTimeout ->
-        close()
-      , duration
+    setTimeout (-> close()), duration if duration > 0
