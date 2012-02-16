@@ -25,8 +25,7 @@ LEVELS =
 # -----------------
 
 # Determine whether or not logging is enabled for the specified `level`.
-loggable = (level) ->
-  log.config.enabled and level >= log.config.level
+loggable = (level) -> log.config.enabled and level >= log.config.level
 
 # Logging setup
 # -------------
@@ -47,8 +46,7 @@ log = window.log = new class Log extends utils.Class
   LEVELS: (
     array = []
     array.push name: key, value: value for own key, value of LEVELS
-    array.sort (a, b) ->
-      a.value - b.value
+    array.sort (a, b) -> a.value - b.value
   )
 
   # Public variables
