@@ -12,8 +12,7 @@
 class Class
 
   # Override the default `toString` implementation to provide a cleaner output.
-  toString: ->
-    @constructor.name
+  toString: -> @constructor.name
 
 # Private variables
 # -----------------
@@ -43,7 +42,7 @@ utils = window.utils = new class Utils extends Class
   # Generate a unique key based on the current time and using a randomly
   # generated hexadecimal number of the specified length.
   keyGen: (separator = '.', length = 5, prefix = '', upperCase = yes) ->
-    parts  = []
+    parts = []
     # Populate the segment(s) to attempt uniquity.
     parts.push new Date().getTime()
     if length > 0
@@ -65,8 +64,7 @@ utils = window.utils = new class Utils extends Class
     entity for entity in entities when filter entity
 
   # Generate a random number between the `min` and `max` values provided.
-  random: (min, max) ->
-    Math.floor(Math.random() * (max - min + 1)) + min
+  random: (min, max) -> Math.floor(Math.random() * (max - min + 1)) + min
 
   # Repeat the string provided the specified number of times.
   repeat: (str = '', repeatStr = str, count = 1) ->
@@ -98,8 +96,7 @@ utils = window.utils = new class Utils extends Class
       0
 
   # Convenient shorthand for `chrome.extension.getURL`.
-  url: ->
-    chrome.extension.getURL arguments...
+  url: -> chrome.extension.getURL arguments...
 
 # Public classes
 # --------------
@@ -112,8 +109,7 @@ utils.Class = Class
 class utils.Runner extends utils.Class
 
   # Create a new instance of `Runner`.
-  constructor: ->
-    @queue = []
+  constructor: -> @queue = []
 
   # Finalize the process by resetting this `Runner` an then calling `onfinish`,
   # if it was specified when `run` was called.  
@@ -153,21 +149,19 @@ class utils.Runner extends utils.Class
   # latter, `context` is ignored and should be `null` (not omitted). All of the
   # remaining `args` are passed to the function when it is called during the
   # process.
-  push: (context, reference, args...) ->
-    @queue.push
-      args:      args
-      context:   context
-      reference: reference
+  push: (context, reference, args...) -> @queue.push
+    args:      args
+    context:   context
+    reference: reference
 
   # Add a new task to the queue using the *packed* values provided.  
   # This method varies from `push` since the arguments are provided in the form
   # of a function which is called immediately before the function, which allows
   # any dependent arguments to be correctly referenced.
-  pushPacked: (context, reference, packedArgs) ->
-    @queue.push
-      args:      packedArgs
-      context:   context
-      reference: reference
+  pushPacked: (context, reference, packedArgs) -> @queue.push
+    args:      packedArgs
+    context:   context
+    reference: reference
 
   # Start the process by calling the first task in the queue and register the
   # `onfinish` function provided.
@@ -176,5 +170,4 @@ class utils.Runner extends utils.Class
     @next()
 
   # Remove the specified number of tasks from the front of the queue.
-  skip: (count = 1) ->
-    @queue.splice 0, count
+  skip: (count = 1) -> @queue.splice 0, count
