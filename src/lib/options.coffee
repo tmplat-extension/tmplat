@@ -143,7 +143,7 @@ loadLoggerSaveEvents = ->
     logger = store.get 'logger'
     chrome.extension.getBackgroundPage().log.config = log.config = logger
     analytics.track 'Logging', 'Changed', key[0].toUpperCase() + key.substr(1),
-      if typeof value is 'number' then value else Number value
+      Number value
 
 # Update the notification section of the options page with the current
 # settings.
@@ -172,8 +172,7 @@ loadNotificationSaveEvents = ->
       enabled = $(this).is ':checked'
       log.debug "Changing notifications to '#{enabled}'"
       notifications.enabled = enabled
-      analytics.track 'Notifications', 'Changed', 'Enabled',
-        if enabled then 1 else 0
+      analytics.track 'Notifications', 'Changed', 'Enabled', Number enabled
 
 # Bind the event handlers required for persisting general changes.
 loadSaveEvents = ->
@@ -341,10 +340,9 @@ loadTemplateControlEvents = ->
       templates.find('option:selected').text()
     $('#delete_con').modal 'show'
   # Cancel the template removal process.
-  $('.delete_no_btn').on 'click', ->
-    $('#delete_con').modal 'hide'
+  $('.delete_no_btn').click -> $('#delete_con').modal 'hide'
   # Finalize the template removal.
-  $('.delete_yes_btn').on 'click', ->
+  $('.delete_yes_btn').click ->
     opt = templates.find 'option:selected'
     if opt.data('readOnly') isnt 'true'
       title = opt.text()
@@ -373,7 +371,7 @@ loadTemplateExportEvents = ->
   log.trace()
   templates = $ '#templates'
   # Restore the previous view in the export process.
-  $('.export_back_btn').on 'click', ->
+  $('.export_back_btn').click ->
     log.info 'Going back to previous export stage'
     $('.export_con_stage1').show()
     $('.export_con_stage2').hide()
@@ -396,13 +394,13 @@ loadTemplateExportEvents = ->
     $('#export_con').modal 'show'
   # Enable/disable the continue button depending on whether or not any
   # templates are currently selected.
-  $('.export_con_list').on 'change', ->
+  $('.export_con_list').change ->
     if $(this).find('option:selected').length > 0
       $('.export_yes_btn').removeAttr 'disabled'
     else
       $('.export_yes_btn').attr 'disabled', 'disabled'
   # Copy the text area contents to the system clipboard.
-  $('.export_copy_btn').on 'click', (event) ->
+  $('.export_copy_btn').click (event) ->
     $this = $ this
     ext.copy $('.export_content').val(), yes
     $this.text i18n.get 'opt_export_wizard_copy_alt_button'
@@ -412,15 +410,15 @@ loadTemplateExportEvents = ->
       $this.dequeue()
     event.preventDefault()
   # Deselect all of the templates in the list.
-  $('.export_deselect_all_btn').on 'click', ->
+  $('.export_deselect_all_btn').click ->
     $('.export_con_list option').removeAttr('selected').parent().focus()
     $('.export_yes_btn').attr 'disabled', 'disabled'
   # Cancel the export process.
-  $('.export_no_btn, .export_close_btn').on 'click', (event) ->
+  $('.export_no_btn, .export_close_btn').click (event) ->
     $('#export_con').modal 'hide'
     event.preventDefault()
   # Prompt the user to select a file location to save the exported data.
-  $('.export_save_btn').on 'click', ->
+  $('.export_save_btn').click ->
     $this = $ this
     str   = $this.parents('.export_con_stage2').find('.export_content').val()
     # Write the contents of the text area in to a temporary file and then
@@ -431,8 +429,7 @@ loadTemplateExportEvents = ->
           builder = new WebKitBlobBuilder()
           done    = no
           builder.append str
-          fileWriter.onerror = (error) ->
-            log.error error
+          fileWriter.onerror = (error) -> log.error error
           fileWriter.onwriteend = ->
             if done
               window.location.href = fileEntry.toURL()
@@ -441,16 +438,15 @@ loadTemplateExportEvents = ->
               fileWriter.write builder.getBlob 'application/json'
           fileWriter.truncate 0
   # Select all of the templates in the list.
-  $('.export_select_all_btn').on 'click', ->
+  $('.export_select_all_btn').click ->
     $('.export_con_list option').attr('selected', 'selected').parent().focus()
     $('.export_yes_btn').removeAttr 'disabled'
   # Create the exported data based on the selected templates.
-  $('.export_yes_btn').on 'click', ->
+  $('.export_yes_btn').click ->
     $this = $ this
     items = $this.parents('.export_con_stage1').find '.export_con_list option'
     keys  = []
-    items.filter(':selected').each ->
-      keys.push $(this).val()
+    items.filter(':selected').each -> keys.push $(this).val()
     $('.export_content').val createExport keys
     $('.export_con_stage1').hide()
     $('.export_con_stage2').show()
@@ -461,7 +457,7 @@ loadTemplateImportEvents = ->
   data      = null
   templates = $ '#templates'
   # Restore the previous view in the import process.
-  $('.import_back_btn').on 'click', ->
+  $('.import_back_btn').click ->
     log.info 'Going back to previous import stage'
     $('.import_con_stage1').show()
     $('.import_con_stage2, .import_con_stage3').hide()
@@ -478,29 +474,25 @@ loadTemplateImportEvents = ->
     $('#import_con').modal 'show'
   # Enable/disable the finalize button depending on whether or not any
   # templates are currently selected.
-  $('.import_con_list').on 'change', ->
+  $('.import_con_list').change ->
     if $(this).find('option:selected').length > 0
       $('.import_final_btn').removeAttr 'disabled'
     else
       $('.import_final_btn').attr 'disabled', 'disabled'
   # Deselect all of the templates in the list.
-  $('.import_deselect_all_btn').on 'click', ->
+  $('.import_deselect_all_btn').click ->
     $('.import_con_list option').removeAttr('selected').parent().focus()
     $('.import_final_btn').attr 'disabled', 'disabled'
   # Read the contents of the loaded file in to the text area and perform simple
   # error handling.
-  $('.import_file_btn').on 'change', (event) ->
+  $('.import_file_btn').change (event) ->
     file   = event.target.files[0]
     reader = new FileReader()
     reader.onerror = (evt) ->
-      message = ''
-      switch evt.target.error.code
-        when evt.target.error.NOT_FOUND_ERR
-          message = i18n.get 'error_file_not_found'
-        when evt.target.error.ABORT_ERR
-          message = i18n.get 'error_file_aborted'
-        else
-          message = i18n.get 'error_file_default'
+      message = i18n.get switch evt.target.error.code
+        when evt.target.error.NOT_FOUND_ERR then 'error_file_not_found'
+        when evt.target.error.ABORT_ERR then 'error_file_aborted'
+        else 'error_file_default'
       log.error message
       $('.import_error').text(message).show()
     reader.onload = (evt) ->
@@ -510,7 +502,7 @@ loadTemplateImportEvents = ->
       $('.import_content').val result
     reader.readAsText file
   # Finalize the import process.
-  $('.import_final_btn').on 'click', ->
+  $('.import_final_btn').click ->
     $this = $ this
     list  = $this.parents('.import_con_stage2').find '.import_con_list'
     list.find('option:selected').each ->
@@ -529,10 +521,9 @@ loadTemplateImportEvents = ->
       analytics.track 'Templates', 'Imported', data.version,
         data.templates.length
   # Cancel the import process.
-  $('.import_no_btn, .import_close_btn').on 'click', ->
-    $('#import_con').modal 'hide'
+  $('.import_no_btn, .import_close_btn').click -> $('#import_con').modal 'hide'
   # Paste the contents of the system clipboard in to the text area.
-  $('.import_paste_btn').on 'click', ->
+  $('.import_paste_btn').click ->
     $this = $ this
     $('.import_file_btn').val ''
     $('.import_content').val ext.paste()
@@ -542,12 +533,12 @@ loadTemplateImportEvents = ->
       $this.text i18n.get 'opt_import_wizard_paste_button'
       $this.dequeue()
   # Select all of the templates in the list.
-  $('.import_select_all_btn').on 'click', ->
+  $('.import_select_all_btn').click ->
     $('.import_con_list option').attr('selected', 'selected').parent().focus()
     $('.import_final_btn').removeAttr 'disabled'
   # Read the imported data and attempt to extract any valid templates and list
   # the changes to user for them to check and finalize.
-  $('.import_yes_btn').on 'click', ->
+  $('.import_yes_btn').click ->
     $this = $(this).attr 'disabled', 'disabled'
     list  = $ '.import_con_list'
     str   = $this.parents('.import_con_stage1').find('.import_content').val()
@@ -582,8 +573,8 @@ loadTemplateSaveEvents = ->
     log.debug "Changing template #{key} to '#{value}'"
     opt.data key, value
   , saveTemplates
-  bindTemplateSaveEvent "#template_content, #template_shortcut,
-   #template_title", 'input', (opt, key) ->
+  bindTemplateSaveEvent "#template_content, #template_shortcut
+  , #template_title", 'input', (opt, key) ->
     switch key
       when 'content' then opt.data key, @val()
       when 'shortcut'
@@ -603,12 +594,12 @@ loadTemplateSaveEvents = ->
     clearErrors selector = "##{jel.attr 'id'}"
     if opt.data 'error'
       showErrors [
-        message:  opt.data 'error'
+        message: opt.data 'error'
         selector: selector
       ]
       opt.removeData 'error'
-      return
-    saveTemplates()
+    else
+      saveTemplates()
 
 # Update the toolbar behaviour section of the options page with the current
 # settings.
@@ -629,28 +620,25 @@ loadToolbar = ->
 # Bind the event handlers required for controlling toolbar behaviour changes.
 loadToolbarControlEvents = ->
   log.trace()
-  buttons = $ '#toolbarPopup, #notToolbarPopup'
   # Bind a click event to listen for changes to the button selection.
-  buttons.click ->
-    switch $(this).attr 'id'
-      when 'notToolbarPopup'
-        $('.toolbarPopup').hide()
-        $('.notToolbarPopup').show()
-      when 'toolbarPopup'
-        $('.notToolbarPopup').hide()
-        $('.toolbarPopup').show()
-  buttons.filter('.active').click()
+  $('#toolbarPopup, #notToolbarPopup').click(-> switch $(this).attr 'id'
+    when 'notToolbarPopup'
+      $('.toolbarPopup').hide()
+      $('.notToolbarPopup').show()
+    when 'toolbarPopup'
+      $('.notToolbarPopup').hide()
+      $('.toolbarPopup').show()
+  ).filter('.active').click()
 
 # Bind the event handlers required for persisting toolbar behaviour changes.
 loadToolbarSaveEvents = ->
   log.trace()
   $('#toolbarPopup, #notToolbarPopup').click ->
     popup = not $('#toolbarPopup').hasClass 'active'
-    store.modify 'toolbar', (toolbar) ->
-      toolbar.popup = popup
+    store.modify 'toolbar', (toolbar) -> toolbar.popup = popup
     ext.updateToolbar()
     log.debug "Toolbar popup enabled: #{popup}"
-    analytics.track 'Toolbars', 'Changed', 'Behaviour', if popup then 1 else 0
+    analytics.track 'Toolbars', 'Changed', 'Behaviour', Number popup
   bindSaveEvent '#toolbarClose, #toolbarKey, #toolbarOptions, #toolbarStyle',
    'change', 'toolbar', (key) ->
     value = if key is 'key' then @val() else @is ':checked'
@@ -662,14 +650,13 @@ loadToolbarSaveEvents = ->
     if key is 'Key'
       analytics.track 'Toolbars', 'Changed', key
     else
-      analytics.track 'Toolbars', 'Changed', key, if value then 1 else 0
+      analytics.track 'Toolbars', 'Changed', key, Number value
 
 # Update the URL shorteners section of the options page with the current
 # settings.
 loadUrlShorteners = ->
   log.trace()
   bitly  = store.get 'bitly'
-  googl  = store.get 'googl'
   yourls = store.get 'yourls'
   $('input[name="enabled_shortener"]').each ->
     $this = $ this
@@ -693,14 +680,11 @@ loadUrlShortenerAccounts = ->
   logout = i18n.get 'opt_url_shortener_logout_button'
   # Retrieve all URL shortener services that use OAuth and iterate over the
   # results.
-  shorteners = ext.queryUrlShortener (shortener) ->
-    shortener.oauth?
-  , no
-  for shortener in shorteners
+  for shortener in ext.queryUrlShortener ((shortener) -> shortener.oauth?), no
     do (shortener) ->
-      button = $ "##{shortener.name}Account"
-      # Bind the event handler required for logging in and out of accounts.
-      button.click ->
+      # Bind the event handler required for logging in and out of accounts and
+      # then reflect the current login state in the button.
+      $("##{shortener.name}Account").click(->
         $this = $(this).attr 'disabled', 'disabled'
         switch $this.text()
           when login
@@ -719,8 +703,7 @@ loadUrlShortenerAccounts = ->
             shortener.oauth.clearTokens()
             $this.text(login).removeAttr 'disabled'
             analytics.track 'Shorteners', 'Logout', shortener.title
-      # Reflect the current login state in the button.
-      button.text if shortener.oauth.hasToken() then logout else login
+      ).text if shortener.oauth.hasToken() then logout else login
 
 # Bind the event handlers required for controlling URL shortener configuration
 # changes.
@@ -738,15 +721,13 @@ loadUrlShortenerSaveEvents = ->
   $('input[name="enabled_shortener"]').change ->
     store.modify 'bitly', 'googl', 'yourls', (data, key) ->
       if data.enabled = $("##{key}").is ':checked'
-        shortener = ext.queryUrlShortener (shortener) ->
-          shortener.name is key
+        shortener = ext.queryUrlShortener (shortener) -> shortener.name is key
         log.debug "Enabling #{shortener.title} URL shortener"
         analytics.track 'Shorteners', 'Enabled', shortener.title
   bindSaveEvent '#bitlyApiKey, #bitlyUsername', 'input', 'bitly', ->
     @val().trim()
-  bindSaveEvent "#yourlsPassword, #yourlsSignature, #yourlsUrl,
-   #yourlsUsername", 'input', 'yourls', ->
-    @val().trim()
+  bindSaveEvent "#yourlsPassword, #yourlsSignature, #yourlsUrl
+   , #yourlsUsername", 'input', 'yourls', -> @val().trim()
 
 # Save functions
 # --------------
@@ -868,8 +849,7 @@ isKeyNew = (key, additionalKeys = []) ->
   log.trace()
   log.debug "Checking if template key '#{key}' is new"
   available = yes
-  $('#templates option').each ->
-    available = no if $(this).val() is key
+  $('#templates option').each -> available = no if $(this).val() is key
   available and key not in additionalKeys
 
 # Indicate whether or not the specified `key` is valid.
@@ -972,9 +952,7 @@ addImportedTemplate = (template) ->
 createExport = (keys) ->
   log.trace()
   log.debug 'Creating an export string for the following keys...', keys
-  data =
-    templates: []
-    version:   ext.version
+  data = templates: [], version: ext.version
   for key in keys
     data.templates.push deriveTemplate $ "#templates option[value='#{key}']"
   if data.templates.length
@@ -986,7 +964,6 @@ createExport = (keys) ->
 createImport = (str) ->
   log.trace()
   log.debug 'Parsing the following import string...', str
-  data = {}
   try
     data = JSON.parse str
   catch error
@@ -1082,12 +1059,9 @@ options = window.options = new class Options extends utils.Class
     analytics.add() if store.get 'analytics'
     # Begin initialization.
     i18n.init
-      footer:
-        opt_footer: "#{new Date().getFullYear()}"
-      googlAccountHelp:
-        opt_url_shortener_account_sub_text: 'shortener_googl'
-      version_definition:
-        opt_guide_standard_version_text: ext.version
+      footer: opt_footer: "#{new Date().getFullYear()}"
+      googlAccountHelp: opt_url_shortener_account_sub_text: 'shortener_googl'
+      version_definition: opt_guide_standard_version_text: ext.version
     # Bind tab selection event to all tabs.
     initialTabChange = yes
     $('a[tabify]').click ->
@@ -1112,13 +1086,10 @@ options = window.options = new class Options extends utils.Class
     $("##{optionsActiveTab}").click()
     log.debug "Initially displaying tab for #{optionsActiveTab}"
     # Bind Developer Tools wizard events to their corresponding elements.
-    $('#tools_nav').click ->
-      $('#tools_wizard').modal 'show'
-    $('.tools_close_btn').click ->
-      $('#tools_wizard').modal 'hide'
+    $('#tools_nav').click -> $('#tools_wizard').modal 'show'
+    $('.tools_close_btn').click -> $('#tools_wizard').modal 'hide'
     # Ensure that form submissions don't reload the page.
-    $('form').submit ->
-      no
+    $('form').submit -> no
     # Load the current option values.
     load()
     $('#template_shortcut_modifier').html if ext.isThisPlatform 'mac'
@@ -1131,12 +1102,10 @@ options = window.options = new class Options extends utils.Class
       trigger = $this.attr 'data-trigger'
       trigger = if trigger? then trigger.trim().toLowerCase() else 'hover'
       $this.popover
-        content: ->
-          i18n.get $this.attr 'popover'
+        content: -> i18n.get $this.attr 'popover'
         trigger: trigger
       if trigger is 'manual'
-        $this.click ->
-          $this.popover 'toggle'
+        $this.click -> $this.popover 'toggle'
     $('[title]').each ->
       $this     = $ this
       placement = $this.attr 'data-placement'
