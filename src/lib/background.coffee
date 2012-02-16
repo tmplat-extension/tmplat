@@ -378,18 +378,14 @@ onRequest = (request, sender, sendResponse) ->
   popup         = chrome.extension.getViews(type: 'popup')[0]
   popupItems    = if popup then $ '#item',    popup.document else $()
   popupLoader   = if popup then $ '#loadDiv', popup.document else $()
-  popupProgress = popupLoader.find '.progress'
+  popupProgress = popupLoader.find '.progress .bar'
   shortenMap    = {}
   tab           = null
   template      = null
   windowId      = null
   # Update the progress bar to display the specified `percent`.
-  updateProgress = (percent) ->
-    if percent?
-      popupProgress.removeClass('progress-striped').find('.bar').css 'width',
-        "#{percent}%"
-    else
-      popupProgress.addClass 'progress-striped'
+  updateProgress = (percent = 0) ->
+    popupProgress.css 'width', "#{percent}%"
   # Create a runner to manage this asynchronous mess.
   runner = new utils.Runner()
   runner.push chrome.windows, 'getCurrent', (win) ->
@@ -475,7 +471,6 @@ onRequest = (request, sender, sendResponse) ->
             success:  yes
             template: template
         else
-          updateProgress()
           runner.next()
       else
         # Display the *empty contents* error message if the contents of the
@@ -544,6 +539,7 @@ onRequest = (request, sender, sendResponse) ->
         else
           popupLoader.queue ->
             popupLoader.hide().dequeue()
+            popupProgress.css 'width', '0px'
           popupItems.queue ->
             popupItems.show().dequeue()
     log.debug "Finished handling #{type} request"
@@ -603,6 +599,7 @@ showNotification = ->
       popupLoader = $ '#loadDiv', popup.document
       popupLoader.queue ->
         popupLoader.hide().dequeue()
+        popupLoader.find('.progress .bar').css 'width', '0px'
       popupItems.queue ->
         popupItems.show().dequeue()
 
@@ -881,7 +878,7 @@ buildPopup = ->
   itemList = $ '<ul id="itemList"/>'
   loadDiv  = $ '<div id="loadDiv"/>'
   loadDiv.append $('<div/>',
-    class: 'progress progress-info active'
+    class: 'progress progress-info progress-striped active'
   ).append $ '<div/>',
     class: 'bar'
     style: 'width: 100%'
