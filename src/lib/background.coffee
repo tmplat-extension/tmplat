@@ -1128,11 +1128,11 @@ initUrlShorteners = ->
   initUrlShorteners_update()
   store.modify 'bitly', (bitly) ->
     bitly.apiKey   ?= ''
-    bitly.enabled  ?= no
+    bitly.enabled  ?= yes
     bitly.usage    ?= 0
     bitly.username ?= ''
   store.modify 'googl', (googl) ->
-    googl.enabled ?= yes
+    googl.enabled ?= no
     googl.usage   ?= 0
   store.modify 'yourls', (yourls) ->
     yourls.enabled   ?= no
@@ -1152,22 +1152,22 @@ initUrlShorteners_update = ->
   # namespace.
   updater.update '0.1.0.0', ->
     log.info 'Updating URL shortener settings for 0.1.0.0'
-    store.rename 'bitlyEnabled',       'bitly',         off
+    store.rename 'bitlyEnabled',       'bitly',         yes
     store.rename 'bitlyXApiKey',       'bitlyApiKey',   ''
     store.rename 'bitlyXLogin',        'bitlyUsername', ''
-    store.rename 'googleEnabled',      'googl',         on
-    store.rename 'googleOAuthEnabled', 'googlOAuth',    on
+    store.rename 'googleEnabled',      'googl',         no
+    store.rename 'googleOAuthEnabled', 'googlOAuth',    yes
   updater.update '1.0.0', ->
     log.info 'Updating URL shortener settings for 1.0.0'
     bitly = store.get 'bitly'
     store.set 'bitly',
       apiKey:    store.get('bitlyApiKey') ? ''
-      enabled:   if typeof bitly is 'boolean' then bitly else no
+      enabled:   if typeof bitly is 'boolean' then bitly else yes
       username:  store.get('bitlyUsername') ? ''
     store.remove 'bitlyApiKey', 'bitlyUsername'
     googl = store.get 'googl'
     store.set 'googl',
-      enabled: if typeof googl is 'boolean' then googl else yes
+      enabled: if typeof googl is 'boolean' then googl else no
     store.remove 'googlOAuth'
     yourls = store.get 'yourls'
     store.set 'yourls',
@@ -1238,10 +1238,10 @@ getActiveUrlShortener = ->
   # Attempt to lookup enabled URL shortener service.
   shortener = ext.queryUrlShortener (shortener) -> shortener.isEnabled()
   unless shortener?
-    # Should never reach here but we'll return goo.gl service by default after
+    # Should never reach here but we'll return bit.ly service by default after
     # ensuring it's the active URL shortener service from now on to save some
     # time in the future.
-    store.modify 'googl', (googl) -> googl.enabled = yes
+    store.modify 'bitly', (bitly) -> bitly.enabled = yes
     shortener = getActiveUrlShortener()
   log.debug "Getting details for #{shortener.title} URL shortener"
   shortener
