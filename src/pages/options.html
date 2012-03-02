@@ -13,8 +13,6 @@
       .top {vertical-align: top;}
       .middle {vertical-align: middle;}
       .bottom {vertical-align: bottom;}
-      .config-expand {display: none;}
-      .config-expand a {cursor: pointer;}
       .import_error {margin-bottom: 8px;}
       .import_content, .export_content {max-height: 284px;}
       textarea {resize: vertical;}
@@ -151,52 +149,54 @@
                 <div class="control-group">
                   <label class="control-label" i18n-content="opt_toolbar_behaviour_label"></label>
                   <div class="controls">
-                    <div class="btn-group" data-toggle="buttons-radio">
-                      <button id="toolbarPopup" class="btn" i18n-values=".innerHTML:opt_toolbar_popup_button;title:opt_toolbar_popup_title"></button>
-                      <button id="notToolbarPopup" class="btn" i18n-values=".innerHTML:opt_toolbar_not_popup_button;title:opt_toolbar_not_popup_title"></button>
+                    <div id="toolbarPopup" class="btn-group" data-toggle="buttons-radio">
+                      <button id="toolbarPopupYes" class="btn" i18n-values=".innerHTML:opt_toolbar_popup_yes_button;title:opt_toolbar_popup_yes_title"></button>
+                      <button id="toolbarPopupNo" class="btn" i18n-values=".innerHTML:opt_toolbar_popup_no_button;title:opt_toolbar_popup_no_title"></button>
                     </div>
                     <p class="help-block" i18n-content="opt_toolbar_behaviour_sub_text"></p>
                   </div>
                 </div>
-                <div class="toolbarPopup">
-                  <div class="control-group">
-                    <label class="control-label" for="toolbarClose" i18n-content="opt_toolbar_close_label"></label>
-                    <div class="controls">
-                      <label class="checkbox span5 tight-left">
-                        <input type="checkbox" id="toolbarClose">
-                        <span i18n-content="opt_toolbar_close_text"></span>
-                        <p class="help-block" i18n-content="opt_toolbar_close_sub_text"></p>
-                      </label>
+                <div>
+                  <div class="toolbarPopupNo">
+                    <div class="control-group">
+                      <label class="control-label" for="toolbarKey" i18n-content="opt_toolbar_key_label"></label>
+                      <div class="controls">
+                        <label class="span5 tight-bottom tight-left">
+                          <select id="toolbarKey" size="1"></select>
+                          <p class="tight-bottom" i18n-content="opt_toolbar_key_text"></p>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="control-group">
+                      <label class="control-label" for="toolbarStyle" i18n-content="opt_toolbar_style_label"></label>
+                      <div class="controls">
+                        <label class="checkbox span5 tight-left">
+                          <input type="checkbox" id="toolbarStyle">
+                          <span i18n-content="opt_toolbar_style_text"></span>
+                          <p class="help-block" i18n-content="opt_toolbar_style_sub_text"></p>
+                        </label>
+                      </div>
                     </div>
                   </div>
-                  <div class="control-group">
-                    <label class="control-label" for="toolbarOptions" i18n-content="opt_toolbar_options_label"></label>
-                    <div class="controls">
-                      <label class="checkbox span5 tight-left">
-                        <input type="checkbox" id="toolbarOptions">
-                        <span i18n-content="opt_toolbar_options_text"></span>
-                      </label>
+                  <div class="toolbarPopupYes">
+                    <div class="control-group">
+                      <label class="control-label" for="toolbarClose" i18n-content="opt_toolbar_close_label"></label>
+                      <div class="controls">
+                        <label class="checkbox span5 tight-left">
+                          <input type="checkbox" id="toolbarClose">
+                          <span i18n-content="opt_toolbar_close_text"></span>
+                          <p class="help-block" i18n-content="opt_toolbar_close_sub_text"></p>
+                        </label>
+                      </div>
                     </div>
-                  </div>
-                </div>
-                <div class="notToolbarPopup">
-                  <div class="control-group">
-                    <label class="control-label" for="toolbarKey" i18n-content="opt_toolbar_key_label"></label>
-                    <div class="controls">
-                      <label class="span5 tight-bottom tight-left">
-                        <select id="toolbarKey" size="1"></select>
-                        <p class="tight-bottom" i18n-content="opt_toolbar_key_text"></p>
-                      </label>
-                    </div>
-                  </div>
-                  <div class="control-group">
-                    <label class="control-label" for="toolbarStyle" i18n-content="opt_toolbar_style_label"></label>
-                    <div class="controls">
-                      <label class="checkbox span5 tight-left">
-                        <input type="checkbox" id="toolbarStyle">
-                        <span i18n-content="opt_toolbar_style_text"></span>
-                        <p class="help-block" i18n-content="opt_toolbar_style_sub_text"></p>
-                      </label>
+                    <div class="control-group">
+                      <label class="control-label" for="toolbarOptions" i18n-content="opt_toolbar_options_label"></label>
+                      <div class="controls">
+                        <label class="checkbox span5 tight-left">
+                          <input type="checkbox" id="toolbarOptions">
+                          <span i18n-content="opt_toolbar_options_text"></span>
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -259,8 +259,8 @@
                     <select class="span4" id="templates" size="5"></select>
                   </div>
                   <div class="span8">
-                    <button id="moveUp_btn" class="btn"><i class="icon-arrow-up"></i></button>
-                    <button id="moveDown_btn" class="btn"><i class="icon-arrow-down"></i></button>
+                    <button id="moveUp_btn" class="btn"><i class="icon-chevron-up"></i></button>
+                    <button id="moveDown_btn" class="btn"><i class="icon-chevron-down"></i></button>
                   </div>
                 </div>
                 <div class="row control-group">
@@ -435,17 +435,9 @@
                   </div>
                   <div class="span10">
                     <div class="control-group">
-                      <label class="control-label" for="bitlyUsername" i18n-content="opt_url_shortener_username_label"></label>
+                      <label class="control-label" for="bitlyAccount" i18n-content="opt_url_shortener_account_label"></label>
                       <div class="span4 controls">
-                        <input type="text" id="bitlyUsername" class="span3">
-                        <p class="help-block" i18n-content="opt_url_shortener_username_bitly_sub_text"></p>
-                      </div>
-                    </div>
-                    <div class="control-group">
-                      <label class="control-label" for="bitlyApiKey" i18n-content="opt_url_shortener_api_key_label"></label>
-                      <div class="span4 controls">
-                        <input type="password" id="bitlyApiKey" class="span3">
-                        <p class="help-block" i18n-content="opt_url_shortener_api_key_bitly_sub_text"></p>
+                        <button class="btn" id="bitlyAccount" i18n-values="title:opt_url_shortener_account_title"></button>
                       </div>
                     </div>
                   </div>
@@ -465,8 +457,7 @@
                     <div class="control-group">
                       <label class="control-label" for="googlAccount" i18n-content="opt_url_shortener_account_label"></label>
                       <div class="span4 controls">
-                        <button class="btn" id="googlAccount"></button>
-                        <p id="googlAccountHelp" class="help-block" i18n-values=".innerHTML:opt_url_shortener_account_sub_text"></p>
+                        <button class="btn" id="googlAccount" i18n-values="title:opt_url_shortener_account_title"></button>
                       </div>
                     </div>
                   </div>
@@ -490,32 +481,42 @@
                         <p class="help-block" i18n-content="opt_url_shortener_url_yourls_sub_text"></p>
                       </div>
                     </div>
-                    <div class="row">
-                      <hr class="span5" style="margin-top: 0">
-                    </div>
                     <div class="control-group">
-                      <label class="control-label" for="yourlsUsername" i18n-content="opt_url_shortener_username_label"></label>
+                      <label class="control-label" i18n-content="opt_url_shortener_authentication_label"></label>
                       <div class="span4 controls">
-                        <input type="text" id="yourlsUsername" class="span3" />
+                        <div id="yourlsAuthentication" class="btn-group" data-toggle="buttons-radio">
+                          <button id="yourlsAuthenticationNone" class="btn" i18n-content="opt_url_shortener_authentication_none_button"></button>
+                          <button id="yourlsAuthenticationBasic" class="btn" i18n-content="opt_url_shortener_authentication_basic_button"></button>
+                          <button id="yourlsAuthenticationAdvanced" class="btn" i18n-content="opt_url_shortener_authentication_advanced_button"></button>
+                        </div>
                       </div>
                     </div>
-                    <div class="control-group">
-                      <label class="control-label" for="yourlsPassword" i18n-content="opt_url_shortener_password_label"></label>
-                      <div class="span4 controls">
-                        <input type="password" id="yourlsPassword" class="span3" />
+                    <div>
+                      <div class="yourlsAuthenticationAdvanced">
+                        <div class="control-group">
+                          <label class="control-label" for="yourlsSignature" i18n-content="opt_url_shortener_signature_label"></label>
+                          <div class="span4 controls">
+                            <input type="password" id="yourlsSignature" class="span3" />
+                            <p class="help-block" i18n-content="opt_url_shortener_signature_yourls_sub_text"></p>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <div class="row control-group">
-                      <div class="span5 controls center">
-                        <strong i18n-content="opt_or_text"></strong>
+                      <div class="yourlsAuthenticationBasic">
+                        <div class="control-group">
+                          <label class="control-label" for="yourlsUsername" i18n-content="opt_url_shortener_username_label"></label>
+                          <div class="span4 controls">
+                            <input type="text" id="yourlsUsername" class="span3" />
+                          </div>
+                        </div>
+                        <div class="control-group">
+                          <label class="control-label" for="yourlsPassword" i18n-content="opt_url_shortener_password_label"></label>
+                          <div class="span4 controls">
+                            <input type="password" id="yourlsPassword" class="span3" />
+                            <p class="help-block" i18n-content="opt_url_shortener_password_sub_text"></p>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <div class="control-group">
-                      <label class="control-label" for="yourlsSignature" i18n-content="opt_url_shortener_signature_label"></label>
-                      <div class="span4 controls">
-                        <input type="password" id="yourlsSignature" class="span3" />
-                        <p class="help-block" i18n-content="opt_url_shortener_signature_yourls_sub_text"></p>
-                      </div>
+                      <div class="yourlsAuthenticationNone"></div>
                     </div>
                   </div>
                 </div>
@@ -897,12 +898,8 @@
                             <td i18n-content="opt_guide_options_bitly_text"></td>
                           </tr>
                           <tr>
-                            <td>bitlyApiKey</td>
-                            <td i18n-content="opt_guide_options_bitly_api_key_text"></td>
-                          </tr>
-                          <tr>
-                            <td>bitlyUsername</td>
-                            <td i18n-content="opt_guide_options_bitly_username_text"></td>
+                            <td>bitlyAccount<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_options_bitly_account_text"></td>
                           </tr>
                           <tr>
                             <td>googl</td>
@@ -955,6 +952,10 @@
                           <tr>
                             <td>yourls</td>
                             <td i18n-content="opt_guide_options_yourls_text"></td>
+                          </tr>
+                          <tr>
+                            <td>yourlsAuthentication<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_options_yourls_authentication_text"></td>
                           </tr>
                           <tr>
                             <td>yourlsPassword</td>

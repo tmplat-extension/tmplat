@@ -75,7 +75,7 @@ load = ->
 # Bind the event handlers required for controlling general changes.
 loadControlEvents = ->
   log.trace()
-  $('#menuEnabled').change(->
+  $('#menuEnabled').change( ->
     controlGroup = $('#menuOptions').parents('.control-group').first()
     if $(this).is ':checked' then controlGroup.show() else controlGroup.hide()
   ).change()
@@ -607,9 +607,9 @@ loadToolbar = ->
   log.trace()
   toolbar = store.get 'toolbar'
   if toolbar.popup
-    $('#toolbarPopup').addClass 'active'
+    $('#toolbarPopupYes').addClass 'active'
   else
-    $('#notToolbarPopup').addClass 'active'
+    $('#toolbarPopupNo').addClass 'active'
   $('#toolbarClose').attr   'checked', 'checked' if toolbar.close
   $('#toolbarOptions').attr 'checked', 'checked' if toolbar.options
   $('#toolbarStyle').attr   'checked', 'checked' if toolbar.style
@@ -621,20 +621,15 @@ loadToolbar = ->
 loadToolbarControlEvents = ->
   log.trace()
   # Bind a click event to listen for changes to the button selection.
-  $('#toolbarPopup, #notToolbarPopup').click(-> switch $(this).attr 'id'
-    when 'notToolbarPopup'
-      $('.toolbarPopup').hide()
-      $('.notToolbarPopup').show()
-    when 'toolbarPopup'
-      $('.notToolbarPopup').hide()
-      $('.toolbarPopup').show()
+  $('#toolbarPopup button').click( ->
+    $(".#{$(this).attr 'id'}").show().siblings().hide()
   ).filter('.active').click()
 
 # Bind the event handlers required for persisting toolbar behaviour changes.
 loadToolbarSaveEvents = ->
   log.trace()
-  $('#toolbarPopup, #notToolbarPopup').click ->
-    popup = not $('#toolbarPopup').hasClass 'active'
+  $('#toolbarPopup button').click ->
+    popup = not $('#toolbarPopupYes').hasClass 'active'
     store.modify 'toolbar', (toolbar) -> toolbar.popup = popup
     ext.updateToolbar()
     log.debug "Toolbar popup enabled: #{popup}"
@@ -656,14 +651,16 @@ loadToolbarSaveEvents = ->
 # settings.
 loadUrlShorteners = ->
   log.trace()
-  bitly  = store.get 'bitly'
-  yourls = store.get 'yourls'
   $('input[name="enabled_shortener"]').each ->
     $this = $ this
     $this.attr 'checked', 'checked' if store.get "#{$this.attr 'id'}.enabled"
     yes
-  $('#bitlyApiKey').val bitly.apiKey
-  $('#bitlyUsername').val bitly.username
+  yourls = store.get 'yourls'
+  $('#yourlsAuthentication' + (switch yourls.authentication
+    when 'advanced' then 'Advanced'
+    when 'basic' then 'Basic'
+    else 'None'
+  )).addClass 'active'
   $('#yourlsPassword').val yourls.password
   $('#yourlsSignature').val yourls.signature
   $('#yourlsUrl').val yourls.url
@@ -676,43 +673,53 @@ loadUrlShorteners = ->
 # current state of their OAuth objects.
 loadUrlShortenerAccounts = ->
   log.trace()
-  login  = i18n.get 'opt_url_shortener_login_button'
-  logout = i18n.get 'opt_url_shortener_logout_button'
   # Retrieve all URL shortener services that use OAuth and iterate over the
   # results.
   for shortener in ext.queryUrlShortener ((shortener) -> shortener.oauth?), no
     do (shortener) ->
       # Bind the event handler required for logging in and out of accounts and
       # then reflect the current login state in the button.
-      $("##{shortener.name}Account").click(->
-        $this = $(this).attr 'disabled', 'disabled'
-        switch $this.text()
-          when login
-            log.debug "Attempting to authorize #{shortener.name}"
-            shortener.oauth.authorize ->
-              log.debug "Authorization response for #{shortener.name}...",
-                arguments
-              if shortener.oauth.hasToken()
-                $this.text logout
-                analytics.track 'Shorteners', 'Login', shortener.title
-              else
-                $this.text login
-              $this.removeAttr 'disabled'
-          when logout
-            log.debug "Removing authorization for #{shortener.name}"
-            shortener.oauth.clearTokens()
-            $this.text(login).removeAttr 'disabled'
-            analytics.track 'Shorteners', 'Logout', shortener.title
-      ).text if shortener.oauth.hasToken() then logout else login
+      button = $ "##{shortener.name}Account"
+      button.click ->
+        $this = $(this).blur()
+        if $this.data('oauth') isnt 'true'
+          log.debug "Attempting to authorize #{shortener.name}"
+          shortener.oauth.authorize ->
+            log.debug "Authorization response for #{shortener.name}...",
+              arguments
+            if success = shortener.oauth.hasAccessToken()
+              $this.addClass('btn-danger').removeClass 'btn-success'
+              $this.data 'oauth', 'true'
+              $this.html i18n.get 'opt_url_shortener_logout_button'
+            analytics.track 'Shorteners', 'Login', shortener.title,
+              Number success
+        else
+          log.debug "Removing authorization for #{shortener.name}"
+          shortener.oauth.clearAccessToken()
+          if $this.attr('id') is 'bitlyAccount'
+            shortener.oauth.clear 'apiKey'
+            shortener.oauth.clear 'login'
+          $this.addClass('btn-success').removeClass 'btn-danger'
+          $this.data 'oauth', 'false'
+          $this.html i18n.get 'opt_url_shortener_login_button'
+          analytics.track 'Shorteners', 'Logout', shortener.title
+      if shortener.oauth.hasAccessToken()
+        button.addClass('btn-danger').removeClass 'btn-success'
+        button.data 'oauth', 'true'
+        button.html i18n.get 'opt_url_shortener_logout_button'
+      else
+        button.addClass('btn-success').removeClass 'btn-danger'
+        button.data 'oauth', 'false'
+        button.html i18n.get 'opt_url_shortener_login_button'
 
 # Bind the event handlers required for controlling URL shortener configuration
 # changes.
 loadUrlShortenerControlEvents = ->
   log.trace()
-  $('.config-expand a').click ->
-    $this = $ this
-    $this.parents('.config-expand').first().hide()
-    $this.parents('.config').first().find('.config-details').show()
+  # Bind a click event to listen for changes to the button selection.
+  $('#yourlsAuthentication button').click( ->
+    $(".#{$(this).attr 'id'}").show().siblings().hide()
+  ).filter('.active').click()
 
 # Bind the event handlers required for persisting URL shortener configuration
 # changes.
@@ -724,8 +731,14 @@ loadUrlShortenerSaveEvents = ->
         shortener = ext.queryUrlShortener (shortener) -> shortener.name is key
         log.debug "Enabling #{shortener.title} URL shortener"
         analytics.track 'Shorteners', 'Enabled', shortener.title
-  bindSaveEvent '#bitlyApiKey, #bitlyUsername', 'input', 'bitly', ->
-    @val().trim()
+  $('#yourlsAuthentication button').click ->
+    $this = $ this
+    auth = $this.attr('id').match(/yourlsAuthentication(.*)/)[1]
+    store.modify 'yourls', (yourls) ->
+      yourls.authentication = if auth is 'None' then '' else auth.toLowerCase()
+    log.debug "YOURLS authentication changed: #{auth}"
+    analytics.track 'Shorteners', 'Changed', 'YOURLS Authentication',
+      $this.index()
   bindSaveEvent "#yourlsPassword, #yourlsSignature, #yourlsUrl
    , #yourlsUsername", 'input', 'yourls', -> @val().trim()
 
@@ -1059,8 +1072,9 @@ options = window.options = new class Options extends utils.Class
     analytics.add() if store.get 'analytics'
     # Begin initialization.
     i18n.init
+      bitlyAccount: opt_url_shortener_account_title: i18n.get 'shortener_bitly'
       footer: opt_footer: "#{new Date().getFullYear()}"
-      googlAccountHelp: opt_url_shortener_account_sub_text: 'shortener_googl'
+      googlAccount: opt_url_shortener_account_title: i18n.get 'shortener_googl'
       version_definition: opt_guide_standard_version_text: ext.version
     # Bind tab selection event to all tabs.
     initialTabChange = yes

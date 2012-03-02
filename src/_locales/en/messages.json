@@ -99,13 +99,13 @@
     }
   },
   "opt_anchor_text": {
-    "message": "This section refers to links that are rendered by the $O_INFO$Anchor$C_INFO$ template.",
+    "message": "This section refers to links that are rendered by the $O_EMPH$Anchor$C_EMPH$ template.",
     "placeholders": {
-      "c_info": {
-        "content": "</span>"
+      "c_emph": {
+        "content": "</em>"
       },
-      "o_info": {
-        "content": "<span class=\"label label-info\">"
+      "o_emph": {
+        "content": "<em>"
       }
     }
   },
@@ -1052,20 +1052,11 @@
       }
     }
   },
-  "opt_guide_options_bitly_api_key_text": {
-    "message": "The $O_ABBR_1$Application Programming Interface$O_ABBR_2$API$C_ABBR$ key associated with your $O_LINK_1$http://bit.ly/a/account$O_LINK_2$bit.ly account$C_LINK$",
+  "opt_guide_options_bitly_account_text": {
+    "message": "Whether or not you are currently logged in to your $O_LINK_1$http://bit.ly$O_LINK_2$bit.ly$C_LINK$ account",
     "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>"
-      },
       "c_link": {
         "content": "</a>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">"
       },
       "o_link_1": {
         "content": "<a href=\""
@@ -1095,34 +1086,6 @@
       },
       "o_link_2": {
         "content": "\" target=\"_blank\">"
-      }
-    }
-  },
-  "opt_guide_options_bitly_username_text": {
-    "message": "The username associated with your $O_LINK_1$http://bit.ly/a/account$O_LINK_2$bit.ly account$C_LINK$",
-    "placeholders": {
-      "c_link": {
-        "content": "</a>"
-      },
-      "o_link_1": {
-        "content": "<a href=\""
-      },
-      "o_link_2": {
-        "content": "\" target=\"_blank\">"
-      }
-    }
-  },
-  "opt_guide_options_menu_text": {
-    "message": "Whether or not the option to show the context (right-click) menu is enabled"
-  },
-  "opt_guide_options_menu_options_text": {
-    "message": "Whether or not the $O_EMPH$Options$C_EMPH$ item is displayed at the bottom of the context (right-click) menu",
-    "placeholders": {
-      "c_emph": {
-        "content": "</em>"
-      },
-      "o_emph": {
-        "content": "<em>"
       }
     }
   },
@@ -1206,6 +1169,20 @@
       }
     }
   },
+  "opt_guide_options_menu_text": {
+    "message": "Whether or not the option to show the context (right-click) menu is enabled"
+  },
+  "opt_guide_options_menu_options_text": {
+    "message": "Whether or not the $O_EMPH$Options$C_EMPH$ item is displayed at the bottom of the context (right-click) menu",
+    "placeholders": {
+      "c_emph": {
+        "content": "</em>"
+      },
+      "o_emph": {
+        "content": "<em>"
+      }
+    }
+  },
   "opt_guide_options_notification_duration_text": {
     "message": "The number of seconds desktop notifications are displayed for"
   },
@@ -1248,6 +1225,35 @@
   },
   "opt_guide_options_toolbar_style_text": {
     "message": "Whether or not the toolbar button's design is based on a template"
+  },
+  "opt_guide_options_yourls_authentication_text": {
+    "message": "The authentication used for the $O_LINK_1$http://yourls.org$O_LINK_2$YOURLS$C_LINK$ service (e.g. $O_EMPH$$EXAMPLE_1$$C_EMPH$, $O_EMPH$$EXAMPLE_2$$C_EMPH$, or nothing if $O_EMPH$$EXAMPLE_3$$C_EMPH$)",
+    "placeholders": {
+      "c_emph": {
+        "content": "</em>"
+      },
+      "c_link": {
+        "content": "</a>"
+      },
+      "example_1": {
+        "content": "advanced"
+      },
+      "example_2": {
+        "content": "basic"
+      },
+      "example_3": {
+        "content": "none"
+      },
+      "o_emph": {
+        "content": "<em>"
+      },
+      "o_link_1": {
+        "content": "<a href=\""
+      },
+      "o_link_2": {
+        "content": "\" target=\"_blank\">"
+      }
+    }
   },
   "opt_guide_options_yourls_password_text": {
     "message": "The password for the $O_LINK_1$http://yourls.org$O_LINK_2$YOURLS$C_LINK$ service",
@@ -1978,9 +1984,6 @@
   "opt_notification_duration_text": {
     "message": "Automatically hide desktop notifications after this time"
   },
-  "opt_or_text": {
-    "message": "OR"
-  },
   "opt_shortcut_label": {
     "message": "Keyboard Shortcuts"
   },
@@ -2086,22 +2089,32 @@
   "opt_toolbar_key_text": {
     "message": "Select the template to be used"
   },
-  "opt_toolbar_not_popup_button": {
-    "message": "Template"
-  },
-  "opt_toolbar_not_popup_title": {
-    "message": "Use a template when the toolbar icon is clicked"
-  },
   "opt_toolbar_options_label": {
     "message": "Options Link"
   },
   "opt_toolbar_options_text": {
     "message": "Display a link to the Options page at the bottom of the popup"
   },
-  "opt_toolbar_popup_button": {
-    "message": "Popup"
+  "opt_toolbar_popup_no_button": {
+    "message": "$ICON$ Template",
+    "placeholders": {
+      "icon": {
+        "content": "<i class=\"icon-screenshot\"></i>"
+      }
+    }
   },
-  "opt_toolbar_popup_title": {
+  "opt_toolbar_popup_no_title": {
+    "message": "Use a template when the toolbar icon is clicked"
+  },
+  "opt_toolbar_popup_yes_button": {
+    "message": "$ICON$ Popup",
+    "placeholders": {
+      "icon": {
+        "content": "<i class=\"icon-th-list\"></i>"
+      }
+    }
+  },
+  "opt_toolbar_popup_yes_title": {
     "message": "Show a popup when the toolbar icon is clicked"
   },
   "opt_toolbar_style_label": {
@@ -2139,48 +2152,38 @@
   "opt_url_shortener_account_label": {
     "message": "Account"
   },
-  "opt_url_shortener_account_sub_text": {
-    "message": "Associate links shortened by $MARKER$ with your account",
+  "opt_url_shortener_account_title": {
+    "message": "Associate links shortened by $SERVICE$ with your account",
     "placeholders": {
-      "marker": {
-        "content": "<strong i18n-content=\"$1\"></strong>"
+      "service": {
+        "content": "$1"
       }
     }
   },
-  "opt_url_shortener_api_key_bitly_sub_text": {
-    "message": "$O_LINK_1$http://bit.ly/a/your_api_key$O_LINK_2$Get your $O_ABBR_1$Application Programming Interface$O_ABBR_2$API$C_ABBR$ key$C_LINK$",
+  "opt_url_shortener_authentication_basic_button": {
+    "message": "$ICON$ Basic",
     "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>"
-      },
-      "c_link": {
-        "content": "</a>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">"
-      },
-      "o_link_1": {
-        "content": "<a href=\""
-      },
-      "o_link_2": {
-        "content": "\" target=\"_blank\">"
+      "icon": {
+        "content": "<i class=\"icon-user\"></i>"
       }
     }
   },
-  "opt_url_shortener_api_key_label": {
-    "message": "$O_ABBR_1$Application Programming Interface$O_ABBR_2$API$C_ABBR$ Key",
+  "opt_url_shortener_authentication_label": {
+    "message": "Authentication"
+  },
+  "opt_url_shortener_authentication_none_button": {
+    "message": "$ICON$ None",
     "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">"
+      "icon": {
+        "content": "<i class=\"icon-ban-circle\"></i>"
+      }
+    }
+  },
+  "opt_url_shortener_authentication_advanced_button": {
+    "message": "$ICON$ Advanced",
+    "placeholders": {
+      "icon": {
+        "content": "<i class=\"icon-lock\"></i>"
       }
     }
   },
@@ -2191,13 +2194,37 @@
     "message": "URL Shorteners"
   },
   "opt_url_shortener_login_button": {
-    "message": "Login"
+    "message": "$ICON$ Login",
+    "placeholders": {
+      "icon": {
+        "content": "<i class=\"icon-off icon-white\"></i>"
+      }
+    }
   },
   "opt_url_shortener_logout_button": {
-    "message": "Logout"
+    "message": "$ICON$ Logout",
+    "placeholders": {
+      "icon": {
+        "content": "<i class=\"icon-off icon-white\"></i>"
+      }
+    }
   },
   "opt_url_shortener_password_label": {
     "message": "Password"
+  },
+  "opt_url_shortener_password_sub_text": {
+    "message": "This is stored and sent in plain text as is required by the $O_ABBR_1$Application Programming Interface$O_ABBR_2$API$C_ABBR$",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
   },
   "opt_url_shortener_service_header": {
     "message": "Service"
@@ -2241,26 +2268,6 @@
       },
       "o_code": {
         "content": "<code>"
-      }
-    }
-  },
-  "opt_url_shortener_username_bitly_sub_text": {
-    "message": "Haven't registered with $O_BOLD$bit.ly$C_BOLD$? $O_LINK_1$http://bit.ly/a/sign_up$O_LINK_2$Sign up now$C_LINK$",
-    "placeholders": {
-      "c_bold": {
-        "content": "</strong>"
-      },
-      "c_link": {
-        "content": "</a>"
-      },
-      "o_bold": {
-        "content": "<strong>"
-      },
-      "o_link_1": {
-        "content": "<a href=\""
-      },
-      "o_link_2": {
-        "content": "\" target=\"_blank\">"
       }
     }
   },
@@ -2330,6 +2337,38 @@
   "shortener_bitly": {
     "message": "bit.ly"
   },
+  "shortener_bitly_api_key": {
+    "message": "$VALUE$",
+    "placeholders": {
+      "value": {
+        "content": "R_91eabef2f32d88c07b197c9d69eed516"
+      }
+    }
+  },
+  "shortener_bitly_client_id": {
+    "message": "$VALUE$",
+    "placeholders": {
+      "value": {
+        "content": "62b88755feb96b088bb2f8fca8eb2c83ba4bad71"
+      }
+    }
+  },
+  "shortener_bitly_client_secret": {
+    "message": "$VALUE$",
+    "placeholders": {
+      "value": {
+        "content": "f621920922ecce79a3a15dc1c90633761912f328"
+      }
+    }
+  },
+  "shortener_bitly_login": {
+    "message": "$VALUE$",
+    "placeholders": {
+      "value": {
+        "content": "templateextension"
+      }
+    }
+  },
   "shortener_config_error": {
     "message": "$SERVICE$ has not been configured correctly",
     "placeholders": {
@@ -2359,6 +2398,30 @@
   },
   "shortener_googl": {
     "message": "goo.gl"
+  },
+  "shortener_googl_api_key": {
+    "message": "$VALUE$",
+    "placeholders": {
+      "value": {
+        "content": "AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY"
+      }
+    }
+  },
+  "shortener_googl_client_id": {
+    "message": "$VALUE$",
+    "placeholders": {
+      "value": {
+        "content": "962266498046.apps.googleusercontent.com"
+      }
+    }
+  },
+  "shortener_googl_client_secret": {
+    "message": "$VALUE$",
+    "placeholders": {
+      "value": {
+        "content": "D15W+qUHliax3uFu1JVpTCSg"
+      }
+    }
   },
   "shortener_yourls": {
     "message": "YOURLS"

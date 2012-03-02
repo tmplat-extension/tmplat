@@ -7,9 +7,7 @@
   },
   "content_scripts"        : [
     {
-      "js"      : [
-        "lib/content.js"
-      ],
+      "js"      : ["lib/content.js"],
       "matches" : [
         "file:///*/*",
         "ftp://*/*",
@@ -18,13 +16,16 @@
       ],
       "run_at"  : "document_end"
     }, {
-      "js"      : [
-        "lib/install.js"
-      ],
-      "matches" : [
-        "http://*.neocotic.com/*"
-      ],
+      "js"      : ["lib/install.js"],
+      "matches" : ["http://*.neocotic.com/*"],
       "run_at"  : "document_end"
+    }, {
+      "js"      : ["vendor/oauth2_inject.js"],
+      "matches" : [
+        "http://bitly.com/robots.txt*",
+        "http://www.google.com/robots.txt*"
+      ],
+      "run_at"  : "document_start"
     }
   ],
   "default_locale"         : "en",
@@ -53,5 +54,5 @@
     "tabs",
     "<all_urls>"
   ],
-  "version"                : "1.0.0"
+  "version"                : "1.0.1"
 }

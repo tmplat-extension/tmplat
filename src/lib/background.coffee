@@ -101,60 +101,64 @@ REAL_EXTENSION_ID = 'dcjnfaoifoefmnbhhlbppaebgnccfddf'
 # List of URL shortener services supported by Template.
 SHORTENERS        = [
   # Setup [bitly](http://bit.ly).
-  contentType:   'application/x-www-form-urlencoded'
+  getHeaders:    -> 'Content-Type': 'application/x-www-form-urlencoded'
   getParameters: (url) ->
-    bitly  = store.get 'bitly'
     params =
-      apiKey:  'R_91eabef2f32d88c07b197c9d69eed516'
       format:  'json'
-      login:   'templateextension'
       longUrl: url
-    if bitly.apiKey and bitly.username
-      params.x_apiKey = bitly.apiKey
-      params.x_login  = bitly.username
+    if @oauth.hasAccessToken()
+      params.access_token = @oauth.getAccessToken()
+    else
+      params.apiKey = i18n.get 'shortener_bitly_api_key'
+      params.login  = i18n.get 'shortener_bitly_login'
     params
   getUsage:      -> store.get 'bitly.usage'
   input:         -> null
   isEnabled:     -> store.get 'bitly.enabled'
   method:        'GET'
   name:          'bitly'
+  oauth:         new OAuth2 'bitly'
+    client_id:     i18n.get 'shortener_bitly_client_id'
+    client_secret: i18n.get 'shortener_bitly_client_secret'
   output:        (resp) -> JSON.parse(resp).data.url
   title:         i18n.get 'shortener_bitly'
-  url:           -> 'http://api.bitly.com/v3/shorten'
+  url:           -> 'https://api-ssl.bitly.com/v3/shorten'
 ,
   # Setup [Google URL Shortener](http://goo.gl).
-  contentType:   'application/json'
-  getParameters: -> key: 'AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY'
+  getHeaders:    ->
+    headers = 'Content-Type': 'application/json'
+    if @oauth.hasAccessToken()
+      headers.Authorization = "OAuth #{@oauth.getAccessToken()}"
+    headers
+  getParameters: -> unless @oauth.hasAccessToken()
+    key: i18n.get 'shortener_googl_api_key'
   getUsage:      -> store.get 'googl.usage'
   input:         (url) -> JSON.stringify longUrl: url
   isEnabled:     -> store.get 'googl.enabled'
   method:        'POST'
   name:          'googl'
-  oauth:         ChromeExOAuth.initBackgroundPage
-    access_url:      'https://www.google.com/accounts/OAuthGetAccessToken'
-    app_name:        i18n.get 'app_name'
-    authorize_url:   'https://www.google.com/accounts/OAuthAuthorizeToken'
-    consumer_key:    'anonymous'
-    consumer_secret: 'anonymous'
-    request_url:     'https://www.google.com/accounts/OAuthGetRequestToken'
-    scope:           'https://www.googleapis.com/auth/urlshortener'
+  oauth:         new OAuth2 'google'
+    api_scope:     'https://www.googleapis.com/auth/urlshortener'
+    client_id:     i18n.get 'shortener_googl_client_id'
+    client_secret: i18n.get 'shortener_googl_client_secret'
   output:        (resp) -> JSON.parse(resp).id
   title:         i18n.get 'shortener_googl'
   url:           -> 'https://www.googleapis.com/urlshortener/v1/url'
 ,
   # Setup [YOURLS](http://yourls.org).
-  contentType:   'application/json'
+  getHeaders:    -> 'Content-Type': 'application/json'
   getParameters: (url) ->
     params =
       action: 'shorturl'
       format: 'json'
       url:    url
     yourls = store.get 'yourls'
-    if yourls.password and yourls.username
-      params.password  = yourls.password
-      params.username  = yourls.username
-    else if yourls.signature
-      params.signature = yourls.signature
+    switch yourls.authentication
+      when 'advanced'
+        params.signature = yourls.signature if yourls.signature
+      when 'basic'
+        params.password = yourls.password if yourls.password
+        params.username = yourls.username if yourls.username
     params
   getUsage:      -> store.get 'yourls.usage'
   input:         -> null
@@ -166,60 +170,44 @@ SHORTENERS        = [
   url:           -> store.get 'yourls.url'
 ]
 # List of extensions supported by Template and used for compatibility purposes.
-SUPPORT           = [
+SUPPORT           =
   # Setup [IE Tab](http://ietab.net).
-  id:    'hehijbfgiekmjfkfjpbkbammjbdenadd'
-  title: (title) ->
-    str = 'IE: '
-    if title
-      idx   = title.indexOf str
-      title = title.substring idx + str.length if idx isnt -1
-    title
-  url:   (url) ->
-    str = 'iecontainer.html#url='
-    if url
-      idx = url.indexOf str
-      url = decodeURIComponent url.substring idx + str.length if idx isnt -1
-    url
-,
+  hehijbfgiekmjfkfjpbkbammjbdenadd: (tab) ->
+    if tab.title
+      str = 'IE: '
+      idx = tab.title.indexOf str
+      tab.title = tab.title.substring idx + str.length if idx isnt -1
+    if tab.url
+      str = 'iecontainer.html#url='
+      idx = tab.url.indexOf str
+      if idx isnt -1
+        tab.url = decodeURIComponent tab.url.substring idx + str.length
   # Setup [IE Tab Classic](http://goo.gl/u7Cau).
-  id:    'miedgcmlgpmdagojnnbemlkgidepfjfi'
-  title: (title) -> title
-  url:   (url) ->
-    str = 'ie.html#'
-    if url
-      idx = url.indexOf str
-      url = url.substring idx + str.length if idx isnt -1
-    url
-,
+  miedgcmlgpmdagojnnbemlkgidepfjfi: (tab) ->
+    if tab.url
+      str = 'ie.html#'
+      idx = tab.url.indexOf str
+      tab.url = tab.url.substring idx + str.length if idx isnt -1
   # Setup [IE Tab Multi (Enhance)](http://iblogbox.com/chrome/ietab).
-  id:    'fnfnbeppfinmnjnjhedifcfllpcfgeea'
-  title: (title) -> title
-  url:   (url) ->
-    str = 'navigate.html?chromeurl='
-    if url
-      idx = url.indexOf str
+  fnfnbeppfinmnjnjhedifcfllpcfgeea: (tab) ->
+    if tab.url
+      str = 'navigate.html?chromeurl='
+      idx = tab.url.indexOf str
       if idx isnt -1
-        url = url.substring idx + str.length
+        tab.url = tab.url.substring idx + str.length
         str = '[escape]'
-        if url and url.indexOf(str) is 0
-          url = decodeURIComponent url.substring str.length
-    url
-,
+        if tab.url.indexOf(str) is 0
+          tab.url = decodeURIComponent tab.url.substring str.length
   # Setup [Mozilla Gecko Tab](http://iblogbox.com/chrome/geckotab).
-  id:    'icoloanbecehinobmflpeglknkplbfbm'
-  title: (title) -> title
-  url:   (url) ->
-    str = 'navigate.html?chromeurl='
-    if url
-      idx = url.indexOf str
+  icoloanbecehinobmflpeglknkplbfbm: (tab) ->
+    if tab.url
+      str = 'navigate.html?chromeurl='
+      idx = tab.url.indexOf str
       if idx isnt -1
-        url = url.substring idx + str.length
+        tab.url = tab.url.substring idx + str.length
         str = '[escape]'
-        if url and url.indexOf(str) is 0
-          url = decodeURIComponent url.substring str.length
-    url
-]
+        if tab.url.indexOf(str) is 0
+          tab.url = decodeURIComponent tab.url.substring str.length
 
 # Private variables
 # -----------------
@@ -642,7 +630,7 @@ addAdditionalData = (tab, data, callback) ->
     log.error error.message
     runner.next()
   runner.push chrome.cookies, 'getAll', url: data.url, (cookies = []) ->
-    log.debug 'Retrieved the followign cookies...', cookies
+    log.debug 'Retrieved the following cookies...', cookies
     $.extend data,
       cookie:  -> (text, render) ->
         # Attempt to find the value for the cookie name.
@@ -709,23 +697,19 @@ buildDerivedData = (tab, onClickData, shortCallback) ->
 # shortener service unless it is actually required.
 buildStandardData = (tab, shortCallback) ->
   log.trace()
-  compatibility = no
-  data          = {}
-  title         = ''
-  url           = {}
+  # Create a copy of the original tab of the tab to run the compatibility
+  # scripts on.
+  ctab = {}
+  ctab[prop] = value for own prop, value of tab
   # Check for any support extensions running on the current tab by simply
   # checking the tabs URL.
-  for extension in SUPPORT when isExtensionActive tab, extension.id
-    log.debug "Making data compatible for #{exension.id}"
-    title         = extension.title tab.title
-    url           = $.url extension.url tab.url
-    compatibility = yes
+  for own extension, handler of SUPPORT when isExtensionActive tab, extension
+    log.debug "Making data compatible with #{extension}"
+    handler? ctab
     break
-  # Derive the initial data from the tab itself if no supported extensions were
-  # found to be active.
-  unless compatibility
-    title = tab.title
-    url   = $.url tab.url
+  # Build the initial URL data.
+  data = {}
+  url  = $.url ctab.url
   # Create references to the base of all grouped options to improve lookup
   # performance.
   anchor        = store.get 'anchor'
@@ -746,8 +730,10 @@ buildStandardData = (tab, shortCallback) ->
     anchortarget:          anchor.target
     anchortitle:           anchor.title
     bitly:                 bitly.enabled
-    bitlyapikey:           bitly.apiKey
-    bitlyusername:         bitly.username
+    bitlyaccount:          ->
+      ext.queryUrlShortener((shortener) ->
+        shortener.name is 'bitly'
+      ).oauth.hasAccessToken()
     browser:               browser.title
     browserversion:        browser.version
     # Deprecated since 1.0.0, use `menu` instead.
@@ -768,7 +754,7 @@ buildStandardData = (tab, shortCallback) ->
       encodeURIComponent(render text) ? ''
     # Deprecated since 0.1.0.2, use `encode` instead.
     encoded:               -> encodeURIComponent @url
-    favicon:               tab.favIconUrl
+    favicon:               ctab.favIconUrl
     fparam:                -> (text, render) ->
       url.fparam(render text) ? ''
     fparams:               nullIfEmpty url.fparam()
@@ -779,7 +765,7 @@ buildStandardData = (tab, shortCallback) ->
     googlaccount:          ->
       ext.queryUrlShortener((shortener) ->
         shortener.name is 'googl'
-      ).oauth.hasToken()
+      ).oauth.hasAccessToken()
     # Deprecated since 1.0.0, use `googlAccount` instead.
     googloauth:            -> @googlaccount()
     java:                  navigator.javaEnabled()
@@ -817,7 +803,7 @@ buildStandardData = (tab, shortCallback) ->
     short:                 -> @shorten()
     shortcuts:             store.get 'shortcuts'
     shorten:               -> shortCallback
-    title:                 title or url.attr 'source'
+    title:                 ctab.title or url.attr 'source'
     toolbarclose:          toolbar.close
     # Deprecated since 1.0.0, use the inverse of `toolbarPopup` instead.
     toolbarfeature:        -> not @toolbarpopup
@@ -832,6 +818,7 @@ buildStandardData = (tab, shortCallback) ->
     url:                   url.attr 'source'
     version:               ext.version
     yourls:                yourls.enabled
+    yourlsauthentication:  yourls.authentication
     yourlspassword:        yourls.password
     yourlssignature:       yourls.signature
     yourlsurl:             yourls.url
@@ -1127,20 +1114,19 @@ initUrlShorteners = ->
     yourls: {}
   initUrlShorteners_update()
   store.modify 'bitly', (bitly) ->
-    bitly.apiKey   ?= ''
-    bitly.enabled  ?= yes
-    bitly.usage    ?= 0
-    bitly.username ?= ''
+    bitly.enabled ?= yes
+    bitly.usage   ?= 0
   store.modify 'googl', (googl) ->
     googl.enabled ?= no
     googl.usage   ?= 0
   store.modify 'yourls', (yourls) ->
-    yourls.enabled   ?= no
-    yourls.password  ?= ''
-    yourls.signature ?= ''
-    yourls.url       ?= ''
-    yourls.username  ?= ''
-    yourls.usage     ?= 0
+    yourls.authentication ?= ''
+    yourls.enabled        ?= no
+    yourls.password       ?= ''
+    yourls.signature      ?= ''
+    yourls.url            ?= ''
+    yourls.username       ?= ''
+    yourls.usage          ?= 0
 
 # Handle the conversion/removal of older version of settings that may have been
 # stored previously by `initUrlShorteners`.
@@ -1178,6 +1164,18 @@ initUrlShorteners_update = ->
       username:  store.get('yourlsUsername') ? ''
     store.remove 'yourlsPassword', 'yourlsSignature', 'yourlsUrl',
                  'yourlsUsername'
+  updater.update '1.0.1', ->
+    store.modify 'bitly', (bitly) ->
+      delete bitly.apiKey
+      delete bitly.username
+    store.modify 'yourls', (yourls) ->
+      yourls.authentication = if yourls.signature
+        'advanced'
+      else if yourls.password and yourls.username
+        'basic'
+      else 
+        ''
+    store.remove store.search(/^oauth_token.*/)...
 
 # URL shortener functions
 # -----------------------
@@ -1200,32 +1198,33 @@ callUrlShortener = (map, callback) ->
   # Create a runner to control the dependencies in the asynchronous processes.
   runner = new utils.Runner()
   for own placeholder, url of map
-    do (placeholder, url) -> runner.push null, ->
-      oauth  = !!service.oauth?.hasToken()
-      params = service.getParameters(url) or {}
-      # Build the HTTP request for the URL shortener service.
-      xhr = new XMLHttpRequest()
-      xhr.open service.method, "#{endpoint}?#{$.param params}", yes
-      xhr.setRequestHeader 'Content-Type', service.contentType
-      # Setup OAuth for the request when required.
+    do (placeholder, url) ->
+      oauth = !!service.oauth?.hasAccessToken()
       if oauth
-        xhr.setRequestHeader 'Authorization',
-          service.oauth.getAuthorizationHeader(endpoint,
-            service.method, params)
-      xhr.onreadystatechange = ->
-        # Wait for the response and let the service handle it before passing
-        # the result to `callback` via the runner.
-        if xhr.readyState is 4
-          if xhr.status is 200
-            map[placeholder] = service.output xhr.responseText
-            runner.next oauth: oauth, success: yes
-          else
-            # Something went wrong so let's tell the user.
-            runner.finish
-              message: i18n.get('shortener_detailed_error', [title, url])
-              success: no
-      # Finally, send the HTTP request.
-      xhr.send service.input url
+        runner.push service.oauth, 'authorize', -> runner.next()
+      runner.push null, ->
+        params    = service.getParameters url
+        endpoint += "?#{$.param params}" if params?
+        # Build the HTTP request for the URL shortener service.
+        xhr = new XMLHttpRequest()
+        xhr.open service.method, endpoint, yes
+        # Allow service to populate request headers.
+        for own header, value of service.getHeaders() ? {}
+          xhr.setRequestHeader header, value
+        xhr.onreadystatechange = ->
+          # Wait for the response and let the service handle it before passing
+          # the result to `callback` via the runner.
+          if xhr.readyState is 4
+            if xhr.status is 200
+              map[placeholder] = service.output xhr.responseText
+              runner.next oauth: oauth, success: yes
+            else
+              # Something went wrong so let's tell the user.
+              runner.finish
+                message: i18n.get('shortener_detailed_error', [title, url])
+                success: no
+        # Finally, send the HTTP request.
+        xhr.send service.input url
   runner.run (result = {}) -> callback
     message: result.message
     oauth:   result.oauth

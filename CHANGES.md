@@ -1,3 +1,15 @@
+YYYY.MM.DD, Version 1.0.1
+
+* [#71](https://github.com/neocotic/template/issues/71): Make [bit.ly](http://bit.ly) the default URL shortener
+* [#71](https://github.com/neocotic/template/issues/71): Make unauthenticated [bit.ly](http://bit.ly) use the [tmpl.at](http://tmpl.at) custom domain
+* [#72](https://github.com/neocotic/template/issues/72): Add [OAuth](http://oauth.net) support for [bit.ly](http://bit.ly)
+* [#72](https://github.com/neocotic/template/issues/72): Add new *"bitlyAccount"* option to determine whether or not you are logged in to [bit.ly](http://bit.ly)
+* [#72](https://github.com/neocotic/template/issues/72): Remove the *"bitlyApiKey"* and *"bitlyUsername"* options
+* [#73](https://github.com/neocotic/template/issues/73): Improve UI on Options page in some places
+* [#74](https://github.com/neocotic/template/issues/74): Implement support for [OAuth 2.0](http://oauth.net/2)
+* [#75](https://github.com/neocotic/template/issues/75): Improve extension compatibility system
+* Minor bug fixes and UI tweaks
+
 2012.02.17, Version 1.0.0
 
 * **Full release!**

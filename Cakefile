@@ -26,6 +26,14 @@ TARGET_SUB_DIRS = [
   "#{TARGET_DIR}/lib"
   "#{TARGET_DIR}/pages"
   "#{TARGET_DIR}/vendor"
+  "#{TARGET_DIR}/vendor/adapters"
+]
+VENDOR_FILES    = [
+  'vendor/adapters/bitly.js'
+  'vendor/adapters/google.js'
+  'vendor/mustache.js'
+  'vendor/oauth2.js'
+  'vendor/oauth2_inject.js'
 ]
 
 # Commands
@@ -66,6 +74,7 @@ task 'clean', 'Cleans directories', ->
 
 task 'dist', 'Create distributable file', ->
   console.log 'Generating distributable....'
+  vfiles = "'#{VENDOR_FILES.join '\' \''}'"
   exec [
     "mkdir -p #{DIST_DIR}"
     "mkdir -p #{DIST_DIR}/#{TEMP_DIR}"
@@ -73,8 +82,8 @@ task 'dist', 'Create distributable file', ->
     "cd #{DIST_DIR}/#{TEMP_DIR}"
     "for file in lib/*.js; do #{MINIFY} $file > $file.tmp"
     'mv -f $file.tmp $file; done'
-    "#{MINIFY} vendor/mustache.js > vendor/mustache.js.tmp"
-    'mv -f vendor/mustache.js.tmp vendor/mustache.js'
+    "for vfile in #{vfiles}; do #{MINIFY} $vfile > $vfile.tmp"
+    'mv -f $vfile.tmp $vfile; done'
     "zip -r ../#{DIST_FILE} *"
     'cd ../'
     "rm -rf #{TEMP_DIR}"
