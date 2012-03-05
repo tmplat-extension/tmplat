@@ -109,62 +109,66 @@ user preferences.</p>             </td>             <td class="code">           
 <span class="nv">SHORTENERS        = </span><span class="p">[</span>
 
 </pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>Setup <a href="http://bit.ly">bitly</a>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-  <span class="nv">contentType: </span>  <span class="s1">&#39;application/x-www-form-urlencoded&#39;</span>
+  <span class="nv">getHeaders: </span>   <span class="o">-&gt;</span> <span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span> <span class="s1">&#39;application/x-www-form-urlencoded&#39;</span>
   <span class="nv">getParameters: </span><span class="nf">(url) -&gt;</span>
-    <span class="nv">bitly  = </span><span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;bitly&#39;</span>
     <span class="nv">params =</span>
-      <span class="nv">apiKey: </span> <span class="s1">&#39;R_91eabef2f32d88c07b197c9d69eed516&#39;</span>
       <span class="nv">format: </span> <span class="s1">&#39;json&#39;</span>
-      <span class="nv">login: </span>  <span class="s1">&#39;templateextension&#39;</span>
       <span class="nv">longUrl: </span><span class="nx">url</span>
-    <span class="k">if</span> <span class="nx">bitly</span><span class="p">.</span><span class="nx">apiKey</span> <span class="o">and</span> <span class="nx">bitly</span><span class="p">.</span><span class="nx">username</span>
-      <span class="nv">params.x_apiKey = </span><span class="nx">bitly</span><span class="p">.</span><span class="nx">apiKey</span>
-      <span class="nv">params.x_login  = </span><span class="nx">bitly</span><span class="p">.</span><span class="nx">username</span>
+    <span class="k">if</span> <span class="nx">@oauth</span><span class="p">.</span><span class="nx">hasAccessToken</span><span class="p">()</span>
+      <span class="nv">params.access_token = </span><span class="nx">@oauth</span><span class="p">.</span><span class="nx">getAccessToken</span><span class="p">()</span>
+    <span class="k">else</span>
+      <span class="nv">params.apiKey = </span><span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_bitly_api_key&#39;</span>
+      <span class="nv">params.login  = </span><span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_bitly_login&#39;</span>
     <span class="nx">params</span>
   <span class="nv">getUsage: </span>     <span class="o">-&gt;</span> <span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;bitly.usage&#39;</span>
   <span class="nv">input: </span>        <span class="o">-&gt;</span> <span class="kc">null</span>
   <span class="nv">isEnabled: </span>    <span class="o">-&gt;</span> <span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;bitly.enabled&#39;</span>
   <span class="nv">method: </span>       <span class="s1">&#39;GET&#39;</span>
   <span class="nv">name: </span>         <span class="s1">&#39;bitly&#39;</span>
+  <span class="nv">oauth: </span>        <span class="k">new</span> <span class="nx">OAuth2</span> <span class="s1">&#39;bitly&#39;</span>
+    <span class="nv">client_id: </span>    <span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_bitly_client_id&#39;</span>
+    <span class="nv">client_secret: </span><span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_bitly_client_secret&#39;</span>
   <span class="nv">output: </span>       <span class="nf">(resp) -&gt;</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">resp</span><span class="p">).</span><span class="nx">data</span><span class="p">.</span><span class="nx">url</span>
   <span class="nv">title: </span>        <span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_bitly&#39;</span>
-  <span class="nv">url: </span>          <span class="o">-&gt;</span> <span class="s1">&#39;http://api.bitly.com/v3/shorten&#39;</span>
+  <span class="nv">url: </span>          <span class="o">-&gt;</span> <span class="s1">&#39;https://api-ssl.bitly.com/v3/shorten&#39;</span>
 <span class="p">,</span>
 
 </pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Setup <a href="http://goo.gl">Google URL Shortener</a>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-  <span class="nv">contentType: </span>  <span class="s1">&#39;application/json&#39;</span>
-  <span class="nv">getParameters: </span><span class="o">-&gt;</span> <span class="nv">key: </span><span class="s1">&#39;AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY&#39;</span>
+  <span class="nv">getHeaders: </span>   <span class="o">-&gt;</span>
+    <span class="nv">headers = </span><span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span> <span class="s1">&#39;application/json&#39;</span>
+    <span class="k">if</span> <span class="nx">@oauth</span><span class="p">.</span><span class="nx">hasAccessToken</span><span class="p">()</span>
+      <span class="nv">headers.Authorization = </span><span class="s2">&quot;OAuth #{@oauth.getAccessToken()}&quot;</span>
+    <span class="nx">headers</span>
+  <span class="nv">getParameters: </span><span class="o">-&gt;</span> <span class="nx">unless</span> <span class="nx">@oauth</span><span class="p">.</span><span class="nx">hasAccessToken</span><span class="p">()</span>
+    <span class="nv">key: </span><span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_googl_api_key&#39;</span>
   <span class="nv">getUsage: </span>     <span class="o">-&gt;</span> <span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;googl.usage&#39;</span>
   <span class="nv">input: </span>        <span class="nf">(url) -&gt;</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span> <span class="nv">longUrl: </span><span class="nx">url</span>
   <span class="nv">isEnabled: </span>    <span class="o">-&gt;</span> <span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;googl.enabled&#39;</span>
   <span class="nv">method: </span>       <span class="s1">&#39;POST&#39;</span>
   <span class="nv">name: </span>         <span class="s1">&#39;googl&#39;</span>
-  <span class="nv">oauth: </span>        <span class="nx">ChromeExOAuth</span><span class="p">.</span><span class="nx">initBackgroundPage</span>
-    <span class="nv">access_url: </span>     <span class="s1">&#39;https://www.google.com/accounts/OAuthGetAccessToken&#39;</span>
-    <span class="nv">app_name: </span>       <span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;app_name&#39;</span>
-    <span class="nv">authorize_url: </span>  <span class="s1">&#39;https://www.google.com/accounts/OAuthAuthorizeToken&#39;</span>
-    <span class="nv">consumer_key: </span>   <span class="s1">&#39;anonymous&#39;</span>
-    <span class="nv">consumer_secret: </span><span class="s1">&#39;anonymous&#39;</span>
-    <span class="nv">request_url: </span>    <span class="s1">&#39;https://www.google.com/accounts/OAuthGetRequestToken&#39;</span>
-    <span class="nv">scope: </span>          <span class="s1">&#39;https://www.googleapis.com/auth/urlshortener&#39;</span>
+  <span class="nv">oauth: </span>        <span class="k">new</span> <span class="nx">OAuth2</span> <span class="s1">&#39;google&#39;</span>
+    <span class="nv">api_scope: </span>    <span class="s1">&#39;https://www.googleapis.com/auth/urlshortener&#39;</span>
+    <span class="nv">client_id: </span>    <span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_googl_client_id&#39;</span>
+    <span class="nv">client_secret: </span><span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_googl_client_secret&#39;</span>
   <span class="nv">output: </span>       <span class="nf">(resp) -&gt;</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">resp</span><span class="p">).</span><span class="nx">id</span>
   <span class="nv">title: </span>        <span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_googl&#39;</span>
   <span class="nv">url: </span>          <span class="o">-&gt;</span> <span class="s1">&#39;https://www.googleapis.com/urlshortener/v1/url&#39;</span>
 <span class="p">,</span>
 
 </pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Setup <a href="http://yourls.org">YOURLS</a>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-  <span class="nv">contentType: </span>  <span class="s1">&#39;application/json&#39;</span>
+  <span class="nv">getHeaders: </span>   <span class="o">-&gt;</span> <span class="s1">&#39;Content-Type&#39;</span><span class="o">:</span> <span class="s1">&#39;application/json&#39;</span>
   <span class="nv">getParameters: </span><span class="nf">(url) -&gt;</span>
     <span class="nv">params =</span>
       <span class="nv">action: </span><span class="s1">&#39;shorturl&#39;</span>
       <span class="nv">format: </span><span class="s1">&#39;json&#39;</span>
       <span class="nv">url: </span>   <span class="nx">url</span>
     <span class="nv">yourls = </span><span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;yourls&#39;</span>
-    <span class="k">if</span> <span class="nx">yourls</span><span class="p">.</span><span class="nx">password</span> <span class="o">and</span> <span class="nx">yourls</span><span class="p">.</span><span class="nx">username</span>
-      <span class="nv">params.password  = </span><span class="nx">yourls</span><span class="p">.</span><span class="nx">password</span>
-      <span class="nv">params.username  = </span><span class="nx">yourls</span><span class="p">.</span><span class="nx">username</span>
-    <span class="k">else</span> <span class="k">if</span> <span class="nx">yourls</span><span class="p">.</span><span class="nx">signature</span>
-      <span class="nv">params.signature = </span><span class="nx">yourls</span><span class="p">.</span><span class="nx">signature</span>
+    <span class="k">switch</span> <span class="nx">yourls</span><span class="p">.</span><span class="nx">authentication</span>
+      <span class="k">when</span> <span class="s1">&#39;advanced&#39;</span>
+        <span class="nv">params.signature = </span><span class="nx">yourls</span><span class="p">.</span><span class="nx">signature</span> <span class="k">if</span> <span class="nx">yourls</span><span class="p">.</span><span class="nx">signature</span>
+      <span class="k">when</span> <span class="s1">&#39;basic&#39;</span>
+        <span class="nv">params.password = </span><span class="nx">yourls</span><span class="p">.</span><span class="nx">password</span> <span class="k">if</span> <span class="nx">yourls</span><span class="p">.</span><span class="nx">password</span>
+        <span class="nv">params.username = </span><span class="nx">yourls</span><span class="p">.</span><span class="nx">username</span> <span class="k">if</span> <span class="nx">yourls</span><span class="p">.</span><span class="nx">username</span>
     <span class="nx">params</span>
   <span class="nv">getUsage: </span>     <span class="o">-&gt;</span> <span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;yourls.usage&#39;</span>
   <span class="nv">input: </span>        <span class="o">-&gt;</span> <span class="kc">null</span>
@@ -177,64 +181,48 @@ user preferences.</p>             </td>             <td class="code">           
 <span class="p">]</span>
 
 </pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>List of extensions supported by Template and used for compatibility purposes.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-<span class="nv">SUPPORT           = </span><span class="p">[</span>
+<span class="nv">SUPPORT           =</span>
 
 </pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>Setup <a href="http://ietab.net">IE Tab</a>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-  <span class="nv">id: </span>   <span class="s1">&#39;hehijbfgiekmjfkfjpbkbammjbdenadd&#39;</span>
-  <span class="nv">title: </span><span class="nf">(title) -&gt;</span>
-    <span class="nv">str = </span><span class="s1">&#39;IE: &#39;</span>
-    <span class="k">if</span> <span class="nx">title</span>
-      <span class="nv">idx   = </span><span class="nx">title</span><span class="p">.</span><span class="nx">indexOf</span> <span class="nx">str</span>
-      <span class="nv">title = </span><span class="nx">title</span><span class="p">.</span><span class="nx">substring</span> <span class="nx">idx</span> <span class="o">+</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span> <span class="k">if</span> <span class="nx">idx</span> <span class="o">isnt</span> <span class="o">-</span><span class="mi">1</span>
-    <span class="nx">title</span>
-  <span class="nv">url: </span>  <span class="nf">(url) -&gt;</span>
-    <span class="nv">str = </span><span class="s1">&#39;iecontainer.html#url=&#39;</span>
-    <span class="k">if</span> <span class="nx">url</span>
-      <span class="nv">idx = </span><span class="nx">url</span><span class="p">.</span><span class="nx">indexOf</span> <span class="nx">str</span>
-      <span class="nv">url = </span><span class="nb">decodeURIComponent</span> <span class="nx">url</span><span class="p">.</span><span class="nx">substring</span> <span class="nx">idx</span> <span class="o">+</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span> <span class="k">if</span> <span class="nx">idx</span> <span class="o">isnt</span> <span class="o">-</span><span class="mi">1</span>
-    <span class="nx">url</span>
-<span class="p">,</span>
+  <span class="nv">hehijbfgiekmjfkfjpbkbammjbdenadd: </span><span class="nf">(tab) -&gt;</span>
+    <span class="k">if</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">title</span>
+      <span class="nv">str = </span><span class="s1">&#39;IE: &#39;</span>
+      <span class="nv">idx = </span><span class="nx">tab</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">indexOf</span> <span class="nx">str</span>
+      <span class="nv">tab.title = </span><span class="nx">tab</span><span class="p">.</span><span class="nx">title</span><span class="p">.</span><span class="nx">substring</span> <span class="nx">idx</span> <span class="o">+</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span> <span class="k">if</span> <span class="nx">idx</span> <span class="o">isnt</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">if</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">url</span>
+      <span class="nv">str = </span><span class="s1">&#39;iecontainer.html#url=&#39;</span>
+      <span class="nv">idx = </span><span class="nx">tab</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">indexOf</span> <span class="nx">str</span>
+      <span class="k">if</span> <span class="nx">idx</span> <span class="o">isnt</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="nv">tab.url = </span><span class="nb">decodeURIComponent</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">substring</span> <span class="nx">idx</span> <span class="o">+</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span>
 
 </pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>Setup <a href="http://goo.gl/u7Cau">IE Tab Classic</a>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-  <span class="nv">id: </span>   <span class="s1">&#39;miedgcmlgpmdagojnnbemlkgidepfjfi&#39;</span>
-  <span class="nv">title: </span><span class="nf">(title) -&gt;</span> <span class="nx">title</span>
-  <span class="nv">url: </span>  <span class="nf">(url) -&gt;</span>
-    <span class="nv">str = </span><span class="s1">&#39;ie.html#&#39;</span>
-    <span class="k">if</span> <span class="nx">url</span>
-      <span class="nv">idx = </span><span class="nx">url</span><span class="p">.</span><span class="nx">indexOf</span> <span class="nx">str</span>
-      <span class="nv">url = </span><span class="nx">url</span><span class="p">.</span><span class="nx">substring</span> <span class="nx">idx</span> <span class="o">+</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span> <span class="k">if</span> <span class="nx">idx</span> <span class="o">isnt</span> <span class="o">-</span><span class="mi">1</span>
-    <span class="nx">url</span>
-<span class="p">,</span>
+  <span class="nv">miedgcmlgpmdagojnnbemlkgidepfjfi: </span><span class="nf">(tab) -&gt;</span>
+    <span class="k">if</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">url</span>
+      <span class="nv">str = </span><span class="s1">&#39;ie.html#&#39;</span>
+      <span class="nv">idx = </span><span class="nx">tab</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">indexOf</span> <span class="nx">str</span>
+      <span class="nv">tab.url = </span><span class="nx">tab</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">substring</span> <span class="nx">idx</span> <span class="o">+</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span> <span class="k">if</span> <span class="nx">idx</span> <span class="o">isnt</span> <span class="o">-</span><span class="mi">1</span>
 
 </pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>Setup <a href="http://iblogbox.com/chrome/ietab">IE Tab Multi (Enhance)</a>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-  <span class="nv">id: </span>   <span class="s1">&#39;fnfnbeppfinmnjnjhedifcfllpcfgeea&#39;</span>
-  <span class="nv">title: </span><span class="nf">(title) -&gt;</span> <span class="nx">title</span>
-  <span class="nv">url: </span>  <span class="nf">(url) -&gt;</span>
-    <span class="nv">str = </span><span class="s1">&#39;navigate.html?chromeurl=&#39;</span>
-    <span class="k">if</span> <span class="nx">url</span>
-      <span class="nv">idx = </span><span class="nx">url</span><span class="p">.</span><span class="nx">indexOf</span> <span class="nx">str</span>
+  <span class="nv">fnfnbeppfinmnjnjhedifcfllpcfgeea: </span><span class="nf">(tab) -&gt;</span>
+    <span class="k">if</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">url</span>
+      <span class="nv">str = </span><span class="s1">&#39;navigate.html?chromeurl=&#39;</span>
+      <span class="nv">idx = </span><span class="nx">tab</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">indexOf</span> <span class="nx">str</span>
       <span class="k">if</span> <span class="nx">idx</span> <span class="o">isnt</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="nv">url = </span><span class="nx">url</span><span class="p">.</span><span class="nx">substring</span> <span class="nx">idx</span> <span class="o">+</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span>
+        <span class="nv">tab.url = </span><span class="nx">tab</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">substring</span> <span class="nx">idx</span> <span class="o">+</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span>
         <span class="nv">str = </span><span class="s1">&#39;[escape]&#39;</span>
-        <span class="k">if</span> <span class="nx">url</span> <span class="o">and</span> <span class="nx">url</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="o">is</span> <span class="mi">0</span>
-          <span class="nv">url = </span><span class="nb">decodeURIComponent</span> <span class="nx">url</span><span class="p">.</span><span class="nx">substring</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span>
-    <span class="nx">url</span>
-<span class="p">,</span>
+        <span class="k">if</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="o">is</span> <span class="mi">0</span>
+          <span class="nv">tab.url = </span><span class="nb">decodeURIComponent</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">substring</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span>
 
 </pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>Setup <a href="http://iblogbox.com/chrome/geckotab">Mozilla Gecko Tab</a>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-  <span class="nv">id: </span>   <span class="s1">&#39;icoloanbecehinobmflpeglknkplbfbm&#39;</span>
-  <span class="nv">title: </span><span class="nf">(title) -&gt;</span> <span class="nx">title</span>
-  <span class="nv">url: </span>  <span class="nf">(url) -&gt;</span>
-    <span class="nv">str = </span><span class="s1">&#39;navigate.html?chromeurl=&#39;</span>
-    <span class="k">if</span> <span class="nx">url</span>
-      <span class="nv">idx = </span><span class="nx">url</span><span class="p">.</span><span class="nx">indexOf</span> <span class="nx">str</span>
+  <span class="nv">icoloanbecehinobmflpeglknkplbfbm: </span><span class="nf">(tab) -&gt;</span>
+    <span class="k">if</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">url</span>
+      <span class="nv">str = </span><span class="s1">&#39;navigate.html?chromeurl=&#39;</span>
+      <span class="nv">idx = </span><span class="nx">tab</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">indexOf</span> <span class="nx">str</span>
       <span class="k">if</span> <span class="nx">idx</span> <span class="o">isnt</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="nv">url = </span><span class="nx">url</span><span class="p">.</span><span class="nx">substring</span> <span class="nx">idx</span> <span class="o">+</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span>
+        <span class="nv">tab.url = </span><span class="nx">tab</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">substring</span> <span class="nx">idx</span> <span class="o">+</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span>
         <span class="nv">str = </span><span class="s1">&#39;[escape]&#39;</span>
-        <span class="k">if</span> <span class="nx">url</span> <span class="o">and</span> <span class="nx">url</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="o">is</span> <span class="mi">0</span>
-          <span class="nv">url = </span><span class="nb">decodeURIComponent</span> <span class="nx">url</span><span class="p">.</span><span class="nx">substring</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span>
-    <span class="nx">url</span>
-<span class="p">]</span>
+        <span class="k">if</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="o">is</span> <span class="mi">0</span>
+          <span class="nv">tab.url = </span><span class="nb">decodeURIComponent</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">substring</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span>
 
 
 </pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <h2>Private variables</h2>             </td>             <td class="code">               <div class="highlight"><pre>
@@ -710,7 +698,7 @@ and persist the changes.</p>             </td>             <td class="code">    
     <span class="nx">log</span><span class="p">.</span><span class="nx">error</span> <span class="nx">error</span><span class="p">.</span><span class="nx">message</span>
     <span class="nx">runner</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span>
   <span class="nx">runner</span><span class="p">.</span><span class="nx">push</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">cookies</span><span class="p">,</span> <span class="s1">&#39;getAll&#39;</span><span class="p">,</span> <span class="nv">url: </span><span class="nx">data</span><span class="p">.</span><span class="nx">url</span><span class="p">,</span> <span class="nf">(cookies = []) -&gt;</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span> <span class="s1">&#39;Retrieved the followign cookies...&#39;</span><span class="p">,</span> <span class="nx">cookies</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span> <span class="s1">&#39;Retrieved the following cookies...&#39;</span><span class="p">,</span> <span class="nx">cookies</span>
     <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">data</span><span class="p">,</span>
       <span class="nv">cookie: </span> <span class="o">-&gt;</span> <span class="nf">(text, render) -&gt;</span>
 
@@ -782,27 +770,24 @@ If a shortened URL is requested when parsing the templates contents later,
 shortener service unless it is actually required.</p>             </td>             <td class="code">               <div class="highlight"><pre>
 <span class="nv">buildStandardData = </span><span class="nf">(tab, shortCallback) -&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
-  <span class="nv">compatibility = </span><span class="kc">no</span>
-  <span class="nv">data          = </span><span class="p">{}</span>
-  <span class="nv">title         = </span><span class="s1">&#39;&#39;</span>
-  <span class="nv">url           = </span><span class="p">{}</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-82">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-82">&#182;</a>               </div>               <p>Check for any support extensions running on the current tab by simply
+</pre></div>             </td>           </tr>                               <tr id="section-82">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-82">&#182;</a>               </div>               <p>Create a copy of the original tab of the tab to run the compatibility
+scripts on.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+  <span class="nv">ctab = </span><span class="p">{}</span>
+  <span class="nx">ctab</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span> <span class="k">for</span> <span class="nx">own</span> <span class="nx">prop</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">tab</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-83">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-83">&#182;</a>               </div>               <p>Check for any support extensions running on the current tab by simply
 checking the tabs URL.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-  <span class="k">for</span> <span class="nx">extension</span> <span class="k">in</span> <span class="nx">SUPPORT</span> <span class="k">when</span> <span class="nx">isExtensionActive</span> <span class="nx">tab</span><span class="p">,</span> <span class="nx">extension</span><span class="p">.</span><span class="nx">id</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span> <span class="s2">&quot;Making data compatible for #{exension.id}&quot;</span>
-    <span class="nv">title         = </span><span class="nx">extension</span><span class="p">.</span><span class="nx">title</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">title</span>
-    <span class="nv">url           = </span><span class="nx">$</span><span class="p">.</span><span class="nx">url</span> <span class="nx">extension</span><span class="p">.</span><span class="nx">url</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">url</span>
-    <span class="nv">compatibility = </span><span class="kc">yes</span>
+  <span class="k">for</span> <span class="nx">own</span> <span class="nx">extension</span><span class="p">,</span> <span class="nx">handler</span> <span class="k">of</span> <span class="nx">SUPPORT</span> <span class="k">when</span> <span class="nx">isExtensionActive</span> <span class="nx">tab</span><span class="p">,</span> <span class="nx">extension</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span> <span class="s2">&quot;Making data compatible with #{extension}&quot;</span>
+    <span class="nx">handler</span><span class="o">?</span> <span class="nx">ctab</span>
     <span class="k">break</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-83">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-83">&#182;</a>               </div>               <p>Derive the initial data from the tab itself if no supported extensions were
-found to be active.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-  <span class="nx">unless</span> <span class="nx">compatibility</span>
-    <span class="nv">title = </span><span class="nx">tab</span><span class="p">.</span><span class="nx">title</span>
-    <span class="nv">url   = </span><span class="nx">$</span><span class="p">.</span><span class="nx">url</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">url</span>
+</pre></div>             </td>           </tr>                               <tr id="section-84">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-84">&#182;</a>               </div>               <p>Build the initial URL data.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+  <span class="nv">data = </span><span class="p">{}</span>
+  <span class="nv">url  = </span><span class="nx">$</span><span class="p">.</span><span class="nx">url</span> <span class="nx">ctab</span><span class="p">.</span><span class="nx">url</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-84">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-84">&#182;</a>               </div>               <p>Create references to the base of all grouped options to improve lookup
+</pre></div>             </td>           </tr>                               <tr id="section-85">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-85">&#182;</a>               </div>               <p>Create references to the base of all grouped options to improve lookup
 performance.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">anchor        = </span><span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;anchor&#39;</span>
   <span class="nv">bitly         = </span><span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;bitly&#39;</span>
@@ -813,7 +798,7 @@ performance.</p>             </td>             <td class="code">               <
   <span class="nv">toolbar       = </span><span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;toolbar&#39;</span>
   <span class="nv">yourls        = </span><span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;yourls&#39;</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-85">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-85">&#182;</a>               </div>               <p>Merge the initial data with the attributes of the <a href="https://github.com/allmarkedup/jQuery-URL-Parser">URL
+</pre></div>             </td>           </tr>                               <tr id="section-86">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-86">&#182;</a>               </div>               <p>Merge the initial data with the attributes of the <a href="https://github.com/allmarkedup/jQuery-URL-Parser">URL
 parser</a> and all of the
 custom Template properties. <br />
 All properties should be in lower case so that they can be looked up
@@ -823,12 +808,14 @@ ignoring case by our modified version of
     <span class="nv">anchortarget: </span>         <span class="nx">anchor</span><span class="p">.</span><span class="nx">target</span>
     <span class="nv">anchortitle: </span>          <span class="nx">anchor</span><span class="p">.</span><span class="nx">title</span>
     <span class="nv">bitly: </span>                <span class="nx">bitly</span><span class="p">.</span><span class="nx">enabled</span>
-    <span class="nv">bitlyapikey: </span>          <span class="nx">bitly</span><span class="p">.</span><span class="nx">apiKey</span>
-    <span class="nv">bitlyusername: </span>        <span class="nx">bitly</span><span class="p">.</span><span class="nx">username</span>
+    <span class="nv">bitlyaccount: </span>         <span class="o">-&gt;</span>
+      <span class="nx">ext</span><span class="p">.</span><span class="nx">queryUrlShortener</span><span class="p">(</span><span class="nf">(shortener) -&gt;</span>
+        <span class="nx">shortener</span><span class="p">.</span><span class="nx">name</span> <span class="o">is</span> <span class="s1">&#39;bitly&#39;</span>
+      <span class="p">).</span><span class="nx">oauth</span><span class="p">.</span><span class="nx">hasAccessToken</span><span class="p">()</span>
     <span class="nv">browser: </span>              <span class="nx">browser</span><span class="p">.</span><span class="nx">title</span>
     <span class="nv">browserversion: </span>       <span class="nx">browser</span><span class="p">.</span><span class="nx">version</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-86">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-86">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use <code>menu</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-87">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-87">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use <code>menu</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nv">contextmenu: </span>          <span class="o">-&gt;</span> <span class="nx">@menu</span>
     <span class="nv">cookiesenabled: </span>       <span class="nx">navigator</span><span class="p">.</span><span class="nx">cookieEnabled</span>
     <span class="nv">count: </span>                <span class="nx">stats</span><span class="p">.</span><span class="nx">count</span>
@@ -839,17 +826,17 @@ ignoring case by our modified version of
       <span class="nb">decodeURIComponent</span><span class="p">(</span><span class="nx">render</span> <span class="nx">text</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span>
     <span class="nv">depth: </span>                <span class="nx">screen</span><span class="p">.</span><span class="nx">colorDepth</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-87">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-87">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use <code>anchorTarget</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-88">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-88">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use <code>anchorTarget</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nv">doanchortarget: </span>       <span class="o">-&gt;</span> <span class="nx">@anchortarget</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-88">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-88">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use <code>anchorTitle</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-89">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-89">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use <code>anchorTitle</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nv">doanchortitle: </span>        <span class="o">-&gt;</span> <span class="nx">@anchortitle</span>
     <span class="nv">encode: </span>               <span class="o">-&gt;</span> <span class="nf">(text, render) -&gt;</span>
       <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">render</span> <span class="nx">text</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-89">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-89">&#182;</a>               </div>               <p>Deprecated since 0.1.0.2, use <code>encode</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-90">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-90">&#182;</a>               </div>               <p>Deprecated since 0.1.0.2, use <code>encode</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nv">encoded: </span>              <span class="o">-&gt;</span> <span class="nb">encodeURIComponent</span> <span class="nx">@url</span>
-    <span class="nv">favicon: </span>              <span class="nx">tab</span><span class="p">.</span><span class="nx">favIconUrl</span>
+    <span class="nv">favicon: </span>              <span class="nx">ctab</span><span class="p">.</span><span class="nx">favIconUrl</span>
     <span class="nv">fparam: </span>               <span class="o">-&gt;</span> <span class="nf">(text, render) -&gt;</span>
       <span class="nx">url</span><span class="p">.</span><span class="nx">fparam</span><span class="p">(</span><span class="nx">render</span> <span class="nx">text</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span>
     <span class="nv">fparams: </span>              <span class="nx">nullIfEmpty</span> <span class="nx">url</span><span class="p">.</span><span class="nx">fparam</span><span class="p">()</span>
@@ -860,9 +847,9 @@ ignoring case by our modified version of
     <span class="nv">googlaccount: </span>         <span class="o">-&gt;</span>
       <span class="nx">ext</span><span class="p">.</span><span class="nx">queryUrlShortener</span><span class="p">(</span><span class="nf">(shortener) -&gt;</span>
         <span class="nx">shortener</span><span class="p">.</span><span class="nx">name</span> <span class="o">is</span> <span class="s1">&#39;googl&#39;</span>
-      <span class="p">).</span><span class="nx">oauth</span><span class="p">.</span><span class="nx">hasToken</span><span class="p">()</span>
+      <span class="p">).</span><span class="nx">oauth</span><span class="p">.</span><span class="nx">hasAccessToken</span><span class="p">()</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-90">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-90">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use <code>googlAccount</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-91">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-91">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use <code>googlAccount</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nv">googloauth: </span>           <span class="o">-&gt;</span> <span class="nx">@googlaccount</span><span class="p">()</span>
     <span class="nv">java: </span>                 <span class="nx">navigator</span><span class="p">.</span><span class="nx">javaEnabled</span><span class="p">()</span>
     <span class="nv">menu: </span>                 <span class="nx">menu</span><span class="p">.</span><span class="nx">enabled</span>
@@ -871,7 +858,7 @@ ignoring case by our modified version of
     <span class="nv">notificationduration: </span> <span class="nx">notifications</span><span class="p">.</span><span class="nx">duration</span> <span class="o">*</span> <span class="p">.</span><span class="mi">001</span>
     <span class="nv">offline: </span>              <span class="o">not</span> <span class="nx">navigator</span><span class="p">.</span><span class="nx">onLine</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-91">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-91">&#182;</a>               </div>               <p>Deprecated since 0.1.0.2, use <code>originalUrl</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-92">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-92">&#182;</a>               </div>               <p>Deprecated since 0.1.0.2, use <code>originalUrl</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nv">originalsource: </span>       <span class="o">-&gt;</span> <span class="nx">@originalurl</span>
     <span class="nv">originaltitle: </span>        <span class="nx">tab</span><span class="p">.</span><span class="nx">title</span> <span class="o">or</span> <span class="nx">url</span><span class="p">.</span><span class="nx">attr</span> <span class="s1">&#39;source&#39;</span>
     <span class="nv">originalurl: </span>          <span class="nx">tab</span><span class="p">.</span><span class="nx">url</span>
@@ -897,20 +884,20 @@ ignoring case by our modified version of
       <span class="nx">url</span><span class="p">.</span><span class="nx">segment</span><span class="p">(</span><span class="nb">parseInt</span> <span class="nx">render</span><span class="p">(</span><span class="nx">text</span><span class="p">),</span> <span class="mi">10</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span>
     <span class="nv">segments: </span>             <span class="nx">url</span><span class="p">.</span><span class="nx">segment</span><span class="p">()</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-92">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-92">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use <code>shorten</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-93">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-93">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use <code>shorten</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nv">short: </span>                <span class="o">-&gt;</span> <span class="nx">@shorten</span><span class="p">()</span>
     <span class="nv">shortcuts: </span>            <span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortcuts&#39;</span>
     <span class="nv">shorten: </span>              <span class="o">-&gt;</span> <span class="nx">shortCallback</span>
-    <span class="nv">title: </span>                <span class="nx">title</span> <span class="o">or</span> <span class="nx">url</span><span class="p">.</span><span class="nx">attr</span> <span class="s1">&#39;source&#39;</span>
+    <span class="nv">title: </span>                <span class="nx">ctab</span><span class="p">.</span><span class="nx">title</span> <span class="o">or</span> <span class="nx">url</span><span class="p">.</span><span class="nx">attr</span> <span class="s1">&#39;source&#39;</span>
     <span class="nv">toolbarclose: </span>         <span class="nx">toolbar</span><span class="p">.</span><span class="nx">close</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-93">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-93">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use the inverse of <code>toolbarPopup</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-94">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-94">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use the inverse of <code>toolbarPopup</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nv">toolbarfeature: </span>       <span class="o">-&gt;</span> <span class="o">not</span> <span class="nx">@toolbarpopup</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-94">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-94">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use <code>toolbarStyle</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-95">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-95">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use <code>toolbarStyle</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nv">toolbarfeaturedetails: </span><span class="o">-&gt;</span> <span class="nx">@toolbarstyle</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-95">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-95">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use <code>toolbarKey</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-96">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-96">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use <code>toolbarKey</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nv">toolbarfeaturename: </span>   <span class="o">-&gt;</span> <span class="nx">@toolbarkey</span>
     <span class="nv">toolbarkey: </span>           <span class="nx">toolbar</span><span class="p">.</span><span class="nx">key</span>
     <span class="nv">toolbaroptions: </span>       <span class="nx">toolbar</span><span class="p">.</span><span class="nx">options</span>
@@ -919,6 +906,7 @@ ignoring case by our modified version of
     <span class="nv">url: </span>                  <span class="nx">url</span><span class="p">.</span><span class="nx">attr</span> <span class="s1">&#39;source&#39;</span>
     <span class="nv">version: </span>              <span class="nx">ext</span><span class="p">.</span><span class="nx">version</span>
     <span class="nv">yourls: </span>               <span class="nx">yourls</span><span class="p">.</span><span class="nx">enabled</span>
+    <span class="nv">yourlsauthentication: </span> <span class="nx">yourls</span><span class="p">.</span><span class="nx">authentication</span>
     <span class="nv">yourlspassword: </span>       <span class="nx">yourls</span><span class="p">.</span><span class="nx">password</span>
     <span class="nv">yourlssignature: </span>      <span class="nx">yourls</span><span class="p">.</span><span class="nx">signature</span>
     <span class="nv">yourlsurl: </span>            <span class="nx">yourls</span><span class="p">.</span><span class="nx">url</span>
@@ -926,7 +914,7 @@ ignoring case by our modified version of
   <span class="nx">data</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-96">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-96">&#182;</a>               </div>               <p>Ensure there is a lower case variant of all properties of <code>data</code>, optionally
+</pre></div>             </td>           </tr>                               <tr id="section-97">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-97">&#182;</a>               </div>               <p>Ensure there is a lower case variant of all properties of <code>data</code>, optionally
 removing the original non-lower-case property.</p>             </td>             <td class="code">               <div class="highlight"><pre>
 <span class="nv">transformData = </span><span class="nf">(data, deleteOld) -&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
@@ -935,10 +923,10 @@ removing the original non-lower-case property.</p>             </td>            
     <span class="k">delete</span> <span class="nx">data</span><span class="p">[</span><span class="nx">prop</span><span class="p">]</span> <span class="k">if</span> <span class="nx">deleteOld</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-97">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-97">&#182;</a>               </div>               <h2>HTML building functions</h2>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-98">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-98">&#182;</a>               </div>               <h2>HTML building functions</h2>             </td>             <td class="code">               <div class="highlight"><pre>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-98">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-98">&#182;</a>               </div>               <p>Build the HTML to populate the popup with to optimize popup loading times.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-99">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-99">&#182;</a>               </div>               <p>Build the HTML to populate the popup with to optimize popup loading times.</p>             </td>             <td class="code">               <div class="highlight"><pre>
 <span class="nv">buildPopup = </span><span class="o">-&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
   <span class="nv">item     = </span><span class="nx">$</span> <span class="s1">&#39;&lt;div id=&quot;item&quot;/&gt;&#39;</span>
@@ -950,11 +938,11 @@ removing the original non-lower-case property.</p>             </td>            
     <span class="k">class</span><span class="o">:</span> <span class="s1">&#39;bar&#39;</span>
     <span class="nv">style: </span><span class="s1">&#39;width: 100%&#39;</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-99">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-99">&#182;</a>               </div>               <p>Generate the HTML for each template.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-100">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-100">&#182;</a>               </div>               <p>Generate the HTML for each template.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="k">for</span> <span class="nx">template</span> <span class="k">in</span> <span class="nx">ext</span><span class="p">.</span><span class="nx">templates</span> <span class="k">when</span> <span class="nx">template</span><span class="p">.</span><span class="nx">enabled</span>
     <span class="nx">itemList</span><span class="p">.</span><span class="nx">append</span> <span class="nx">buildTemplate</span> <span class="nx">template</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-100">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-100">&#182;</a>               </div>               <p>Add a generic message to state the obvious... that the list is empty.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-101">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-101">&#182;</a>               </div>               <p>Add a generic message to state the obvious... that the list is empty.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="k">if</span> <span class="nx">itemList</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;li&#39;</span><span class="p">).</span><span class="nx">length</span> <span class="o">is</span> <span class="mi">0</span>
     <span class="nx">itemList</span><span class="p">.</span><span class="nx">append</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;&lt;li/&gt;&#39;</span><span class="p">).</span><span class="nx">append</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;&lt;div/&gt;&#39;</span><span class="p">,</span>
       <span class="k">class</span><span class="o">:</span> <span class="s1">&#39;menu&#39;</span>
@@ -964,7 +952,7 @@ removing the original non-lower-case property.</p>             </td>            
       <span class="nv">style: </span><span class="s1">&#39;margin-left: 0&#39;</span>
       <span class="nv">text: </span> <span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;empty&#39;</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-101">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-101">&#182;</a>               </div>               <p>Add a link to the options page if the user doesn't mind.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-102">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-102">&#182;</a>               </div>               <p>Add a link to the options page if the user doesn't mind.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="k">if</span> <span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;toolbar.options&#39;</span>
     <span class="nx">itemList</span><span class="p">.</span><span class="nx">append</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;&lt;li/&gt;&#39;</span><span class="p">,</span>
       <span class="k">class</span><span class="o">:</span>       <span class="s1">&#39;options&#39;</span>
@@ -980,7 +968,7 @@ removing the original non-lower-case property.</p>             </td>            
   <span class="nv">ext.popupHtml = </span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;&lt;div/&gt;&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">loadDiv</span><span class="p">,</span> <span class="nx">item</span><span class="p">).</span><span class="nx">html</span><span class="p">()</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-102">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-102">&#182;</a>               </div>               <p>Create an <code>li</code> element to represent <code>template</code>. <br />
+</pre></div>             </td>           </tr>                               <tr id="section-103">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-103">&#182;</a>               </div>               <p>Create an <code>li</code> element to represent <code>template</code>. <br />
 The element should then be inserted in to the <code>ul</code> element in the popup page
 but is created here to optimize display times for the popup.</p>             </td>             <td class="code">               <div class="highlight"><pre>
 <span class="nv">buildTemplate = </span><span class="nf">(template) -&gt;</span>
@@ -1006,26 +994,26 @@ but is created here to optimize display times for the popup.</p>             </t
   <span class="nx">item</span><span class="p">.</span><span class="nx">append</span> <span class="nx">menu</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-103">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-103">&#182;</a>               </div>               <h2>Initialization functions</h2>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-104">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-104">&#182;</a>               </div>               <h2>Initialization functions</h2>             </td>             <td class="code">               <div class="highlight"><pre>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-104">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-104">&#182;</a>               </div>               <p>Handle the conversion/removal of older version of settings that may have been
+</pre></div>             </td>           </tr>                               <tr id="section-105">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-105">&#182;</a>               </div>               <p>Handle the conversion/removal of older version of settings that may have been
 stored previously by <code>ext.init</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
 <span class="nv">init_update = </span><span class="o">-&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-105">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-105">&#182;</a>               </div>               <p>Update the update progress indicator itself.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-106">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-106">&#182;</a>               </div>               <p>Update the update progress indicator itself.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="k">if</span> <span class="nx">store</span><span class="p">.</span><span class="nx">exists</span> <span class="s1">&#39;update_progress&#39;</span>
     <span class="nx">store</span><span class="p">.</span><span class="nx">modify</span> <span class="s1">&#39;updates&#39;</span><span class="p">,</span> <span class="nf">(updates) -&gt;</span>
       <span class="nv">progress = </span><span class="nx">store</span><span class="p">.</span><span class="nx">remove</span> <span class="s1">&#39;update_progress&#39;</span>
       <span class="k">for</span> <span class="nx">own</span> <span class="nx">namespace</span><span class="p">,</span> <span class="nx">versions</span> <span class="k">of</span> <span class="nx">progress</span>
         <span class="nx">updates</span><span class="p">[</span><span class="nx">namespace</span><span class="p">]</span> <span class="o">=</span> <span class="k">if</span> <span class="nx">versions</span><span class="o">?</span><span class="p">.</span><span class="nx">length</span> <span class="k">then</span> <span class="nx">versions</span><span class="p">.</span><span class="nx">pop</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-106">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-106">&#182;</a>               </div>               <p>Create updater for the <code>settings</code> namespace.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-107">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-107">&#182;</a>               </div>               <p>Create updater for the <code>settings</code> namespace.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">updater      = </span><span class="k">new</span> <span class="nx">store</span><span class="p">.</span><span class="nx">Updater</span> <span class="s1">&#39;settings&#39;</span>
   <span class="nv">isNewInstall = </span><span class="nx">updater</span><span class="p">.</span><span class="nx">isNew</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-107">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-107">&#182;</a>               </div>               <p>Define the processes for all required updates to the <code>settings</code>
+</pre></div>             </td>           </tr>                               <tr id="section-108">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-108">&#182;</a>               </div>               <p>Define the processes for all required updates to the <code>settings</code>
 namespace.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nx">updater</span><span class="p">.</span><span class="nx">update</span> <span class="s1">&#39;0.1.0.0&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
     <span class="nx">log</span><span class="p">.</span><span class="nx">info</span> <span class="s1">&#39;Updating general settings for 0.1.0.0&#39;</span>
@@ -1056,33 +1044,33 @@ namespace.</p>             </td>             <td class="code">               <di
     <span class="nx">store</span><span class="p">.</span><span class="nx">remove</span> <span class="s1">&#39;notificationDuration&#39;</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-108">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-108">&#182;</a>               </div>               <p>Initialize the settings related to statistical information.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-109">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-109">&#182;</a>               </div>               <p>Initialize the settings related to statistical information.</p>             </td>             <td class="code">               <div class="highlight"><pre>
 <span class="nv">initStatistics = </span><span class="o">-&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
   <span class="nx">updateStatistics</span><span class="p">()</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-109">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-109">&#182;</a>               </div>               <p>Initialize <code>template</code> and its properties, before adding it to <code>templates</code> to
+</pre></div>             </td>           </tr>                               <tr id="section-110">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-110">&#182;</a>               </div>               <p>Initialize <code>template</code> and its properties, before adding it to <code>templates</code> to
 be persisted later.</p>             </td>             <td class="code">               <div class="highlight"><pre>
 <span class="nv">initTemplate = </span><span class="nf">(template, templates) -&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-110">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-110">&#182;</a>               </div>               <p>Derive the index of <code>template</code> to determine whether or not it already
+</pre></div>             </td>           </tr>                               <tr id="section-111">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-111">&#182;</a>               </div>               <p>Derive the index of <code>template</code> to determine whether or not it already
 exists.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">idx = </span><span class="nx">templates</span><span class="p">.</span><span class="nx">indexOf</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">query</span> <span class="nx">templates</span><span class="p">,</span> <span class="kc">yes</span><span class="p">,</span> <span class="nf">(tmpl) -&gt;</span>
     <span class="nx">tmpl</span><span class="p">.</span><span class="nx">key</span> <span class="o">is</span> <span class="nx">template</span><span class="p">.</span><span class="nx">key</span>
   <span class="k">if</span> <span class="nx">idx</span> <span class="o">is</span> <span class="o">-</span><span class="mi">1</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-111">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-111">&#182;</a>               </div>               <p><code>template</code> doesn't already exist so add it now.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-112">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-112">&#182;</a>               </div>               <p><code>template</code> doesn't already exist so add it now.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span> <span class="s1">&#39;Adding the following predefined template...&#39;</span><span class="p">,</span> <span class="nx">template</span>
     <span class="nx">templates</span><span class="p">.</span><span class="nx">push</span> <span class="nx">template</span>
   <span class="k">else</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-112">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-112">&#182;</a>               </div>               <p><code>template</code> exists so modify the properties to ensure they are reliable.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-113">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-113">&#182;</a>               </div>               <p><code>template</code> exists so modify the properties to ensure they are reliable.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span> <span class="s1">&#39;Ensuring following template adheres to structure...&#39;</span><span class="p">,</span> <span class="nx">template</span>
     <span class="k">if</span> <span class="nx">template</span><span class="p">.</span><span class="nx">readOnly</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-113">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-113">&#182;</a>               </div>               <p><code>template</code> is read-only so certain properties should always be
+</pre></div>             </td>           </tr>                               <tr id="section-114">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-114">&#182;</a>               </div>               <p><code>template</code> is read-only so certain properties should always be
 overriden and others only when they are not already available.</p>             </td>             <td class="code">               <div class="highlight"><pre>
       <span class="nx">templates</span><span class="p">[</span><span class="nx">idx</span><span class="p">].</span><span class="nv">content   = </span><span class="nx">template</span><span class="p">.</span><span class="nx">content</span>
       <span class="nx">templates</span><span class="p">[</span><span class="nx">idx</span><span class="p">].</span><span class="nx">enabled</span>  <span class="o">?=</span> <span class="nx">template</span><span class="p">.</span><span class="nx">enabled</span>
@@ -1095,7 +1083,7 @@ overriden and others only when they are not already available.</p>             <
       <span class="nx">templates</span><span class="p">[</span><span class="nx">idx</span><span class="p">].</span><span class="nx">usage</span>    <span class="o">?=</span> <span class="nx">template</span><span class="p">.</span><span class="nx">usage</span>
     <span class="k">else</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-114">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-114">&#182;</a>               </div>               <p><code>template</code> is <em>not</em> read-only so set unavailable, but required,
+</pre></div>             </td>           </tr>                               <tr id="section-115">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-115">&#182;</a>               </div>               <p><code>template</code> is <em>not</em> read-only so set unavailable, but required,
 properties to their default value.</p>             </td>             <td class="code">               <div class="highlight"><pre>
       <span class="nx">templates</span><span class="p">[</span><span class="nx">idx</span><span class="p">].</span><span class="nx">content</span>  <span class="o">?=</span> <span class="s1">&#39;&#39;</span>
       <span class="nx">templates</span><span class="p">[</span><span class="nx">idx</span><span class="p">].</span><span class="nx">enabled</span>  <span class="o">?=</span> <span class="kc">yes</span>
@@ -1110,32 +1098,32 @@ properties to their default value.</p>             </td>             <td class="
   <span class="nx">template</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-115">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-115">&#182;</a>               </div>               <p>Initialize the persisted managed templates.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-116">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-116">&#182;</a>               </div>               <p>Initialize the persisted managed templates.</p>             </td>             <td class="code">               <div class="highlight"><pre>
 <span class="nv">initTemplates = </span><span class="o">-&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
   <span class="nx">initTemplates_update</span><span class="p">()</span>
   <span class="nx">store</span><span class="p">.</span><span class="nx">modify</span> <span class="s1">&#39;templates&#39;</span><span class="p">,</span> <span class="nf">(templates) -&gt;</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-116">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-116">&#182;</a>               </div>               <p>Initialize all default templates to ensure their properties are as
+</pre></div>             </td>           </tr>                               <tr id="section-117">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-117">&#182;</a>               </div>               <p>Initialize all default templates to ensure their properties are as
 expected.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nx">initTemplate</span> <span class="nx">template</span><span class="p">,</span> <span class="nx">templates</span> <span class="k">for</span> <span class="nx">template</span> <span class="k">in</span> <span class="nx">DEFAULT_TEMPLATES</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-117">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-117">&#182;</a>               </div>               <p>Now, initialize <em>all</em> templates to ensure their properties are valid.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-118">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-118">&#182;</a>               </div>               <p>Now, initialize <em>all</em> templates to ensure their properties are valid.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nx">initTemplate</span> <span class="nx">template</span><span class="p">,</span> <span class="nx">templates</span> <span class="k">for</span> <span class="nx">template</span> <span class="k">in</span> <span class="nx">templates</span>
   <span class="nx">ext</span><span class="p">.</span><span class="nx">updateTemplates</span><span class="p">()</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-118">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-118">&#182;</a>               </div>               <p>Handle the conversion/removal of older version of settings that may have been
+</pre></div>             </td>           </tr>                               <tr id="section-119">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-119">&#182;</a>               </div>               <p>Handle the conversion/removal of older version of settings that may have been
 stored previously by <code>initTemplates</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
 <span class="nv">initTemplates_update = </span><span class="o">-&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-119">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-119">&#182;</a>               </div>               <p>Create updater for the <code>features</code> namespace and then rename it to
+</pre></div>             </td>           </tr>                               <tr id="section-120">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-120">&#182;</a>               </div>               <p>Create updater for the <code>features</code> namespace and then rename it to
 <code>templates</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">updater = </span><span class="k">new</span> <span class="nx">store</span><span class="p">.</span><span class="nx">Updater</span> <span class="s1">&#39;features&#39;</span>
   <span class="nx">updater</span><span class="p">.</span><span class="nx">rename</span> <span class="s1">&#39;templates&#39;</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-120">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-120">&#182;</a>               </div>               <p>Define the processes for all required updates to the <code>templates</code> namespace.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-121">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-121">&#182;</a>               </div>               <p>Define the processes for all required updates to the <code>templates</code> namespace.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nx">updater</span><span class="p">.</span><span class="nx">update</span> <span class="s1">&#39;0.1.0.0&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
     <span class="nx">log</span><span class="p">.</span><span class="nx">info</span> <span class="s1">&#39;Updating template settings for 0.1.0.0&#39;</span>
     <span class="nx">store</span><span class="p">.</span><span class="nx">rename</span> <span class="s1">&#39;copyAnchorEnabled&#39;</span><span class="p">,</span>  <span class="s1">&#39;feat__anchor_enabled&#39;</span><span class="p">,</span>  <span class="kc">yes</span>
@@ -1202,7 +1190,7 @@ stored previously by <code>initTemplates</code>.</p>             </td>          
     <span class="p">)...</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-121">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-121">&#182;</a>               </div>               <p>Initialize the settings related to the toolbar/browser action.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-122">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-122">&#182;</a>               </div>               <p>Initialize the settings related to the toolbar/browser action.</p>             </td>             <td class="code">               <div class="highlight"><pre>
 <span class="nv">initToolbar = </span><span class="o">-&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
   <span class="nx">initToolbar_update</span><span class="p">()</span>
@@ -1215,15 +1203,15 @@ stored previously by <code>initTemplates</code>.</p>             </td>          
   <span class="nx">ext</span><span class="p">.</span><span class="nx">updateToolbar</span><span class="p">()</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-122">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-122">&#182;</a>               </div>               <p>Handle the conversion/removal of older version of settings that may have been
+</pre></div>             </td>           </tr>                               <tr id="section-123">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-123">&#182;</a>               </div>               <p>Handle the conversion/removal of older version of settings that may have been
 stored previously by <code>initToolbar</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
 <span class="nv">initToolbar_update = </span><span class="o">-&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-123">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-123">&#182;</a>               </div>               <p>Create updater for the <code>toolbar</code> namespace.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-124">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-124">&#182;</a>               </div>               <p>Create updater for the <code>toolbar</code> namespace.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">updater = </span><span class="k">new</span> <span class="nx">store</span><span class="p">.</span><span class="nx">Updater</span> <span class="s1">&#39;toolbar&#39;</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-124">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-124">&#182;</a>               </div>               <p>Define the processes for all required updates to the <code>toolbar</code> namespace.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-125">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-125">&#182;</a>               </div>               <p>Define the processes for all required updates to the <code>toolbar</code> namespace.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nx">updater</span><span class="p">.</span><span class="nx">update</span> <span class="s1">&#39;1.0.0&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
     <span class="nx">log</span><span class="p">.</span><span class="nx">info</span> <span class="s1">&#39;Updating toolbar settings for 1.0.0&#39;</span>
     <span class="nx">store</span><span class="p">.</span><span class="nx">modify</span> <span class="s1">&#39;toolbar&#39;</span><span class="p">,</span> <span class="nf">(toolbar) -&gt;</span>
@@ -1233,7 +1221,7 @@ stored previously by <code>initToolbar</code>.</p>             </td>            
                  <span class="s1">&#39;toolbarFeatureName&#39;</span><span class="p">,</span> <span class="s1">&#39;toolbarPopup&#39;</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-125">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-125">&#182;</a>               </div>               <p>Initialize the settings related to the supported URL Shortener services.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-126">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-126">&#182;</a>               </div>               <p>Initialize the settings related to the supported URL Shortener services.</p>             </td>             <td class="code">               <div class="highlight"><pre>
 <span class="nv">initUrlShorteners = </span><span class="o">-&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
   <span class="nx">store</span><span class="p">.</span><span class="nx">init</span>
@@ -1242,50 +1230,49 @@ stored previously by <code>initToolbar</code>.</p>             </td>            
     <span class="nv">yourls: </span><span class="p">{}</span>
   <span class="nx">initUrlShorteners_update</span><span class="p">()</span>
   <span class="nx">store</span><span class="p">.</span><span class="nx">modify</span> <span class="s1">&#39;bitly&#39;</span><span class="p">,</span> <span class="nf">(bitly) -&gt;</span>
-    <span class="nx">bitly</span><span class="p">.</span><span class="nx">apiKey</span>   <span class="o">?=</span> <span class="s1">&#39;&#39;</span>
-    <span class="nx">bitly</span><span class="p">.</span><span class="nx">enabled</span>  <span class="o">?=</span> <span class="kc">no</span>
-    <span class="nx">bitly</span><span class="p">.</span><span class="nx">usage</span>    <span class="o">?=</span> <span class="mi">0</span>
-    <span class="nx">bitly</span><span class="p">.</span><span class="nx">username</span> <span class="o">?=</span> <span class="s1">&#39;&#39;</span>
+    <span class="nx">bitly</span><span class="p">.</span><span class="nx">enabled</span> <span class="o">?=</span> <span class="kc">yes</span>
+    <span class="nx">bitly</span><span class="p">.</span><span class="nx">usage</span>   <span class="o">?=</span> <span class="mi">0</span>
   <span class="nx">store</span><span class="p">.</span><span class="nx">modify</span> <span class="s1">&#39;googl&#39;</span><span class="p">,</span> <span class="nf">(googl) -&gt;</span>
-    <span class="nx">googl</span><span class="p">.</span><span class="nx">enabled</span> <span class="o">?=</span> <span class="kc">yes</span>
+    <span class="nx">googl</span><span class="p">.</span><span class="nx">enabled</span> <span class="o">?=</span> <span class="kc">no</span>
     <span class="nx">googl</span><span class="p">.</span><span class="nx">usage</span>   <span class="o">?=</span> <span class="mi">0</span>
   <span class="nx">store</span><span class="p">.</span><span class="nx">modify</span> <span class="s1">&#39;yourls&#39;</span><span class="p">,</span> <span class="nf">(yourls) -&gt;</span>
-    <span class="nx">yourls</span><span class="p">.</span><span class="nx">enabled</span>   <span class="o">?=</span> <span class="kc">no</span>
-    <span class="nx">yourls</span><span class="p">.</span><span class="nx">password</span>  <span class="o">?=</span> <span class="s1">&#39;&#39;</span>
-    <span class="nx">yourls</span><span class="p">.</span><span class="nx">signature</span> <span class="o">?=</span> <span class="s1">&#39;&#39;</span>
-    <span class="nx">yourls</span><span class="p">.</span><span class="nx">url</span>       <span class="o">?=</span> <span class="s1">&#39;&#39;</span>
-    <span class="nx">yourls</span><span class="p">.</span><span class="nx">username</span>  <span class="o">?=</span> <span class="s1">&#39;&#39;</span>
-    <span class="nx">yourls</span><span class="p">.</span><span class="nx">usage</span>     <span class="o">?=</span> <span class="mi">0</span>
+    <span class="nx">yourls</span><span class="p">.</span><span class="nx">authentication</span> <span class="o">?=</span> <span class="s1">&#39;&#39;</span>
+    <span class="nx">yourls</span><span class="p">.</span><span class="nx">enabled</span>        <span class="o">?=</span> <span class="kc">no</span>
+    <span class="nx">yourls</span><span class="p">.</span><span class="nx">password</span>       <span class="o">?=</span> <span class="s1">&#39;&#39;</span>
+    <span class="nx">yourls</span><span class="p">.</span><span class="nx">signature</span>      <span class="o">?=</span> <span class="s1">&#39;&#39;</span>
+    <span class="nx">yourls</span><span class="p">.</span><span class="nx">url</span>            <span class="o">?=</span> <span class="s1">&#39;&#39;</span>
+    <span class="nx">yourls</span><span class="p">.</span><span class="nx">username</span>       <span class="o">?=</span> <span class="s1">&#39;&#39;</span>
+    <span class="nx">yourls</span><span class="p">.</span><span class="nx">usage</span>          <span class="o">?=</span> <span class="mi">0</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-126">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-126">&#182;</a>               </div>               <p>Handle the conversion/removal of older version of settings that may have been
+</pre></div>             </td>           </tr>                               <tr id="section-127">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-127">&#182;</a>               </div>               <p>Handle the conversion/removal of older version of settings that may have been
 stored previously by <code>initUrlShorteners</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
 <span class="nv">initUrlShorteners_update = </span><span class="o">-&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-127">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-127">&#182;</a>               </div>               <p>Create updater for the <code>shorteners</code> namespace.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-128">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-128">&#182;</a>               </div>               <p>Create updater for the <code>shorteners</code> namespace.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">updater = </span><span class="k">new</span> <span class="nx">store</span><span class="p">.</span><span class="nx">Updater</span> <span class="s1">&#39;shorteners&#39;</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-128">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-128">&#182;</a>               </div>               <p>Define the processes for all required updates to the <code>shorteners</code>
+</pre></div>             </td>           </tr>                               <tr id="section-129">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-129">&#182;</a>               </div>               <p>Define the processes for all required updates to the <code>shorteners</code>
 namespace.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nx">updater</span><span class="p">.</span><span class="nx">update</span> <span class="s1">&#39;0.1.0.0&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
     <span class="nx">log</span><span class="p">.</span><span class="nx">info</span> <span class="s1">&#39;Updating URL shortener settings for 0.1.0.0&#39;</span>
-    <span class="nx">store</span><span class="p">.</span><span class="nx">rename</span> <span class="s1">&#39;bitlyEnabled&#39;</span><span class="p">,</span>       <span class="s1">&#39;bitly&#39;</span><span class="p">,</span>         <span class="kc">off</span>
+    <span class="nx">store</span><span class="p">.</span><span class="nx">rename</span> <span class="s1">&#39;bitlyEnabled&#39;</span><span class="p">,</span>       <span class="s1">&#39;bitly&#39;</span><span class="p">,</span>         <span class="kc">yes</span>
     <span class="nx">store</span><span class="p">.</span><span class="nx">rename</span> <span class="s1">&#39;bitlyXApiKey&#39;</span><span class="p">,</span>       <span class="s1">&#39;bitlyApiKey&#39;</span><span class="p">,</span>   <span class="s1">&#39;&#39;</span>
     <span class="nx">store</span><span class="p">.</span><span class="nx">rename</span> <span class="s1">&#39;bitlyXLogin&#39;</span><span class="p">,</span>        <span class="s1">&#39;bitlyUsername&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span>
-    <span class="nx">store</span><span class="p">.</span><span class="nx">rename</span> <span class="s1">&#39;googleEnabled&#39;</span><span class="p">,</span>      <span class="s1">&#39;googl&#39;</span><span class="p">,</span>         <span class="kc">on</span>
-    <span class="nx">store</span><span class="p">.</span><span class="nx">rename</span> <span class="s1">&#39;googleOAuthEnabled&#39;</span><span class="p">,</span> <span class="s1">&#39;googlOAuth&#39;</span><span class="p">,</span>    <span class="kc">on</span>
+    <span class="nx">store</span><span class="p">.</span><span class="nx">rename</span> <span class="s1">&#39;googleEnabled&#39;</span><span class="p">,</span>      <span class="s1">&#39;googl&#39;</span><span class="p">,</span>         <span class="kc">no</span>
+    <span class="nx">store</span><span class="p">.</span><span class="nx">rename</span> <span class="s1">&#39;googleOAuthEnabled&#39;</span><span class="p">,</span> <span class="s1">&#39;googlOAuth&#39;</span><span class="p">,</span>    <span class="kc">yes</span>
   <span class="nx">updater</span><span class="p">.</span><span class="nx">update</span> <span class="s1">&#39;1.0.0&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
     <span class="nx">log</span><span class="p">.</span><span class="nx">info</span> <span class="s1">&#39;Updating URL shortener settings for 1.0.0&#39;</span>
     <span class="nv">bitly = </span><span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;bitly&#39;</span>
     <span class="nx">store</span><span class="p">.</span><span class="nx">set</span> <span class="s1">&#39;bitly&#39;</span><span class="p">,</span>
       <span class="nv">apiKey: </span>   <span class="nx">store</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;bitlyApiKey&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span>
-      <span class="nv">enabled: </span>  <span class="k">if</span> <span class="k">typeof</span> <span class="nx">bitly</span> <span class="o">is</span> <span class="s1">&#39;boolean&#39;</span> <span class="k">then</span> <span class="nx">bitly</span> <span class="k">else</span> <span class="kc">no</span>
+      <span class="nv">enabled: </span>  <span class="k">if</span> <span class="k">typeof</span> <span class="nx">bitly</span> <span class="o">is</span> <span class="s1">&#39;boolean&#39;</span> <span class="k">then</span> <span class="nx">bitly</span> <span class="k">else</span> <span class="kc">yes</span>
       <span class="nv">username: </span> <span class="nx">store</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;bitlyUsername&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span>
     <span class="nx">store</span><span class="p">.</span><span class="nx">remove</span> <span class="s1">&#39;bitlyApiKey&#39;</span><span class="p">,</span> <span class="s1">&#39;bitlyUsername&#39;</span>
     <span class="nv">googl = </span><span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;googl&#39;</span>
     <span class="nx">store</span><span class="p">.</span><span class="nx">set</span> <span class="s1">&#39;googl&#39;</span><span class="p">,</span>
-      <span class="nv">enabled: </span><span class="k">if</span> <span class="k">typeof</span> <span class="nx">googl</span> <span class="o">is</span> <span class="s1">&#39;boolean&#39;</span> <span class="k">then</span> <span class="nx">googl</span> <span class="k">else</span> <span class="kc">yes</span>
+      <span class="nv">enabled: </span><span class="k">if</span> <span class="k">typeof</span> <span class="nx">googl</span> <span class="o">is</span> <span class="s1">&#39;boolean&#39;</span> <span class="k">then</span> <span class="nx">googl</span> <span class="k">else</span> <span class="kc">no</span>
     <span class="nx">store</span><span class="p">.</span><span class="nx">remove</span> <span class="s1">&#39;googlOAuth&#39;</span>
     <span class="nv">yourls = </span><span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;yourls&#39;</span>
     <span class="nx">store</span><span class="p">.</span><span class="nx">set</span> <span class="s1">&#39;yourls&#39;</span><span class="p">,</span>
@@ -1296,12 +1283,24 @@ namespace.</p>             </td>             <td class="code">               <di
       <span class="nv">username: </span> <span class="nx">store</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;yourlsUsername&#39;</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span>
     <span class="nx">store</span><span class="p">.</span><span class="nx">remove</span> <span class="s1">&#39;yourlsPassword&#39;</span><span class="p">,</span> <span class="s1">&#39;yourlsSignature&#39;</span><span class="p">,</span> <span class="s1">&#39;yourlsUrl&#39;</span><span class="p">,</span>
                  <span class="s1">&#39;yourlsUsername&#39;</span>
+  <span class="nx">updater</span><span class="p">.</span><span class="nx">update</span> <span class="s1">&#39;1.0.1&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
+    <span class="nx">store</span><span class="p">.</span><span class="nx">modify</span> <span class="s1">&#39;bitly&#39;</span><span class="p">,</span> <span class="nf">(bitly) -&gt;</span>
+      <span class="k">delete</span> <span class="nx">bitly</span><span class="p">.</span><span class="nx">apiKey</span>
+      <span class="k">delete</span> <span class="nx">bitly</span><span class="p">.</span><span class="nx">username</span>
+    <span class="nx">store</span><span class="p">.</span><span class="nx">modify</span> <span class="s1">&#39;yourls&#39;</span><span class="p">,</span> <span class="nf">(yourls) -&gt;</span>
+      <span class="nv">yourls.authentication = </span><span class="k">if</span> <span class="nx">yourls</span><span class="p">.</span><span class="nx">signature</span>
+        <span class="s1">&#39;advanced&#39;</span>
+      <span class="k">else</span> <span class="k">if</span> <span class="nx">yourls</span><span class="p">.</span><span class="nx">password</span> <span class="o">and</span> <span class="nx">yourls</span><span class="p">.</span><span class="nx">username</span>
+        <span class="s1">&#39;basic&#39;</span>
+      <span class="k">else</span> 
+        <span class="s1">&#39;&#39;</span>
+    <span class="nx">store</span><span class="p">.</span><span class="nx">remove</span> <span class="nx">store</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="sr">/^oauth_token.*/</span><span class="p">)...</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-129">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-129">&#182;</a>               </div>               <h2>URL shortener functions</h2>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-130">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-130">&#182;</a>               </div>               <h2>URL shortener functions</h2>             </td>             <td class="code">               <div class="highlight"><pre>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-130">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-130">&#182;</a>               </div>               <p>Call the active URL shortener service for each URL in <code>map</code> in order to
+</pre></div>             </td>           </tr>                               <tr id="section-131">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-131">&#182;</a>               </div>               <p>Call the active URL shortener service for each URL in <code>map</code> in order to
 obtain their corresponding short URLs. <br />
 <code>callback</code> will be called with the result once all URLs have been shortened
 or an error is encountered.</p>             </td>             <td class="code">               <div class="highlight"><pre>
@@ -1311,47 +1310,48 @@ or an error is encountered.</p>             </td>             <td class="code"> 
   <span class="nv">endpoint = </span><span class="nx">service</span><span class="p">.</span><span class="nx">url</span><span class="p">()</span>
   <span class="nv">title    = </span><span class="nx">service</span><span class="p">.</span><span class="nx">title</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-131">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-131">&#182;</a>               </div>               <p>Ensure the service URL exists in case it is user-defined (e.g. YOURLS).</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-132">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-132">&#182;</a>               </div>               <p>Ensure the service URL exists in case it is user-defined (e.g. YOURLS).</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nx">unless</span> <span class="nx">endpoint</span>
     <span class="k">return</span> <span class="nx">callback</span>
       <span class="nv">message: </span><span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_config_error&#39;</span><span class="p">,</span> <span class="nx">title</span>
       <span class="nv">service: </span><span class="nx">service</span>
       <span class="nv">success: </span><span class="kc">no</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-132">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-132">&#182;</a>               </div>               <p>Create a runner to control the dependencies in the asynchronous processes.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-133">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-133">&#182;</a>               </div>               <p>Create a runner to control the dependencies in the asynchronous processes.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">runner = </span><span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">Runner</span><span class="p">()</span>
   <span class="k">for</span> <span class="nx">own</span> <span class="nx">placeholder</span><span class="p">,</span> <span class="nx">url</span> <span class="k">of</span> <span class="nx">map</span>
-    <span class="nx">do</span> <span class="nf">(placeholder, url) -&gt;</span> <span class="nx">runner</span><span class="p">.</span><span class="nx">push</span> <span class="kc">null</span><span class="p">,</span> <span class="o">-&gt;</span>
-      <span class="nv">oauth  = </span><span class="o">!!</span><span class="nx">service</span><span class="p">.</span><span class="nx">oauth</span><span class="o">?</span><span class="p">.</span><span class="nx">hasToken</span><span class="p">()</span>
-      <span class="nv">params = </span><span class="nx">service</span><span class="p">.</span><span class="nx">getParameters</span><span class="p">(</span><span class="nx">url</span><span class="p">)</span> <span class="o">or</span> <span class="p">{}</span>
-
-</pre></div>             </td>           </tr>                               <tr id="section-133">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-133">&#182;</a>               </div>               <p>Build the HTTP request for the URL shortener service.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-      <span class="nv">xhr = </span><span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">()</span>
-      <span class="nx">xhr</span><span class="p">.</span><span class="nx">open</span> <span class="nx">service</span><span class="p">.</span><span class="nx">method</span><span class="p">,</span> <span class="s2">&quot;#{endpoint}?#{$.param params}&quot;</span><span class="p">,</span> <span class="kc">yes</span>
-      <span class="nx">xhr</span><span class="p">.</span><span class="nx">setRequestHeader</span> <span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span> <span class="nx">service</span><span class="p">.</span><span class="nx">contentType</span>
-
-</pre></div>             </td>           </tr>                               <tr id="section-134">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-134">&#182;</a>               </div>               <p>Setup OAuth for the request when required.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+    <span class="nx">do</span> <span class="nf">(placeholder, url) -&gt;</span>
+      <span class="nv">oauth = </span><span class="o">!!</span><span class="nx">service</span><span class="p">.</span><span class="nx">oauth</span><span class="o">?</span><span class="p">.</span><span class="nx">hasAccessToken</span><span class="p">()</span>
       <span class="k">if</span> <span class="nx">oauth</span>
-        <span class="nx">xhr</span><span class="p">.</span><span class="nx">setRequestHeader</span> <span class="s1">&#39;Authorization&#39;</span><span class="p">,</span>
-          <span class="nx">service</span><span class="p">.</span><span class="nx">oauth</span><span class="p">.</span><span class="nx">getAuthorizationHeader</span><span class="p">(</span><span class="nx">endpoint</span><span class="p">,</span>
-            <span class="nx">service</span><span class="p">.</span><span class="nx">method</span><span class="p">,</span> <span class="nx">params</span><span class="p">)</span>
-      <span class="nv">xhr.onreadystatechange = </span><span class="o">-&gt;</span>
+        <span class="nx">runner</span><span class="p">.</span><span class="nx">push</span> <span class="nx">service</span><span class="p">.</span><span class="nx">oauth</span><span class="p">,</span> <span class="s1">&#39;authorize&#39;</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="nx">runner</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span>
+      <span class="nx">runner</span><span class="p">.</span><span class="nx">push</span> <span class="kc">null</span><span class="p">,</span> <span class="o">-&gt;</span>
+        <span class="nv">params    = </span><span class="nx">service</span><span class="p">.</span><span class="nx">getParameters</span> <span class="nx">url</span>
+        <span class="nx">endpoint</span> <span class="o">+=</span> <span class="s2">&quot;?#{$.param params}&quot;</span> <span class="k">if</span> <span class="nx">params</span><span class="o">?</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-135">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-135">&#182;</a>               </div>               <p>Wait for the response and let the service handle it before passing
+</pre></div>             </td>           </tr>                               <tr id="section-134">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-134">&#182;</a>               </div>               <p>Build the HTTP request for the URL shortener service.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+        <span class="nv">xhr = </span><span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">()</span>
+        <span class="nx">xhr</span><span class="p">.</span><span class="nx">open</span> <span class="nx">service</span><span class="p">.</span><span class="nx">method</span><span class="p">,</span> <span class="nx">endpoint</span><span class="p">,</span> <span class="kc">yes</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-135">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-135">&#182;</a>               </div>               <p>Allow service to populate request headers.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+        <span class="k">for</span> <span class="nx">own</span> <span class="nx">header</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">service</span><span class="p">.</span><span class="nx">getHeaders</span><span class="p">()</span> <span class="o">?</span> <span class="p">{}</span>
+          <span class="nx">xhr</span><span class="p">.</span><span class="nx">setRequestHeader</span> <span class="nx">header</span><span class="p">,</span> <span class="nx">value</span>
+        <span class="nv">xhr.onreadystatechange = </span><span class="o">-&gt;</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-136">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-136">&#182;</a>               </div>               <p>Wait for the response and let the service handle it before passing
 the result to <code>callback</code> via the runner.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-        <span class="k">if</span> <span class="nx">xhr</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">is</span> <span class="mi">4</span>
-          <span class="k">if</span> <span class="nx">xhr</span><span class="p">.</span><span class="nx">status</span> <span class="o">is</span> <span class="mi">200</span>
-            <span class="nx">map</span><span class="p">[</span><span class="nx">placeholder</span><span class="p">]</span> <span class="o">=</span> <span class="nx">service</span><span class="p">.</span><span class="nx">output</span> <span class="nx">xhr</span><span class="p">.</span><span class="nx">responseText</span>
-            <span class="nx">runner</span><span class="p">.</span><span class="nx">next</span> <span class="nv">oauth: </span><span class="nx">oauth</span><span class="p">,</span> <span class="nv">success: </span><span class="kc">yes</span>
-          <span class="k">else</span>
+          <span class="k">if</span> <span class="nx">xhr</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">is</span> <span class="mi">4</span>
+            <span class="k">if</span> <span class="nx">xhr</span><span class="p">.</span><span class="nx">status</span> <span class="o">is</span> <span class="mi">200</span>
+              <span class="nx">map</span><span class="p">[</span><span class="nx">placeholder</span><span class="p">]</span> <span class="o">=</span> <span class="nx">service</span><span class="p">.</span><span class="nx">output</span> <span class="nx">xhr</span><span class="p">.</span><span class="nx">responseText</span>
+              <span class="nx">runner</span><span class="p">.</span><span class="nx">next</span> <span class="nv">oauth: </span><span class="nx">oauth</span><span class="p">,</span> <span class="nv">success: </span><span class="kc">yes</span>
+            <span class="k">else</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-136">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-136">&#182;</a>               </div>               <p>Something went wrong so let's tell the user.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-            <span class="nx">runner</span><span class="p">.</span><span class="nx">finish</span>
-              <span class="nv">message: </span><span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;shortener_detailed_error&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nx">title</span><span class="p">,</span> <span class="nx">url</span><span class="p">])</span>
-              <span class="nv">success: </span><span class="kc">no</span>
+</pre></div>             </td>           </tr>                               <tr id="section-137">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-137">&#182;</a>               </div>               <p>Something went wrong so let's tell the user.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+              <span class="nx">runner</span><span class="p">.</span><span class="nx">finish</span>
+                <span class="nv">message: </span><span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;shortener_detailed_error&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nx">title</span><span class="p">,</span> <span class="nx">url</span><span class="p">])</span>
+                <span class="nv">success: </span><span class="kc">no</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-137">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-137">&#182;</a>               </div>               <p>Finally, send the HTTP request.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-      <span class="nx">xhr</span><span class="p">.</span><span class="nx">send</span> <span class="nx">service</span><span class="p">.</span><span class="nx">input</span> <span class="nx">url</span>
+</pre></div>             </td>           </tr>                               <tr id="section-138">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-138">&#182;</a>               </div>               <p>Finally, send the HTTP request.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+        <span class="nx">xhr</span><span class="p">.</span><span class="nx">send</span> <span class="nx">service</span><span class="p">.</span><span class="nx">input</span> <span class="nx">url</span>
   <span class="nx">runner</span><span class="p">.</span><span class="nx">run</span> <span class="nf">(result = {}) -&gt;</span> <span class="nx">callback</span>
     <span class="nv">message: </span><span class="nx">result</span><span class="p">.</span><span class="nx">message</span>
     <span class="nv">oauth: </span>  <span class="nx">result</span><span class="p">.</span><span class="nx">oauth</span>
@@ -1359,32 +1359,32 @@ the result to <code>callback</code> via the runner.</p>             </td>       
     <span class="nv">success: </span><span class="nx">result</span><span class="p">.</span><span class="nx">success</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-138">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-138">&#182;</a>               </div>               <p>Retrieve the active URL shortener service.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-139">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-139">&#182;</a>               </div>               <p>Retrieve the active URL shortener service.</p>             </td>             <td class="code">               <div class="highlight"><pre>
 <span class="nv">getActiveUrlShortener = </span><span class="o">-&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-139">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-139">&#182;</a>               </div>               <p>Attempt to lookup enabled URL shortener service.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-140">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-140">&#182;</a>               </div>               <p>Attempt to lookup enabled URL shortener service.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">shortener = </span><span class="nx">ext</span><span class="p">.</span><span class="nx">queryUrlShortener</span> <span class="nf">(shortener) -&gt;</span> <span class="nx">shortener</span><span class="p">.</span><span class="nx">isEnabled</span><span class="p">()</span>
   <span class="nx">unless</span> <span class="nx">shortener</span><span class="o">?</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-140">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-140">&#182;</a>               </div>               <p>Should never reach here but we'll return goo.gl service by default after
+</pre></div>             </td>           </tr>                               <tr id="section-141">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-141">&#182;</a>               </div>               <p>Should never reach here but we'll return bit.ly service by default after
 ensuring it's the active URL shortener service from now on to save some
 time in the future.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-    <span class="nx">store</span><span class="p">.</span><span class="nx">modify</span> <span class="s1">&#39;googl&#39;</span><span class="p">,</span> <span class="nf">(googl) -&gt;</span> <span class="nv">googl.enabled = </span><span class="kc">yes</span>
+    <span class="nx">store</span><span class="p">.</span><span class="nx">modify</span> <span class="s1">&#39;bitly&#39;</span><span class="p">,</span> <span class="nf">(bitly) -&gt;</span> <span class="nv">bitly.enabled = </span><span class="kc">yes</span>
     <span class="nv">shortener = </span><span class="nx">getActiveUrlShortener</span><span class="p">()</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span> <span class="s2">&quot;Getting details for #{shortener.title} URL shortener&quot;</span>
   <span class="nx">shortener</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-141">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-141">&#182;</a>               </div>               <h2>Background page setup</h2>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-142">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-142">&#182;</a>               </div>               <h2>Background page setup</h2>             </td>             <td class="code">               <div class="highlight"><pre>
 
 <span class="nv">ext = </span><span class="nb">window</span><span class="p">.</span><span class="nv">ext = </span><span class="k">new</span> <span class="k">class</span> <span class="nx">Extension</span> <span class="k">extends</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">Class</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-142">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-142">&#182;</a>               </div>               <h2>Public constants</h2>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-143">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-143">&#182;</a>               </div>               <h2>Public constants</h2>             </td>             <td class="code">               <div class="highlight"><pre>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-143">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-143">&#182;</a>               </div>               <p>List of images available as template icons.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-144">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-144">&#182;</a>               </div>               <p>List of images available as template icons.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">IMAGES: </span><span class="p">[</span>
     <span class="s1">&#39;tmpl_auction&#39;</span><span class="p">,</span>         <span class="s1">&#39;tmpl_bug&#39;</span><span class="p">,</span>        <span class="s1">&#39;tmpl_clipboard&#39;</span>
     <span class="s1">&#39;tmpl_clipboard_empty&#39;</span><span class="p">,</span> <span class="s1">&#39;tmpl_component&#39;</span><span class="p">,</span>  <span class="s1">&#39;tmpl_cookies&#39;</span>
@@ -1401,20 +1401,20 @@ time in the future.</p>             </td>             <td class="code">         
   <span class="p">]</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-144">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-144">&#182;</a>               </div>               <p>String representation of the keyboard modifiers listened to by Template on
+</pre></div>             </td>           </tr>                               <tr id="section-145">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-145">&#182;</a>               </div>               <p>String representation of the keyboard modifiers listened to by Template on
 Windows/Linux platforms.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">SHORTCUT_MODIFIERS: </span><span class="s1">&#39;Ctrl+Alt+&#39;</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-145">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-145">&#182;</a>               </div>               <p>String representation of the keyboard modifiers listened to by Template on
+</pre></div>             </td>           </tr>                               <tr id="section-146">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-146">&#182;</a>               </div>               <p>String representation of the keyboard modifiers listened to by Template on
 Mac platforms.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">SHORTCUT_MAC_MODIFIERS: </span><span class="s1">&#39;&amp;#8679;&amp;#8997;&#39;</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-146">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-146">&#182;</a>               </div>               <h2>Public variables</h2>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-147">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-147">&#182;</a>               </div>               <h2>Public variables</h2>             </td>             <td class="code">               <div class="highlight"><pre>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-147">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-147">&#182;</a>               </div>               <p>Information specifying what should be displaying in the notification. <br />
+</pre></div>             </td>           </tr>                               <tr id="section-148">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-148">&#182;</a>               </div>               <p>Information specifying what should be displaying in the notification. <br />
 This should be reset after every copy request.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">notification:</span>
     <span class="nv">description: </span>     <span class="s1">&#39;&#39;</span>
@@ -1426,25 +1426,25 @@ This should be reset after every copy request.</p>             </td>            
     <span class="nv">titleStyle: </span>      <span class="s1">&#39;&#39;</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-148">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-148">&#182;</a>               </div>               <p>Pre-prepared HTML for the popup to be populated using. <br />
+</pre></div>             </td>           </tr>                               <tr id="section-149">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-149">&#182;</a>               </div>               <p>Pre-prepared HTML for the popup to be populated using. <br />
 This should be updated whenever templates are changed/updated in any way as
 this is generated to improve performance and load times of the popup frame.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">popupHtml: </span><span class="s1">&#39;&#39;</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-149">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-149">&#182;</a>               </div>               <p>Local copy of templates being used, ordered to match that specified by the
+</pre></div>             </td>           </tr>                               <tr id="section-150">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-150">&#182;</a>               </div>               <p>Local copy of templates being used, ordered to match that specified by the
 user.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">templates: </span><span class="p">[]</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-150">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-150">&#182;</a>               </div>               <p>Current version of Template.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-151">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-151">&#182;</a>               </div>               <p>Current version of Template.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">version: </span><span class="s1">&#39;&#39;</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-151">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-151">&#182;</a>               </div>               <h2>Public functions</h2>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-152">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-152">&#182;</a>               </div>               <h2>Public functions</h2>             </td>             <td class="code">               <div class="highlight"><pre>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-152">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-152">&#182;</a>               </div>               <p>Add <code>str</code> to the system clipboard. <br />
+</pre></div>             </td>           </tr>                               <tr id="section-153">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-153">&#182;</a>               </div>               <p>Add <code>str</code> to the system clipboard. <br />
 All successful copy requests should, at some point, call this function. <br />
 If <code>str</code> is empty the contents of the system clipboard will not change.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">copy: </span><span class="nf">(str, hidden) -&gt;</span>
@@ -1456,7 +1456,7 @@ If <code>str</code> is empty the contents of the system clipboard will not chang
     <span class="nx">showNotification</span><span class="p">()</span> <span class="nx">unless</span> <span class="nx">hidden</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-153">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-153">&#182;</a>               </div>               <p>Attempt to retrieve the key of the template with the specified <code>name</code>. <br />
+</pre></div>             </td>           </tr>                               <tr id="section-154">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-154">&#182;</a>               </div>               <p>Attempt to retrieve the key of the template with the specified <code>name</code>. <br />
 Since only the names of predefined templates are known, return a newly
 generated key if it does not match any of their names.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">getKeyForName: </span><span class="nf">(name, generate = yes) -&gt;</span>
@@ -1473,17 +1473,17 @@ generated key if it does not match any of their names.</p>             </td>    
     <span class="nx">key</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-154">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-154">&#182;</a>               </div>               <p>Initialize the background page. <br />
+</pre></div>             </td>           </tr>                               <tr id="section-155">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-155">&#182;</a>               </div>               <p>Initialize the background page. <br />
 This will involve initializing the settings and adding the request
 listeners.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">init: </span><span class="o">-&gt;</span>
     <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
     <span class="nx">log</span><span class="p">.</span><span class="nx">info</span> <span class="s1">&#39;Initializing extension controller&#39;</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-155">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-155">&#182;</a>               </div>               <p>Add support for analytics if the user hasn't opted out.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-156">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-156">&#182;</a>               </div>               <p>Add support for analytics if the user hasn't opted out.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nx">analytics</span><span class="p">.</span><span class="nx">add</span><span class="p">()</span> <span class="k">if</span> <span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;analytics&#39;</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-156">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-156">&#182;</a>               </div>               <p>Begin initialization.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-157">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-157">&#182;</a>               </div>               <p>Begin initialization.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nx">store</span><span class="p">.</span><span class="nx">init</span>
       <span class="nv">anchor: </span>       <span class="p">{}</span>
       <span class="nv">menu: </span>         <span class="p">{}</span>
@@ -1507,13 +1507,13 @@ listeners.</p>             </td>             <td class="code">               <di
     <span class="nx">initStatistics</span><span class="p">()</span>
     <span class="nx">initUrlShorteners</span><span class="p">()</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-157">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-157">&#182;</a>               </div>               <p>Add listener for toolbar/browser action clicks. <br />
+</pre></div>             </td>           </tr>                               <tr id="section-158">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-158">&#182;</a>               </div>               <p>Add listener for toolbar/browser action clicks. <br />
 This listener will be ignored whenever the popup is enabled.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nx">chrome</span><span class="p">.</span><span class="nx">browserAction</span><span class="p">.</span><span class="nx">onClicked</span><span class="p">.</span><span class="nx">addListener</span> <span class="nf">(tab) -&gt;</span> <span class="nx">onRequest</span>
       <span class="nv">data: key: </span><span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;toolbar.key&#39;</span>
       <span class="nv">type: </span><span class="s1">&#39;toolbar&#39;</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-158">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-158">&#182;</a>               </div>               <p>Add listeners for internal and external requests.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-159">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-159">&#182;</a>               </div>               <p>Add listeners for internal and external requests.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nx">chrome</span><span class="p">.</span><span class="nx">extension</span><span class="p">.</span><span class="nx">onRequest</span><span class="p">.</span><span class="nx">addListener</span> <span class="nx">onRequest</span>
     <span class="nx">chrome</span><span class="p">.</span><span class="nx">extension</span><span class="p">.</span><span class="nx">onRequestExternal</span><span class="p">.</span><span class="nx">addListener</span> <span class="nf">(req, sender, cb) -&gt;</span>
       <span class="nv">block = </span><span class="nx">isBlacklisted</span> <span class="nx">sender</span><span class="p">.</span><span class="nx">id</span>
@@ -1525,27 +1525,27 @@ This listener will be ignored whenever the popup is enabled.</p>             </t
         <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span> <span class="s2">&quot;Accepting external request from #{sender.id}&quot;</span>
         <span class="nx">onRequest</span> <span class="nx">req</span><span class="p">,</span> <span class="nx">sender</span><span class="p">,</span> <span class="nx">cb</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-159">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-159">&#182;</a>               </div>               <p>Derive the browser and OS information.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-160">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-160">&#182;</a>               </div>               <p>Derive the browser and OS information.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nv">browser.version = </span><span class="nx">getBrowserVersion</span><span class="p">()</span>
     <span class="nv">operatingSystem = </span><span class="nx">getOperatingSystem</span><span class="p">()</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-160">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-160">&#182;</a>               </div>               <p>It's nice knowing what version is running.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-161">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-161">&#182;</a>               </div>               <p>It's nice knowing what version is running.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nx">$</span><span class="p">.</span><span class="nx">getJSON</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">url</span><span class="p">(</span><span class="s1">&#39;manifest.json&#39;</span><span class="p">),</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="o">=&gt;</span>
       <span class="vi">@version = </span><span class="nx">data</span><span class="p">.</span><span class="nx">version</span>
       <span class="k">if</span> <span class="nx">isNewInstall</span>
         <span class="nx">analytics</span><span class="p">.</span><span class="nx">track</span> <span class="s1">&#39;Installs&#39;</span><span class="p">,</span> <span class="s1">&#39;New&#39;</span><span class="p">,</span> <span class="nx">@version</span><span class="p">,</span> <span class="nb">Number</span> <span class="nx">isProductionBuild</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-161">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-161">&#182;</a>               </div>               <p>Execute content scripts now that we know the version.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-162">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-162">&#182;</a>               </div>               <p>Execute content scripts now that we know the version.</p>             </td>             <td class="code">               <div class="highlight"><pre>
       <span class="nx">executeScriptsInExistingWindows</span><span class="p">()</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-162">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-162">&#182;</a>               </div>               <p>Determine whether or not <code>os</code> matches the user's operating system.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-163">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-163">&#182;</a>               </div>               <p>Determine whether or not <code>os</code> matches the user's operating system.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">isThisPlatform: </span><span class="nf">(os) -&gt;</span>
     <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
     <span class="nx">navigator</span><span class="p">.</span><span class="nx">userAgent</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">().</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">os</span><span class="p">)</span> <span class="o">isnt</span> <span class="o">-</span><span class="mi">1</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-163">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-163">&#182;</a>               </div>               <p>Attempt to retrieve the contents of the system clipboard as a string.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-164">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-164">&#182;</a>               </div>               <p>Attempt to retrieve the contents of the system clipboard as a string.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">paste: </span><span class="o">-&gt;</span>
     <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
     <span class="nv">result  = </span><span class="s1">&#39;&#39;</span>
@@ -1556,20 +1556,20 @@ This listener will be ignored whenever the popup is enabled.</p>             </t
     <span class="nx">result</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-164">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-164">&#182;</a>               </div>               <p>Retrieve the first template that passes the specified <code>filter</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-165">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-165">&#182;</a>               </div>               <p>Retrieve the first template that passes the specified <code>filter</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">queryTemplate: </span><span class="nf">(filter, singular = yes) -&gt;</span>
     <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
     <span class="nx">utils</span><span class="p">.</span><span class="nx">query</span> <span class="nx">@templates</span><span class="p">,</span> <span class="nx">singular</span><span class="p">,</span> <span class="nx">filter</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-165">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-165">&#182;</a>               </div>               <p>Retrieve the first URL shortener service that passes the specified
+</pre></div>             </td>           </tr>                               <tr id="section-166">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-166">&#182;</a>               </div>               <p>Retrieve the first URL shortener service that passes the specified
 <code>filter</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">queryUrlShortener: </span><span class="nf">(filter, singular = yes) -&gt;</span>
     <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
     <span class="nx">utils</span><span class="p">.</span><span class="nx">query</span> <span class="nx">SHORTENERS</span><span class="p">,</span> <span class="nx">singular</span><span class="p">,</span> <span class="nx">filter</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-166">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-166">&#182;</a>               </div>               <p>Reset the notification information associated with the current copy
+</pre></div>             </td>           </tr>                               <tr id="section-167">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-167">&#182;</a>               </div>               <p>Reset the notification information associated with the current copy
 request. <br />
 This should be called when a copy request is completed regardless of its
 outcome.</p>             </td>             <td class="code">               <div class="highlight"><pre>
@@ -1585,27 +1585,27 @@ outcome.</p>             </td>             <td class="code">               <div 
       <span class="nv">titleStyle: </span>      <span class="s1">&#39;&#39;</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-167">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-167">&#182;</a>               </div>               <p>Update the context menu items to reflect the currently enabled templates. <br />
+</pre></div>             </td>           </tr>                               <tr id="section-168">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-168">&#182;</a>               </div>               <p>Update the context menu items to reflect the currently enabled templates. <br />
 If the context menu option has been disabled by the user, just remove all
 of the existing menu items.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">updateContextMenu: </span><span class="o">-&gt;</span>
     <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-168">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-168">&#182;</a>               </div>               <p>Ensure that any previously added context menu items are removed.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-169">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-169">&#182;</a>               </div>               <p>Ensure that any previously added context menu items are removed.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nx">chrome</span><span class="p">.</span><span class="nx">contextMenus</span><span class="p">.</span><span class="nx">removeAll</span> <span class="o">=&gt;</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-169">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-169">&#182;</a>               </div>               <p>Called whenever a template menu item is clicked. <br />
+</pre></div>             </td>           </tr>                               <tr id="section-170">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-170">&#182;</a>               </div>               <p>Called whenever a template menu item is clicked. <br />
 Send a self request, passing along the available information.</p>             </td>             <td class="code">               <div class="highlight"><pre>
       <span class="nv">onMenuClick = </span><span class="nf">(info, tab) -&gt;</span> <span class="nx">onRequest</span> <span class="nv">data: </span><span class="nx">info</span><span class="p">,</span> <span class="nv">type: </span><span class="s1">&#39;menu&#39;</span>
       <span class="nv">menu = </span><span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;menu&#39;</span>
       <span class="k">if</span> <span class="nx">menu</span><span class="p">.</span><span class="nx">enabled</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-170">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-170">&#182;</a>               </div>               <p>Create and add the top-level Template menu.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-171">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-171">&#182;</a>               </div>               <p>Create and add the top-level Template menu.</p>             </td>             <td class="code">               <div class="highlight"><pre>
         <span class="nv">parentId = </span><span class="nx">chrome</span><span class="p">.</span><span class="nx">contextMenus</span><span class="p">.</span><span class="nx">create</span>
           <span class="nv">contexts: </span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span>
           <span class="nv">title: </span>   <span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;name&#39;</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-171">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-171">&#182;</a>               </div>               <p>Create and add a sub-menu item for each enabled template.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-172">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-172">&#182;</a>               </div>               <p>Create and add a sub-menu item for each enabled template.</p>             </td>             <td class="code">               <div class="highlight"><pre>
         <span class="k">for</span> <span class="nx">template</span> <span class="k">in</span> <span class="nx">@templates</span> <span class="k">when</span> <span class="nx">template</span><span class="p">.</span><span class="nx">enabled</span>
           <span class="nv">notEmpty = </span><span class="kc">yes</span>
           <span class="nv">menuId   = </span><span class="nx">chrome</span><span class="p">.</span><span class="nx">contextMenus</span><span class="p">.</span><span class="nx">create</span>
@@ -1620,7 +1620,7 @@ Send a self request, passing along the available information.</p>             </
             <span class="nv">parentId: </span><span class="nx">parentId</span>
             <span class="nv">title: </span>   <span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;empty&#39;</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-172">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-172">&#182;</a>               </div>               <p>Add an item to open the options page if the user doesn't mind.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-173">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-173">&#182;</a>               </div>               <p>Add an item to open the options page if the user doesn't mind.</p>             </td>             <td class="code">               <div class="highlight"><pre>
         <span class="k">if</span> <span class="nx">menu</span><span class="p">.</span><span class="nx">options</span>
           <span class="nx">chrome</span><span class="p">.</span><span class="nx">contextMenus</span><span class="p">.</span><span class="nx">create</span>
             <span class="nv">contexts: </span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span>
@@ -1633,7 +1633,7 @@ Send a self request, passing along the available information.</p>             </
             <span class="nv">title: </span>   <span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;options&#39;</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-173">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-173">&#182;</a>               </div>               <p>Update the local list of templates to reflect those persisted. <br />
+</pre></div>             </td>           </tr>                               <tr id="section-174">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-174">&#182;</a>               </div>               <p>Update the local list of templates to reflect those persisted. <br />
 It is very important that this is called whenever templates may have been
 changed in order to prepare the popup HTML and optimize performance.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">updateTemplates: </span><span class="o">-&gt;</span>
@@ -1645,7 +1645,7 @@ changed in order to prepare the popup HTML and optimize performance.</p>        
     <span class="nx">updateStatistics</span><span class="p">()</span>
 
 
-</pre></div>             </td>           </tr>                               <tr id="section-174">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-174">&#182;</a>               </div>               <p>Update the toolbar/browser action depending on the current settings.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-175">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-175">&#182;</a>               </div>               <p>Update the toolbar/browser action depending on the current settings.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">updateToolbar: </span><span class="o">-&gt;</span>
     <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
     <span class="nv">image    = </span><span class="s1">&#39;images/icon_19.png&#39;</span>
@@ -1656,25 +1656,25 @@ changed in order to prepare the popup HTML and optimize performance.</p>        
     <span class="k">if</span> <span class="o">not</span> <span class="nx">template</span> <span class="o">or</span> <span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;toolbar.popup&#39;</span>
       <span class="nx">log</span><span class="p">.</span><span class="nx">info</span> <span class="s1">&#39;Configuring toolbar to display popup&#39;</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-175">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-175">&#182;</a>               </div>               <p>Use Template's details to style the browser action.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-176">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-176">&#182;</a>               </div>               <p>Use Template's details to style the browser action.</p>             </td>             <td class="code">               <div class="highlight"><pre>
       <span class="nx">chrome</span><span class="p">.</span><span class="nx">browserAction</span><span class="p">.</span><span class="nx">setIcon</span>  <span class="nv">path: </span> <span class="nx">utils</span><span class="p">.</span><span class="nx">url</span> <span class="nx">image</span>
       <span class="nx">chrome</span><span class="p">.</span><span class="nx">browserAction</span><span class="p">.</span><span class="nx">setTitle</span> <span class="nv">title: </span><span class="nx">title</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-176">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-176">&#182;</a>               </div>               <p>Show the popup when the browser action is clicked.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-177">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-177">&#182;</a>               </div>               <p>Show the popup when the browser action is clicked.</p>             </td>             <td class="code">               <div class="highlight"><pre>
       <span class="nx">chrome</span><span class="p">.</span><span class="nx">browserAction</span><span class="p">.</span><span class="nx">setPopup</span> <span class="nv">popup: </span><span class="s1">&#39;pages/popup.html&#39;</span>
     <span class="k">else</span>
       <span class="nx">log</span><span class="p">.</span><span class="nx">info</span> <span class="s1">&#39;Configuring toolbar to activate specified template&#39;</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-177">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-177">&#182;</a>               </div>               <p>Replace Template's details with that of the selected template.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-178">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-178">&#182;</a>               </div>               <p>Replace Template's details with that of the selected template.</p>             </td>             <td class="code">               <div class="highlight"><pre>
       <span class="k">if</span> <span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;toolbar.style&#39;</span>
         <span class="nv">image = </span><span class="nx">getImagePathForTemplate</span> <span class="nx">template</span> <span class="k">if</span> <span class="nx">template</span><span class="p">.</span><span class="nx">image</span> <span class="o">isnt</span> <span class="mi">0</span>
         <span class="nv">title = </span><span class="nx">template</span><span class="p">.</span><span class="nx">title</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-178">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-178">&#182;</a>               </div>               <p>Potentially change the style of the browser action.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+</pre></div>             </td>           </tr>                               <tr id="section-179">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-179">&#182;</a>               </div>               <p>Potentially change the style of the browser action.</p>             </td>             <td class="code">               <div class="highlight"><pre>
       <span class="nx">chrome</span><span class="p">.</span><span class="nx">browserAction</span><span class="p">.</span><span class="nx">setIcon</span>  <span class="nv">path: </span> <span class="nx">utils</span><span class="p">.</span><span class="nx">url</span> <span class="nx">image</span>
       <span class="nx">chrome</span><span class="p">.</span><span class="nx">browserAction</span><span class="p">.</span><span class="nx">setTitle</span> <span class="nv">title: </span><span class="nx">title</span>
 
-</pre></div>             </td>           </tr>                               <tr id="section-179">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-179">&#182;</a>               </div>               <p>Disable the popup, effectively enabling the listener for
+</pre></div>             </td>           </tr>                               <tr id="section-180">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-180">&#182;</a>               </div>               <p>Disable the popup, effectively enabling the listener for
 <code>chrome.browserAction.onClicked</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
       <span class="nx">chrome</span><span class="p">.</span><span class="nx">browserAction</span><span class="p">.</span><span class="nx">setPopup</span> <span class="nv">popup: </span><span class="s1">&#39;&#39;</span>
 

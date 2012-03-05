@@ -1,4 +1,4 @@
-YYYY.MM.DD, Version 1.0.1
+2012.03.05, Version 1.0.1
 
 * [#71](https://github.com/neocotic/template/issues/71): Make [bit.ly](http://bit.ly) the default URL shortener
 * [#71](https://github.com/neocotic/template/issues/71): Make unauthenticated [bit.ly](http://bit.ly) use the [tmpl.at](http://tmpl.at) custom domain

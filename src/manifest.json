@@ -22,7 +22,7 @@
     }, {
       "js"      : ["vendor/oauth2_inject.js"],
       "matches" : [
-        "http://bitly.com/robots.txt*",
+        "http://neocotic.com/robots.txt*",
         "http://www.google.com/robots.txt*"
       ],
       "run_at"  : "document_start"
