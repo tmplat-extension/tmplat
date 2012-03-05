@@ -20,8 +20,12 @@ https://github.com/neocotic/template/issues
 
 ## Questions?
 
-Take a look at `docs/*.html` to get a better understanding of what the code is
-doing.
+If you want help creating your own templates you should read the guide within the
+Options page of the extension (click the question mark symbol in the navigation
+bar or the link on the Templates tab).
+
+Alternatively, you can take a look at `docs/*.html` to get a better
+understanding of what the code is doing.
 
 If that doesn't help, feel free to follow me on Twitter, [@neocotic][].
 

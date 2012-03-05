@@ -5,6 +5,7 @@
 * [#72](https://github.com/neocotic/template/issues/72): Add [OAuth](http://oauth.net) support for [bit.ly](http://bit.ly)
 * [#72](https://github.com/neocotic/template/issues/72): Add new *"bitlyAccount"* option to determine whether or not you are logged in to [bit.ly](http://bit.ly)
 * [#72](https://github.com/neocotic/template/issues/72): Remove the *"bitlyApiKey"* and *"bitlyUsername"* options
+* [#73](https://github.com/neocotic/template/issues/73): Add new *"yourlsAuthentication"* option to determine how the [YOURLS](http://yourls.org) URL shortener is being authenticated
 * [#73](https://github.com/neocotic/template/issues/73): Improve UI on Options page in some places
 * [#74](https://github.com/neocotic/template/issues/74): Implement support for [OAuth 2.0](http://oauth.net/2)
 * [#75](https://github.com/neocotic/template/issues/75): Improve extension compatibility system
