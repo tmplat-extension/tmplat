@@ -1,4 +1,4 @@
-2012.03.06, Version 1.0.2
+2012.03.06, Version 1.0.3
 
 * [#76](https://github.com/neocotic/template/issues/76): Add new *"selectionHTML"* list to enabled access to the HTML behind the current selection
 * [#76](https://github.com/neocotic/template/issues/76): Add new *"selectedImages"* list to enabled iteration over images within in current selection
