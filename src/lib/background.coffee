@@ -672,7 +672,7 @@ addAdditionalData = (tab, data, callback) ->
       selection:      result.selection      ? ''
       selectionhtml:  result.selectionHTML  ? ''
       # Deprecated since 1.0.0, use `selectedLinks` instead.
-      selectionlinks: result.selectedLinks  ? []
+      selectionlinks: -> @selectedlinks
       stylesheets:    result.styleSheets    ? []
     callback()
 
@@ -786,14 +786,10 @@ buildStandardData = (tab, shortCallback) ->
       url.param(render text) ? ''
     params:                nullIfEmpty url.param()
     plugins:               (
-      array   = []
-      plugins = (plugin.name for plugin in navigator.plugins)
-      plugins.sort().filter (name) ->
-        if name in array then no else
-          array.push name
-          yes
-      array = null
-      plugins
+      results = []
+      for plugin in navigator.plugins when plugin.name not in results
+        results.push plugin.name
+      results.sort()
     )
     popular:               ext.queryTemplate (template) ->
       template.key is stats.popular

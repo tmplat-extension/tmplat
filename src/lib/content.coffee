@@ -8,19 +8,25 @@
 # -------
 
 # Extract the value the specified `property` from all elements of `array`.  
-# If an element does not have a valid `property` it should be ignored from the
-# results.
+# If an element does not have a valid `property` or its value has already been
+# recorded it should be ignored from the results.
 extractAll = (array, property) ->
-  element[property] for element in array when element[property]?
+  results = []
+  for element in array when element[property]?
+    results.push element[property] if element[property] not in results
+  results
 
 # Attempt to extract the contents of the meta element with the specified
 # `name`.  
-# If `csv` is enabled, separate the contents by commas and return each value
-# in an array.
+# If `csv` is enabled, separate the contents by commas and return each unique
+# value in an array.
 getMeta = (name, csv) ->
   content = document.querySelector("meta[name='#{name}']")?.content?.trim()
   if csv and content?
-    value for value in content.split /\s*,\s*/ when value.length
+    results = []
+    for value in content.split /\s*,\s*/ when value.length
+      results.push value if value not in results
+    results
   else
     content
 
@@ -54,8 +60,8 @@ chrome.extension.sendRequest type: 'info', (data) ->
         href.href = href.href for href in container.querySelectorAll '[href]'
         src.src   = src.src for src in container.querySelectorAll '[src]'
         # Capture addresses for links and images.
-        images = (image.src for image in container.querySelectorAll 'img[src]')
-        links  = (link.href for link in container.querySelectorAll 'a[href]')
+        images = extractAll container.querySelectorAll('img[src]'), 'src'
+        links  = extractAll container.querySelectorAll('a[href]'),  'href'
     # Build response with values derived from the DOM.
     sendResponse
       author:         getMeta 'author'

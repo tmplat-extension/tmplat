@@ -6,20 +6,26 @@ For all details and documentation: <br />
 
 
 </pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Extract the value the specified <code>property</code> from all elements of <code>array</code>. <br />
-If an element does not have a valid <code>property</code> it should be ignored from the
-results.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+If an element does not have a valid <code>property</code> or its value has already been
+recorded it should be ignored from the results.</p>             </td>             <td class="code">               <div class="highlight"><pre>
 <span class="nv">extractAll = </span><span class="nf">(array, property) -&gt;</span>
-  <span class="nx">element</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="k">for</span> <span class="nx">element</span> <span class="k">in</span> <span class="nx">array</span> <span class="k">when</span> <span class="nx">element</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span><span class="o">?</span>
+  <span class="nv">results = </span><span class="p">[]</span>
+  <span class="k">for</span> <span class="nx">element</span> <span class="k">in</span> <span class="nx">array</span> <span class="k">when</span> <span class="nx">element</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span><span class="o">?</span>
+    <span class="nx">results</span><span class="p">.</span><span class="nx">push</span> <span class="nx">element</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="k">if</span> <span class="nx">element</span><span class="p">[</span><span class="nx">property</span><span class="p">]</span> <span class="o">not</span> <span class="k">in</span> <span class="nx">results</span>
+  <span class="nx">results</span>
 
 
 </pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Attempt to extract the contents of the meta element with the specified
 <code>name</code>. <br />
-If <code>csv</code> is enabled, separate the contents by commas and return each value
-in an array.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+If <code>csv</code> is enabled, separate the contents by commas and return each unique
+value in an array.</p>             </td>             <td class="code">               <div class="highlight"><pre>
 <span class="nv">getMeta = </span><span class="nf">(name, csv) -&gt;</span>
   <span class="nv">content = </span><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s2">&quot;meta[name=&#39;#{name}&#39;]&quot;</span><span class="p">)</span><span class="o">?</span><span class="p">.</span><span class="nx">content</span><span class="o">?</span><span class="p">.</span><span class="nx">trim</span><span class="p">()</span>
   <span class="k">if</span> <span class="nx">csv</span> <span class="o">and</span> <span class="nx">content</span><span class="o">?</span>
-    <span class="nx">value</span> <span class="k">for</span> <span class="nx">value</span> <span class="k">in</span> <span class="nx">content</span><span class="p">.</span><span class="nx">split</span> <span class="sr">/\s*,\s*/</span> <span class="k">when</span> <span class="nx">value</span><span class="p">.</span><span class="nx">length</span>
+    <span class="nv">results = </span><span class="p">[]</span>
+    <span class="k">for</span> <span class="nx">value</span> <span class="k">in</span> <span class="nx">content</span><span class="p">.</span><span class="nx">split</span> <span class="sr">/\s*,\s*/</span> <span class="k">when</span> <span class="nx">value</span><span class="p">.</span><span class="nx">length</span>
+      <span class="nx">results</span><span class="p">.</span><span class="nx">push</span> <span class="nx">value</span> <span class="k">if</span> <span class="nx">value</span> <span class="o">not</span> <span class="k">in</span> <span class="nx">results</span>
+    <span class="nx">results</span>
   <span class="k">else</span>
     <span class="nx">content</span>
 
@@ -59,8 +65,8 @@ extracted from the DOM when required.</p>             </td>             <td clas
         <span class="nv">src.src   = </span><span class="nx">src</span><span class="p">.</span><span class="nx">src</span> <span class="k">for</span> <span class="nx">src</span> <span class="k">in</span> <span class="nx">container</span><span class="p">.</span><span class="nx">querySelectorAll</span> <span class="s1">&#39;[src]&#39;</span>
 
 </pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Capture addresses for links and images.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-        <span class="nv">images = </span><span class="p">(</span><span class="nx">image</span><span class="p">.</span><span class="nx">src</span> <span class="k">for</span> <span class="nx">image</span> <span class="k">in</span> <span class="nx">container</span><span class="p">.</span><span class="nx">querySelectorAll</span> <span class="s1">&#39;img[src]&#39;</span><span class="p">)</span>
-        <span class="nv">links  = </span><span class="p">(</span><span class="nx">link</span><span class="p">.</span><span class="nx">href</span> <span class="k">for</span> <span class="nx">link</span> <span class="k">in</span> <span class="nx">container</span><span class="p">.</span><span class="nx">querySelectorAll</span> <span class="s1">&#39;a[href]&#39;</span><span class="p">)</span>
+        <span class="nv">images = </span><span class="nx">extractAll</span> <span class="nx">container</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">&#39;img[src]&#39;</span><span class="p">),</span> <span class="s1">&#39;src&#39;</span>
+        <span class="nv">links  = </span><span class="nx">extractAll</span> <span class="nx">container</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s1">&#39;a[href]&#39;</span><span class="p">),</span>  <span class="s1">&#39;href&#39;</span>
 
 </pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Build response with values derived from the DOM.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nx">sendResponse</span>

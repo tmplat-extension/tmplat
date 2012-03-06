@@ -743,7 +743,7 @@ executed.</p>             </td>             <td class="code">               <div
       <span class="nv">selectionhtml: </span> <span class="nx">result</span><span class="p">.</span><span class="nx">selectionHTML</span>  <span class="o">?</span> <span class="s1">&#39;&#39;</span>
 
 </pre></div>             </td>           </tr>                               <tr id="section-79">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-79">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use <code>selectedLinks</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-      <span class="nv">selectionlinks: </span><span class="nx">result</span><span class="p">.</span><span class="nx">selectedLinks</span>  <span class="o">?</span> <span class="p">[]</span>
+      <span class="nv">selectionlinks: </span><span class="o">-&gt;</span> <span class="nx">@selectedlinks</span>
       <span class="nv">stylesheets: </span>   <span class="nx">result</span><span class="p">.</span><span class="nx">styleSheets</span>    <span class="o">?</span> <span class="p">[]</span>
     <span class="nx">callback</span><span class="p">()</span>
 
@@ -870,14 +870,10 @@ ignoring case by our modified version of
       <span class="nx">url</span><span class="p">.</span><span class="nx">param</span><span class="p">(</span><span class="nx">render</span> <span class="nx">text</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span>
     <span class="nv">params: </span>               <span class="nx">nullIfEmpty</span> <span class="nx">url</span><span class="p">.</span><span class="nx">param</span><span class="p">()</span>
     <span class="nv">plugins: </span>              <span class="p">(</span>
-      <span class="nv">array   = </span><span class="p">[]</span>
-      <span class="nv">plugins = </span><span class="p">(</span><span class="nx">plugin</span><span class="p">.</span><span class="nx">name</span> <span class="k">for</span> <span class="nx">plugin</span> <span class="k">in</span> <span class="nx">navigator</span><span class="p">.</span><span class="nx">plugins</span><span class="p">)</span>
-      <span class="nx">plugins</span><span class="p">.</span><span class="nx">sort</span><span class="p">().</span><span class="nx">filter</span> <span class="nf">(name) -&gt;</span>
-        <span class="k">if</span> <span class="nx">name</span> <span class="k">in</span> <span class="nx">array</span> <span class="k">then</span> <span class="kc">no</span> <span class="k">else</span>
-          <span class="nx">array</span><span class="p">.</span><span class="nx">push</span> <span class="nx">name</span>
-          <span class="kc">yes</span>
-      <span class="nv">array = </span><span class="kc">null</span>
-      <span class="nx">plugins</span>
+      <span class="nv">results = </span><span class="p">[]</span>
+      <span class="k">for</span> <span class="nx">plugin</span> <span class="k">in</span> <span class="nx">navigator</span><span class="p">.</span><span class="nx">plugins</span> <span class="k">when</span> <span class="nx">plugin</span><span class="p">.</span><span class="nx">name</span> <span class="o">not</span> <span class="k">in</span> <span class="nx">results</span>
+        <span class="nx">results</span><span class="p">.</span><span class="nx">push</span> <span class="nx">plugin</span><span class="p">.</span><span class="nx">name</span>
+      <span class="nx">results</span><span class="p">.</span><span class="nx">sort</span><span class="p">()</span>
     <span class="p">)</span>
     <span class="nv">popular: </span>              <span class="nx">ext</span><span class="p">.</span><span class="nx">queryTemplate</span> <span class="nf">(template) -&gt;</span>
       <span class="nx">template</span><span class="p">.</span><span class="nx">key</span> <span class="o">is</span> <span class="nx">stats</span><span class="p">.</span><span class="nx">popular</span>

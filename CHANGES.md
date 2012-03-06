@@ -4,6 +4,7 @@
 * [#76](https://github.com/neocotic/template/issues/76): Add new *"selectedImages"* list to enabled iteration over images within in current selection
 * [#76](https://github.com/neocotic/template/issues/76): Add new *"images"* list to enable iteration over all of the images on the page 
 * [#77](https://github.com/neocotic/template/issues/77): Fix bug preventing access to page-derived template variables
+* [#78](https://github.com/neocotic/template/issues/78): Remove duplicate URLs from certain lists
 
 2012.03.05, Version 1.0.1
 
