@@ -655,22 +655,25 @@ addAdditionalData = (tab, data, callback) ->
       time = Date.parse result.lastModified
       new Date time unless isNaN time
     $.extend data,
-      author:         result.author        ? ''
-      characterset:   result.characterSet  ? ''
-      description:    result.description   ? ''
-      keywords:       result.keywords      ? []
+      author:         result.author         ? ''
+      characterset:   result.characterSet   ? ''
+      description:    result.description    ? ''
+      images:         result.images         ? []
+      keywords:       result.keywords       ? []
       lastmodified:   -> (text, render) ->
         lastModified?.format(render(text) or undefined) ? ''
-      links:          result.links         ? []
-      pageheight:     result.pageHeight    ? ''
-      pagewidth:      result.pageWidth     ? ''
-      referrer:       result.referrer      ? ''
-      scripts:        result.scripts       ? []
-      selectedlinks:  result.selectedLinks ? []
-      selection:      result.selection     ? ''
+      links:          result.links          ? []
+      pageheight:     result.pageHeight     ? ''
+      pagewidth:      result.pageWidth      ? ''
+      referrer:       result.referrer       ? ''
+      scripts:        result.scripts        ? []
+      selectedimages: result.selectedImages ? []
+      selectedlinks:  result.selectedLinks  ? []
+      selection:      result.selection      ? ''
+      selectionhtml:  result.selectionHTML  ? ''
       # Deprecated since 1.0.0, use `selectedLinks` instead.
-      selectionlinks: result.selectedLinks ? []
-      stylesheets:    result.styleSheets   ? []
+      selectionlinks: result.selectedLinks  ? []
+      stylesheets:    result.styleSheets    ? []
     callback()
 
 # Creates an object containing data based on information derived from the

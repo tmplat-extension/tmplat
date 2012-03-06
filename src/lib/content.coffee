@@ -46,21 +46,31 @@ chrome.extension.sendRequest type: 'info', (data) ->
   # extracted from the DOM when required.
   chrome.extension.onRequest.addListener (request, sender, sendResponse) ->
     selection = window.getSelection()
-    if selection.rangeCount > 0
-      contents = selection.getRangeAt(0).cloneContents()
-      if contents
-        links = (link.href for link in contents.querySelectorAll 'a[href]')
+    unless selection.isCollapsed
+      if contents = selection.getRangeAt(0).cloneContents()
+        container = document.createElement 'div'
+        container.appendChild contents
+        # Convert relative addresses to absolute.
+        href.href = href.href for href in container.querySelectorAll '[href]'
+        src.src   = src.src for src in container.querySelectorAll '[src]'
+        # Capture addresses for links and images.
+        images = (image.src for image in container.querySelectorAll 'img[src]')
+        links  = (link.href for link in container.querySelectorAll 'a[href]')
+    # Build response with values derived from the DOM.
     sendResponse
-      author:        getMeta 'author'
-      characterSet:  document.characterSet
-      description:   getMeta 'description'
-      keywords:      getMeta 'keywords', yes
-      lastModified:  document.lastModified
-      links:         extractAll document.links, 'href'
-      pageHeight:    window.innerHeight
-      pageWidth:     window.innerWidth
-      referrer:      document.referrer
-      scripts:       extractAll document.scripts, 'src'
-      selectedLinks: links
-      selection:     selection.toString()
-      styleSheets:   extractAll document.styleSheets, 'href'
+      author:         getMeta 'author'
+      characterSet:   document.characterSet
+      description:    getMeta 'description'
+      images:         extractAll document.images, 'src'
+      keywords:       getMeta('keywords', yes)
+      lastModified:   document.lastModified
+      links:          extractAll document.links, 'href'
+      pageHeight:     window.innerHeight
+      pageWidth:      window.innerWidth
+      referrer:       document.referrer
+      scripts:        extractAll document.scripts, 'src'
+      selectedImages: images
+      selectedLinks:  links
+      selection:      selection.toString()
+      selectionHTML:  container?.innerHTML
+      styleSheets:    extractAll document.styleSheets, 'href'

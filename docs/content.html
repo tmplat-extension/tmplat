@@ -49,23 +49,36 @@ of Template that is currently running.</p>             </td>             <td cla
 extracted from the DOM when required.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nx">chrome</span><span class="p">.</span><span class="nx">extension</span><span class="p">.</span><span class="nx">onRequest</span><span class="p">.</span><span class="nx">addListener</span> <span class="nf">(request, sender, sendResponse) -&gt;</span>
     <span class="nv">selection = </span><span class="nb">window</span><span class="p">.</span><span class="nx">getSelection</span><span class="p">()</span>
-    <span class="k">if</span> <span class="nx">selection</span><span class="p">.</span><span class="nx">rangeCount</span> <span class="o">&gt;</span> <span class="mi">0</span>
-      <span class="nv">contents = </span><span class="nx">selection</span><span class="p">.</span><span class="nx">getRangeAt</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">cloneContents</span><span class="p">()</span>
-      <span class="k">if</span> <span class="nx">contents</span>
-        <span class="nv">links = </span><span class="p">(</span><span class="nx">link</span><span class="p">.</span><span class="nx">href</span> <span class="k">for</span> <span class="nx">link</span> <span class="k">in</span> <span class="nx">contents</span><span class="p">.</span><span class="nx">querySelectorAll</span> <span class="s1">&#39;a[href]&#39;</span><span class="p">)</span>
+    <span class="nx">unless</span> <span class="nx">selection</span><span class="p">.</span><span class="nx">isCollapsed</span>
+      <span class="k">if</span> <span class="nv">contents = </span><span class="nx">selection</span><span class="p">.</span><span class="nx">getRangeAt</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">cloneContents</span><span class="p">()</span>
+        <span class="nv">container = </span><span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span> <span class="s1">&#39;div&#39;</span>
+        <span class="nx">container</span><span class="p">.</span><span class="nx">appendChild</span> <span class="nx">contents</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Convert relative addresses to absolute.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+        <span class="nv">href.href = </span><span class="nx">href</span><span class="p">.</span><span class="nx">href</span> <span class="k">for</span> <span class="nx">href</span> <span class="k">in</span> <span class="nx">container</span><span class="p">.</span><span class="nx">querySelectorAll</span> <span class="s1">&#39;[href]&#39;</span>
+        <span class="nv">src.src   = </span><span class="nx">src</span><span class="p">.</span><span class="nx">src</span> <span class="k">for</span> <span class="nx">src</span> <span class="k">in</span> <span class="nx">container</span><span class="p">.</span><span class="nx">querySelectorAll</span> <span class="s1">&#39;[src]&#39;</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Capture addresses for links and images.</p>             </td>             <td class="code">               <div class="highlight"><pre>
+        <span class="nv">images = </span><span class="p">(</span><span class="nx">image</span><span class="p">.</span><span class="nx">src</span> <span class="k">for</span> <span class="nx">image</span> <span class="k">in</span> <span class="nx">container</span><span class="p">.</span><span class="nx">querySelectorAll</span> <span class="s1">&#39;img[src]&#39;</span><span class="p">)</span>
+        <span class="nv">links  = </span><span class="p">(</span><span class="nx">link</span><span class="p">.</span><span class="nx">href</span> <span class="k">for</span> <span class="nx">link</span> <span class="k">in</span> <span class="nx">container</span><span class="p">.</span><span class="nx">querySelectorAll</span> <span class="s1">&#39;a[href]&#39;</span><span class="p">)</span>
+
+</pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Build response with values derived from the DOM.</p>             </td>             <td class="code">               <div class="highlight"><pre>
     <span class="nx">sendResponse</span>
-      <span class="nv">author: </span>       <span class="nx">getMeta</span> <span class="s1">&#39;author&#39;</span>
-      <span class="nv">characterSet: </span> <span class="nb">document</span><span class="p">.</span><span class="nx">characterSet</span>
-      <span class="nv">description: </span>  <span class="nx">getMeta</span> <span class="s1">&#39;description&#39;</span>
-      <span class="nv">keywords: </span>     <span class="nx">getMeta</span> <span class="s1">&#39;keywords&#39;</span><span class="p">,</span> <span class="kc">yes</span>
-      <span class="nv">lastModified: </span> <span class="nb">document</span><span class="p">.</span><span class="nx">lastModified</span>
-      <span class="nv">links: </span>        <span class="nx">extractAll</span> <span class="nb">document</span><span class="p">.</span><span class="nx">links</span><span class="p">,</span> <span class="s1">&#39;href&#39;</span>
-      <span class="nv">pageHeight: </span>   <span class="nb">window</span><span class="p">.</span><span class="nx">innerHeight</span>
-      <span class="nv">pageWidth: </span>    <span class="nb">window</span><span class="p">.</span><span class="nx">innerWidth</span>
-      <span class="nv">referrer: </span>     <span class="nb">document</span><span class="p">.</span><span class="nx">referrer</span>
-      <span class="nv">scripts: </span>      <span class="nx">extractAll</span> <span class="nb">document</span><span class="p">.</span><span class="nx">scripts</span><span class="p">,</span> <span class="s1">&#39;src&#39;</span>
-      <span class="nv">selectedLinks: </span><span class="nx">links</span>
-      <span class="nv">selection: </span>    <span class="nx">selection</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
-      <span class="nv">styleSheets: </span>  <span class="nx">extractAll</span> <span class="nb">document</span><span class="p">.</span><span class="nx">styleSheets</span><span class="p">,</span> <span class="s1">&#39;href&#39;</span>
+      <span class="nv">author: </span>        <span class="nx">getMeta</span> <span class="s1">&#39;author&#39;</span>
+      <span class="nv">characterSet: </span>  <span class="nb">document</span><span class="p">.</span><span class="nx">characterSet</span>
+      <span class="nv">description: </span>   <span class="nx">getMeta</span> <span class="s1">&#39;description&#39;</span>
+      <span class="nv">images: </span>        <span class="nx">extractAll</span> <span class="nb">document</span><span class="p">.</span><span class="nx">images</span><span class="p">,</span> <span class="s1">&#39;src&#39;</span>
+      <span class="nv">keywords: </span>      <span class="nx">getMeta</span><span class="p">(</span><span class="s1">&#39;keywords&#39;</span><span class="p">,</span> <span class="kc">yes</span><span class="p">)</span>
+      <span class="nv">lastModified: </span>  <span class="nb">document</span><span class="p">.</span><span class="nx">lastModified</span>
+      <span class="nv">links: </span>         <span class="nx">extractAll</span> <span class="nb">document</span><span class="p">.</span><span class="nx">links</span><span class="p">,</span> <span class="s1">&#39;href&#39;</span>
+      <span class="nv">pageHeight: </span>    <span class="nb">window</span><span class="p">.</span><span class="nx">innerHeight</span>
+      <span class="nv">pageWidth: </span>     <span class="nb">window</span><span class="p">.</span><span class="nx">innerWidth</span>
+      <span class="nv">referrer: </span>      <span class="nb">document</span><span class="p">.</span><span class="nx">referrer</span>
+      <span class="nv">scripts: </span>       <span class="nx">extractAll</span> <span class="nb">document</span><span class="p">.</span><span class="nx">scripts</span><span class="p">,</span> <span class="s1">&#39;src&#39;</span>
+      <span class="nv">selectedImages: </span><span class="nx">images</span>
+      <span class="nv">selectedLinks: </span> <span class="nx">links</span>
+      <span class="nv">selection: </span>     <span class="nx">selection</span><span class="p">.</span><span class="nx">toString</span><span class="p">()</span>
+      <span class="nv">selectionHTML: </span> <span class="nx">container</span><span class="o">?</span><span class="p">.</span><span class="nx">innerHTML</span>
+      <span class="nv">styleSheets: </span>   <span class="nx">extractAll</span> <span class="nb">document</span><span class="p">.</span><span class="nx">styleSheets</span><span class="p">,</span> <span class="s1">&#39;href&#39;</span>
 
 </pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 

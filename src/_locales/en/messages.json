@@ -1,7 +1,4 @@
 {
-  "app_name": {
-    "message": "Template Chrome Extension"
-  },
   "default_template_anchor": {
     "message": "Anchor"
   },
@@ -605,6 +602,20 @@
   "opt_guide_lists_objects_header": {
     "message": "Lists &amp; Objects"
   },
+  "opt_guide_lists_objects_images_text": {
+    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all images on the page",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
   "opt_guide_lists_objects_keywords_text": {
     "message": "The keywords from the page's meta information"
   },
@@ -695,6 +706,20 @@
   },
   "opt_guide_lists_objects_segments_text": {
     "message": "The segments from the $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$'s path",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
+  },
+  "opt_guide_lists_objects_selected_images_text": {
+    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all images within the current selection",
     "placeholders": {
       "c_abbr": {
         "content": "</abbr>"
@@ -1763,6 +1788,20 @@
   },
   "opt_guide_standard_screen_width_text": {
     "message": "The width of the screen"
+  },
+  "opt_guide_standard_selection_html_text": {
+    "message": "The $O_ABBR_1$Hypertext Markup Language$O_ABBR_2$HTML$C_ABBR$ behind the current selection",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">"
+      }
+    }
   },
   "opt_guide_standard_selection_text": {
     "message": "The currently selected text"

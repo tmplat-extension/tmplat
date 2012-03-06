@@ -29,8 +29,8 @@ To run the locally built extension in [Google Chrome][] you can follow these ste
 2. Bring up the extensions management page by clicking the wrench icon ![wrench](http://code.google.com/chrome/extensions/images/toolsmenu.gif) and choosing **Tools > Extensions**
 3. Ensure **Developer mode** is checked in the top right of the page
 4. **Disable** all other versions of the extension which are installed to avoid any conflicts with keyboard shortcuts
-4. Click the **Load unpacked extension...** button (a file dialog appears)
-5. In the file dialog, navigate to the extension's `bin` folder (created by `cake build`) and click **OK**
+5. Click the **Load unpacked extension...** button (a file dialog appears)
+6. In the file dialog, navigate to the extension's `bin` folder (created by `cake build`) and click **OK**
 
 [coffeescript]: http://coffeescript.org
 [docco]: http://jashkenas.github.com/docco

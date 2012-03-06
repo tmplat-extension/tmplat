@@ -725,23 +725,26 @@ executed.</p>             </td>             <td class="code">               <div
       <span class="nv">time = </span><span class="nb">Date</span><span class="p">.</span><span class="nx">parse</span> <span class="nx">result</span><span class="p">.</span><span class="nx">lastModified</span>
       <span class="k">new</span> <span class="nb">Date</span> <span class="nx">time</span> <span class="nx">unless</span> <span class="nb">isNaN</span> <span class="nx">time</span>
     <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">data</span><span class="p">,</span>
-      <span class="nv">author: </span>        <span class="nx">result</span><span class="p">.</span><span class="nx">author</span>        <span class="o">?</span> <span class="s1">&#39;&#39;</span>
-      <span class="nv">characterset: </span>  <span class="nx">result</span><span class="p">.</span><span class="nx">characterSet</span>  <span class="o">?</span> <span class="s1">&#39;&#39;</span>
-      <span class="nv">description: </span>   <span class="nx">result</span><span class="p">.</span><span class="nx">description</span>   <span class="o">?</span> <span class="s1">&#39;&#39;</span>
-      <span class="nv">keywords: </span>      <span class="nx">result</span><span class="p">.</span><span class="nx">keywords</span>      <span class="o">?</span> <span class="p">[]</span>
+      <span class="nv">author: </span>        <span class="nx">result</span><span class="p">.</span><span class="nx">author</span>         <span class="o">?</span> <span class="s1">&#39;&#39;</span>
+      <span class="nv">characterset: </span>  <span class="nx">result</span><span class="p">.</span><span class="nx">characterSet</span>   <span class="o">?</span> <span class="s1">&#39;&#39;</span>
+      <span class="nv">description: </span>   <span class="nx">result</span><span class="p">.</span><span class="nx">description</span>    <span class="o">?</span> <span class="s1">&#39;&#39;</span>
+      <span class="nv">images: </span>        <span class="nx">result</span><span class="p">.</span><span class="nx">images</span>         <span class="o">?</span> <span class="p">[]</span>
+      <span class="nv">keywords: </span>      <span class="nx">result</span><span class="p">.</span><span class="nx">keywords</span>       <span class="o">?</span> <span class="p">[]</span>
       <span class="nv">lastmodified: </span>  <span class="o">-&gt;</span> <span class="nf">(text, render) -&gt;</span>
         <span class="nx">lastModified</span><span class="o">?</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="nx">render</span><span class="p">(</span><span class="nx">text</span><span class="p">)</span> <span class="o">or</span> <span class="kc">undefined</span><span class="p">)</span> <span class="o">?</span> <span class="s1">&#39;&#39;</span>
-      <span class="nv">links: </span>         <span class="nx">result</span><span class="p">.</span><span class="nx">links</span>         <span class="o">?</span> <span class="p">[]</span>
-      <span class="nv">pageheight: </span>    <span class="nx">result</span><span class="p">.</span><span class="nx">pageHeight</span>    <span class="o">?</span> <span class="s1">&#39;&#39;</span>
-      <span class="nv">pagewidth: </span>     <span class="nx">result</span><span class="p">.</span><span class="nx">pageWidth</span>     <span class="o">?</span> <span class="s1">&#39;&#39;</span>
-      <span class="nv">referrer: </span>      <span class="nx">result</span><span class="p">.</span><span class="nx">referrer</span>      <span class="o">?</span> <span class="s1">&#39;&#39;</span>
-      <span class="nv">scripts: </span>       <span class="nx">result</span><span class="p">.</span><span class="nx">scripts</span>       <span class="o">?</span> <span class="p">[]</span>
-      <span class="nv">selectedlinks: </span> <span class="nx">result</span><span class="p">.</span><span class="nx">selectedLinks</span> <span class="o">?</span> <span class="p">[]</span>
-      <span class="nv">selection: </span>     <span class="nx">result</span><span class="p">.</span><span class="nx">selection</span>     <span class="o">?</span> <span class="s1">&#39;&#39;</span>
+      <span class="nv">links: </span>         <span class="nx">result</span><span class="p">.</span><span class="nx">links</span>          <span class="o">?</span> <span class="p">[]</span>
+      <span class="nv">pageheight: </span>    <span class="nx">result</span><span class="p">.</span><span class="nx">pageHeight</span>     <span class="o">?</span> <span class="s1">&#39;&#39;</span>
+      <span class="nv">pagewidth: </span>     <span class="nx">result</span><span class="p">.</span><span class="nx">pageWidth</span>      <span class="o">?</span> <span class="s1">&#39;&#39;</span>
+      <span class="nv">referrer: </span>      <span class="nx">result</span><span class="p">.</span><span class="nx">referrer</span>       <span class="o">?</span> <span class="s1">&#39;&#39;</span>
+      <span class="nv">scripts: </span>       <span class="nx">result</span><span class="p">.</span><span class="nx">scripts</span>        <span class="o">?</span> <span class="p">[]</span>
+      <span class="nv">selectedimages: </span><span class="nx">result</span><span class="p">.</span><span class="nx">selectedImages</span> <span class="o">?</span> <span class="p">[]</span>
+      <span class="nv">selectedlinks: </span> <span class="nx">result</span><span class="p">.</span><span class="nx">selectedLinks</span>  <span class="o">?</span> <span class="p">[]</span>
+      <span class="nv">selection: </span>     <span class="nx">result</span><span class="p">.</span><span class="nx">selection</span>      <span class="o">?</span> <span class="s1">&#39;&#39;</span>
+      <span class="nv">selectionhtml: </span> <span class="nx">result</span><span class="p">.</span><span class="nx">selectionHTML</span>  <span class="o">?</span> <span class="s1">&#39;&#39;</span>
 
 </pre></div>             </td>           </tr>                               <tr id="section-79">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-79">&#182;</a>               </div>               <p>Deprecated since 1.0.0, use <code>selectedLinks</code> instead.</p>             </td>             <td class="code">               <div class="highlight"><pre>
-      <span class="nv">selectionlinks: </span><span class="nx">result</span><span class="p">.</span><span class="nx">selectedLinks</span> <span class="o">?</span> <span class="p">[]</span>
-      <span class="nv">stylesheets: </span>   <span class="nx">result</span><span class="p">.</span><span class="nx">styleSheets</span>   <span class="o">?</span> <span class="p">[]</span>
+      <span class="nv">selectionlinks: </span><span class="nx">result</span><span class="p">.</span><span class="nx">selectedLinks</span>  <span class="o">?</span> <span class="p">[]</span>
+      <span class="nv">stylesheets: </span>   <span class="nx">result</span><span class="p">.</span><span class="nx">styleSheets</span>    <span class="o">?</span> <span class="p">[]</span>
     <span class="nx">callback</span><span class="p">()</span>
 
 

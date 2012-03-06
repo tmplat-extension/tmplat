@@ -1,3 +1,10 @@
+2012.03.06, Version 1.0.2
+
+* [#76](https://github.com/neocotic/template/issues/76): Add new *"selectionHTML"* list to enabled access to the HTML behind the current selection
+* [#76](https://github.com/neocotic/template/issues/76): Add new *"selectedImages"* list to enabled iteration over images within in current selection
+* [#76](https://github.com/neocotic/template/issues/76): Add new *"images"* list to enable iteration over all of the images on the page 
+* [#77](https://github.com/neocotic/template/issues/77): Fix bug preventing access to page-derived template variables
+
 2012.03.05, Version 1.0.1
 
 * [#71](https://github.com/neocotic/template/issues/71): Make [bit.ly](http://bit.ly) the default URL shortener
