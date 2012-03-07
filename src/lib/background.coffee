@@ -393,16 +393,17 @@ onRequest = (request, sender, sendResponse) ->
     try
       switch request.type
         when 'menu'
-          data     = buildDerivedData tab, request.data, shortCallback
           template = getTemplateWithMenuId request.data.menuItemId
+          if template?
+            data = buildDerivedData tab, request.data, shortCallback
         when 'popup', 'toolbar'
-          data     = buildStandardData tab, shortCallback
           template = getTemplateWithKey request.data.key
+          data     = buildStandardData tab, shortCallback if template?
         when 'shortcut'
-          data     = buildStandardData tab, shortCallback
           template = getTemplateWithShortcut request.data.key
+          data     = buildStandardData tab, shortCallback if template?
       updateProgress 20
-      if data? and template? then runner.next() else runner.finish()
+      if data? then runner.next() else runner.finish()
     catch error
       log.error error
       # Oops! Something went wrong so we should probably let the user know.

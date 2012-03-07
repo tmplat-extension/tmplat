@@ -66,8 +66,10 @@ potentially transforming it to upper case.</p>             </td>             <td
 
 </pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Retrieve the first entity/all entities that pass the specified <code>filter</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">query: </span><span class="nf">(entities, singular, filter) -&gt;</span>
-    <span class="k">return</span> <span class="nx">entity</span> <span class="k">for</span> <span class="nx">entity</span> <span class="k">in</span> <span class="nx">entities</span> <span class="k">when</span> <span class="nx">filter</span> <span class="nx">entity</span> <span class="k">if</span> <span class="nx">singular</span>
-    <span class="nx">entity</span> <span class="k">for</span> <span class="nx">entity</span> <span class="k">in</span> <span class="nx">entities</span> <span class="k">when</span> <span class="nx">filter</span> <span class="nx">entity</span>
+    <span class="k">if</span> <span class="nx">singular</span>
+      <span class="k">return</span> <span class="nx">entity</span> <span class="k">for</span> <span class="nx">entity</span> <span class="k">in</span> <span class="nx">entities</span> <span class="k">when</span> <span class="nx">filter</span> <span class="nx">entity</span>
+    <span class="k">else</span>
+      <span class="nx">entity</span> <span class="k">for</span> <span class="nx">entity</span> <span class="k">in</span> <span class="nx">entities</span> <span class="k">when</span> <span class="nx">filter</span> <span class="nx">entity</span>
 
 
 </pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Generate a random number between the <code>min</code> and <code>max</code> values provided.</p>             </td>             <td class="code">               <div class="highlight"><pre>

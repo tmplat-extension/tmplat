@@ -438,16 +438,17 @@ loading animation.</p>             </td>             <td class="code">          
     <span class="k">try</span>
       <span class="k">switch</span> <span class="nx">request</span><span class="p">.</span><span class="nx">type</span>
         <span class="k">when</span> <span class="s1">&#39;menu&#39;</span>
-          <span class="nv">data     = </span><span class="nx">buildDerivedData</span> <span class="nx">tab</span><span class="p">,</span> <span class="nx">request</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span> <span class="nx">shortCallback</span>
           <span class="nv">template = </span><span class="nx">getTemplateWithMenuId</span> <span class="nx">request</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">menuItemId</span>
+          <span class="k">if</span> <span class="nx">template</span><span class="o">?</span>
+            <span class="nv">data = </span><span class="nx">buildDerivedData</span> <span class="nx">tab</span><span class="p">,</span> <span class="nx">request</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span> <span class="nx">shortCallback</span>
         <span class="k">when</span> <span class="s1">&#39;popup&#39;</span><span class="p">,</span> <span class="s1">&#39;toolbar&#39;</span>
-          <span class="nv">data     = </span><span class="nx">buildStandardData</span> <span class="nx">tab</span><span class="p">,</span> <span class="nx">shortCallback</span>
           <span class="nv">template = </span><span class="nx">getTemplateWithKey</span> <span class="nx">request</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">key</span>
+          <span class="nv">data     = </span><span class="nx">buildStandardData</span> <span class="nx">tab</span><span class="p">,</span> <span class="nx">shortCallback</span> <span class="k">if</span> <span class="nx">template</span><span class="o">?</span>
         <span class="k">when</span> <span class="s1">&#39;shortcut&#39;</span>
-          <span class="nv">data     = </span><span class="nx">buildStandardData</span> <span class="nx">tab</span><span class="p">,</span> <span class="nx">shortCallback</span>
           <span class="nv">template = </span><span class="nx">getTemplateWithShortcut</span> <span class="nx">request</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">key</span>
+          <span class="nv">data     = </span><span class="nx">buildStandardData</span> <span class="nx">tab</span><span class="p">,</span> <span class="nx">shortCallback</span> <span class="k">if</span> <span class="nx">template</span><span class="o">?</span>
       <span class="nx">updateProgress</span> <span class="mi">20</span>
-      <span class="k">if</span> <span class="nx">data</span><span class="o">?</span> <span class="o">and</span> <span class="nx">template</span><span class="o">?</span> <span class="k">then</span> <span class="nx">runner</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span> <span class="k">else</span> <span class="nx">runner</span><span class="p">.</span><span class="nx">finish</span><span class="p">()</span>
+      <span class="k">if</span> <span class="nx">data</span><span class="o">?</span> <span class="k">then</span> <span class="nx">runner</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span> <span class="k">else</span> <span class="nx">runner</span><span class="p">.</span><span class="nx">finish</span><span class="p">()</span>
     <span class="k">catch</span> <span class="nx">error</span>
       <span class="nx">log</span><span class="p">.</span><span class="nx">error</span> <span class="nx">error</span>
 

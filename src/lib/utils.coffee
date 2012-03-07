@@ -60,8 +60,10 @@ utils = window.utils = new class Utils extends Class
 
   # Retrieve the first entity/all entities that pass the specified `filter`.
   query: (entities, singular, filter) ->
-    return entity for entity in entities when filter entity if singular
-    entity for entity in entities when filter entity
+    if singular
+      return entity for entity in entities when filter entity
+    else
+      entity for entity in entities when filter entity
 
   # Generate a random number between the `min` and `max` values provided.
   random: (min, max) -> Math.floor(Math.random() * (max - min + 1)) + min
