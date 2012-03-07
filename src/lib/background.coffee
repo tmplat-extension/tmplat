@@ -109,8 +109,8 @@ SHORTENERS        = [
     if @oauth.hasAccessToken()
       params.access_token = @oauth.getAccessToken()
     else
-      params.apiKey = i18n.get 'shortener_bitly_api_key'
-      params.login  = i18n.get 'shortener_bitly_login'
+      params.apiKey = 'R_91eabef2f32d88c07b197c9d69eed516'
+      params.login  = 'templateextension'
     params
   getUsage:      -> store.get 'bitly.usage'
   input:         -> null
@@ -118,8 +118,8 @@ SHORTENERS        = [
   method:        'GET'
   name:          'bitly'
   oauth:         new OAuth2 'bitly'
-    client_id:     i18n.get 'shortener_bitly_client_id'
-    client_secret: i18n.get 'shortener_bitly_client_secret'
+    client_id:     'deb9b5c6c0c5928674a0601691e404b1de021f0f'
+    client_secret: 'd864c9a5ba89e1fc7af5d1c500a63c9232dca331'
   output:        (resp) -> JSON.parse(resp).data.url
   title:         i18n.get 'shortener_bitly'
   url:           -> 'https://api-ssl.bitly.com/v3/shorten'
@@ -131,7 +131,7 @@ SHORTENERS        = [
       headers.Authorization = "OAuth #{@oauth.getAccessToken()}"
     headers
   getParameters: -> unless @oauth.hasAccessToken()
-    key: i18n.get 'shortener_googl_api_key'
+    key: 'AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY'
   getUsage:      -> store.get 'googl.usage'
   input:         (url) -> JSON.stringify longUrl: url
   isEnabled:     -> store.get 'googl.enabled'
@@ -139,8 +139,8 @@ SHORTENERS        = [
   name:          'googl'
   oauth:         new OAuth2 'google'
     api_scope:     'https://www.googleapis.com/auth/urlshortener'
-    client_id:     i18n.get 'shortener_googl_client_id'
-    client_secret: i18n.get 'shortener_googl_client_secret'
+    client_id:     '962266498046.apps.googleusercontent.com'
+    client_secret: 'D15W+qUHliax3uFu1JVpTCSg'
   output:        (resp) -> JSON.parse(resp).id
   title:         i18n.get 'shortener_googl'
   url:           -> 'https://www.googleapis.com/urlshortener/v1/url'

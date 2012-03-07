@@ -117,8 +117,8 @@ user preferences.</p>             </td>             <td class="code">           
     <span class="k">if</span> <span class="nx">@oauth</span><span class="p">.</span><span class="nx">hasAccessToken</span><span class="p">()</span>
       <span class="nv">params.access_token = </span><span class="nx">@oauth</span><span class="p">.</span><span class="nx">getAccessToken</span><span class="p">()</span>
     <span class="k">else</span>
-      <span class="nv">params.apiKey = </span><span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_bitly_api_key&#39;</span>
-      <span class="nv">params.login  = </span><span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_bitly_login&#39;</span>
+      <span class="nv">params.apiKey = </span><span class="s1">&#39;R_91eabef2f32d88c07b197c9d69eed516&#39;</span>
+      <span class="nv">params.login  = </span><span class="s1">&#39;templateextension&#39;</span>
     <span class="nx">params</span>
   <span class="nv">getUsage: </span>     <span class="o">-&gt;</span> <span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;bitly.usage&#39;</span>
   <span class="nv">input: </span>        <span class="o">-&gt;</span> <span class="kc">null</span>
@@ -126,8 +126,8 @@ user preferences.</p>             </td>             <td class="code">           
   <span class="nv">method: </span>       <span class="s1">&#39;GET&#39;</span>
   <span class="nv">name: </span>         <span class="s1">&#39;bitly&#39;</span>
   <span class="nv">oauth: </span>        <span class="k">new</span> <span class="nx">OAuth2</span> <span class="s1">&#39;bitly&#39;</span>
-    <span class="nv">client_id: </span>    <span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_bitly_client_id&#39;</span>
-    <span class="nv">client_secret: </span><span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_bitly_client_secret&#39;</span>
+    <span class="nv">client_id: </span>    <span class="s1">&#39;deb9b5c6c0c5928674a0601691e404b1de021f0f&#39;</span>
+    <span class="nv">client_secret: </span><span class="s1">&#39;d864c9a5ba89e1fc7af5d1c500a63c9232dca331&#39;</span>
   <span class="nv">output: </span>       <span class="nf">(resp) -&gt;</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">resp</span><span class="p">).</span><span class="nx">data</span><span class="p">.</span><span class="nx">url</span>
   <span class="nv">title: </span>        <span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_bitly&#39;</span>
   <span class="nv">url: </span>          <span class="o">-&gt;</span> <span class="s1">&#39;https://api-ssl.bitly.com/v3/shorten&#39;</span>
@@ -140,7 +140,7 @@ user preferences.</p>             </td>             <td class="code">           
       <span class="nv">headers.Authorization = </span><span class="s2">&quot;OAuth #{@oauth.getAccessToken()}&quot;</span>
     <span class="nx">headers</span>
   <span class="nv">getParameters: </span><span class="o">-&gt;</span> <span class="nx">unless</span> <span class="nx">@oauth</span><span class="p">.</span><span class="nx">hasAccessToken</span><span class="p">()</span>
-    <span class="nv">key: </span><span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_googl_api_key&#39;</span>
+    <span class="nv">key: </span><span class="s1">&#39;AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY&#39;</span>
   <span class="nv">getUsage: </span>     <span class="o">-&gt;</span> <span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;googl.usage&#39;</span>
   <span class="nv">input: </span>        <span class="nf">(url) -&gt;</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span> <span class="nv">longUrl: </span><span class="nx">url</span>
   <span class="nv">isEnabled: </span>    <span class="o">-&gt;</span> <span class="nx">store</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;googl.enabled&#39;</span>
@@ -148,8 +148,8 @@ user preferences.</p>             </td>             <td class="code">           
   <span class="nv">name: </span>         <span class="s1">&#39;googl&#39;</span>
   <span class="nv">oauth: </span>        <span class="k">new</span> <span class="nx">OAuth2</span> <span class="s1">&#39;google&#39;</span>
     <span class="nv">api_scope: </span>    <span class="s1">&#39;https://www.googleapis.com/auth/urlshortener&#39;</span>
-    <span class="nv">client_id: </span>    <span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_googl_client_id&#39;</span>
-    <span class="nv">client_secret: </span><span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_googl_client_secret&#39;</span>
+    <span class="nv">client_id: </span>    <span class="s1">&#39;962266498046.apps.googleusercontent.com&#39;</span>
+    <span class="nv">client_secret: </span><span class="s1">&#39;D15W+qUHliax3uFu1JVpTCSg&#39;</span>
   <span class="nv">output: </span>       <span class="nf">(resp) -&gt;</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">resp</span><span class="p">).</span><span class="nx">id</span>
   <span class="nv">title: </span>        <span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s1">&#39;shortener_googl&#39;</span>
   <span class="nv">url: </span>          <span class="o">-&gt;</span> <span class="s1">&#39;https://www.googleapis.com/urlshortener/v1/url&#39;</span>
