@@ -342,6 +342,9 @@ onRequest = (request, sender, sendResponse) ->
   # Select or create a tab for the Options page.
   if request.type is 'options'
     selectOrCreateTab utils.url 'pages/options.html'
+    # Close the popup if it's currently open. This should happen naturally but
+    # is being forced to ensure consistency.
+    chrome.extension.getViews(type: 'popup')[0]?.close()
     return sendResponse?()
   # Info requests are simple, just send some useful information back. Done!
   if request.type in ['info', 'version']
