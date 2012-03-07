@@ -1,4 +1,4 @@
-2012.04.07, Version 1.0.4
+2012.03.07, Version 1.0.4
 
 * [#80](https://github.com/neocotic/template/issues/80): Tidy i18n bundle to help with [new translation process](http://i18n.tmpl.at)
 * [#81](https://github.com/neocotic/template/issues/81): Fix bug where unregistered keyboard shortcuts still trigger desktop notification when using modifier
