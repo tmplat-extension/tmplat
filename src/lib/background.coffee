@@ -802,6 +802,7 @@ buildStandardData = (tab, shortCallback) ->
     segment:               -> (text, render) ->
       url.segment(parseInt render(text), 10) ? ''
     segments:              url.segment()
+    selectionmarkdown:     -> md @selectionhtml
     # Deprecated since 1.0.0, use `shorten` instead.
     short:                 -> @shorten()
     shortcuts:             store.get 'shortcuts'

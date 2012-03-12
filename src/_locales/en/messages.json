@@ -2227,6 +2227,20 @@
       }
     }
   },
+  "opt_guide_standard_selection_markdown_text": {
+    "message": "The current selection formatted as $O_LINK_MARKDOWN$Markdown$C_LINK$",
+    "description": "Description of the selectionMarkdown variable on the Guide tab of the Options page under the Standard section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_markdown": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">"
+      }
+    }
+  },
   "opt_guide_standard_selection_text": {
     "message": "The currently selected text",
     "description": "Description of the selection variable on the Guide tab of the Options page under the Standard section."
