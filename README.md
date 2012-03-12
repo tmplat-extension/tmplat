@@ -11,18 +11,16 @@
 [Template][] is a Google Chrome extension that quickly and easily copies info on
 the current page using a simple and unique template system.
 
-## Bugs
+## Help Desk
 
-If you have any problems with this extension or would like to see the changes
-currently in development you can do so here;
-
-https://github.com/neocotic/template/issues
+If you have any problems with this extension or would like give us your feedback
+you can do so on our [Help Desk][].
 
 ## Questions?
 
-If you want help creating your own templates you should read the guide within the
-Options page of the extension (click the question mark symbol in the navigation
-bar or the link on the Templates tab).
+If you want help creating your own templates you should read the guide within
+the Options page of the extension (click the question mark symbol in the
+navigation bar or the link on the Templates tab).
 
 Alternatively, you can take a look at `docs/*.html` to get a better
 understanding of what the code is doing.
@@ -35,4 +33,5 @@ please visit the project's homepage;
 http://neocotic.com/template
 
 [@neocotic]: https://twitter.com/#!/neocotic
-[Template]: https://chrome.google.com/webstore/detail/dcjnfaoifoefmnbhhlbppaebgnccfddf
+[help desk]: https://template.uservoice.com
+[template]: https://chrome.google.com/webstore/detail/dcjnfaoifoefmnbhhlbppaebgnccfddf
