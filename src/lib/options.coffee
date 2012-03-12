@@ -11,12 +11,16 @@
 R_VALID_KEY      = /^[A-Z0-9]*\.[A-Z0-9]*$/i
 # Regular expression used to validate keyboard shortcut inputs.
 R_VALID_SHORTCUT = /[A-Z0-9]/i
+# Unique identifier for the user feedback widget.
+WIDGET_ID        = 'RSRS5SpMkMxvKOCs27g'
 
 # Private variables
 # -----------------
 
 # Easily accessible reference to the extension controller.
 {ext} = chrome.extension.getBackgroundPage()
+# Indicate whether or not the user feedback feature has been added to the page.
+feedbackAdded = no
 
 # Load functions
 # --------------
@@ -1006,6 +1010,17 @@ deriveTemplate = (option) ->
   log.debug 'Following template was derived from the option...', template
   template
 
+# Add the user feedback feature to the page.
+feedback = ->
+  unless feedbackAdded
+    window.uvOptions = {}
+    uv = document.createElement 'script'
+    uv.async = 'async'
+    uv.src   = "http://widget.uservoice.com/#{WIDGET_ID}.js"
+    script = document.getElementsByTagName('script')[0]
+    script.parentNode.insertBefore uv, script
+    feedbackAdded = yes
+
 # Read the imported data created by `createImport` and extract all of the
 # imported templates that appear to be valid.  
 # When overwriting an existing template, only the properties with valid values
@@ -1070,6 +1085,8 @@ options = window.options = new class Options extends utils.Class
     log.info 'Initializing the options page'
     # Add support for analytics if the user hasn't opted out.
     analytics.add() if store.get 'analytics'
+    # Add the user feedback feature to the page.
+    feedback()
     # Begin initialization.
     i18n.init
       bitlyAccount: opt_url_shortener_account_title: i18n.get 'shortener_bitly'

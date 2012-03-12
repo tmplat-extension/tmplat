@@ -28,7 +28,7 @@
     "description": "Extension description displayed on Chrome's Extensions page and in the Web Store."
   },
   "detailed_description": {
-    "message": "Provides quick and easy access to lots of information about the current page and environment;\n\ntab title and URL (all the way down to the protocol used), shortened URL, meta information, screen and page dimensions, browser information, cookies, plugins, formatted date & time, operating system, geographic location, referrering page, colour depth, current selection, statistics, scripts, and style sheets\n\nJust to name a few...\n\nBetter yet, using a unique template system it allows users to easily create their own templates making the possibilities endless and includes a built-in step-by-step guide to help you write your own. These predefined templates are also provided to help you get started;\n\n * URL - Copies the URL of the current tab\n * Short - Copies the shortened URL (using any of the supported services)\n * Anchor - Copies an HTML anchor tag with the URL and the tab's title\n * Encoded - Copies the encoded URL (to be safely added directly in to an HTTP query)\n * Markdown - Copies a Markdown inline link with the URL and the tab's title\n * BBCode - Copies a BBCode URL tag with the URL and the tab's title\n\nSo with a click of a button you can add all this information directly to your system clipboard without any formatting. This saves you so much time with those tedious tasks and it's certainly any testers best friend.\n\nWith support for keyboard shortcuts and context (right-click) menus access to your favourite templates is even quicker and they are all easily manageable thanks to Template's unique and simple options page.\n\n# URL Shorteners\nThe following URL shortener services are supported;\n\n * bit.ly - Link to your bit.ly account to allow tracking on your timeline\n * goo.gl - Login to your Google account to allow tracking on goo.gl\n * YOURLS - Link to any custom YOURLS installations\n\n# ATTENTION\nSome features may not work on Chrome Web Store or internal browser pages due to Google's design. Please try it on another site before reporting any issues. You may need to restart Chrome to make it work fully.\n\n# Changes\nA complete archive of changes included in previous version can be found below;\n@ tmpl.at/wMEa53\n\n# Issues\nIf you have any problems with this extension or would like to see the changes currently in development you can do so here;\n@ tmpl.at/ysRmRi\n\nHowever, I highly recommend reading our frequently asked questions before raising a new issue;\n@ tmpl.at/xU4a1L\n\n# Permissions\nFor those of you that worry about these things I have constructed a breakdown of what permissions are used by this extension (even those you aren't warned about) and why;\n@ tmpl.at/zLIdEG\n\n# Open Source\nThis extension is open source and can be found on GitHub below;\n@ tmpl.at/wIdP2B",
+    "message": "Provides quick and easy access to lots of information about the current page and environment;\n\ntab title and URL (all the way down to the protocol used), shortened URL, meta information, screen and page dimensions, browser information, cookies, plugins, formatted date & time, operating system, geographic location, referrering page, colour depth, current selection, markdown formatting, statistics, scripts, and style sheets\n\nJust to name a few...\n\nBetter yet, using a unique template system it allows users to easily create their own templates making the possibilities endless and includes a built-in step-by-step guide to help you write your own. These predefined templates are also provided to help you get started;\n\n * URL - Copies the URL of the current tab\n * Short - Copies the shortened URL (using any of the supported services)\n * Anchor - Copies an HTML anchor tag with the URL and the tab's title\n * Encoded - Copies the encoded URL (to be safely added directly in to an HTTP query)\n * Markdown - Copies a Markdown inline link with the URL and the tab's title\n * BBCode - Copies a BBCode URL tag with the URL and the tab's title\n\nSo with a click of a button you can add all this information directly to your system clipboard without any formatting. This saves you so much time with those tedious tasks and it's certainly any testers best friend.\n\nWith support for keyboard shortcuts and context (right-click) menus access to your favourite templates is even quicker and they are all easily manageable thanks to Template's unique and simple options page.\n\n# URL Shorteners\nThe following URL shortener services are supported;\n\n * bit.ly - Link to your bit.ly account to allow tracking on your timeline\n * goo.gl - Login to your Google account to allow tracking on goo.gl\n * YOURLS - Link to any custom YOURLS installations\n\n# ATTENTION\nSome features may not work on Chrome Web Store or internal browser pages due to Google's design. Please try it on another site before reporting any issues. You may need to restart Chrome to make it work fully.\n\n# Changes\nA complete archive of changes included in previous version can be found below;\n@ tmpl.at/wMEa53\n\n# Help Desk\nIf you have any problems with this extension or would like to give us your feedback you can do so here;\n@ tmpl.at/zZfwLi\n\n# Permissions\nFor those of you that worry about these things I have constructed a breakdown of what permissions are used by this extension (even those you aren't warned about) and why;\n@ tmpl.at/zLIdEG\n\n# Open Source\nThis extension is open source and can be found on GitHub below;\n@ tmpl.at/wIdP2B",
     "description": "Detailed extension description displayed in the Web Store."
   },
   "empty": {
@@ -388,21 +388,21 @@
     }
   },
   "opt_guide_introduction_notes_text_1": {
-    "message": "If you are having problems with understanding this guide please $O_LINK_WEBSTORE_DETAIL$leave a comment here$C_LINK$ and we will try to help you and take your comments on board, updating the documentation if required.",
+    "message": "If you are having problems with understanding this guide please $O_LINK_HELP_DESK$let us know$C_LINK$ and we will try to help you and take your comments on board, updating the documentation if required.",
     "description": "1st paragraph for the Notes area on the Guide tab of the Options page under the Introduction section.",
     "placeholders": {
       "c_link": {
         "content": "</a>",
         "example": "</a>"
       },
-      "o_link_webstore_detail": {
-        "content": "<a href=\"https://chrome.google.com/webstore/detail/dcjnfaoifoefmnbhhlbppaebgnccfddf\" target=\"_blank\">",
-        "example": "<a href=\"https://chrome.google.com/webstore/detail/dcjnfaoifoefmnbhhlbppaebgnccfddf\" target=\"_blank\">"
+      "o_link_help_desk": {
+        "content": "<a href=\"http://template.uservoice.com/\" target=\"_blank\">",
+        "example": "<a href=\"http://template.uservoice.com/\" target=\"_blank\">"
       }
     }
   },
   "opt_guide_introduction_notes_text_2": {
-    "message": "If you encounter any problems while using $O_BOLD$Template$C_BOLD$ and/or would like to see a change or addition, please $O_LINK_ISSUES$raise an issue$C_LINK$ and we will have a look at it.",
+    "message": "If you encounter any problems while using $O_BOLD$Template$C_BOLD$ and/or would like to see a change or addition, please $O_LINK_HELP_DESK$raise a ticket$C_LINK$ and we will have a look at it.",
     "description": "2nd paragraph for the Notes area on the Guide tab of the Options page under the Introduction section.",
     "placeholders": {
       "c_bold": {
@@ -417,9 +417,9 @@
         "content": "<strong>",
         "example": "<strong>"
       },
-      "o_link_issues": {
-        "content": "<a href=\"https://github.com/neocotic/template/issues\" target=\"_blank\">",
-        "example": "<a href=\"https://github.com/neocotic/template/issues\" target=\"_blank\">"
+      "o_link_help_desk": {
+        "content": "<a href=\"http://template.uservoice.com/\" target=\"_blank\">",
+        "example": "<a href=\"http://template.uservoice.com/\" target=\"_blank\">"
       }
     }
   },
