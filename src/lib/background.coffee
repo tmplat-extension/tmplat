@@ -109,20 +109,20 @@ SHORTENERS        = [
     if @oauth.hasAccessToken()
       params.access_token = @oauth.getAccessToken()
     else
-      params.apiKey = 'R_91eabef2f32d88c07b197c9d69eed516'
-      params.login  = 'templateextension'
+      params.apiKey = services.bitly.api_key
+      params.login  = services.bitly.login
     params
   getUsage:      -> store.get 'bitly.usage'
   input:         -> null
   isEnabled:     -> store.get 'bitly.enabled'
   method:        'GET'
   name:          'bitly'
-  oauth:         new OAuth2 'bitly'
-    client_id:     'deb9b5c6c0c5928674a0601691e404b1de021f0f'
-    client_secret: 'd864c9a5ba89e1fc7af5d1c500a63c9232dca331'
+  oauth:         -> new OAuth2 'bitly'
+    client_id:     services.bitly.client_id
+    client_secret: services.bitly.client_secret
   output:        (resp) -> JSON.parse(resp).data.url
   title:         i18n.get 'shortener_bitly'
-  url:           -> 'https://api-ssl.bitly.com/v3/shorten'
+  url:           -> services.bitly.url
 ,
   # Setup [Google URL Shortener](http://goo.gl).
   getHeaders:    ->
@@ -131,19 +131,19 @@ SHORTENERS        = [
       headers.Authorization = "OAuth #{@oauth.getAccessToken()}"
     headers
   getParameters: -> unless @oauth.hasAccessToken()
-    key: 'AIzaSyD504IwHeL3V2aw6ZGYQRgwWnJ38jNl2MY'
+    key: services.googl.api_key
   getUsage:      -> store.get 'googl.usage'
   input:         (url) -> JSON.stringify longUrl: url
   isEnabled:     -> store.get 'googl.enabled'
   method:        'POST'
   name:          'googl'
-  oauth:         new OAuth2 'google'
-    api_scope:     'https://www.googleapis.com/auth/urlshortener'
-    client_id:     '962266498046.apps.googleusercontent.com'
-    client_secret: 'D15W+qUHliax3uFu1JVpTCSg'
+  oauth:         -> new OAuth2 'google'
+    api_scope:     services.googl.api_scope
+    client_id:     services.googl.client_id
+    client_secret: services.googl.client_secret
   output:        (resp) -> JSON.parse(resp).id
   title:         i18n.get 'shortener_googl'
-  url:           -> 'https://www.googleapis.com/urlshortener/v1/url'
+  url:           -> services.googl.url
 ,
   # Setup [YOURLS](http://yourls.org).
   getHeaders:    -> 'Content-Type': 'application/json'
@@ -222,6 +222,8 @@ isNewInstall      = no
 isProductionBuild = EXTENSION_ID is REAL_EXTENSION_ID
 # Name of the user's operating system.
 operatingSystem   = ''
+# Details of web services used by Template.
+services          = {}
 
 # Private functions
 # -----------------
@@ -1345,51 +1347,60 @@ ext = window.ext = new class Extension extends utils.Class
     log.info 'Initializing extension controller'
     # Add support for analytics if the user hasn't opted out.
     analytics.add() if store.get 'analytics'
-    # Begin initialization.
-    store.init
-      anchor:        {}
-      menu:          {}
-      notifications: {}
-      stats:         {}
-      templates:     []
-      toolbar:       {}
-    init_update()
-    store.modify 'anchor', (anchor) ->
-      anchor.target ?= off
-      anchor.title  ?= off
-    store.modify 'menu', (menu) ->
-      menu.enabled ?= yes
-      menu.options ?= yes
-    store.modify 'notifications', (notifications) ->
-      notifications.duration ?= 3000
-      notifications.enabled  ?= yes
-    store.init 'shortcuts', on
-    initTemplates()
-    initToolbar()
-    initStatistics()
-    initUrlShorteners()
-    # Add listener for toolbar/browser action clicks.  
-    # This listener will be ignored whenever the popup is enabled.
-    chrome.browserAction.onClicked.addListener (tab) -> onRequest
-      data: key: store.get 'toolbar.key'
-      type: 'toolbar'
-    # Add listeners for internal and external requests.
-    chrome.extension.onRequest.addListener onRequest
-    chrome.extension.onRequestExternal.addListener (req, sender, cb) ->
-      block = isBlacklisted sender.id
-      analytics.track 'External Requests', 'Started', sender.id, Number !block
-      if block
-        log.debug "Blocking external request from #{sender.id}"
-        cb?()
-      else
-        log.debug "Accepting external request from #{sender.id}"
-        onRequest req, sender, cb
-    # Derive the browser and OS information.
-    browser.version = getBrowserVersion()
-    operatingSystem = getOperatingSystem()
-    # It's nice knowing what version is running.
-    $.getJSON utils.url('manifest.json'), (data) =>
+    # Create a runner to ensure asynchronous dependencies are met.
+    runner = new utils.Runner()
+    runner.push jQuery, 'getJSON', utils.url('manifest.json'), (data) =>
+      # It's nice knowing what version is running.
       @version = data.version
+      runner.next()
+    runner.push jQuery, 'getJSON', utils.url('services.json'), (data) ->
+      services = data
+      shortener.oauth = shortener.oauth?() for shortener in SHORTENERS
+      runner.next()
+    runner.run =>
+      # Begin initialization.
+      store.init
+        anchor:        {}
+        menu:          {}
+        notifications: {}
+        stats:         {}
+        templates:     []
+        toolbar:       {}
+      init_update()
+      store.modify 'anchor', (anchor) ->
+        anchor.target ?= off
+        anchor.title  ?= off
+      store.modify 'menu', (menu) ->
+        menu.enabled ?= yes
+        menu.options ?= yes
+      store.modify 'notifications', (notifications) ->
+        notifications.duration ?= 3000
+        notifications.enabled  ?= yes
+      store.init 'shortcuts', on
+      initTemplates()
+      initToolbar()
+      initStatistics()
+      initUrlShorteners()
+      # Add listener for toolbar/browser action clicks.  
+      # This listener will be ignored whenever the popup is enabled.
+      chrome.browserAction.onClicked.addListener (tab) -> onRequest
+        data: key: store.get 'toolbar.key'
+        type: 'toolbar'
+      # Add listeners for internal and external requests.
+      chrome.extension.onRequest.addListener onRequest
+      chrome.extension.onRequestExternal.addListener (req, sender, cb) ->
+        block = isBlacklisted sender.id
+        analytics.track 'External Requests', 'Started', sender.id,
+          Number !block
+        if block
+          log.debug "Blocking external request from #{sender.id}"
+          cb?()
+        else
+          log.debug "Accepting external request from #{sender.id}"
+          onRequest req, sender, cb
+      # Derive the browser and OS information.
+      browser.version = getBrowserVersion()
+      operatingSystem = getOperatingSystem()
       if isNewInstall
         analytics.track 'Installs', 'New', @version, Number isProductionBuild
       # Execute content scripts now that we know the version.
