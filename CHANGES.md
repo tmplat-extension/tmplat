@@ -1,3 +1,10 @@
+YYYY.MM.DD, Version 1.0.5
+
+* [#82](https://github.com/neocotic/template/issues/82): Add new *"selectionMarkdown"* standard variable to enable access to the current selection formatted as [Markdown](http://en.wikipedia.org/wiki/Markdown)
+* [#83](https://github.com/neocotic/template/issues/83): Improve way in which web service configurations are stored and retrieved
+* [#85](https://github.com/neocotic/template/issues/85): Improve help documentation for certain fields in the Options page
+* [#86](https://github.com/neocotic/template/issues/86): Add user feedback system to the Options page
+
 2012.03.07, Version 1.0.4
 
 * [#80](https://github.com/neocotic/template/issues/80): Tidy i18n bundle to help with [new translation process](http://i18n.tmpl.at)
@@ -5,8 +12,8 @@
 
 2012.03.06, Version 1.0.3
 
-* [#76](https://github.com/neocotic/template/issues/76): Add new *"selectionHTML"* list to enabled access to the HTML behind the current selection
-* [#76](https://github.com/neocotic/template/issues/76): Add new *"selectedImages"* list to enabled iteration over images within in current selection
+* [#76](https://github.com/neocotic/template/issues/76): Add new *"selectionHTML"* standard variable to enable access to the HTML behind the current selection
+* [#76](https://github.com/neocotic/template/issues/76): Add new *"selectedImages"* list to enable iteration over images within in current selection
 * [#76](https://github.com/neocotic/template/issues/76): Add new *"images"* list to enable iteration over all of the images on the page 
 * [#77](https://github.com/neocotic/template/issues/77): Fix bug preventing access to page-derived template variables
 * [#78](https://github.com/neocotic/template/issues/78): Remove duplicate URLs from certain lists
