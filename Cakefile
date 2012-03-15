@@ -31,7 +31,7 @@ TARGET_SUB_DIRS = [
 VENDOR_FILES    = [
   'vendor/adapters/bitly.js'
   'vendor/adapters/google.js'
-  'vendor/jquery.url.min.js'
+  'vendor/jquery.url.js'
   'vendor/mustache.js'
   'vendor/oauth2.js'
   'vendor/oauth2_inject.js'
