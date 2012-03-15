@@ -112,9 +112,8 @@ loadImages = ->
     ).appendTo(images).data 'file', "#{image}.png"
   images.change ->
     opt = images.find 'option:selected'
-    imagePreview.attr
-      src:   "../images/#{opt.data 'file'}"
-      title: opt.text()
+    imagePreview.attr 'src', "../images/#{opt.data 'file'}"
+    imagePreview.removeData('tooltip').tooltip title: opt.text()
   images.change()
 
 # Update the logging section of the options page with the current settings.
