@@ -1,3 +1,10 @@
+2012.03.15, Version 1.0.6
+
+* [#87](https://github.com/neocotic/template/issues/87): Fix bug where URL and all derived variables are automatically decoded
+* [#88](https://github.com/neocotic/template/issues/88): Add new *"Selection in Markdown"* predefined template (disabled by default)
+* [#89](https://github.com/neocotic/template/issues/89): Fix bug where whitespace after an operation is being ignored
+* Minor UI fixes
+
 2012.03.12, Version 1.0.5
 
 * [#82](https://github.com/neocotic/template/issues/82): Add new *"selectionMarkdown"* standard variable to enable access to the current selection formatted as [Markdown](http://en.wikipedia.org/wiki/Markdown)
