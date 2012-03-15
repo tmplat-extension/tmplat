@@ -73,6 +73,16 @@ DEFAULT_TEMPLATES = [
     shortcut: 'M'
     title:    i18n.get 'default_template_markdown'
     usage:    0
+  ,
+    content:  '{selectionMarkdown}'
+    enabled:  no
+    image:    'tmpl_note'
+    index:    6
+    key:      'PREDEFINED.00007'
+    readOnly: yes
+    shortcut: 'C'
+    title:    i18n.get 'default_template_markdown_selection'
+    usage:    0
 ]
 # Extension ID being used by Template.
 EXTENSION_ID      = i18n.get '@@extension_id'
