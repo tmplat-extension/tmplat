@@ -120,9 +120,8 @@ images on the options page.</p>             </td>             <td class="code"> 
     <span class="p">).</span><span class="nx">appendTo</span><span class="p">(</span><span class="nx">images</span><span class="p">).</span><span class="nx">data</span> <span class="s1">&#39;file&#39;</span><span class="p">,</span> <span class="s2">&quot;#{image}.png&quot;</span>
   <span class="nx">images</span><span class="p">.</span><span class="nx">change</span> <span class="o">-&gt;</span>
     <span class="nv">opt = </span><span class="nx">images</span><span class="p">.</span><span class="nx">find</span> <span class="s1">&#39;option:selected&#39;</span>
-    <span class="nx">imagePreview</span><span class="p">.</span><span class="nx">attr</span>
-      <span class="nv">src: </span>  <span class="s2">&quot;../images/#{opt.data &#39;file&#39;}&quot;</span>
-      <span class="nv">title: </span><span class="nx">opt</span><span class="p">.</span><span class="nx">text</span><span class="p">()</span>
+    <span class="nx">imagePreview</span><span class="p">.</span><span class="nx">attr</span> <span class="s1">&#39;src&#39;</span><span class="p">,</span> <span class="s2">&quot;../images/#{opt.data &#39;file&#39;}&quot;</span>
+    <span class="nx">imagePreview</span><span class="p">.</span><span class="nx">removeData</span><span class="p">(</span><span class="s1">&#39;tooltip&#39;</span><span class="p">).</span><span class="nx">tooltip</span> <span class="nv">title: </span><span class="nx">opt</span><span class="p">.</span><span class="nx">text</span><span class="p">()</span>
   <span class="nx">images</span><span class="p">.</span><span class="nx">change</span><span class="p">()</span>
 
 
