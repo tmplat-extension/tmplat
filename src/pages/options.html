@@ -24,7 +24,13 @@
       .form-vertical .control-group > label, .control-label {padding-top: 6px;}
       #shorteners_tab .form-horizontal .control-group > label {width: 100px;}
       #shorteners_tab .form-horizontal .controls  {margin-left: 40px;}
+      .modal {z-index: 10050;}
+      .modal-backdrop {z-index: 10040;}
       .modal-footer input[type="file"] {float: right; margin-left: 5px; margin-bottom: 0;}
+      .modal-open .dropdown-menu{z-index: 20050;}
+      .modal-open .dropdown.open{*z-index: 20050;}
+      .modal-open .popover{z-index: 20060;}
+      .modal-open .tooltip{z-index: 20070;}
       .input-prepend, .input-append {margin-bottom: 0;}
       .error-message {margin-top: 0;}
       pre {overflow: auto; white-space: pre;}
@@ -51,7 +57,6 @@
       }
     </style>
     <script src="../vendor/jquery.min.js"></script>
-    <script src="../vendor/date.min.js"></script>
     <script src="../vendor/bootstrap.min.js"></script>
     <script src="../lib/utils.js"></script>
     <script src="../lib/store.js"></script>
