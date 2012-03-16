@@ -1,3 +1,8 @@
+2012.03.16, Version 1.0.7
+
+* [#90](https://github.com/neocotic/template/issues/90): Fix bug where wrong window is used to populate template data in [Chrome dev](http://www.chromium.org/getting-involved/dev-channel)
+* [#91](https://github.com/neocotic/template/issues/91): Add new *"tabs"* list to enable iteration over the URLs of every tab in the current window
+
 2012.03.15, Version 1.0.6
 
 * [#87](https://github.com/neocotic/template/issues/87): Fix bug where URL and all derived variables are automatically decoded
