@@ -366,13 +366,14 @@ onRequest = (request, sender, sendResponse) ->
   shortenMap = {}
   tab        = null
   template   = null
-  windowId   = null
+  windowId   = chrome.windows.WINDOW_ID_CURRENT
   # Create a runner to manage this asynchronous mess.
   runner = new utils.Runner()
-  runner.push chrome.windows, 'getCurrent', (win) ->
-    log.info 'Retrieved the following window...', win
-    windowId = win.id
-    runner.next()
+  unless windowId?
+    runner.push chrome.windows, 'getCurrent', (win) ->
+      log.info 'Retrieved the following window...', win
+      windowId = win.id
+      runner.next()
   runner.pushPacked chrome.tabs, 'query', ->
     [active: yes, windowId: windowId, (tabs) ->
       log.info 'Retrieved the following tabs...', tabs
@@ -518,13 +519,14 @@ onRequest = (request, sender, sendResponse) ->
 selectOrCreateTab = (url, callback) ->
   log.trace()
   tab      = null
-  windowId = null
+  windowId = chrome.windows.WINDOW_ID_CURRENT
   # Create a runner to mange the asynchronous pattern.
   runner = new utils.Runner()
-  runner.push chrome.windows, 'getCurrent', (win) ->
-    log.debug 'Retrieved the following window...', win
-    windowId = win.id
-    runner.next()
+  unless windowId?
+    runner.push chrome.windows, 'getCurrent', (win) ->
+      log.debug 'Retrieved the following window...', win
+      windowId = win.id
+      runner.next()
   runner.pushPacked chrome.tabs, 'query', ->
     [windowId: windowId, (tabs) ->
       log.debug 'Retrieved the following tabs...', tabs
