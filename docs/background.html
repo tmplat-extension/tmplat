@@ -407,14 +407,15 @@ is being forced to ensure consistency.</p>             </td>             <td cla
   <span class="nv">shortenMap = </span><span class="p">{}</span>
   <span class="nv">tab        = </span><span class="kc">null</span>
   <span class="nv">template   = </span><span class="kc">null</span>
-  <span class="nv">windowId   = </span><span class="kc">null</span>
+  <span class="nv">windowId   = </span><span class="nx">chrome</span><span class="p">.</span><span class="nx">windows</span><span class="p">.</span><span class="nx">WINDOW_ID_CURRENT</span>
 
 </pre></div>             </td>           </tr>                               <tr id="section-49">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-49">&#182;</a>               </div>               <p>Create a runner to manage this asynchronous mess.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">runner = </span><span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">Runner</span><span class="p">()</span>
-  <span class="nx">runner</span><span class="p">.</span><span class="nx">push</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">windows</span><span class="p">,</span> <span class="s1">&#39;getCurrent&#39;</span><span class="p">,</span> <span class="nf">(win) -&gt;</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nx">info</span> <span class="s1">&#39;Retrieved the following window...&#39;</span><span class="p">,</span> <span class="nx">win</span>
-    <span class="nv">windowId = </span><span class="nx">win</span><span class="p">.</span><span class="nx">id</span>
-    <span class="nx">runner</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span>
+  <span class="nx">unless</span> <span class="nx">windowId</span><span class="o">?</span>
+    <span class="nx">runner</span><span class="p">.</span><span class="nx">push</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">windows</span><span class="p">,</span> <span class="s1">&#39;getCurrent&#39;</span><span class="p">,</span> <span class="nf">(win) -&gt;</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">info</span> <span class="s1">&#39;Retrieved the following window...&#39;</span><span class="p">,</span> <span class="nx">win</span>
+      <span class="nv">windowId = </span><span class="nx">win</span><span class="p">.</span><span class="nx">id</span>
+      <span class="nx">runner</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span>
   <span class="nx">runner</span><span class="p">.</span><span class="nx">pushPacked</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">,</span> <span class="s1">&#39;query&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
     <span class="p">[</span><span class="nv">active: </span><span class="kc">yes</span><span class="p">,</span> <span class="nv">windowId: </span><span class="nx">windowId</span><span class="p">,</span> <span class="nf">(tabs) -&gt;</span>
       <span class="nx">log</span><span class="p">.</span><span class="nx">info</span> <span class="s1">&#39;Retrieved the following tabs...&#39;</span><span class="p">,</span> <span class="nx">tabs</span>
@@ -574,14 +575,15 @@ If no existing tab exists a new one is simply created.</p>             </td>    
 <span class="nv">selectOrCreateTab = </span><span class="nf">(url, callback) -&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
   <span class="nv">tab      = </span><span class="kc">null</span>
-  <span class="nv">windowId = </span><span class="kc">null</span>
+  <span class="nv">windowId = </span><span class="nx">chrome</span><span class="p">.</span><span class="nx">windows</span><span class="p">.</span><span class="nx">WINDOW_ID_CURRENT</span>
 
 </pre></div>             </td>           </tr>                               <tr id="section-64">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-64">&#182;</a>               </div>               <p>Create a runner to mange the asynchronous pattern.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">runner = </span><span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">Runner</span><span class="p">()</span>
-  <span class="nx">runner</span><span class="p">.</span><span class="nx">push</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">windows</span><span class="p">,</span> <span class="s1">&#39;getCurrent&#39;</span><span class="p">,</span> <span class="nf">(win) -&gt;</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span> <span class="s1">&#39;Retrieved the following window...&#39;</span><span class="p">,</span> <span class="nx">win</span>
-    <span class="nv">windowId = </span><span class="nx">win</span><span class="p">.</span><span class="nx">id</span>
-    <span class="nx">runner</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span>
+  <span class="nx">unless</span> <span class="nx">windowId</span><span class="o">?</span>
+    <span class="nx">runner</span><span class="p">.</span><span class="nx">push</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">windows</span><span class="p">,</span> <span class="s1">&#39;getCurrent&#39;</span><span class="p">,</span> <span class="nf">(win) -&gt;</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span> <span class="s1">&#39;Retrieved the following window...&#39;</span><span class="p">,</span> <span class="nx">win</span>
+      <span class="nv">windowId = </span><span class="nx">win</span><span class="p">.</span><span class="nx">id</span>
+      <span class="nx">runner</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span>
   <span class="nx">runner</span><span class="p">.</span><span class="nx">pushPacked</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">,</span> <span class="s1">&#39;query&#39;</span><span class="p">,</span> <span class="o">-&gt;</span>
     <span class="p">[</span><span class="nv">windowId: </span><span class="nx">windowId</span><span class="p">,</span> <span class="nf">(tabs) -&gt;</span>
       <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span> <span class="s1">&#39;Retrieved the following tabs...&#39;</span><span class="p">,</span> <span class="nx">tabs</span>
@@ -702,9 +704,22 @@ and persist the changes.</p>             </td>             <td class="code">    
 </pre></div>             </td>           </tr>                               <tr id="section-77">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-77">&#182;</a>               </div>               <p>Extract additional information from <code>tab</code> and add it to <code>data</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>
 <span class="nv">addAdditionalData = </span><span class="nf">(tab, data, callback) -&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
+  <span class="nv">windowId = </span><span class="nx">chrome</span><span class="p">.</span><span class="nx">windows</span><span class="p">.</span><span class="nx">WINDOW_ID_CURRENT</span>
 
 </pre></div>             </td>           </tr>                               <tr id="section-78">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-78">&#182;</a>               </div>               <p>Create a runner to simplify this process.</p>             </td>             <td class="code">               <div class="highlight"><pre>
   <span class="nv">runner = </span><span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">Runner</span><span class="p">()</span>
+  <span class="nx">unless</span> <span class="nx">windowId</span><span class="o">?</span>
+    <span class="nx">runner</span><span class="p">.</span><span class="nx">push</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">windows</span><span class="p">,</span> <span class="s1">&#39;getCurrent&#39;</span><span class="p">,</span> <span class="nf">(win) -&gt;</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">info</span> <span class="s1">&#39;Retrieved the following window...&#39;</span><span class="p">,</span> <span class="nx">win</span>
+      <span class="nv">windowId = </span><span class="nx">win</span><span class="p">.</span><span class="nx">id</span>
+      <span class="nx">runner</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span>
+  <span class="nx">runner</span><span class="p">.</span><span class="nx">pushPacked</span> <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">,</span> <span class="s1">&#39;query&#39;</span><span class="p">,</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="nv">windowId: </span><span class="nx">windowId</span><span class="p">,</span> <span class="nf">(tabs) -&gt;</span>
+    <span class="nx">log</span><span class="p">.</span><span class="nx">info</span> <span class="s1">&#39;Retrieved the following tabs...&#39;</span><span class="p">,</span> <span class="nx">tabs</span>
+    <span class="nv">urls = </span><span class="p">[]</span>
+    <span class="nx">urls</span><span class="p">.</span><span class="nx">push</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">url</span> <span class="k">for</span> <span class="nx">tab</span> <span class="k">in</span> <span class="nx">tabs</span> <span class="k">when</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">url</span> <span class="o">not</span> <span class="k">in</span> <span class="nx">urls</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">extend</span> <span class="nx">data</span><span class="p">,</span> <span class="nv">tabs: </span><span class="nx">urls</span>
+    <span class="nx">runner</span><span class="p">.</span><span class="nx">next</span><span class="p">()</span>
+  <span class="p">]</span>
   <span class="nx">runner</span><span class="p">.</span><span class="nx">push</span> <span class="nx">navigator</span><span class="p">.</span><span class="nx">geolocation</span><span class="p">,</span> <span class="s1">&#39;getCurrentPosition&#39;</span><span class="p">,</span> <span class="nf">(position) -&gt;</span>
     <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span> <span class="s1">&#39;Retrieved the following geolocation information...&#39;</span><span class="p">,</span> <span class="nx">position</span>
     <span class="nv">coords = </span><span class="p">{}</span>
