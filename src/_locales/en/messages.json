@@ -985,6 +985,24 @@
       }
     }
   },
+  "opt_guide_lists_objects_tabs_text": {
+    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all tabs open in the current window",
+    "description": "Description of the tabs variable on the Guide tab of the Options page under the Lists & Objects section.",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>",
+        "example": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\"",
+        "example": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">",
+        "example": "\">"
+      }
+    }
+  },
   "opt_guide_lists_objects_template_text": {
     "message": "The properties of the activated template (e.g. $EXAMPLE_1$, $EXAMPLE_2$, $EXAMPLE_3$ and many more)",
     "description": "Description of the template variable on the Guide tab of the Options page under the Lists & Objects section.",

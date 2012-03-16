@@ -635,8 +635,21 @@ updateUrlShortenerUsage = (name, oauth) ->
 # Extract additional information from `tab` and add it to `data`.
 addAdditionalData = (tab, data, callback) ->
   log.trace()
+  windowId = chrome.windows.WINDOW_ID_CURRENT
   # Create a runner to simplify this process.
   runner = new utils.Runner()
+  unless windowId?
+    runner.push chrome.windows, 'getCurrent', (win) ->
+      log.info 'Retrieved the following window...', win
+      windowId = win.id
+      runner.next()
+  runner.pushPacked chrome.tabs, 'query', -> [windowId: windowId, (tabs) ->
+    log.info 'Retrieved the following tabs...', tabs
+    urls = []
+    urls.push tab.url for tab in tabs when tab.url not in urls
+    $.extend data, tabs: urls
+    runner.next()
+  ]
   runner.push navigator.geolocation, 'getCurrentPosition', (position) ->
     log.debug 'Retrieved the following geolocation information...', position
     coords = {}
