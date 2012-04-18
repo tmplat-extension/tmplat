@@ -1,3 +1,18 @@
+# Module dependencies
+# -------------------
+
+coffee = require 'coffee-script'
+{exec} = require 'child_process'
+fs     = require 'fs'
+jsp    = require('uglify-js').parser
+pro    = require('uglify-js').uglify
+wrench = require 'wrench'
+
+# Flags
+# -----
+
+IS_WINDOWS = /^win/i.test process.platform
+
 # Strings
 # -------
 
@@ -7,7 +22,10 @@ COPYRIGHT = """
   // Freely distributable under the MIT license.
   // For all details and documentation:
   // http://neocotic.com/template
+
 """
+ENCODING  = 'utf8'
+MODE      = 0777
 
 # Files & directories
 # -------------------
@@ -37,59 +55,62 @@ VENDOR_FILES    = [
   'vendor/oauth2_inject.js'
 ]
 
-# Commands
-# --------
+# Helpers
+# -------
 
-COMPILE = '`which coffee`'
-DOCS    = '`which docco`'
-MINIFY  = '`which uglifyjs`'
+compile = (path) ->
+  ws = fs.createWriteStream path.replace(/\.coffee$/i, '.js'),
+    encoding : ENCODING
+    mode     : MODE
+  ws.write COPYRIGHT
+  ws.end coffee.compile(fs.readFileSync path, ENCODING), ENCODING
+  ws.on 'close', -> fs.unlinkSync path
 
-# Functions
-# ---------
-
-{exec} = require 'child_process'
+minify = (path) ->
+  ast = jsp.parse fs.readFileSync path, ENCODING
+  ast = pro.ast_mangle ast
+  ast = pro.ast_squeeze ast
+  ws = fs.createWriteStream path,
+    encoding : ENCODING
+    mode     : MODE
+  ws.write COPYRIGHT
+  ws.end pro.gen_code(ast), ENCODING
 
 # Tasks
 # -----
 
 task 'build', 'Build extension', ->
   console.log 'Building Template...'
-  for path in TARGET_SUB_DIRS
-    exec "mkdir -p #{path}", (error) -> throw error if error
-  exec [
-    "cp -r #{SOURCE_DIR}/* #{TARGET_DIR}"
-    "find #{TARGET_DIR}/ -name '.git*' -print0 | xargs -0 -IFILES rm FILES"
-    "#{COMPILE} --compile #{TARGET_DIR}/lib/"
-    "rm -f #{TARGET_DIR}/lib/*.coffee"
-    "for file in #{TARGET_DIR}/lib/*.js; do echo \"#{COPYRIGHT}\" > $file.tmp"
-    'cat $file >> $file.tmp'
-    'mv -f $file.tmp $file; done'
-  ].join('&&'), (error) -> throw error if error
+  wrench.mkdirSyncRecursive path for path in TARGET_SUB_DIRS
+  wrench.copyDirSyncRecursive SOURCE_DIR, TARGET_DIR
+  # TODO: Find & delete .git* files
+  for file in fs.readdirSync "#{TARGET_DIR}/lib" when /\.coffee$/i.test file
+    compile "#{TARGET_DIR}/lib/#{file}"
 
 task 'clean', 'Cleans directories', ->
   console.log 'Spring cleaning...'
-  exec [
-    "rm -rf #{TARGET_DIR}"
-    "rm -rf #{DIST_DIR}"
-  ].join('&&'), (error) -> throw error if error
+  wrench.rmdirSyncRecursive TARGET_DIR, yes
+  wrench.rmdirSyncRecursive DIST_DIR, yes
 
 task 'dist', 'Create distributable file', ->
   console.log 'Generating distributable....'
-  vfiles = "'#{VENDOR_FILES.join '\' \''}'"
+  wrench.mkdirSyncRecursive DIST_DIR
+  wrench.mkdirSyncRecursive "#{DIST_DIR}/#{TEMP_DIR}"
+  wrench.copyDirSyncRecursive TARGET_DIR, "#{DIST_DIR}/#{TEMP_DIR}"
+  for file in fs.readdirSync "#{DIST_DIR}/#{TEMP_DIR}/lib" when /\.js$/i.test file
+    minify "#{DIST_DIR}/#{TEMP_DIR}/lib/#{file}"
+  for file in VENDOR_FILES
+    minify "#{DIST_DIR}/#{TEMP_DIR}/#{file}"
+  # TODO: Support Windows
   exec [
-    "mkdir -p #{DIST_DIR}"
-    "mkdir -p #{DIST_DIR}/#{TEMP_DIR}"
-    "cp -r #{TARGET_DIR}/* #{DIST_DIR}/#{TEMP_DIR}"
     "cd #{DIST_DIR}/#{TEMP_DIR}"
-    "for file in lib/*.js; do #{MINIFY} $file > $file.tmp"
-    'mv -f $file.tmp $file; done'
-    "for vfile in #{vfiles}; do #{MINIFY} $vfile > $vfile.tmp"
-    'mv -f $vfile.tmp $vfile; done'
     "zip -r ../#{DIST_FILE} *"
     'cd ../'
-    "rm -rf #{TEMP_DIR}"
-  ].join('&&'), (error) -> throw error if error
+  ].join('&&'), (err) ->
+    throw err if err
+    wrench.rmdirSyncRecursive "#{DIST_DIR}/#{TEMP_DIR}", yes
 
 task 'docs', 'Create documentation', ->
   console.log 'Generating documentation...'
-  exec "#{DOCS} #{SOURCE_DIR}/lib/*.coffee", (error) -> throw error if error
+  # TODO: Support Windows
+  exec "docco #{SOURCE_DIR}/lib/*.coffee", (err) -> throw err if err
