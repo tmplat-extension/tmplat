@@ -66,6 +66,7 @@ load = ->
   $('#anchorTitle').attr  'checked', 'checked' if anchor.title
   $('#menuEnabled').attr  'checked', 'checked' if menu.enabled
   $('#menuOptions').attr  'checked', 'checked' if menu.options
+  $('#menuPaste').attr    'checked', 'checked' if menu.paste
   $('#shortcuts').attr    'checked', 'checked' if store.get 'shortcuts'
   loadControlEvents()
   loadSaveEvents()
@@ -80,8 +81,9 @@ load = ->
 loadControlEvents = ->
   log.trace()
   $('#menuEnabled').change( ->
-    controlGroup = $('#menuOptions').parents('.control-group').first()
-    if $(this).is ':checked' then controlGroup.show() else controlGroup.hide()
+    groups = $('#menuOptions').parents('.control-group').first()
+    groups = groups.add $('#menuPaste').parents('.control-group').first()
+    if $(this).is ':checked' then groups.show() else groups.hide()
   ).change()
 
 # Update the developer tools section of the options page with the current
@@ -200,10 +202,11 @@ loadSaveEvents = ->
   , (jel, key, value) ->
     key = key[0].toUpperCase() + key.substr 1
     analytics.track 'Anchors', 'Changed', key, Number value
-  bindSaveEvent '#menuEnabled, #menuOptions', 'change', 'menu', (key) ->
-    value = @is ':checked'
-    log.debug "Changing context menu #{key} to '#{value}'"
-    value
+  bindSaveEvent '#menuEnabled, #menuOptions, #menuPaste', 'change', 'menu',
+    (key) ->
+      value = @is ':checked'
+      log.debug "Changing context menu #{key} to '#{value}'"
+      value
   , (jel, key, value) ->
     ext.updateContextMenu()
     key = key[0].toUpperCase() + key.substr 1
@@ -1143,5 +1146,5 @@ options = window.options = new class Options extends utils.Class
       $this.tooltip placement: placement
     $('[data-goto]').click ->
       goto = $ $(this).attr 'data-goto'
-      log.debug "Relocating view to include '#{goto}'"
-      $(window).scrollTop if goto.length then goto.scrollTop() else 0
+      log.debug "Relocating view to include '#{goto.selector}'"
+      $(window).scrollTop goto.position()?.top or 0

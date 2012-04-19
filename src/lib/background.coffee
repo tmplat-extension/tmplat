@@ -362,6 +362,9 @@ onRequest = (request, sender, sendResponse) ->
   if request.type in ['info', 'version']
     return sendResponse? id: EXTENSION_ID, version: ext.version
   data       = null
+  editable   = no
+  id         = utils.keyGen '', null, 't', no
+  link       = no
   output     = null
   shortenMap = {}
   tab        = null
@@ -411,7 +414,8 @@ onRequest = (request, sender, sendResponse) ->
         when 'menu'
           template = getTemplateWithMenuId request.data.menuItemId
           if template?
-            data = buildDerivedData tab, request.data, shortCallback
+            {data, editable, link} = buildDerivedData tab, request.data,
+              shortCallback
         when 'popup', 'toolbar'
           template = getTemplateWithKey request.data.key
           data     = buildStandardData tab, shortCallback if template?
@@ -430,7 +434,7 @@ onRequest = (request, sender, sendResponse) ->
           'result_bad_error_description'
         success: no
   runner.pushPacked null, addAdditionalData, ->
-    [tab, data, ->
+    [tab, data, id, editable, link, ->
       updateProgress 40
       # Ensure all properties of `data` are lower case.
       transformData data
@@ -498,6 +502,9 @@ onRequest = (request, sender, sendResponse) ->
         ext.notification.description = result.message ?
           i18n.get 'result_good_description', result.template.title
         ext.copy result.contents
+        if editable and store.get('menu.paste') and not isProtectedPage tab
+          chrome.tabs.sendRequest tab.id,
+            contents: result.contents, id: id, type: 'paste'
         sendResponse? contents: result.contents
       else
         ext.notification.title       = i18n.get 'result_bad_title'
@@ -633,7 +640,7 @@ updateUrlShortenerUsage = (name, oauth) ->
 # --------------
 
 # Extract additional information from `tab` and add it to `data`.
-addAdditionalData = (tab, data, callback) ->
+addAdditionalData = (tab, data, id, editable, link, callback) ->
   log.trace()
   windowId = chrome.windows.WINDOW_ID_CURRENT
   # Create a runner to simplify this process.
@@ -677,10 +684,11 @@ addAdditionalData = (tab, data, callback) ->
     # Try to prevent pages hanging because content script should not have been
     # executed.
     if isProtectedPage tab then runner.finish() else runner.next()
-  runner.push chrome.tabs, 'sendRequest', tab.id, {}, (response) ->
-    log.debug 'Retrieved the following data from the content script...',
-      response
-    runner.finish response
+  runner.push chrome.tabs, 'sendRequest', tab.id,
+    editable: editable, id: id, link: link, url: data.url, (response) ->
+      log.debug 'Retrieved the following data from the content script...',
+        response
+      runner.finish response
   runner.run (result = {}) ->
     lastModified = if result.lastModified?
       time = Date.parse result.lastModified
@@ -693,6 +701,8 @@ addAdditionalData = (tab, data, callback) ->
       keywords:       result.keywords       ? []
       lastmodified:   -> (text, render) ->
         lastModified?.format(render(text) or undefined) ? ''
+      link:           result.link           ? ''
+      linkhtml:       result.linkHTML       ? ''
       links:          result.links          ? []
       pageheight:     result.pageHeight     ? ''
       pagewidth:      result.pageWidth      ? ''
@@ -711,9 +721,11 @@ addAdditionalData = (tab, data, callback) ->
 # specified tab and menu item data.
 buildDerivedData = (tab, onClickData, shortCallback) ->
   log.trace()
+  obj  = editable: onClickData.editable, link: no
   data =
     title: tab.title
     url:   if onClickData.linkUrl
+        obj.link = yes
         onClickData.linkUrl
       else if onClickData.srcUrl
         onClickData.srcUrl
@@ -721,7 +733,8 @@ buildDerivedData = (tab, onClickData, shortCallback) ->
         onClickData.frameUrl
       else
         onClickData.pageUrl
-  buildStandardData data, shortCallback
+  obj.data = buildStandardData data, shortCallback
+  obj
 
 # Construct a data object based on information extracted from `tab`.  
 # The tab information is then merged with additional information relating to
@@ -803,8 +816,10 @@ buildStandardData = (tab, shortCallback) ->
     # Deprecated since 1.0.0, use `googlAccount` instead.
     googloauth:            -> @googlaccount()
     java:                  navigator.javaEnabled()
+    linkmarkdown:          -> md @linkhtml
     menu:                  menu.enabled
     menuoptions:           menu.options
+    menupaste:             menu.paste
     notifications:         notifications.enabled
     notificationduration:  notifications.duration * .001
     offline:               not navigator.onLine
@@ -1398,6 +1413,7 @@ ext = window.ext = new class Extension extends utils.Class
       store.modify 'menu', (menu) ->
         menu.enabled ?= yes
         menu.options ?= yes
+        menu.paste   ?= no
       store.modify 'notifications', (notifications) ->
         notifications.duration ?= 3000
         notifications.enabled  ?= yes

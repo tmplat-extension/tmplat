@@ -7,12 +7,15 @@
     <style type="text/css">
       body {padding-top: 60px; padding-bottom: 10px;}
       a {cursor: pointer;}
+      a.ref-link {font-weight: bold;}
+      a.ref-link:hover {text-decoration: none;}
       .left {text-align: left;}
       .center {text-align: center;}
       .right {text-align: right;}
       .top {vertical-align: top;}
       .middle {vertical-align: middle;}
       .bottom {vertical-align: bottom;}
+      .bottomless {margin-bottom: 0;}
       .import_error {margin-bottom: 8px;}
       .import_content, .export_content {max-height: 284px;}
       textarea {resize: vertical;}
@@ -223,6 +226,16 @@
                     <label class="checkbox span5 tight-left">
                       <input type="checkbox" id="menuOptions">
                       <span i18n-content="opt_menu_options_text"></span>
+                    </label>
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label" for="menuPaste" i18n-content="opt_menu_paste_label"></label>
+                  <div class="controls">
+                    <label class="checkbox span5 tight-left">
+                      <input type="checkbox" id="menuPaste">
+                      <span i18n-content="opt_menu_paste_text"></span>
+                      <p class="help-block" i18n-content="opt_menu_paste_sub_text"></p>
                     </label>
                   </div>
                 </div>
@@ -588,7 +601,7 @@
                         </thead>
                         <tbody>
                           <tr>
-                            <td>author<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>author <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_standard_author_text"></td>
                           </tr>
                           <tr>
@@ -604,7 +617,7 @@
                             <td i18n-content="opt_guide_standard_browser_version_text"></td>
                           </tr>
                           <tr>
-                            <td>characterSet<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>characterSet <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_standard_character_set_text"></td>
                           </tr>
                           <tr>
@@ -612,11 +625,11 @@
                             <td i18n-content="opt_guide_standard_cookies_enabled_text"></td>
                           </tr>
                           <tr>
-                            <td>count<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>count</td>
                             <td i18n-content="opt_guide_standard_count_text"></td>
                           </tr>
                           <tr>
-                            <td>customCount<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>customCount</td>
                             <td i18n-content="opt_guide_standard_custom_count_text"></td>
                           </tr>
                           <tr>
@@ -624,11 +637,11 @@
                             <td i18n-content="opt_guide_standard_date_time_text"></td>
                           </tr>
                           <tr>
-                            <td>depth<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>depth</td>
                             <td i18n-content="opt_guide_standard_depth_text"></td>
                           </tr>
                           <tr>
-                            <td>description<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>description <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_standard_description_text"></td>
                           </tr>
                           <tr>
@@ -656,8 +669,20 @@
                             <td i18n-content="opt_guide_standard_java_text"></td>
                           </tr>
                           <tr>
-                            <td>lastModified<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>lastModified <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_standard_last_modified_text"></td>
+                          </tr>
+                          <tr>
+                            <td>link <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a> <a data-goto="#guide_standard_ref_2" class="ref-link">&sup2;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_link_text"></td>
+                          </tr>
+                          <tr>
+                            <td>linkHTML <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a> <a data-goto="#guide_standard_ref_2" class="ref-link">&sup2;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_link_html_text"></td>
+                          </tr>
+                          <tr>
+                            <td>linkMarkdown <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a> <a data-goto="#guide_standard_ref_2" class="ref-link">&sup2;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_link_markdown_text"></td>
                           </tr>
                           <tr>
                             <td>offline</td>
@@ -676,11 +701,11 @@
                             <td i18n-content="opt_guide_standard_os_text"></td>
                           </tr>
                           <tr>
-                            <td>pageHeight<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>pageHeight <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_standard_page_height_text"></td>
                           </tr>
                           <tr>
-                            <td>pageWidth<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>pageWidth <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_standard_page_width_text"></td>
                           </tr>
                           <tr>
@@ -700,7 +725,7 @@
                             <td i18n-content="opt_guide_standard_query_text"></td>
                           </tr>
                           <tr>
-                            <td>referrer<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>referrer <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_standard_referrer_text"></td>
                           </tr>
                           <tr>
@@ -708,23 +733,23 @@
                             <td i18n-content="opt_guide_standard_relative_text"></td>
                           </tr>
                           <tr>
-                            <td>screenHeight<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>screenHeight</td>
                             <td i18n-content="opt_guide_standard_screen_height_text"></td>
                           </tr>
                           <tr>
-                            <td>screenWidth<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>screenWidth</td>
                             <td i18n-content="opt_guide_standard_screen_width_text"></td>
                           </tr>
                           <tr>
-                            <td>selection<strong>*</strong></td>
+                            <td>selection <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_standard_selection_text"></td>
                           </tr>
                           <tr>
-                            <td>selectionHTML<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>selectionHTML <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_standard_selection_html_text"></td>
                           </tr>
                           <tr>
-                            <td>selectionMarkdown<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>selectionMarkdown <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_standard_selection_markdown_text"></td>
                           </tr>
                           <tr>
@@ -742,7 +767,12 @@
                         </tbody>
                         <tfoot>
                           <tr>
-                            <td colspan="2"><em i18n-content="opt_guide_protected_tag_text"></em></td>
+                            <td colspan="2">
+                              <ul class="unstyled bottomless">
+                                <li><a data-goto="#guide_standard_ref_1" id="guide_standard_ref_1" class="ref-link">&sup1;</a> <em i18n-content="opt_guide_definitions_footer_1"></em></li>
+                                <li><a data-goto="#guide_standard_ref_2" id="guide_standard_ref_2" class="ref-link">&sup2;</a> <em i18n-content="opt_guide_definitions_footer_2"></em></li>
+                              </ul>
+                            </td>
                           </tr>
                         </tfoot>
                       </table>
@@ -784,7 +814,7 @@
                             <td i18n-content="opt_guide_lists_objects_cookies_text"></td>
                           </tr>
                           <tr>
-                            <td>coords<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>coords</td>
                             <td i18n-content="opt_guide_type_object_text"></td>
                             <td i18n-content="opt_guide_lists_objects_coords_text"></td>
                           </tr>
@@ -799,17 +829,17 @@
                             <td i18n-content="opt_guide_lists_objects_fsegments_text"></td>
                           </tr>
                           <tr>
-                            <td>images<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>images <a data-goto="#guide_lists_objects_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_type_list_text"></td>
                             <td i18n-content="opt_guide_lists_objects_images_text"></td>
                           </tr>
                           <tr>
-                            <td>keywords<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>keywords <a data-goto="#guide_lists_objects_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_type_list_text"></td>
                             <td i18n-content="opt_guide_lists_objects_keywords_text"></td>
                           </tr>
                           <tr>
-                            <td>links<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>links <a data-goto="#guide_lists_objects_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_type_list_text"></td>
                             <td i18n-content="opt_guide_lists_objects_links_text"></td>
                           </tr>
@@ -819,17 +849,17 @@
                             <td i18n-content="opt_guide_lists_objects_params_text"></td>
                           </tr>
                           <tr>
-                            <td>plugins<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>plugins</td>
                             <td i18n-content="opt_guide_type_list_text"></td>
                             <td i18n-content="opt_guide_lists_objects_plugins_text"></td>
                           </tr>
                           <tr>
-                            <td>popular<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>popular</td>
                             <td i18n-content="opt_guide_type_object_text"></td>
                             <td i18n-content="opt_guide_lists_objects_popular_text"></td>
                           </tr>
                           <tr>
-                            <td>scripts<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>scripts <a data-goto="#guide_lists_objects_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_type_list_text"></td>
                             <td i18n-content="opt_guide_lists_objects_scripts_text"></td>
                           </tr>
@@ -839,34 +869,38 @@
                             <td i18n-content="opt_guide_lists_objects_segments_text"></td>
                           </tr>
                           <tr>
-                            <td>selectedImages<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>selectedImages <a data-goto="#guide_lists_objects_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_type_list_text"></td>
                             <td i18n-content="opt_guide_lists_objects_selected_images_text"></td>
                           </tr>
                           <tr>
-                            <td>selectedLinks<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>selectedLinks <a data-goto="#guide_lists_objects_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_type_list_text"></td>
                             <td i18n-content="opt_guide_lists_objects_selected_links_text"></td>
                           </tr>
                           <tr>
-                            <td>styleSheets<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>styleSheets <a data-goto="#guide_lists_objects_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_type_list_text"></td>
                             <td i18n-content="opt_guide_lists_objects_style_sheets_text"></td>
                           </tr>
                           <tr>
-                            <td>tabs<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>tabs</td>
                             <td i18n-content="opt_guide_type_list_text"></td>
                             <td i18n-content="opt_guide_lists_objects_tabs_text"></td>
                           </tr>
                           <tr>
-                            <td>template<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>template</td>
                             <td i18n-content="opt_guide_type_object_text"></td>
                             <td i18n-content="opt_guide_lists_objects_template_text"></td>
                           </tr>
                         </tbody>
                         <tfoot>
                           <tr>
-                            <td colspan="3"><em i18n-content="opt_guide_protected_tag_text"></em></td>
+                            <td colspan="3">
+                              <ul class="unstyled bottomless">
+                                <li><a data-goto="#guide_lists_objects_ref_1" id="guide_lists_objects_ref_1" class="ref-link">&sup1;</a> <em i18n-content="opt_guide_definitions_footer_1"></em></li>
+                              </ul>
+                            </td>
                           </tr>
                         </tfoot>
                       </table>
@@ -914,11 +948,11 @@
                         </thead>
                         <tbody>
                           <tr>
-                            <td>anchorTarget<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>anchorTarget</td>
                             <td i18n-content="opt_guide_options_anchor_target_text"></td>
                           </tr>
                           <tr>
-                            <td>anchorTitle<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>anchorTitle</td>
                             <td i18n-content="opt_guide_options_anchor_title_text"></td>
                           </tr>
                           <tr>
@@ -926,7 +960,7 @@
                             <td i18n-content="opt_guide_options_bitly_text"></td>
                           </tr>
                           <tr>
-                            <td>bitlyAccount<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>bitlyAccount</td>
                             <td i18n-content="opt_guide_options_bitly_account_text"></td>
                           </tr>
                           <tr>
@@ -934,16 +968,20 @@
                             <td i18n-content="opt_guide_options_googl_text"></td>
                           </tr>
                           <tr>
-                            <td>googlAccount<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>googlAccount</td>
                             <td i18n-content="opt_guide_options_googl_account_text"></td>
                           </tr>
                           <tr>
-                            <td>menu<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>menu</td>
                             <td i18n-content="opt_guide_options_menu_text"></td>
                           </tr>
                           <tr>
-                            <td>menuOptions<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>menuOptions</td>
                             <td i18n-content="opt_guide_options_menu_options_text"></td>
+                          </tr>
+                          <tr>
+                            <td>menuPaste<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_options_menu_paste_text"></td>
                           </tr>
                           <tr>
                             <td>notificationDuration</td>
@@ -958,23 +996,23 @@
                             <td i18n-content="opt_guide_options_shortcuts_text"></td>
                           </tr>
                           <tr>
-                            <td>toolbarClose<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>toolbarClose</td>
                             <td i18n-content="opt_guide_options_toolbar_close_text"></td>
                           </tr>
                           <tr>
-                            <td>toolbarKey<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>toolbarKey</td>
                             <td i18n-content="opt_guide_options_toolbar_key_text"></td>
                           </tr>
                           <tr>
-                            <td>toolbarOptions<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>toolbarOptions</td>
                             <td i18n-content="opt_guide_options_toolbar_options_text"></td>
                           </tr>
                           <tr>
-                            <td>toolbarPopup<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>toolbarPopup</td>
                             <td i18n-content="opt_guide_options_toolbar_popup_text"></td>
                           </tr>
                           <tr>
-                            <td>toolbarStyle<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>toolbarStyle</td>
                             <td i18n-content="opt_guide_options_toolbar_style_text"></td>
                           </tr>
                           <tr>
@@ -982,7 +1020,7 @@
                             <td i18n-content="opt_guide_options_yourls_text"></td>
                           </tr>
                           <tr>
-                            <td>yourlsAuthentication<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>yourlsAuthentication</td>
                             <td i18n-content="opt_guide_options_yourls_authentication_text"></td>
                           </tr>
                           <tr>
@@ -1070,7 +1108,7 @@
                             <td i18n-content="opt_guide_operations_fsegment_text"></td>
                           </tr>
                           <tr>
-                            <td>lastModified<strong>*</strong><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>lastModified <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_argument_text_text"></td>
                             <td>
                               <span i18n-content="opt_guide_operations_last_modified_text_1"></span>
@@ -1089,14 +1127,18 @@
                             <td i18n-content="opt_guide_operations_segment_text"></td>
                           </tr>
                           <tr>
-                            <td>shorten<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>shorten</td>
                             <td i18n-content="opt_guide_argument_text_text"></td>
                             <td i18n-content="opt_guide_operations_shorten_text"></td>
                           </tr>
                         </tbody>
                         <tfoot>
                           <tr>
-                            <td colspan="3"><em i18n-content="opt_guide_protected_tag_text"></em></td>
+                            <td colspan="3">
+                              <ul class="unstyled bottomless">
+                                <li><a data-goto="#guide_operations_ref_1" id="guide_operations_ref_1" class="ref-link">&sup1;</a> <em i18n-content="opt_guide_definitions_footer_1"></em></li>
+                              </ul>
+                            </td>
                           </tr>
                         </tfoot>
                       </table>
@@ -1145,7 +1187,7 @@
       </div>
       <hr>
       <footer class="footer">
-        <p class="pull-right"><a data-goto="top" i18n-content="opt_top_button"></a></p>
+        <p class="pull-right"><a data-goto="#top" i18n-content="opt_top_button"></a></p>
         <p id="footer" i18n-content="opt_footer"></p>
       </footer>
       <div id="tools_wizard" class="hide modal">

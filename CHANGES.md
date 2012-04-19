@@ -1,6 +1,16 @@
+YYYY.MM.DD, Version 1.0.8
+
+* [#92](https://github.com/neocotic/template/issues/92): Improve error handling when saving export data to a file
+* [#94](https://github.com/neocotic/template/issues/94): Add new *"link"* standard variable to enable access to the text of the right-clicked link
+* [#94](https://github.com/neocotic/template/issues/94): Add new *"linkHTML"* standard variable to enable access to the HTML behind the right-clicked link
+* [#94](https://github.com/neocotic/template/issues/94): Add new *"linkMarkdown"* standard variable to enable access to contents of the right-clicked link as [Markdown][]
+* [#95](https://github.com/neocotic/template/issues/95): Add option to automatically paste Template output into right-clicked input field (available in templates via the new *"menuPaste"* option)
+* Update [jQuery][] to v1.7.2
+* Update [mustache.js][] to v0.4.2
+
 2012.03.16, Version 1.0.7
 
-* [#90](https://github.com/neocotic/template/issues/90): Fix bug where wrong window is used to populate template data in [Chrome dev](http://www.chromium.org/getting-involved/dev-channel)
+* [#90](https://github.com/neocotic/template/issues/90): Fix bug where wrong window is used to populate template data in [Chrome dev][]
 * [#91](https://github.com/neocotic/template/issues/91): Add new *"tabs"* list to enable iteration over the URLs of every tab in the current window
 
 2012.03.15, Version 1.0.6
@@ -12,14 +22,14 @@
 
 2012.03.12, Version 1.0.5
 
-* [#82](https://github.com/neocotic/template/issues/82): Add new *"selectionMarkdown"* standard variable to enable access to the current selection formatted as [Markdown](http://en.wikipedia.org/wiki/Markdown)
+* [#82](https://github.com/neocotic/template/issues/82): Add new *"selectionMarkdown"* standard variable to enable access to the current selection formatted as [Markdown][]
 * [#83](https://github.com/neocotic/template/issues/83): Improve way in which web service configurations are stored and retrieved
 * [#85](https://github.com/neocotic/template/issues/85): Improve help documentation for certain fields in the Options page
 * [#86](https://github.com/neocotic/template/issues/86): Add user feedback system to the Options page
 
 2012.03.07, Version 1.0.4
 
-* [#80](https://github.com/neocotic/template/issues/80): Tidy i18n bundle to help with [new translation process](http://i18n.tmpl.at)
+* [#80](https://github.com/neocotic/template/issues/80): Tidy i18n bundle to help with [new translation process][translation]
 * [#81](https://github.com/neocotic/template/issues/81): Fix bug where unregistered keyboard shortcuts still trigger desktop notification when using modifier
 
 2012.03.06, Version 1.0.3
@@ -32,21 +42,21 @@
 
 2012.03.05, Version 1.0.1
 
-* [#71](https://github.com/neocotic/template/issues/71): Make [bit.ly](http://bit.ly) the default URL shortener
-* [#71](https://github.com/neocotic/template/issues/71): Make unauthenticated [bit.ly](http://bit.ly) use the [tmpl.at](http://tmpl.at) custom domain
-* [#72](https://github.com/neocotic/template/issues/72): Add [OAuth](http://oauth.net) support for [bit.ly](http://bit.ly)
-* [#72](https://github.com/neocotic/template/issues/72): Add new *"bitlyAccount"* option to determine whether or not you are logged in to [bit.ly](http://bit.ly)
+* [#71](https://github.com/neocotic/template/issues/71): Make [bit.ly][] the default URL shortener
+* [#71](https://github.com/neocotic/template/issues/71): Make unauthenticated [bit.ly][] use the [tmpl.at][] custom domain
+* [#72](https://github.com/neocotic/template/issues/72): Add [OAuth][] support for [bit.ly][]
+* [#72](https://github.com/neocotic/template/issues/72): Add new *"bitlyAccount"* option to determine whether or not you are logged in to [bit.ly][]
 * [#72](https://github.com/neocotic/template/issues/72): Remove the *"bitlyApiKey"* and *"bitlyUsername"* options
-* [#73](https://github.com/neocotic/template/issues/73): Add new *"yourlsAuthentication"* option to determine how the [YOURLS](http://yourls.org) URL shortener is being authenticated
+* [#73](https://github.com/neocotic/template/issues/73): Add new *"yourlsAuthentication"* option to determine how the [YOURLS][] URL shortener is being authenticated
 * [#73](https://github.com/neocotic/template/issues/73): Improve UI on Options page in some places
-* [#74](https://github.com/neocotic/template/issues/74): Implement support for [OAuth 2.0](http://oauth.net/2)
+* [#74](https://github.com/neocotic/template/issues/74): Implement support for [OAuth 2.0][]
 * [#75](https://github.com/neocotic/template/issues/75): Improve extension compatibility system
 * Minor bug fixes and UI tweaks
 
 2012.02.17, Version 1.0.0
 
 * **Full release!**
-* [#20](https://github.com/neocotic/template/issues/20): Add *"Login"*/*"Logout"* button to [goo.gl](http://goo.gl)'s configuration on the Options page
+* [#20](https://github.com/neocotic/template/issues/20): Add *"Login"*/*"Logout"* button to [goo.gl][]'s configuration on the Options page
 * [#20](https://github.com/neocotic/template/issues/20): Deprecate the *"googlOAuth"* option and replace with the new *"googlAccount"* option
 * [#35](https://github.com/neocotic/template/issues/35): Ensure code and documentation quality and standards are high
 * [#47](https://github.com/neocotic/template/issues/47): Completely redesign and simplify the Options page
@@ -58,7 +68,7 @@
 * [#49](https://github.com/neocotic/template/issues/49): Add new *"customCount"* standard variable to enable access to the total number of custom templates (i.e. excluding predefined)
 * [#49](https://github.com/neocotic/template/issues/49): Add new *"popular"* object to enable access to the details of the most popular template
 * [#49](https://github.com/neocotic/template/issues/49): Reorganize template data stored in `localStorage`
-* [#52](https://github.com/neocotic/template/issues/52): Completely rewrite code in [CoffeeScript](http://coffeescript.org)
+* [#52](https://github.com/neocotic/template/issues/52): Completely rewrite code in [CoffeeScript][]
 * [#52](https://github.com/neocotic/template/issues/52): Update build process
 * [#58](https://github.com/neocotic/template/issues/58): Remove requirement of names for templates
 * [#59](https://github.com/neocotic/template/issues/59): Reorganize option data stored in `localStorage`
@@ -68,7 +78,7 @@
 * [#62](https://github.com/neocotic/template/issues/62): Add Options link to bottom of popup (available in templates via the new *"toolbarOptions"* option)
 * [#62](https://github.com/neocotic/template/issues/62): Deprecate the *"contextMenu"* option and replace with the new *"menu"* option
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"author"* standard variable to enable access to the author from the page's meta information
-* [#63](https://github.com/neocotic/template/issues/63): Add new *"characterSet"* standard variable to enable access to the [character set](http://www.iana.org/assignments/character-sets)
+* [#63](https://github.com/neocotic/template/issues/63): Add new *"characterSet"* standard variable to enable access to the [character set][]
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"description"* standard variable to enable access to the description from the page's meta information
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"depth"* standard variable to enable access to the colour depth of the user's screen
 * [#63](https://github.com/neocotic/template/issues/63): Add new *"keywords"* list to enable iteration over the keywords from the page's meta information
@@ -98,10 +108,10 @@
 * [#48](https://github.com/neocotic/template/issues/48): Add option to change the style of the toolbar icon to that of the default template (available in templates via the new *"toolbarFeatureDetails"* option tag)
 * [#50](https://github.com/neocotic/template/issues/50): Make tags case-insensitive
 * [#51](https://github.com/neocotic/template/issues/51): Add new *"dateTime"* simple tag and function to allow formatted date/time
-* [#53](https://github.com/neocotic/template/issues/53): Add support for [inline installation](http://code.google.com/chrome/webstore/docs/inline_installation.html)
-* [#54](https://github.com/neocotic/template/issues/54): Replace API calls deprecated by [Chrome 16](http://code.google.com/chrome/extensions/whats_new.html#16)
+* [#53](https://github.com/neocotic/template/issues/53): Add support for [inline installation][]
+* [#54](https://github.com/neocotic/template/issues/54): Replace API calls deprecated by [Chrome 16][]
 * [#56](https://github.com/neocotic/template/issues/56): Add new *"decode"* function to decode its previously encoded contents
-* Change to [MIT license](http://www.opensource.org/licenses/mit-license.php)
+* Change to [MIT license][]
 * Update homepage links
 * Patch underlying template technology
 * Minor bug fixes
@@ -121,7 +131,7 @@
 
 * Rebrand logo and create new promotional images
 * [#36](https://github.com/neocotic/template/issues/36): Improve URL derivation when using the context menu
-* Update [jQuery](http://jquery.com) to v1.6.4
+* Update [jQuery][] to v1.6.4
 
 2011.08.08, Version 0.2.2.0
 
@@ -142,7 +152,7 @@
 
 2011.08.04, Version 0.2.0.1
 
-* [#27](https://github.com/neocotic/template/issues/27): Add new permissions required by [Chrome 13](http://code.google.com/chrome/extensions/whats_new.html#13) to use copy/paste functionality
+* [#27](https://github.com/neocotic/template/issues/27): Add new permissions required by [Chrome 13][] to use copy/paste functionality
 * [#28](https://github.com/neocotic/template/issues/28): Add copy and paste buttons to the template import and export views
 * Minor bug fixes and tweaks
 
@@ -158,9 +168,9 @@
 
 2011.07.28, Version 0.1.1.1
 
-* [#21](https://github.com/neocotic/template/issues/21): Fix error caused by using extension on a page where [IE Tab](https://chrome.google.com/webstore/detail/hehijbfgiekmjfkfjpbkbammjbdenadd) is active
+* [#21](https://github.com/neocotic/template/issues/21): Fix error caused by using extension on a page where [IE Tab][] is active
 * [#21](https://github.com/neocotic/template/issues/21): Redesign compatibility structure to support multiple extensions
-* [#21](https://github.com/neocotic/template/issues/21): Add compatibility support for [IE Tab Classic](https://chrome.google.com/webstore/detail/miedgcmlgpmdagojnnbemlkgidepfjfi), [IE Tab Multi (Enhance)](https://chrome.google.com/webstore/detail/fnfnbeppfinmnjnjhedifcfllpcfgeea) and [Mozilla Gecko Tab](https://chrome.google.com/webstore/detail/icoloanbecehinobmflpeglknkplbfbm) extensions
+* [#21](https://github.com/neocotic/template/issues/21): Add compatibility support for [IE Tab Classic][], [IE Tab Multi (Enhance)][] and [Mozilla Gecko Tab][] extensions
 
 2011.07.27, Version 0.1.1.0
 
@@ -204,13 +214,13 @@
 * [#4](https://github.com/neocotic/template/issues/4): Redesign Features section of options page to support feature customization
 * [#4](https://github.com/neocotic/template/issues/4): Add new help system to options page including documentation on the new template system
 * [#7](https://github.com/neocotic/template/issues/7): Add support for context (right-click) menus
-* [#6](https://github.com/neocotic/template/issues/6): Add support for [YOURLS](http://yourls.org) URL shortener installations
-* [#1](https://github.com/neocotic/template/issues/1): Fix [bit.ly](http://bit.ly) URL shortener service
+* [#6](https://github.com/neocotic/template/issues/6): Add support for [YOURLS][] URL shortener installations
+* [#1](https://github.com/neocotic/template/issues/1): Fix [bit.ly][] URL shortener service
 * [#5](https://github.com/neocotic/template/issues/5): Allow keyboard shortcuts to be customized
 * [#3](https://github.com/neocotic/template/issues/3): Fix OS X keyboard shortcuts
 * Major rewrite of code including huge optimization work and performance improvements
-* Update [jQuery](http://jquery.com) to v1.6.2
-* Remove [jQuery](http://jquery.com) dependencies from all but the background and options pages to optimize page loads
+* Update [jQuery][] to v1.6.2
+* Remove [jQuery][] dependencies from all but the background and options pages to optimize page loads
 * Remove support for the French language
 * Change how supported extensions are used to be less intrusive
 * And lots more...
@@ -218,14 +228,14 @@
 2011.04.11, Version 0.0.2.1
 
 * Add support for multiple URL shortener services
-* Add [OAuth](http://oauth.net) support for URL shortener services (enabled by default)
-* Add support for [bit.ly](http://bit.ly) URL shortener service
+* Add [OAuth][] support for URL shortener services (enabled by default)
+* Add support for [bit.ly][] URL shortener service
 * Add new window (target) option for anchor feature
 * Change software-specific features (e.g. BBCode) to be disabled by default
 * Change key listeners to listen for `keyup` events as opposed to `keydown`
 * Add collapsible sections to options page to simplify content
 * Complete rewrite of code and file system restructuring for optimization and ease of future improvements/changes
-* Include [jQuery](http://jquery.com) (v1.5.2 - minified) to minimize code duplication and increase efficiency
+* Include [jQuery][] (v1.5.2 - minified) to minimize code duplication and increase efficiency
 * Reduce image sizes for optimization
 * Minify JavaScript files for optimization
 
@@ -233,8 +243,30 @@
 
 * Add BBCode feature
 * Add Encoded feature
-* Implement [IE Tab](https://chrome.google.com/webstore/detail/hehijbfgiekmjfkfjpbkbammjbdenadd) extension compatibility (options are included but not visible yet)
+* Implement [IE Tab][] extension compatibility (options are included but not visible yet)
 * Add enable/disable feature option functionality
 * Add reorder feature option functionality
 * Add French language support
 * Change images to be more consistent
+
+[bit.ly]: http://bit.ly
+[character set]: http://www.iana.org/assignments/character-sets
+[chrome 13]: http://code.google.com/chrome/extensions/whats_new.html#13
+[chrome 16]: http://code.google.com/chrome/extensions/whats_new.html#16
+[chrome dev]: http://www.chromium.org/getting-involved/dev-channel
+[coffeescript]: http://coffeescript.org
+[goo.gl]: http://goo.gl
+[ie tab]: https://chrome.google.com/webstore/detail/hehijbfgiekmjfkfjpbkbammjbdenadd
+[ie tab classic]: https://chrome.google.com/webstore/detail/miedgcmlgpmdagojnnbemlkgidepfjfi
+[ie tab multi (enhance)]: https://chrome.google.com/webstore/detail/fnfnbeppfinmnjnjhedifcfllpcfgeea
+[inline installation]: http://code.google.com/chrome/webstore/docs/inline_installation.html
+[jquery]: http://jquery.com
+[markdown]: http://en.wikipedia.org/wiki/Markdown
+[mit license]: http://www.opensource.org/licenses/mit-license.php
+[mozilla gecko tab]: https://chrome.google.com/webstore/detail/icoloanbecehinobmflpeglknkplbfbm
+[mustache.js]: https://github.com/janl/mustache.js
+[oauth]: http://oauth.net
+[oauth 2.0]: http://oauth.net/2
+[tmpl.at]: http://tmpl.at
+[translation]: http://i18n.tmpl.at
+[yourls]: http://yourls.org

@@ -267,6 +267,24 @@
     "message": "Definitions",
     "description": "Caption displayed above the Definitions table on the Guide tab of the Options page under all of the specific sections."
   },
+  "opt_guide_definitions_footer_1": {
+    "message": "Not available on internal Chrome pages or the $O_LINK_WEBSTORE$Chrome Web Store$C_LINK$",
+    "description": "First optional footer displayed below the Definitions table on the Guide tab of the Options page under some of the specific sections.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_webstore": {
+        "content": "<a href=\"https://chrome.google.com/webstore\" target=\"_blank\">",
+        "example": "<a href=\"https://chrome.google.com/webstore\" target=\"_blank\">"
+      }
+    }
+  },
+  "opt_guide_definitions_footer_2": {
+    "message": "Only available when Template is accessed via the context menu of a link",
+    "description": "Second optional footer displayed below the Definitions table on the Guide tab of the Options page under some of the specific sections."
+  },
   "opt_guide_description_header": {
     "message": "Description",
     "description": "Header for the Description column on the Guide tab of the Options page under all of the specific sections."
@@ -1629,6 +1647,10 @@
       }
     }
   },
+  "opt_guide_options_menu_paste_text": {
+    "message": "Whether or not the Template output is automatically pasted into a contextual (right-clicked) field",
+    "description": "Description of the menuPaste variable on the Guide tab of the Options page under the Options section."
+  },
   "opt_guide_options_notification_duration_text": {
     "message": "The number of seconds desktop notifications are displayed for",
     "description": "Description of the notificationDuration variable on the Guide tab of the Options page under the Options section."
@@ -1810,24 +1832,6 @@
       "o_link_yourls": {
         "content": "<a href=\"http://yourls.org\" target=\"_blank\">",
         "example": "<a href=\"http://yourls.org\" target=\"_blank\">"
-      }
-    }
-  },
-  "opt_guide_protected_tag_text": {
-    "message": "$ASTERISK$ Not available on internal Chrome pages or the $O_LINK_WEBSTORE$Chrome Web Store$C_LINK$",
-    "description": "Footer displayed below the Definitions table on the Guide tab of the Options page under some of the specific sections.",
-    "placeholders": {
-      "asterisk": {
-        "content": "<strong>*</strong>",
-        "example": "*"
-      },
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_link_webstore": {
-        "content": "<a href=\"https://chrome.google.com/webstore\" target=\"_blank\">",
-        "example": "<a href=\"https://chrome.google.com/webstore\" target=\"_blank\">"
       }
     }
   },
@@ -2084,6 +2088,42 @@
         "example": "<a href=\"http://www.faqs.org/rfcs/rfc2822.html\" target=\"_blank\">"
       }
     }
+  },
+  "opt_guide_standard_link_html_text": {
+    "message": "The $O_ABBR_1$Hypertext Markup Language$O_ABBR_2$HTML$C_ABBR$ behind the contextual (right-clicked) link",
+    "description": "Description of the linkHTML variable on the Guide tab of the Options page under the Standard section.",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>",
+        "example": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\"",
+        "example": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">",
+        "example": "\">"
+      }
+    }
+  },
+  "opt_guide_standard_link_markdown_text": {
+    "message": "The contents of the contextual (right-clicked) link formatted as $O_LINK_MARKDOWN$Markdown$C_LINK$",
+    "description": "Description of the linkMarkdown variable on the Guide tab of the Options page under the Standard section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_markdown": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">"
+      }
+    }
+  },
+  "opt_guide_standard_link_text": {
+    "message": "The contextual (right-clicked) link text",
+    "description": "Description of the link variable on the Guide tab of the Options page under the Standard section."
   },
   "opt_guide_standard_offline_text": {
     "message": "Whether or not you are currently offline",
@@ -2492,6 +2532,28 @@
   "opt_menu_options_text": {
     "message": "Display an item to open the Options page at the bottom of the menu",
     "description": "Text for the Options Link field on the General tab of the Options page under the Context Menu section."
+  },
+  "opt_menu_paste_label": {
+    "message": "Automatically Paste",
+    "description": "Label for the Automatically Paste field on the General tab of the Options page under the Context Menu section."
+  },
+  "opt_menu_paste_sub_text": {
+    "message": "This is not available on internal Chrome pages or the $O_LINK_WEBSTORE$Chrome Web Store$C_LINK$",
+    "description": "Help text for the Automatically Paste field on the General tab of the Options page under the Context Menu section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_webstore": {
+        "content": "<a href=\"https://chrome.google.com/webstore\" target=\"_blank\">",
+        "example": "<a href=\"https://chrome.google.com/webstore\" target=\"_blank\">"
+      }
+    }
+  },
+  "opt_menu_paste_text": {
+    "message": "Paste the Template result into the right-clicked editable field",
+    "description": "Text for the Automatically Paste field on the General tab of the Options page under the Context Menu section."
   },
   "opt_misc_header": {
     "message": "Miscellaneous",
