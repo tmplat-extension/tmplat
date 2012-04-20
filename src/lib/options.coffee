@@ -1106,9 +1106,9 @@ options = window.options = new class Options extends utils.Class
     # Begin initialization.
     i18n.init
       bitlyAccount: opt_url_shortener_account_title: i18n.get 'shortener_bitly'
-      footer: opt_footer: "#{new Date().getFullYear()}"
       googlAccount: opt_url_shortener_account_title: i18n.get 'shortener_googl'
       version_definition: opt_guide_standard_version_text: ext.version
+    $('.year-repl').html "#{new Date().getFullYear()}"
     # Bind tab selection event to all tabs.
     initialTabChange = yes
     $('a[tabify]').click ->

@@ -1,71 +1,71 @@
 {
   "default_template_anchor": {
     "message": "Anchor",
-    "description": "Name of the predefined Anchor template."
+    "description": "Title of the Anchor template."
   },
   "default_template_bbcode": {
     "message": "BBCode",
-    "description": "Name of the predefined BBCode template."
+    "description": "Title of the BBCode template."
   },
   "default_template_encoded": {
     "message": "Encoded",
-    "description": "Name of the predefined Encoded template."
+    "description": "Title of the Encoded template."
   },
   "default_template_markdown": {
     "message": "Markdown",
-    "description": "Name of the predefined Markdown template."
+    "description": "Title of the Markdown template."
   },
   "default_template_markdown_selection": {
     "message": "Selection in Markdown",
-    "description": "Name of the predefined Selection in Markdown template."
+    "description": "Title of the Selection in Markdown template."
   },
   "default_template_short": {
     "message": "Short",
-    "description": "Name of the predefined Short template."
+    "description": "Title of the Short template."
   },
   "default_template_url": {
     "message": "URL",
-    "description": "Name of the predefined URL template."
+    "description": "Title of the URL template."
   },
   "description": {
     "message": "Quickly and easily copies info on the current page using a simple and unique template system",
-    "description": "Extension description displayed on Chrome's Extensions page and in the Web Store."
+    "description": "Brief description of the extension."
   },
   "detailed_description": {
     "message": "Provides quick and easy access to lots of information about the current page and environment;\n\ntab title and URL (all the way down to the protocol used), shortened URL, meta information, screen and page dimensions, browser information, cookies, plugins, formatted date & time, operating system, geographic location, referrering page, colour depth, current selection, markdown formatting, statistics, scripts, and style sheets\n\nJust to name a few...\n\nBetter yet, using a unique template system it allows users to easily create their own templates making the possibilities endless and includes a built-in step-by-step guide to help you write your own. These predefined templates are also provided to help you get started;\n\n * URL - Copies the URL of the current tab\n * Short - Copies the shortened URL (using any of the supported services)\n * Anchor - Copies an HTML anchor tag with the URL and the tab's title\n * Encoded - Copies the encoded URL (to be safely added directly in to an HTTP query)\n * Markdown - Copies a Markdown inline link with the URL and the tab's title\n * BBCode - Copies a BBCode URL tag with the URL and the tab's title\n * Selection in Markdown - Copies the current selection on the page as Markdown\n\nSo with a click of a button you can add all this information directly to your system clipboard without any formatting. This saves you so much time with those tedious tasks and it's certainly any testers best friend.\n\nWith support for keyboard shortcuts and context (right-click) menus access to your favourite templates is even quicker and they are all easily manageable thanks to Template's unique and simple options page.\n\n# URL Shorteners\nThe following URL shortener services are supported;\n\n * bit.ly - Link to your bit.ly account to allow tracking on your timeline\n * goo.gl - Login to your Google account to allow tracking on goo.gl\n * YOURLS - Link to any custom YOURLS installations\n\n# ATTENTION\nSome features may not work on Chrome Web Store or internal browser pages due to Google's design. Please try it on another site before reporting any issues. You may need to restart Chrome to make it work fully.\n\n# Changes\nA complete archive of changes included in previous version can be found below;\n@ tmpl.at/wMEa53\n\n# Help Desk\nIf you have any problems with this extension or would like to give us your feedback you can do so here;\n@ tmpl.at/zZfwLi\n\n# Permissions\nFor those of you that worry about these things I have constructed a breakdown of what permissions are used by this extension (even those you aren't warned about) and why;\n@ tmpl.at/zLIdEG\n\n# Open Source\nThis extension is open source and can be found on GitHub below;\n@ tmpl.at/wIdP2B",
-    "description": "Detailed extension description displayed in the Web Store."
+    "description": "Detailed description of the extension."
   },
   "empty": {
     "message": "Empty",
-    "description": "Displayed in popups and context menus when no templates are enabled."
+    "description": "Popup/menu text where no Templates are active."
   },
   "error_file_aborted": {
     "message": "Aborted!",
-    "description": "Error message displayed during the import/export process when the user stops uploading a file."
+    "description": "Error message for when a file upload is aborted."
   },
   "error_file_default": {
     "message": "Could not read/write file!",
-    "description": "Error message displayed during the import/export process when the file uploaded couldn't be read/written."
+    "description": "Error message for when an uploaded file couldn't be read."
   },
   "error_file_not_found": {
     "message": "File not found!",
-    "description": "Error message displayed during the import/export process when the file could not be found."
+    "description": "Error message for when a file could not be found."
   },
   "error_import_data": {
     "message": "Unable to parse data!",
-    "description": "Error message displayed during the import process when the imported data isn't valid."
+    "description": "Error message for when imported data isn't valid."
   },
   "error_import_invalid": {
     "message": "Some values are missing or corrupt!",
-    "description": "Error message displayed during the import process when the imported data isn't structured correctly."
+    "description": "Error message for when imported data isn't structured correctly."
   },
   "name": {
     "message": "Template",
-    "description": "Extension name displayout throughout the extension, the Chrome's Extensions page, and in the Web Store."
+    "description": "Name of the extension."
   },
   "opt_add_button": {
     "message": "$ICON$ Add",
-    "description": "Text for the Add button on the Templates tab of the Options page. This is used when no templates are currently selected.",
+    "description": "Text of button used to add templates.",
     "placeholders": {
       "icon": {
         "content": "<i class=\"icon-plus icon-white\"></i>",
@@ -75,7 +75,7 @@
   },
   "opt_add_new_button": {
     "message": "$ICON$ Add New",
-    "description": "Text for the Add button on the Templates tab of the Options page. This is used when a template is already selected.",
+    "description": "Text of button used to clear template selection, allowing a new template to be created.",
     "placeholders": {
       "icon": {
         "content": "<i class=\"icon-plus icon-white\"></i>",
@@ -85,31 +85,31 @@
   },
   "opt_analytics_label": {
     "message": "Analytics",
-    "description": "Label for the Analytics field on the General tab of the Options page under the Miscellaneous section."
+    "description": "Label for the Analytics field."
   },
   "opt_analytics_sub_text": {
     "message": "This information is only ever used to help improve user experience and will never be supplied to a 3rd party",
-    "description": "Help text for the Analytics field on the General tab of the Options page under the Miscellaneous section."
+    "description": "Help text for the Analytics field."
   },
   "opt_analytics_text": {
     "message": "Send anonymous usage statistics",
-    "description": "Text for the Analytics field on the General tab of the Options page under the Miscellaneous section."
+    "description": "Text for the Analytics field."
   },
   "opt_anchor_header": {
     "message": "Anchor Tags",
-    "description": "Header for the Anchor Tags section on the General tab of the Options page."
+    "description": "Header for the Anchor Tags section."
   },
   "opt_anchor_target_label": {
     "message": "New Tab/Window",
-    "description": "Label for the New Tab/Window field on the General tab of the Options page under the Anchor Tags section."
+    "description": "Label for the New Tab/Window field."
   },
   "opt_anchor_target_text": {
     "message": "Links open in a new browser tab/window when clicked",
-    "description": "Text for the New Tab/Window field on the General tab of the Options page under the Anchor Tags section."
+    "description": "Text for the New Tab/Window field."
   },
   "opt_anchor_target_sub_text": {
     "message": "Anchor tags are rendered with the attribute $CODE$",
-    "description": "Help text for the New Tab/Window field on the General tab of the Options page under the Anchor Tags section.",
+    "description": "Help text for the New Tab/Window field.",
     "placeholders": {
       "code": {
         "content": "<code>target=\"_blank\"</code>",
@@ -119,7 +119,7 @@
   },
   "opt_anchor_text": {
     "message": "This section refers to links that are rendered by the $O_EMPH$Anchor$C_EMPH$ template.",
-    "description": "Text for the Anchor Tags section on the General tab of the Options page.",
+    "description": "Text for the Anchor Tags section.",
     "placeholders": {
       "c_emph": {
         "content": "</em>",
@@ -133,11 +133,11 @@
   },
   "opt_anchor_title_label": {
     "message": "Hover Text",
-    "description": "Label for the Hover Text field on the General tab of the Options page under the Anchor Tags section."
+    "description": "Label for the Hover Text field."
   },
   "opt_anchor_title_sub_text": {
     "message": "Anchor tags are rendered with the attribute $CODE$",
-    "description": "Help text for the Hover Text field on the General tab of the Options page under the Anchor Tags section.",
+    "description": "Help text for the Hover Text field.",
     "placeholders": {
       "code": {
         "content": "<code>title=\"{{title}}\"</code>",
@@ -147,11 +147,11 @@
   },
   "opt_anchor_title_text": {
     "message": "Links show the contextual title when hovered over",
-    "description": "Text for the Hover Text field on the General tab of the Options page under the Anchor Tags section."
+    "description": "Text for the Hover Text field."
   },
   "opt_delete_button": {
     "message": "$ICON$ Delete",
-    "description": "Text for the Delete button on the Templates tab of the Options page.",
+    "description": "Text for the Delete button.",
     "placeholders": {
       "icon": {
         "content": "<i class=\"icon-trash icon-white\"></i>",
@@ -161,7 +161,7 @@
   },
   "opt_delete_wizard_header": {
     "message": "Delete $TEMPLATE$",
-    "description": "Header for the confirmation dialog displayed when attempts to delete a template.",
+    "description": "Header for the confirmation dialog displayed when deleting a template.",
     "placeholders": {
       "template": {
         "content": "$1",
@@ -171,7 +171,7 @@
   },
   "opt_delete_wizard_text_1": {
     "message": "This action is $O_BOLD$permanent$C_BOLD$ and cannot be reversed.",
-    "description": "1st paragraph for the confirmation dialog displayed when attempts to delete a template.",
+    "description": "1st paragraph for the confirmation dialog displayed when deleting a template.",
     "placeholders": {
       "c_bold": {
         "content": "</strong>",
@@ -185,15 +185,15 @@
   },
   "opt_delete_wizard_text_2": {
     "message": "Do you want to continue anyway?",
-    "description": "2nd paragraph for the confirmation dialog displayed when attempts to delete a template."
+    "description": "2nd paragraph for the confirmation dialog displayed when deleting a template."
   },
   "opt_errors_header": {
     "message": "The following problem(s) need to be corrected;",
-    "description": "Preceding text for any errors displayed on the Templates tab of the Options page."
+    "description": "Preceding text for any errors on the Templates tab."
   },
   "opt_export_button": {
     "message": "$ICON$ Export",
-    "description": "Text for the Export button on the Templates tab of the Options page.",
+    "description": "Text for the Export button.",
     "placeholders": {
       "icon": {
         "content": "<i class=\"icon-upload\"></i>",
@@ -203,11 +203,11 @@
   },
   "opt_export_wizard_copy_alt_button": {
     "message": "Copied!",
-    "description": "Text for the Copy button in the Export dialog. This is used for a short duration after the user clicks the button."
+    "description": "Text for the Copy button, used for a short duration after being clicked."
   },
   "opt_export_wizard_copy_button": {
     "message": "Copy",
-    "description": "Text for the Copy button in the Export dialog."
+    "description": "Text for the Copy button."
   },
   "opt_export_wizard_header": {
     "message": "Export",
@@ -215,7 +215,7 @@
   },
   "opt_export_wizard_save_as_button": {
     "message": "Save As...",
-    "description": "Text for the Save As... button in the Export dialog."
+    "description": "Text for the Save As... button."
   },
   "opt_export_wizard_stage_1_text": {
     "message": "Select the template(s) to be exported.",
@@ -225,51 +225,29 @@
     "message": "Copy or download the template data.",
     "description": "Text for the 2nd step of the Export dialog."
   },
-  "opt_footer": {
-    "message": "&copy;$YEAR$ $O_LINK_AUTHOR$$AUTHOR$$C_LINK$",
-    "description": "Text for the footer of the Options page.",
-    "placeholders": {
-      "author": {
-        "content": "Alasdair Mercer",
-        "example": "Alasdair Mercer"
-      },
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_link_author": {
-        "content": "<a href=\"http://neocotic.com\" target=\"_blank\">",
-        "example": "<a href=\"http://neocotic.com\" target=\"_blank\">"
-      },
-      "year": {
-        "content": "$1",
-        "example": "2012"
-      }
-    }
-  },
   "opt_general_header": {
     "message": "General",
-    "description": "Header of the General tab of the Options page. This is also displayed in the page's navigation."
+    "description": "Header of the General tab."
   },
   "opt_guide_argument_header": {
     "message": "Argument",
-    "description": "Header for the Argument column on the Guide tab of the Options page under the Operations section."
+    "description": "Header for the Argument column."
   },
   "opt_guide_argument_number_text": {
     "message": "Number",
-    "description": "Text for operations that take numeric arguments. This is displayed in the Argument column on the Guide tab of the Options page under the Operations section."
+    "description": "Text for operations that take numeric arguments, displayed in the Argument column."
   },
   "opt_guide_argument_text_text": {
     "message": "Text",
-    "description": "Text for operations that take string arguments. This is displayed in the Argument column on the Guide tab of the Options page under the Operations section."
+    "description": "Text for operations that take string arguments, displayed in the Argument column."
   },
   "opt_guide_definitions_caption": {
     "message": "Definitions",
-    "description": "Caption displayed above the Definitions table on the Guide tab of the Options page under all of the specific sections."
+    "description": "Caption displayed above all Definitions tables."
   },
   "opt_guide_definitions_footer_1": {
     "message": "Not available on internal Chrome pages or the $O_LINK_WEBSTORE$Chrome Web Store$C_LINK$",
-    "description": "First optional footer displayed below the Definitions table on the Guide tab of the Options page under some of the specific sections.",
+    "description": "First optional footer displayed below Definitions tables.",
     "placeholders": {
       "c_link": {
         "content": "</a>",
@@ -277,25 +255,25 @@
       },
       "o_link_webstore": {
         "content": "<a href=\"https://chrome.google.com/webstore\" target=\"_blank\">",
-        "example": "<a href=\"https://chrome.google.com/webstore\" target=\"_blank\">"
+        "example": "<a href=\"https://chrome.google.com/webstore\">"
       }
     }
   },
   "opt_guide_definitions_footer_2": {
     "message": "Only available when Template is accessed via the context menu of a link",
-    "description": "Second optional footer displayed below the Definitions table on the Guide tab of the Options page under some of the specific sections."
+    "description": "Second optional footer displayed below Definitions tables."
   },
   "opt_guide_description_header": {
     "message": "Description",
-    "description": "Header for the Description column on the Guide tab of the Options page under all of the specific sections."
+    "description": "Header for the Description column."
   },
   "opt_guide_examples_header": {
     "message": "Examples",
-    "description": "Header for the expandable Examples area on the Guide tab of the Options page under all of the specific sections."
+    "description": "Header for all expandable Examples areas."
   },
   "opt_guide_header": {
     "message": "Guide",
-    "description": "Header for the Guide tab of the Options page. This is also displayed as a hover text for the question mark symbol in the page's navigation."
+    "description": "Header for the Guide tab."
   },
   "opt_guide_introduction_case_sensitivity_header": {
     "message": "Case Sensitivity",
@@ -419,7 +397,7 @@
       },
       "o_link_help_desk": {
         "content": "<a href=\"http://template.uservoice.com/\" target=\"_blank\">",
-        "example": "<a href=\"http://template.uservoice.com/\" target=\"_blank\">"
+        "example": "<a href=\"http://template.uservoice.com/\">"
       }
     }
   },
@@ -441,7 +419,7 @@
       },
       "o_link_help_desk": {
         "content": "<a href=\"http://template.uservoice.com/\" target=\"_blank\">",
-        "example": "<a href=\"http://template.uservoice.com/\" target=\"_blank\">"
+        "example": "<a href=\"http://template.uservoice.com/\">"
       }
     }
   },
@@ -1107,7 +1085,7 @@
       },
       "o_link_php_date": {
         "content": "<a href=\"http://php.net/manual/en/function.date.php#refsect1-function.date-parameters\" target=\"_blank\">",
-        "example": "<a href=\"http://php.net/manual/en/function.date.php#refsect1-function.date-parameters\" target=\"_blank\">"
+        "example": "<a href=\"http://php.net/manual/en/function.date.php#refsect1-function.date-parameters\">"
       }
     }
   },
@@ -1239,7 +1217,7 @@
       },
       "o_link_iso_8601": {
         "content": "<a href=\"http://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">",
-        "example": "<a href=\"http://en.wikipedia.org/wiki/ISO_8601\" target=\"_blank\">"
+        "example": "<a href=\"http://en.wikipedia.org/wiki/ISO_8601\">"
       }
     }
   },
@@ -1361,7 +1339,7 @@
       },
       "o_link_php_date": {
         "content": "<a href=\"http://php.net/manual/en/function.date.php#refsect1-function.date-parameters\" target=\"_blank\">",
-        "example": "<a href=\"http://php.net/manual/en/function.date.php#refsect1-function.date-parameters\" target=\"_blank\">"
+        "example": "<a href=\"http://php.net/manual/en/function.date.php#refsect1-function.date-parameters\">"
       }
     }
   },
@@ -1467,7 +1445,7 @@
       },
       "o_link_bitly": {
         "content": "<a href=\"http://bit.ly\" target=\"_blank\">",
-        "example": "<a href=\"http://bit.ly\" target=\"_blank\">"
+        "example": "<a href=\"http://bit.ly\">"
       }
     }
   },
@@ -1493,7 +1471,7 @@
       },
       "o_link_bitly": {
         "content": "<a href=\"http://bit.ly\" target=\"_blank\">",
-        "example": "<a href=\"http://bit.ly\" target=\"_blank\">"
+        "example": "<a href=\"http://bit.ly\">"
       }
     }
   },
@@ -1599,7 +1577,7 @@
       },
       "o_link_googl": {
         "content": "<a href=\"http://goo.gl\" target=\"_blank\">",
-        "example": "<a href=\"http://goo.gl\" target=\"_blank\">"
+        "example": "<a href=\"http://goo.gl\">"
       }
     }
   },
@@ -1625,7 +1603,7 @@
       },
       "o_link_googl": {
         "content": "<a href=\"http://goo.gl\" target=\"_blank\">",
-        "example": "<a href=\"http://goo.gl\" target=\"_blank\">"
+        "example": "<a href=\"http://goo.gl\">"
       }
     }
   },
@@ -1729,7 +1707,7 @@
       },
       "o_link_yourls": {
         "content": "<a href=\"http://yourls.org\" target=\"_blank\">",
-        "example": "<a href=\"http://yourls.org\" target=\"_blank\">"
+        "example": "<a href=\"http://yourls.org\">"
       }
     }
   },
@@ -1743,7 +1721,7 @@
       },
       "o_link_yourls": {
         "content": "<a href=\"http://yourls.org\" target=\"_blank\">",
-        "example": "<a href=\"http://yourls.org\" target=\"_blank\">"
+        "example": "<a href=\"http://yourls.org\">"
       }
     }
   },
@@ -1761,7 +1739,7 @@
       },
       "o_link_yourls": {
         "content": "<a href=\"http://yourls.org\" target=\"_blank\">",
-        "example": "<a href=\"http://yourls.org\" target=\"_blank\">"
+        "example": "<a href=\"http://yourls.org\">"
       }
     }
   },
@@ -1787,7 +1765,7 @@
       },
       "o_link_yourls": {
         "content": "<a href=\"http://yourls.org\" target=\"_blank\">",
-        "example": "<a href=\"http://yourls.org\" target=\"_blank\">"
+        "example": "<a href=\"http://yourls.org\">"
       }
     }
   },
@@ -1817,7 +1795,7 @@
       },
       "o_link_yourls": {
         "content": "<a href=\"http://yourls.org\" target=\"_blank\">",
-        "example": "<a href=\"http://yourls.org\" target=\"_blank\">"
+        "example": "<a href=\"http://yourls.org\">"
       }
     }
   },
@@ -1831,7 +1809,7 @@
       },
       "o_link_yourls": {
         "content": "<a href=\"http://yourls.org\" target=\"_blank\">",
-        "example": "<a href=\"http://yourls.org\" target=\"_blank\">"
+        "example": "<a href=\"http://yourls.org\">"
       }
     }
   },
@@ -1887,7 +1865,7 @@
       },
       "o_link_char_set": {
         "content": "<a href=\"http://www.iana.org/assignments/character-sets\" target=\"_blank\">",
-        "example": "<a href=\"http://www.iana.org/assignments/character-sets\" target=\"_blank\">"
+        "example": "<a href=\"http://www.iana.org/assignments/character-sets\">"
       }
     }
   },
@@ -1913,7 +1891,7 @@
       },
       "o_link_rfc_2822": {
         "content": "<a href=\"http://www.faqs.org/rfcs/rfc2822.html\" target=\"_blank\">",
-        "example": "<a href=\"http://www.faqs.org/rfcs/rfc2822.html\" target=\"_blank\">"
+        "example": "<a href=\"http://www.faqs.org/rfcs/rfc2822.html\">"
       }
     }
   },
@@ -2071,7 +2049,7 @@
       },
       "o_link_java": {
         "content": "<a href=\"http://www.java.com\" target=\"_blank\">",
-        "example": "<a href=\"http://www.java.com\" target=\"_blank\">"
+        "example": "<a href=\"http://www.java.com\">"
       }
     }
   },
@@ -2085,7 +2063,7 @@
       },
       "o_link_rfc_2822": {
         "content": "<a href=\"http://www.faqs.org/rfcs/rfc2822.html\" target=\"_blank\">",
-        "example": "<a href=\"http://www.faqs.org/rfcs/rfc2822.html\" target=\"_blank\">"
+        "example": "<a href=\"http://www.faqs.org/rfcs/rfc2822.html\">"
       }
     }
   },
@@ -2117,7 +2095,7 @@
       },
       "o_link_markdown": {
         "content": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">",
-        "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">"
+        "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\">"
       }
     }
   },
@@ -2299,7 +2277,7 @@
       },
       "o_link_markdown": {
         "content": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">",
-        "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">"
+        "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\">"
       }
     }
   },
@@ -2547,7 +2525,7 @@
       },
       "o_link_webstore": {
         "content": "<a href=\"https://chrome.google.com/webstore\" target=\"_blank\">",
-        "example": "<a href=\"https://chrome.google.com/webstore\" target=\"_blank\">"
+        "example": "<a href=\"https://chrome.google.com/webstore\">"
       }
     }
   },
@@ -2925,7 +2903,7 @@
       },
       "o_link_api_docs": {
         "content": "<a href=\"http://code.google.com/p/yourls/wiki/PasswordlessAPI\" target=\"_blank\">",
-        "example": "<a href=\"http://code.google.com/p/yourls/wiki/PasswordlessAPI\" target=\"_blank\">"
+        "example": "<a href=\"http://code.google.com/p/yourls/wiki/PasswordlessAPI\">"
       }
     }
   },
@@ -2991,11 +2969,11 @@
   },
   "options": {
     "message": "Options",
-    "description": "Text for the Options item displayed at the bottom of popups and context menus."
+    "description": "Text for the Options popup/menu item."
   },
   "result_bad_description": {
     "message": "$TEMPLATE$ could not be copied",
-    "description": "Message displayed in a desktop notification when something unknown went wrong while processing a template.",
+    "description": "Notification for when something unknown went wrong while processing a template.",
     "placeholders": {
       "template": {
         "content": "$1",
@@ -3005,7 +2983,7 @@
   },
   "result_bad_empty_description": {
     "message": "$TEMPLATE$ output was empty",
-    "description": "Message displayed in a desktop notification when the outcome of processing a template is an empty string.",
+    "description": "Notification for when the outcome of processing a template is an empty string.",
     "placeholders": {
       "template": {
         "content": "$1",
@@ -3015,19 +2993,19 @@
   },
   "result_bad_error_description": {
     "message": "An error occurred while collecting information",
-    "description": "Message displayed in a desktop notification when something went wrong while collecting contextual data before processing a template."
+    "description": "Notification for when something went wrong while collecting contextual data before processing a template."
   },
   "result_bad_uri_description": {
     "message": "The URL is not properly encoded",
-    "description": "Message displayed in a desktop notification when collecting data for an invalid URL before processing a template."
+    "description": "Notification for when collecting data for an invalid URL before processing a template."
   },
   "result_bad_title": {
     "message": "Sorry!",
-    "description": "Header for desktop notifications displayed when something bad happened while processing a template."
+    "description": "Notification header for when something bad happened while processing a template."
   },
   "result_good_description": {
     "message": "$TEMPLATE$ has been copied",
-    "description": "Default message displayed in a desktop notification when a template is processed successfully.",
+    "description": "Notification for when a template is processed successfully.",
     "placeholders": {
       "template": {
         "content": "$1",
@@ -3037,7 +3015,7 @@
   },
   "result_good_title": {
     "message": "Success!",
-    "description": "Header for desktop notifications displayed when a template is processed successfully."
+    "description": "Notification header for when a template is processed successfully."
   },
   "shortener_bitly": {
     "message": "bit.ly",
@@ -3045,7 +3023,7 @@
   },
   "shortener_config_error": {
     "message": "$SERVICE$ has not been configured correctly",
-    "description": "Message displayed in a desktop notification when attempting to use an incorrectly configured URL Shortener while processing a template.",
+    "description": "Notification for when attempting to use an incorrectly configured URL Shortener while processing a template.",
     "placeholders": {
       "service": {
         "content": "$1",
@@ -3055,7 +3033,7 @@
   },
   "shortener_detailed_error": {
     "message": "$SERVICE$ experienced a problem while shortening $URL$",
-    "description": "Message displayed in a desktop notification when something went wrong while calling a URL Shortener service. This is a more detailed version of shortener_error as it also displays the URL being shortened.",
+    "description": "Notification for when something went wrong while calling a URL Shortener service. This is a more detailed version of shortener_error as it also displays the URL being shortened.",
     "placeholders": {
       "service": {
         "content": "$1",
@@ -3069,7 +3047,7 @@
   },
   "shortener_error": {
     "message": "$SERVICE$ experienced a problem",
-    "description": "Message displayed in a desktop notification when something went wrong while calling a URL Shortener service.",
+    "description": "Notification for when something went wrong while calling a URL Shortener service.",
     "placeholders": {
       "service": {
         "content": "$1",
@@ -3087,146 +3065,142 @@
   },
   "tmpl_auction": {
     "message": "Auction",
-    "description": "Text for the Auction option for the Image field on the Templates tab on the Options page."
+    "description": "Auction icon caption."
   },
   "tmpl_bug": {
     "message": "Bug",
-    "description": "Text for the Bug option for the Image field on the Templates tab on the Options page."
+    "description": "Bug icon caption."
   },
   "tmpl_clipboard": {
     "message": "Clipboard",
-    "description": "Text for the Clipboard option for the Image field on the Templates tab on the Options page."
+    "description": "Clipboard icon caption."
   },
   "tmpl_clipboard_empty": {
     "message": "Clipboard (Empty)",
-    "description": "Text for the Clipboard (Empty) option for the Image field on the Templates tab on the Options page."
+    "description": "Clipboard (Empty) icon caption."
   },
   "tmpl_component": {
     "message": "Component",
-    "description": "Text for the Component option for the Image field on the Templates tab on the Options page."
+    "description": "Component icon caption."
   },
   "tmpl_cookies": {
     "message": "Cookies",
-    "description": "Text for the Cookies option for the Image field on the Templates tab on the Options page."
+    "description": "Cookies icon caption."
   },
   "tmpl_discussion": {
     "message": "Discussion",
-    "description": "Text for the Discussion option for the Image field on the Templates tab on the Options page."
+    "description": "Discussion icon caption."
   },
   "tmpl_globe": {
     "message": "Globe",
-    "description": "Text for the Globe option for the Image field on the Templates tab on the Options page."
+    "description": "Globe icon caption."
   },
   "tmpl_google": {
     "message": "Google",
-    "description": "Text for the Google option for the Image field on the Templates tab on the Options page."
+    "description": "Google icon caption."
   },
   "tmpl_heart": {
     "message": "Heart",
-    "description": "Text for the Heart option for the Image field on the Templates tab on the Options page."
+    "description": "Heart icon caption."
   },
   "tmpl_html": {
     "message": "HTML",
-    "description": "Text for the HTML option for the Image field on the Templates tab on the Options page."
+    "description": "HTML icon caption."
   },
   "tmpl_key": {
     "message": "Key",
-    "description": "Text for the Key option for the Image field on the Templates tab on the Options page."
+    "description": "Key icon caption."
   },
   "tmpl_lightbulb": {
     "message": "Lightbulb",
-    "description": "Text for the Lightbulb option for the Image field on the Templates tab on the Options page."
+    "description": "Lightbulb icon caption."
   },
   "tmpl_lighthouse": {
     "message": "Lighthouse",
-    "description": "Text for the Lighthouse option for the Image field on the Templates tab on the Options page."
+    "description": "Lighthouse icon caption."
   },
   "tmpl_lightning": {
     "message": "Lightning",
-    "description": "Text for the Lightning option for the Image field on the Templates tab on the Options page."
+    "description": "Lightning icon caption."
   },
   "tmpl_link": {
     "message": "Link",
-    "description": "Text for the Link option for the Image field on the Templates tab on the Options page."
+    "description": "Link icon caption."
   },
   "tmpl_linux": {
     "message": "Linux",
-    "description": "Text for the Linux option for the Image field on the Templates tab on the Options page."
+    "description": "Linux icon caption."
   },
   "tmpl_mail": {
     "message": "Mail",
-    "description": "Text for the Mail option for the Image field on the Templates tab on the Options page."
+    "description": "Mail icon caption."
   },
   "tmpl_newspaper": {
     "message": "Newspaper",
-    "description": "Text for the Newspaper option for the Image field on the Templates tab on the Options page."
+    "description": "Newspaper icon caption."
   },
   "tmpl_none": {
     "message": "None",
-    "description": "Text for the None option for the Image field on the Templates tab on the Options page."
+    "description": "None icon caption."
   },
   "tmpl_note": {
     "message": "Note",
-    "description": "Text for the Note option for the Image field on the Templates tab on the Options page."
+    "description": "Note icon caption."
   },
   "tmpl_page": {
     "message": "Page",
-    "description": "Text for the Page option for the Image field on the Templates tab on the Options page."
+    "description": "Page icon caption."
   },
   "tmpl_plugin": {
     "message": "Plugin",
-    "description": "Text for the Plugin option for the Image field on the Templates tab on the Options page."
+    "description": "Plugin icon caption."
   },
   "tmpl_rss": {
     "message": "RSS",
-    "description": "Text for the RSS option for the Image field on the Templates tab on the Options page."
+    "description": "RSS icon caption."
   },
   "tmpl_script": {
     "message": "Script",
-    "description": "Text for the Script option for the Image field on the Templates tab on the Options page."
+    "description": "Script icon caption."
   },
   "tmpl_scull": {
     "message": "Scull",
-    "description": "Text for the Scull option for the Image field on the Templates tab on the Options page."
+    "description": "Scull icon caption."
   },
   "tmpl_sign": {
     "message": "Sign",
-    "description": "Text for the Sign option for the Image field on the Templates tab on the Options page."
+    "description": "Sign icon caption."
   },
   "tmpl_siren": {
     "message": "Siren",
-    "description": "Text for the Siren option for the Image field on the Templates tab on the Options page."
+    "description": "Siren icon caption."
   },
   "tmpl_star": {
     "message": "Star",
-    "description": "Text for the Star option for the Image field on the Templates tab on the Options page."
+    "description": "Star icon caption."
   },
   "tmpl_support": {
     "message": "Support",
-    "description": "Text for the Support option for the Image field on the Templates tab on the Options page."
+    "description": "Support icon caption."
   },
   "tmpl_tag": {
     "message": "Tag",
-    "description": "Text for the Tag option for the Image field on the Templates tab on the Options page."
+    "description": "Tag icon caption."
   },
   "tmpl_tags": {
     "message": "Tags",
-    "description": "Text for the Tags option for the Image field on the Templates tab on the Options page."
+    "description": "Tags icon caption."
   },
   "tmpl_thumb_down": {
     "message": "Thumb Down",
-    "description": "Text for the Thumbs Down option for the Image field on the Templates tab on the Options page."
+    "description": "Thumb Down icon caption."
   },
   "tmpl_thumb_up": {
     "message": "Thumb Up",
-    "description": "Text for the Thumbs Up option for the Image field on the Templates tab on the Options page."
+    "description": "Thumb Up icon caption."
   },
   "tmpl_tools": {
     "message": "Tools",
-    "description": "Text for the Tools option for the Image field on the Templates tab on the Options page."
-  },
-  "untitled": {
-    "message": "Untitled",
-    "description": "Default title assigned to corrupt templates."
+    "description": "Tools icon caption."
   }
 }

@@ -1033,7 +1033,7 @@ initTemplate = (template, templates) ->
       templates[idx].key      ?= template.key
       templates[idx].readOnly  = no
       templates[idx].shortcut ?= ''
-      templates[idx].title    ?= i18n.get 'untitled'
+      templates[idx].title    ?= '?'
       templates[idx].usage    ?= 0
     template = templates[idx]
   template
@@ -1117,7 +1117,7 @@ initTemplates_update = ->
         key:      key
         readOnly: store.remove("feat_#{name}_readonly") ? no
         shortcut: store.remove("feat_#{name}_shortcut") ? ''
-        title:    store.remove("feat_#{name}_title")    ? i18n.get 'untitled'
+        title:    store.remove("feat_#{name}_title")    ? '?'
         usage:    0
     store.set 'templates', templates
     store.remove store.search(
