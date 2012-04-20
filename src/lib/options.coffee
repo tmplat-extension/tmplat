@@ -392,6 +392,7 @@ loadTemplateExportEvents = ->
     $('.export_con_stage1').show()
     $('.export_con_stage2').hide()
     $('.export_content').val ''
+    $('.export_error').html('&nbsp;').hide()
     templates.find('option').each ->
       opt = $ this
       list.append $ '<option/>',
@@ -427,6 +428,10 @@ loadTemplateExportEvents = ->
   $('.export_save_btn').click ->
     $this = $ this
     str   = $this.parents('.export_con_stage2').find('.export_content').val()
+    # Export-specific error handler for dealing with the FileSystem API.
+    exportErrorHandler = fileErrorHandler (message) ->
+      log.error message
+      $('.export_error').text(message).show()
     # Write the contents of the text area in to a temporary file and then
     # prompt the user to download it.
     window.webkitRequestFileSystem window.TEMPORARY, 1024 * 1024, (fs) ->
@@ -435,14 +440,17 @@ loadTemplateExportEvents = ->
           builder = new WebKitBlobBuilder()
           done    = no
           builder.append str
-          fileWriter.onerror = (error) -> log.error error
+          fileWriter.onerror    = exportErrorHandler
           fileWriter.onwriteend = ->
             if done
+              $('.export_error').html('&nbsp;').hide()
               window.location.href = fileEntry.toURL()
             else
               done = yes
               fileWriter.write builder.getBlob 'application/json'
           fileWriter.truncate 0
+      , exportErrorHandler
+    , exportErrorHandler
   # Select all of the templates in the list.
   $('.export_select_all_btn').click ->
     $('.export_con_list option').attr('selected', 'selected').parent().focus()
@@ -454,6 +462,7 @@ loadTemplateExportEvents = ->
     keys  = []
     items.filter(':selected').each -> keys.push $(this).val()
     $('.export_content').val createExport keys
+    $('.export_error').html('&nbsp;').hide()
     $('.export_con_stage1').hide()
     $('.export_con_stage2').show()
 
@@ -494,11 +503,7 @@ loadTemplateImportEvents = ->
   $('.import_file_btn').change (event) ->
     file   = event.target.files[0]
     reader = new FileReader()
-    reader.onerror = (evt) ->
-      message = i18n.get switch evt.target.error.code
-        when evt.target.error.NOT_FOUND_ERR then 'error_file_not_found'
-        when evt.target.error.ABORT_ERR then 'error_file_aborted'
-        else 'error_file_default'
+    reader.onerror = fileErrorHandler (message) ->
       log.error message
       $('.import_error').text(message).show()
     reader.onload = (evt) ->
@@ -1022,6 +1027,15 @@ feedback = ->
     script = document.getElementsByTagName('script')[0]
     script.parentNode.insertBefore uv, script
     feedbackAdded = yes
+
+# Error handler to be used when dealing with the FileSystem API that passes a
+# localized error message to `callback`.
+fileErrorHandler = (callback) ->
+  (e) ->
+    callback i18n.get switch e.code
+      when FileError.NOT_FOUND_ERR then 'error_file_not_found'
+      when FileError.ABORT_ERR then 'error_file_aborted'
+      else 'error_file_default'
 
 # Read the imported data created by `createImport` and extract all of the
 # imported templates that appear to be valid.  

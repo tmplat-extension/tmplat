@@ -41,15 +41,15 @@
   },
   "error_file_aborted": {
     "message": "Aborted!",
-    "description": "Error message displayed during the import process when the user stops uploading a file."
+    "description": "Error message displayed during the import/export process when the user stops uploading a file."
   },
   "error_file_default": {
-    "message": "Could not read file!",
-    "description": "Error message displayed during the import process when the file uploaded couldn't be read."
+    "message": "Could not read/write file!",
+    "description": "Error message displayed during the import/export process when the file uploaded couldn't be read/written."
   },
   "error_file_not_found": {
     "message": "File not found!",
-    "description": "Error message displayed during the import process when the file could not be found."
+    "description": "Error message displayed during the import/export process when the file could not be found."
   },
   "error_import_data": {
     "message": "Unable to parse data!",
