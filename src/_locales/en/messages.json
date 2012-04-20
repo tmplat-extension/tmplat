@@ -2121,9 +2121,9 @@
       }
     }
   },
-  "opt_guide_standard_link_text": {
+  "opt_guide_standard_link_text_text": {
     "message": "The contextual (right-clicked) link text",
-    "description": "Description of the link variable on the Guide tab of the Options page under the Standard section."
+    "description": "Description of the linkText variable on the Guide tab of the Options page under the Standard section."
   },
   "opt_guide_standard_offline_text": {
     "message": "Whether or not you are currently offline",

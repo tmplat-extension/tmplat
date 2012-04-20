@@ -1,12 +1,13 @@
 YYYY.MM.DD, Version 1.0.8
 
 * [#92](https://github.com/neocotic/template/issues/92): Improve error handling when saving export data to a file
-* [#94](https://github.com/neocotic/template/issues/94): Add new *"link"* standard variable to enable access to the text of the right-clicked link
 * [#94](https://github.com/neocotic/template/issues/94): Add new *"linkHTML"* standard variable to enable access to the HTML behind the right-clicked link
 * [#94](https://github.com/neocotic/template/issues/94): Add new *"linkMarkdown"* standard variable to enable access to contents of the right-clicked link as [Markdown][]
+* [#94](https://github.com/neocotic/template/issues/94): Add new *"linkText"* standard variable to enable access to the text of the right-clicked link
 * [#95](https://github.com/neocotic/template/issues/95): Add option to automatically paste Template output into right-clicked input field (available in templates via the new *"menuPaste"* option)
 * Update [jQuery][] to v1.7.2
 * Update [mustache.js][] to v0.4.2
+* Minor fixes
 
 2012.03.16, Version 1.0.7
 

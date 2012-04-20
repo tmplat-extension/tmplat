@@ -95,13 +95,15 @@ chrome.extension.sendRequest type: 'info', (data) ->
         data: key: String.fromCharCode(e.keyCode).toUpperCase()
         type: 'shortcut'
   # Add a listener to provide the background page with information that is
-  # extracted from the DOM when required.
+  # extracted from the DOM or perform auto-paste functionality.
   chrome.extension.onRequest.addListener (request, sender, sendResponse) ->
     return sendResponse() unless request.id?
     if request.type is 'paste'
       if request.contents? and
          isEditable rightClickedBackups[request.id]?.field
         paste rightClickedBackups[request.id].field, request.contents
+      # Backups no longer required so might as well clean up a bit.
+      delete rightClickedBackups[request.id]
       return sendResponse()
     # Create a backup of the relevant right-clicked elements.
     rightClickedBackups[request.id] =
@@ -128,8 +130,8 @@ chrome.extension.sendRequest type: 'info', (data) ->
       images:         extractAll document.images, 'src'
       keywords:       getMeta('keywords', yes)
       lastModified:   document.lastModified
-      link:           link?.textContent
       linkHTML:       link?.innerHTML
+      linkText:       link?.textContent
       links:          extractAll document.links, 'href'
       pageHeight:     window.innerHeight
       pageWidth:      window.innerWidth

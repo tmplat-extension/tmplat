@@ -701,9 +701,9 @@ addAdditionalData = (tab, data, id, editable, link, callback) ->
       keywords:       result.keywords       ? []
       lastmodified:   -> (text, render) ->
         lastModified?.format(render(text) or undefined) ? ''
-      link:           result.link           ? ''
       linkhtml:       result.linkHTML       ? ''
       links:          result.links          ? []
+      linktext:       result.linkText       ? ''
       pageheight:     result.pageHeight     ? ''
       pagewidth:      result.pageWidth      ? ''
       referrer:       result.referrer       ? ''
