@@ -1,4 +1,4 @@
-YYYY.MM.DD, Version 1.0.8
+2012.04.20, Version 1.0.8
 
 * [#92](https://github.com/neocotic/template/issues/92): Improve error handling when saving export data to a file
 * [#94](https://github.com/neocotic/template/issues/94): Add new *"linkHTML"* standard variable to enable access to the HTML behind the right-clicked link
