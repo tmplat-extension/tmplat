@@ -819,10 +819,10 @@ buildStandardData = (tab, shortCallback) ->
     # Deprecated since 1.0.0, use `googlAccount` instead.
     googloauth:            -> @googlaccount()
     java:                  navigator.javaEnabled()
-    length:                -> (render, text) ->
+    length:                -> (text, render) ->
       render(text).length
     linkmarkdown:          -> md @linkhtml
-    lowercase:             -> (render, text) ->
+    lowercase:             -> (text, render) ->
       render(text).toLowerCase()
     menu:                  menu.enabled
     menuoptions:           menu.options
@@ -856,7 +856,7 @@ buildStandardData = (tab, shortCallback) ->
     short:                 -> @shorten()
     shortcuts:             store.get 'shortcuts'
     shorten:               -> shortCallback
-    tidy:                  -> (render, text) ->
+    tidy:                  -> (text, render) ->
       render(text).replace(/([ \t]+)/g, ' ').trim()
     title:                 ctab.title or url.attr 'source'
     toolbarclose:          toolbar.close
@@ -870,13 +870,13 @@ buildStandardData = (tab, shortCallback) ->
     toolbaroptions:        toolbar.options
     toolbarpopup:          toolbar.popup
     toolbarstyle:          toolbar.style
-    trim:                  -> (render, text) ->
+    trim:                  -> (text, render) ->
       render(text).trim()
-    trimleft:              -> (render, text) ->
+    trimleft:              -> (text, render) ->
       render(text).trimLeft()
-    trimright:             -> (render, text) ->
+    trimright:             -> (text, render) ->
       render(text).trimRight()
-    uppercase:             -> (render, text) ->
+    uppercase:             -> (text, render) ->
       render(text).toUpperCase()
     url:                   url.attr 'source'
     version:               ext.version
