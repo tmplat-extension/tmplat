@@ -1,3 +1,9 @@
+2012.05.09, Version 1.0.9
+
+* [#97](https://github.com/neocotic/template/issues/97): Update build process to minify i18n files for distribution
+* [#99](https://github.com/neocotic/template/issues/99): Add new operations for string manipulation
+* Update [date-ext][] to v1.0.2
+
 2012.04.20, Version 1.0.8
 
 * [#92](https://github.com/neocotic/template/issues/92): Improve error handling when saving export data to a file
@@ -256,6 +262,7 @@
 [chrome 16]: http://code.google.com/chrome/extensions/whats_new.html#16
 [chrome dev]: http://www.chromium.org/getting-involved/dev-channel
 [coffeescript]: http://coffeescript.org
+[date-ext]: http://neocotic.com/date-ext
 [goo.gl]: http://goo.gl
 [ie tab]: https://chrome.google.com/webstore/detail/hehijbfgiekmjfkfjpbkbammjbdenadd
 [ie tab classic]: https://chrome.google.com/webstore/detail/miedgcmlgpmdagojnnbemlkgidepfjfi
