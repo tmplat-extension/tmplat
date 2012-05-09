@@ -1055,6 +1055,14 @@
     "message": "Notes",
     "description": "Header for the Notes area on the Guide tab of the Options page under some sections."
   },
+  "opt_guide_operations_capitalise_name": {
+    "message": "capitalise",
+    "description": "Name of the capitalise variable on the Guide tab of the Options page under the Operations section."
+  },
+  "opt_guide_operations_capitalise_text": {
+    "message": "Transform the text provided into title case",
+    "description": "Description of the capitalise variable on the Guide tab of the Options page under the Operations section."
+  },
   "opt_guide_operations_cookie_text": {
     "message": "Get the value for the cookie with the name provided",
     "description": "Description of the cookie variable on the Guide tab of the Options page under the Operations section."
@@ -1343,6 +1351,14 @@
       }
     }
   },
+  "opt_guide_operations_length_text": {
+    "message": "Get the character length of the text provided",
+    "description": "Description of the length variable on the Guide tab of the Options page under the Operations section."
+  },
+  "opt_guide_operations_lower_case_text": {
+    "message": "Transform the text provided into lower case",
+    "description": "Description of the lowerCase variable on the Guide tab of the Options page under the Operations section."
+  },
   "opt_guide_operations_notes_text_1": {
     "message": "The following notes only apply to $SEGMENT_LABEL$ and $FSEGMENT_LABEL$ operations;",
     "description": "1st paragraph for the Notes area on the Guide tab of the Options page under the Operations section.",
@@ -1410,6 +1426,26 @@
         "example": "<strong>"
       }
     }
+  },
+  "opt_guide_operations_tidy_text": {
+    "message": "Reduce all of the joined spaces and tabs into single spaces within the text provided before removing all leading and trailing whitespace",
+    "description": "Description of the tidy variable on the Guide tab of the Options page under the Operations section."
+  },
+  "opt_guide_operations_trim_text": {
+    "message": "Remove all leading and trailing whitespace from the text provided",
+    "description": "Description of the trim variable on the Guide tab of the Options page under the Operations section."
+  },
+  "opt_guide_operations_trim_left_text": {
+    "message": "Remove all leading whitespace from the text provided",
+    "description": "Description of the trimLeft variable on the Guide tab of the Options page under the Operations section."
+  },
+  "opt_guide_operations_trim_right_text": {
+    "message": "Remove all trailing whitespace from the text provided",
+    "description": "Description of the trimRight variable on the Guide tab of the Options page under the Operations section."
+  },
+  "opt_guide_operations_upper_case_text": {
+    "message": "Transform the text provided into upper case",
+    "description": "Description of the upperCase variable on the Guide tab of the Options page under the Operations section."
   },
   "opt_guide_options_header": {
     "message": "Options",

@@ -783,6 +783,9 @@ buildStandardData = (tab, shortCallback) ->
       ).oauth.hasAccessToken()
     browser:               browser.title
     browserversion:        browser.version
+    capitalise:            -> @capitalize()
+    capitalize:            -> (text, render) ->
+      render(text).capitalize()
     # Deprecated since 1.0.0, use `menu` instead.
     contextmenu:           -> @menu
     cookiesenabled:        navigator.cookieEnabled
@@ -816,7 +819,11 @@ buildStandardData = (tab, shortCallback) ->
     # Deprecated since 1.0.0, use `googlAccount` instead.
     googloauth:            -> @googlaccount()
     java:                  navigator.javaEnabled()
+    length:                -> (render, text) ->
+      render(text).length
     linkmarkdown:          -> md @linkhtml
+    lowercase:             -> (render, text) ->
+      render(text).toLowerCase()
     menu:                  menu.enabled
     menuoptions:           menu.options
     menupaste:             menu.paste
@@ -849,6 +856,8 @@ buildStandardData = (tab, shortCallback) ->
     short:                 -> @shorten()
     shortcuts:             store.get 'shortcuts'
     shorten:               -> shortCallback
+    tidy:                  -> (render, text) ->
+      render(text).replace(/([ \t]+)/g, ' ').trim()
     title:                 ctab.title or url.attr 'source'
     toolbarclose:          toolbar.close
     # Deprecated since 1.0.0, use the inverse of `toolbarPopup` instead.
@@ -861,6 +870,14 @@ buildStandardData = (tab, shortCallback) ->
     toolbaroptions:        toolbar.options
     toolbarpopup:          toolbar.popup
     toolbarstyle:          toolbar.style
+    trim:                  -> (render, text) ->
+      render(text).trim()
+    trimleft:              -> (render, text) ->
+      render(text).trimLeft()
+    trimright:             -> (render, text) ->
+      render(text).trimRight()
+    uppercase:             -> (render, text) ->
+      render(text).toUpperCase()
     url:                   url.attr 'source'
     version:               ext.version
     yourls:                yourls.enabled
