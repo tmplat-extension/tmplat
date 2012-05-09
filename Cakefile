@@ -33,19 +33,21 @@ MODE      = 0777
 DIST_DIR        = 'dist'
 DIST_FILE       = 'Template'
 DOCS_DIR        = 'docs'
+I18N_FILE       = 'messages.json'
+LOCALES         = ['en']
+LOCALES_DIR     = '_locales'
 SOURCE_DIR      = 'src'
 TEMP_DIR        = 'temp'
 TARGET_DIR      = 'bin'
 TARGET_SUB_DIRS = [
   TARGET_DIR
-  "#{TARGET_DIR}/_locales"
-  "#{TARGET_DIR}/_locales/en"
+  "#{TARGET_DIR}/#{LOCALES_DIR}"
   "#{TARGET_DIR}/images"
   "#{TARGET_DIR}/lib"
   "#{TARGET_DIR}/pages"
   "#{TARGET_DIR}/vendor"
   "#{TARGET_DIR}/vendor/adapters"
-]
+].concat ("#{TARGET_DIR}/#{LOCALES_DIR}/#{locale}" for locale in LOCALES)
 VENDOR_FILES    = [
   'vendor/adapters/bitly.js'
   'vendor/adapters/google.js'
@@ -67,14 +69,19 @@ compile = (path) ->
   ws.on 'close', -> fs.unlinkSync path
 
 minify = (path) ->
-  ast = jsp.parse fs.readFileSync path, ENCODING
-  ast = pro.ast_mangle ast
-  ast = pro.ast_squeeze ast
-  ws = fs.createWriteStream path,
-    encoding : ENCODING
-    mode     : MODE
-  ws.write COPYRIGHT
-  ws.end pro.gen_code(ast), ENCODING
+  switch path.match(/\.([^\.]+)$/)[1].toLowerCase()
+    when 'js'
+      ast = jsp.parse fs.readFileSync path, ENCODING
+      ast = pro.ast_mangle ast
+      ast = pro.ast_squeeze ast
+      ws = fs.createWriteStream path, encoding: ENCODING, mode: MODE
+      ws.write COPYRIGHT
+      ws.end pro.gen_code ast
+    when 'json'
+      obj = JSON.parse fs.readFileSync path, ENCODING
+      ws = fs.createWriteStream path, encoding: ENCODING, mode: MODE
+      ws.end JSON.stringify obj
+    else throw "Cannot minify file: #{path}"
 
 # Tasks
 # -----
@@ -97,10 +104,11 @@ task 'dist', 'Create distributable file', ->
   wrench.mkdirSyncRecursive DIST_DIR
   wrench.mkdirSyncRecursive "#{DIST_DIR}/#{TEMP_DIR}"
   wrench.copyDirSyncRecursive TARGET_DIR, "#{DIST_DIR}/#{TEMP_DIR}"
-  for file in fs.readdirSync "#{DIST_DIR}/#{TEMP_DIR}/lib" when /\.js$/i.test file
-    minify "#{DIST_DIR}/#{TEMP_DIR}/lib/#{file}"
-  for file in VENDOR_FILES
-    minify "#{DIST_DIR}/#{TEMP_DIR}/#{file}"
+  for file in fs.readdirSync "#{DIST_DIR}/#{TEMP_DIR}/lib"
+    minify "#{DIST_DIR}/#{TEMP_DIR}/lib/#{file}" if /\.js$/i.test file
+  minify "#{DIST_DIR}/#{TEMP_DIR}/#{file}" for file in VENDOR_FILES
+  for locale in LOCALES
+    minify "#{DIST_DIR}/#{TEMP_DIR}/#{LOCALES_DIR}/#{locale}/#{I18N_FILE}"
   # TODO: Support Windows
   exec [
     "cd #{DIST_DIR}/#{TEMP_DIR}"
