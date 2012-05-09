@@ -120,5 +120,8 @@ task 'dist', 'Create distributable file', ->
 
 task 'docs', 'Create documentation', ->
   console.log 'Generating documentation...'
-  # TODO: Support Windows
-  exec "docco #{SOURCE_DIR}/lib/*.coffee", (err) -> throw err if err
+  files = (
+    for file in fs.readdirSync "#{SOURCE_DIR}/lib" when /\.coffee$/i.test file
+      "#{SOURCE_DIR}/lib/#{file}"
+  )
+  exec "docco #{files.join ' '}", (err) -> throw err if err
