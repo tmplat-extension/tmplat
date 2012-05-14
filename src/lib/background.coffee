@@ -4,6 +4,14 @@
 # For all details and documentation:  
 # <http://neocotic.com/template>
 
+# Extending prototypes
+# --------------------
+
+# Transform the string into title case.
+String::capitalize = ->
+  @replace /\w+/g, (word) ->
+    word.charAt(0).toUpperCase() + word.substr(1).toLowerCase()
+
 # Private constants
 # -----------------
 
