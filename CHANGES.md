@@ -1,3 +1,7 @@
+2012.05.14, Version 1.0.10
+
+* [#101](https://github.com/neocotic/template/issues/101): Fix bug where *"capitalise"* operation wasn't working
+
 2012.05.09, Version 1.0.9
 
 * [#97](https://github.com/neocotic/template/issues/97): Update build process to minify i18n files for distribution
