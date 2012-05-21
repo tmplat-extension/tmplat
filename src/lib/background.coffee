@@ -1593,3 +1593,7 @@ ext = window.ext = new class Extension extends utils.Class
       # Disable the popup, effectively enabling the listener for
       # `chrome.browserAction.onClicked`.
       chrome.browserAction.setPopup popup: ''
+
+# Initialize `ext` when the DOM is ready.
+utils.ready ->
+  ext.init()

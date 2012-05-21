@@ -70,3 +70,7 @@ notification = window.notification = new class Notification extends utils.Class
     # open until it is closed manually by the user.
     duration = store.get 'notifications.duration'
     setTimeout (-> close()), duration if duration > 0
+
+# Initialize `notification` when the DOM is ready.
+utils.ready ->
+  notification.init()

@@ -45,3 +45,7 @@ popup = window.popup = new class Popup extends utils.Class
     log.debug 'Sending the following request to the extension controller',
       request
     chrome.extension.sendRequest request
+
+# Initialize `popup` when the DOM is ready.
+utils.ready ->
+  popup.init()

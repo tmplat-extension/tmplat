@@ -1162,3 +1162,7 @@ options = window.options = new class Options extends utils.Class
       goto = $ $(this).attr 'data-goto'
       log.debug "Relocating view to include '#{goto.selector}'"
       $(window).scrollTop goto.position()?.top or 0
+
+# Initialize `options` when the DOM is ready.
+utils.ready ->
+  options.init()

@@ -68,6 +68,13 @@ utils = window.utils = new class Utils extends Class
   # Generate a random number between the `min` and `max` values provided.
   random: (min, max) -> Math.floor(Math.random() * (max - min + 1)) + min
 
+  # Bind `handler` to event indicating that the DOM is ready.
+  ready: (handler) ->
+    if jQuery?
+      jQuery handler
+    else
+      document.addEventListener 'DOMContentLoaded', handler
+
   # Repeat the string provided the specified number of times.
   repeat: (str = '', repeatStr = str, count = 1) ->
     if count isnt 0
