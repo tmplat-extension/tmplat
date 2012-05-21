@@ -42,6 +42,7 @@ TARGET_DIR      = 'bin'
 TARGET_SUB_DIRS = [
   TARGET_DIR
   "#{TARGET_DIR}/#{LOCALES_DIR}"
+  "#{TARGET_DIR}/css"
   "#{TARGET_DIR}/images"
   "#{TARGET_DIR}/lib"
   "#{TARGET_DIR}/pages"

@@ -1,0 +1,58 @@
+body {padding-top: 60px; padding-bottom: 10px;}
+a {cursor: pointer;}
+a.ref-link {font-weight: bold;}
+a.ref-link:hover {text-decoration: none;}
+.left {text-align: left;}
+.center {text-align: center;}
+.right {text-align: right;}
+.top {vertical-align: top;}
+.middle {vertical-align: middle;}
+.bottom {vertical-align: bottom;}
+.bottomless {margin-bottom: 0;}
+.import_error, .export_error {margin-bottom: 8px;}
+.import_content, .export_content {max-height: 284px;}
+textarea {resize: vertical;}
+.navbar-fixed-top .brand {padding-right: 0; padding-left: 0; margin-left: 20px; float: right; font-weight: bold; color: black; text-shadow: 0 1px 0 rgba(255, 255, 255, .1), 0 0 30px rgba(255, 255, 255, .125); -webkit-transition: all .2s linear; -moz-transition: all .2s linear; transition: all .2s linear;}
+#template_content {resize: both;}
+#template_image_preview {margin-left: 10px;}
+#template_shortcut {text-transform: uppercase;}
+#moveDown_btn, #moveUp_btn {display: block; margin-top: 11px;}
+.form-vertical .control-group > label, .control-label {padding-top: 6px;}
+#shorteners_tab .form-horizontal .control-group > label {width: 100px;}
+#shorteners_tab .form-horizontal .controls  {margin-left: 40px;}
+#tools_wizard legend .help {font-size: 13px; line-height: 18px;}
+.modal {z-index: 10050;}
+.modal-backdrop {z-index: 10040;}
+.modal-footer input[type="file"] {float: right; margin-left: 5px; margin-bottom: 0;}
+.modal-open .dropdown-menu{z-index: 20050;}
+.modal-open .dropdown.open{*z-index: 20050;}
+.modal-open .popover{z-index: 20060;}
+.modal-open .tooltip{z-index: 20070;}
+.input-prepend, .input-append {margin-bottom: 0;}
+.error-message {margin-top: 0;}
+pre {overflow: auto; white-space: pre;}
+input[type="file"]::-webkit-file-upload-button {display: inline-block; padding: 4px 10px 4px; font-size: 13px; line-height: 18px; color: #333333; text-align: center; text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75); background-color: #fafafa; background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), color-stop(25%, #ffffff), to(#e6e6e6)); background-image: -webkit-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6); background-image: -moz-linear-gradient(top, #ffffff, #ffffff 25%, #e6e6e6); background-image: -ms-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6); background-image: -o-linear-gradient(#ffffff, #ffffff 25%, #e6e6e6); background-image: linear-gradient(#ffffff, #ffffff 25%, #e6e6e6); background-repeat: no-repeat; filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e6e6e6', GradientType=0); border: 1px solid #ccc; border-bottom-color: #bbb; -webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px; -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2),0 1px 2px rgba(0, 0, 0, 0.05); -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2),0 1px 2px rgba(0, 0, 0, 0.05); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2),0 1px 2px rgba(0, 0, 0, 0.05); cursor: pointer; *margin-left: .3em;}
+input[type="file"]:first-child::-webkit-file-upload-button {*margin-left: 0;}
+input[type="file"]::-webkit-file-upload-button:hover {color: #333333; text-decoration: none; background-color: #e6e6e6; background-position: 0 -15px; -webkit-transition: background-position 0.1s linear; -moz-transition: background-position 0.1s linear; -ms-transition: background-position 0.1s linear; -o-transition: background-position 0.1s linear; transition: background-position 0.1s linear;}
+input[type="file"]::-webkit-file-upload-button:focus {outline: thin dotted; outline: 5px auto -webkit-focus-ring-color; outline-offset: -2px;}
+input[type="file"]:disabled::-webkit-file-upload-button {cursor: efault; background-image: none; background-color: #e6e6e6; opacity: 0.65; filter:alpha(opacity=65); -webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none;}
+td > .label, th > .label {padding-bottom: 0;}
+.popover-content > p > p {margin-bottom: 5px;}
+.popover-content > p > p:last-child {margin-bottom: 0;}
+.popover-inner {text-align: left;}
+.help {cursor: help;}
+.tight {margin: 0;}
+.tight-top {margin-top: 0;}
+.tight-right {margin-right: 0;}
+.tight-bottom {margin-bottom: 0;}
+.tight-left {margin-left: 0;}
+.gap-top {padding-top: 18px;}
+.gap-bottom {margin-bottom: 5px;}
+.w-quarter {width: 25%;}
+.w-tenth {width: 10%;}
+@media (max-width: 768px) {
+  body {padding-top: 0;}
+}
+@media (min-width: 768px) and (max-width: 980px) {
+  body {padding-top: 0;}
+}
