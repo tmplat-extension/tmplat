@@ -55,6 +55,7 @@ VENDOR_FILES    = [
   'vendor/jquery.url.js'
   'vendor/mustache.js'
   'vendor/oauth2.js'
+  'vendor/oauth2_finish.js'
   'vendor/oauth2_inject.js'
 ]
 
