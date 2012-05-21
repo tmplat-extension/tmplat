@@ -935,7 +935,6 @@ buildPopup = ->
     itemList.append $('<li/>',
       class:       'options'
       'data-type': 'options'
-      onclick:     'popup.sendRequest(this)'
     ).append $('<div/>',
       class: 'menu'
       style: "background-image: url('../images/tmpl_tools.png')"
@@ -955,7 +954,6 @@ buildTemplate = (template) ->
   item  = $ '<li/>',
     'data-key':  template.key
     'data-type': 'popup'
-    onclick:     'popup.sendRequest(this)'
   menu  = $ '<div/>',
     class: 'menu'
     style: "background-image: url('#{image}')"
@@ -1595,5 +1593,4 @@ ext = window.ext = new class Extension extends utils.Class
       chrome.browserAction.setPopup popup: ''
 
 # Initialize `ext` when the DOM is ready.
-utils.ready ->
-  ext.init()
+utils.ready -> ext.init()

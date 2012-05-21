@@ -69,11 +69,14 @@ utils = window.utils = new class Utils extends Class
   random: (min, max) -> Math.floor(Math.random() * (max - min + 1)) + min
 
   # Bind `handler` to event indicating that the DOM is ready.
-  ready: (handler) ->
-    if jQuery?
-      jQuery handler
+  ready: (context, handler) ->
+    unless handler?
+      handler = context
+      context = window
+    if context.jQuery?
+      context.jQuery handler
     else
-      document.addEventListener 'DOMContentLoaded', handler
+      context.document.addEventListener 'DOMContentLoaded', handler
 
   # Repeat the string provided the specified number of times.
   repeat: (str = '', repeatStr = str, count = 1) ->

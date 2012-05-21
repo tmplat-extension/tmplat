@@ -72,5 +72,4 @@ notification = window.notification = new class Notification extends utils.Class
     setTimeout (-> close()), duration if duration > 0
 
 # Initialize `notification` when the DOM is ready.
-utils.ready ->
-  notification.init()
+utils.ready this, -> notification.init()

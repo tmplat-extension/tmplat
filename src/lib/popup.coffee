@@ -24,8 +24,10 @@ popup = window.popup = new class Popup extends utils.Class
     log.trace()
     log.info 'Initializing the popup'
     analytics.track 'Frames', 'Displayed', 'Popup'
-    # Insert the prepared HTML in to the popup's body.
+    # Insert the prepared HTML in to the popup's body and bind click events.
     document.body.innerHTML = ext.popupHtml
+    for item in document.querySelectorAll '#itemList li'
+      item.addEventListener 'click', popup.sendRequest
     # Calculate the widest text used by the `div` elements in the popup and
     # assign it to all of the others.
     items = document.querySelectorAll '.text'
@@ -37,15 +39,14 @@ popup = window.popup = new class Popup extends utils.Class
     document.querySelector('#loadDiv .progress').style.width = "#{width + 2}px"
 
   # Send a request to the background page using the information provided.
-  sendRequest: (item) ->
+  sendRequest: ->
     log.trace()
     request =
-      data: key: item.getAttribute 'data-key'
-      type: item.getAttribute 'data-type'
+      data: key: @getAttribute 'data-key'
+      type: @getAttribute 'data-type'
     log.debug 'Sending the following request to the extension controller',
       request
     chrome.extension.sendRequest request
 
 # Initialize `popup` when the DOM is ready.
-utils.ready ->
-  popup.init()
+utils.ready this, -> popup.init()
