@@ -11,8 +11,8 @@
 R_VALID_KEY      = /^[A-Z0-9]*\.[A-Z0-9]*$/i
 # Regular expression used to validate keyboard shortcut inputs.
 R_VALID_SHORTCUT = /[A-Z0-9]/i
-# Unique identifier for the user feedback widget.
-WIDGET_ID        = 'RSRS5SpMkMxvKOCs27g'
+# Source URL of the user feedback widget script.
+WIDGET_SOURCE    = "https://widget.uservoice.com/RSRS5SpMkMxvKOCs27g.js"
 
 # Private variables
 # -----------------
@@ -694,6 +694,7 @@ loadUrlShortenerAccounts = ->
       button.click ->
         $this = $(this).blur()
         if $this.data('oauth') isnt 'true'
+          $this.tooltip 'hide'
           log.debug "Attempting to authorize #{shortener.name}"
           shortener.oauth.authorize ->
             log.debug "Authorization response for #{shortener.name}...",
@@ -1020,10 +1021,25 @@ deriveTemplate = (option) ->
 # Add the user feedback feature to the page.
 feedback = ->
   unless feedbackAdded
+    # Temporary workaround for Content Security Policy issues with UserVoice's
+    # use of inline JavaScript.  
+    # This should be removed if/when it's no longer required.
+    uvwDialogClose = $ '#uvw-dialog-close[onclick]'
+    uvwDialogClose.live 'hover', ->
+      $(this).removeAttr 'onclick'
+      uvwDialogClose.die 'hover'
+    $(uvwDialogClose.selector.replace('[onclick]', '')).live 'click', (e) ->
+      UserVoice.hidePopupWidget()
+      e.preventDefault()
+    uvTabLabel = $ '#uvTabLabel[href^="javascript:"]'
+    uvTabLabel.live 'hover', ->
+      $(this).removeAttr 'href'
+      uvTabLabel.die 'hover'
+    # Continue with normal process of loading Widget.
     window.uvOptions = {}
     uv = document.createElement 'script'
     uv.async = 'async'
-    uv.src   = "http://widget.uservoice.com/#{WIDGET_ID}.js"
+    uv.src   = WIDGET_SOURCE
     script = document.getElementsByTagName('script')[0]
     script.parentNode.insertBefore uv, script
     feedbackAdded = yes
