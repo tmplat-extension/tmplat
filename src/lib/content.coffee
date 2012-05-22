@@ -7,14 +7,18 @@
 # Private variables
 # -----------------
 
-# Details of the last relevant right-clicked elements.
-rightClicked =
+# Backups of relevant elements, each related to individual requests.
+elementBackups = {}
+
+# Details of the last relevant elements.
+elements =
   field: null
   link:  null
   other: null
 
-# Backups of right-click records, each related to individual processes.
-rightClickedBackups = {}
+# List of shortcuts used by enabled templates.  
+# This list should be updated after any templates have been.
+hotkeys = []
 
 # Helpers
 # -------
@@ -31,11 +35,11 @@ extractAll = (array, property) ->
 # Attempt to derive the most relevant anchor element from those stored under
 # the `id` provided.
 getLink = (id, url) ->
-  return unless rightClickedBackups[id]?
-  if rightClickedBackups[id].link?.href is url
-    rightClickedBackups[id].link
+  return unless elementBackups[id]?
+  if elementBackups[id].link?.href is url
+    elementBackups[id].link
   else
-    parentLink rightClickedBackups[id].other
+    parentLink elementBackups[id].other
 
 # Attempt to extract the contents of the meta element with the specified
 # `name`.  
@@ -81,35 +85,46 @@ chrome.extension.sendRequest type: 'info', (data) ->
   # of Template that is currently running.
   return if document.body.getAttribute(data.id) is data.version
   document.body.setAttribute data.id, data.version
-  # Record right-clicked links and input fields.
+  # Record relevant links and input fields when using the right-click menu.
   window.addEventListener 'contextmenu', (e) ->
     switch e.target.nodeName
-      when 'A' then rightClicked.link = e.target
-      when 'INPUT', 'TEXTAREA' then rightClicked.field = e.target
-      else rightClicked.other = e.target
+      when 'A' then elements.link = e.target
+      when 'INPUT', 'TEXTAREA' then elements.field = e.target
+      else elements.other = e.target
   # Add a listener for extension keyboard shortcuts in to the page context.
-  window.addEventListener 'keyup', (e) ->
+  window.addEventListener 'keydown', (e) ->
     if (not isMac and e.ctrlKey and e.altKey) or
        (isMac and e.shiftKey and e.altKey)
-      chrome.extension.sendRequest
-        data: key: String.fromCharCode(e.keyCode).toUpperCase()
-        type: 'shortcut'
+      key = String.fromCharCode(e.keyCode).toUpperCase()
+      if key in hotkeys
+        if e.target.nodeName in ['INPUT', 'TEXTAREA']
+          elements.field = e.target
+        else
+          elements.field = null
+        chrome.extension.sendRequest
+          data: key: key
+          type: 'shortcut'
+        e.preventDefault()
   # Add a listener to provide the background page with information that is
   # extracted from the DOM or perform auto-paste functionality.
   chrome.extension.onRequest.addListener (request, sender, sendResponse) ->
+    # Ensure local hotkeys are up-to-date.
+    if request.hotkeys?
+      hotkeys = request.hotkeys
+      return sendResponse()
     return sendResponse() unless request.id?
     if request.type is 'paste'
       if request.contents? and
-         isEditable rightClickedBackups[request.id]?.field
-        paste rightClickedBackups[request.id].field, request.contents
+         isEditable elementBackups[request.id]?.field
+        paste elementBackups[request.id].field, request.contents
       # Backups no longer required so might as well clean up a bit.
-      delete rightClickedBackups[request.id]
+      delete elementBackups[request.id]
       return sendResponse()
-    # Create a backup of the relevant right-clicked elements.
-    rightClickedBackups[request.id] =
-      field: if request.editable then rightClicked.field
-      link:  if request.link then rightClicked.link
-      other: if request.link then rightClicked.other
+    # Create a backup of the relevant elements for this request.
+    elementBackups[request.id] =
+      field: if request.editable or request.shortcut then elements.field
+      link:  if request.link then elements.link
+      other: if request.link then elements.other
     selection = window.getSelection()
     unless selection.isCollapsed
       if contents = selection.getRangeAt(0).cloneContents()

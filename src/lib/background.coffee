@@ -357,7 +357,7 @@ nullIfEmpty = (object) ->
 onRequest = (request, sender, sendResponse) ->
   log.trace()
   # Don't allow shortcut requests when shortcuts are disabled.
-  if request.type is 'shortcut' and not store.get 'shortcuts'
+  if request.type is 'shortcut' and not store.get 'shortcuts.enabled'
     return sendResponse?()
   # Select or create a tab for the Options page.
   if request.type is 'options'
@@ -374,6 +374,7 @@ onRequest = (request, sender, sendResponse) ->
   id         = utils.keyGen '', null, 't', no
   link       = no
   output     = null
+  shortcut   = no
   shortenMap = {}
   tab        = null
   template   = null
@@ -428,6 +429,7 @@ onRequest = (request, sender, sendResponse) ->
           template = getTemplateWithKey request.data.key
           data     = buildStandardData tab, shortCallback if template?
         when 'shortcut'
+          shortcut = yes
           template = getTemplateWithShortcut request.data.key
           data     = buildStandardData tab, shortCallback if template?
       updateProgress 20
@@ -442,7 +444,7 @@ onRequest = (request, sender, sendResponse) ->
           'result_bad_error_description'
         success: no
   runner.pushPacked null, addAdditionalData, ->
-    [tab, data, id, editable, link, ->
+    [tab, data, id, editable, shortcut, link, ->
       updateProgress 40
       # Ensure all properties of `data` are lower case.
       transformData data
@@ -494,7 +496,7 @@ onRequest = (request, sender, sendResponse) ->
         template: template
   runner.run (result) ->
     type  = request.type[0].toUpperCase() + request.type.substr 1
-    value = request.data.key.charCodeAt 0 if request.type is 'shortcut'
+    value = request.data.key.charCodeAt 0 if shortcut
     analytics.track 'Requests', 'Processed', type, value
     updateProgress 100
     if result?
@@ -510,7 +512,9 @@ onRequest = (request, sender, sendResponse) ->
         ext.notification.description = result.message ?
           i18n.get 'result_good_description', result.template.title
         ext.copy result.contents
-        if editable and store.get('menu.paste') and not isProtectedPage tab
+        if not isProtectedPage(tab) and
+           (editable and store.get 'menu.paste') or
+           (shortcut and store.get 'shortcuts.paste')
           chrome.tabs.sendRequest tab.id,
             contents: result.contents, id: id, type: 'paste'
         sendResponse? contents: result.contents
@@ -575,6 +579,29 @@ showNotification = ->
   else
     ext.reset()
   updateProgress null, off
+
+# Update hotkeys stored by the `content.coffee` script within all of the tabs
+# (where valid) of each Chrome window.
+updateHotkeys = ->
+  log.trace()
+  # Build list of shortcuts used by enabled templates.
+  hotkeys = (
+    template.shortcut for template in ext.templates when template.enabled
+  )
+  # Create a runner to help manage the asynchronous aspect.
+  runner = new utils.Runner()
+  runner.push chrome.windows, 'getAll', null, (windows) ->
+    log.info 'Retrieved the following windows...', windows
+    for win in windows
+      do (win) -> runner.push chrome.tabs, 'query', windowId: win.id, (tabs) ->
+        log.info 'Retrieved the following tabs...', tabs
+        # Check tabs are not displaying a *protected* page (i.e. one that
+        # will cause an error if an attempt is made to send a request to it).
+        for tab in tabs when not isProtectedPage tab
+          chrome.tabs.sendRequest tab.id, hotkeys: hotkeys
+        runner.next()
+    runner.next()
+  runner.run()
 
 # Update the popup UI state to reflect the progress of the current request.  
 # Ignore `percent` if `toggle` is specified; otherwise update the percentage on
@@ -648,7 +675,7 @@ updateUrlShortenerUsage = (name, oauth) ->
 # --------------
 
 # Extract additional information from `tab` and add it to `data`.
-addAdditionalData = (tab, data, id, editable, link, callback) ->
+addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
   log.trace()
   windowId = chrome.windows.WINDOW_ID_CURRENT
   # Create a runner to simplify this process.
@@ -693,10 +720,11 @@ addAdditionalData = (tab, data, id, editable, link, callback) ->
     # executed.
     if isProtectedPage tab then runner.finish() else runner.next()
   runner.push chrome.tabs, 'sendRequest', tab.id,
-    editable: editable, id: id, link: link, url: data.url, (response) ->
-      log.debug 'Retrieved the following data from the content script...',
-        response
-      runner.finish response
+    editable: editable, id: id, link: link, shortcut: shortcut, url: data.url,
+      (response) ->
+        log.debug 'Retrieved the following data from the content script...',
+          response
+        runner.finish response
   runner.run (result = {}) ->
     lastModified = if result.lastModified?
       time = Date.parse result.lastModified
@@ -772,6 +800,7 @@ buildStandardData = (tab, shortCallback) ->
   googl         = store.get 'googl'
   menu          = store.get 'menu'
   notifications = store.get 'notifications'
+  shortcuts     = store.get 'shortcuts'
   stats         = store.get 'stats'
   toolbar       = store.get 'toolbar'
   yourls        = store.get 'yourls'
@@ -862,7 +891,8 @@ buildStandardData = (tab, shortCallback) ->
     selectionmarkdown:     -> md @selectionhtml
     # Deprecated since 1.0.0, use `shorten` instead.
     short:                 -> @shorten()
-    shortcuts:             store.get 'shortcuts'
+    shortcuts:             shortcuts.enabled
+    shortcutspaste:        shortcuts.paste
     shorten:               -> shortCallback
     tidy:                  -> (text, render) ->
       render(text).replace(/([ \t]+)/g, ' ').trim()
@@ -960,7 +990,7 @@ buildTemplate = (template) ->
   menu.append $ '<span/>',
     class: 'text'
     text:  template.title
-  if store.get 'shortcuts'
+  if store.get 'shortcuts.enabled'
     modifiers = ext.SHORTCUT_MODIFIERS
     modifiers = ext.SHORTCUT_MAC_MODIFIERS if ext.isThisPlatform 'mac'
     menu.append $ '<span/>',
@@ -1013,6 +1043,10 @@ init_update = ->
       duration: store.get('notificationDuration') ? 3000
       enabled:  store.get('notifications') ? yes
     store.remove 'notificationDuration'
+  updater.update '1.1.0', ->
+    log.info 'Updating general settings for 1.1.0'
+    store.set 'shortcuts',
+      enabled: store.get('shortcuts') ? yes
 
 # Initialize the settings related to statistical information.
 initStatistics = ->
@@ -1426,6 +1460,7 @@ ext = window.ext = new class Extension extends utils.Class
         anchor:        {}
         menu:          {}
         notifications: {}
+        shortcuts:     {}
         stats:         {}
         templates:     []
         toolbar:       {}
@@ -1440,7 +1475,9 @@ ext = window.ext = new class Extension extends utils.Class
       store.modify 'notifications', (notifications) ->
         notifications.duration ?= 3000
         notifications.enabled  ?= yes
-      store.init 'shortcuts', on
+      store.modify 'shortcuts', (shortcuts) ->
+        shortcuts.enabled ?= yes
+        shortcuts.paste   ?= no
       initTemplates()
       initToolbar()
       initStatistics()
@@ -1563,6 +1600,7 @@ ext = window.ext = new class Extension extends utils.Class
     buildPopup()
     @updateContextMenu()
     updateStatistics()
+    updateHotkeys()
 
   # Update the toolbar/browser action depending on the current settings.
   updateToolbar: ->

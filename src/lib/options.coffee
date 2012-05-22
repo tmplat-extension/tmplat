@@ -59,15 +59,17 @@ bindTemplateSaveEvent = (selector, type, assign, callback) ->
 # Update the options page with the values from the current settings.
 load = ->
   log.trace()
-  anchor = store.get 'anchor'
-  menu   = store.get 'menu'
-  $('#analytics').attr    'checked', 'checked' if store.get 'analytics'
-  $('#anchorTarget').attr 'checked', 'checked' if anchor.target
-  $('#anchorTitle').attr  'checked', 'checked' if anchor.title
-  $('#menuEnabled').attr  'checked', 'checked' if menu.enabled
-  $('#menuOptions').attr  'checked', 'checked' if menu.options
-  $('#menuPaste').attr    'checked', 'checked' if menu.paste
-  $('#shortcuts').attr    'checked', 'checked' if store.get 'shortcuts'
+  anchor    = store.get 'anchor'
+  menu      = store.get 'menu'
+  shortcuts = store.get 'shortcuts'
+  $('#analytics').attr        'checked', 'checked' if store.get 'analytics'
+  $('#anchorTarget').attr     'checked', 'checked' if anchor.target
+  $('#anchorTitle').attr      'checked', 'checked' if anchor.title
+  $('#menuEnabled').attr      'checked', 'checked' if menu.enabled
+  $('#menuOptions').attr      'checked', 'checked' if menu.options
+  $('#menuPaste').attr        'checked', 'checked' if menu.paste
+  $('#shortcutsEnabled').attr 'checked', 'checked' if shortcuts.enabled
+  $('#shortcutsPaste').attr   'checked', 'checked' if shortcuts.paste
   loadControlEvents()
   loadSaveEvents()
   loadImages()
@@ -83,7 +85,11 @@ loadControlEvents = ->
   $('#menuEnabled').change( ->
     groups = $('#menuOptions').parents('.control-group').first()
     groups = groups.add $('#menuPaste').parents('.control-group').first()
-    if $(this).is ':checked' then groups.show() else groups.hide()
+    if $(this).is ':checked' then groups.slideDown() else groups.slideUp()
+  ).change()
+  $('#shortcutsEnabled').change( ->
+    groups = $('#shortcutsPaste').parents('.control-group').first()
+    if $(this).is ':checked' then groups.slideDown() else groups.slideUp()
   ).change()
 
 # Update the developer tools section of the options page with the current
@@ -211,11 +217,14 @@ loadSaveEvents = ->
     ext.updateContextMenu()
     key = key[0].toUpperCase() + key.substr 1
     analytics.track 'Context Menu', 'Changed', key, Number value
-  $('#shortcuts').change ->
-    enabled = $(this).is ':checked'
-    log.debug "Changing keyboard shortcuts to '#{enabled}'"
-    store.set 'shortcuts', enabled
-    analytics.track 'General', 'Changed', 'Keyboard Shortcuts', Number enabled
+  bindSaveEvent '#shortcutsEnabled, #shortcutsPaste', 'change', 'shortcuts',
+    (key) ->
+      value = @is ':checked'
+      log.debug "Changing keyboard shortcuts #{key} to '#{value}'"
+      value
+  , (jel, key, value) ->
+    key = key[0].toUpperCase() + key.substr 1
+    analytics.track 'Keyboard Shortcuts', 'Changed', key, Number value
 
 # Update the templates section of the options page with the current settings.
 loadTemplates = ->

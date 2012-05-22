@@ -176,22 +176,35 @@
                     <label class="checkbox span5 tight-left">
                       <input type="checkbox" id="menuPaste">
                       <span i18n-content="opt_menu_paste_text"></span>
-                      <p class="help-block" i18n-content="opt_menu_paste_sub_text"></p>
+                      <p class="help-block" i18n-content="opt_protected_sub_text"></p>
+                    </label>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend i18n-content="opt_shortcuts_header"></legend>
+                <div class="control-group">
+                  <label class="control-label" for="shortcutsEnabled" i18n-content="opt_shortcuts_enabled_label"></label>
+                  <div class="controls">
+                    <label class="checkbox span5 tight-left">
+                      <input type="checkbox" id="shortcutsEnabled">
+                      <span i18n-content="opt_shortcuts_enabled_text"></span>
+                    </label>
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label" for="shortcutsPaste" i18n-content="opt_shortcuts_paste_label"></label>
+                  <div class="controls">
+                    <label class="checkbox span5 tight-left">
+                      <input type="checkbox" id="shortcutsPaste">
+                      <span i18n-content="opt_shortcuts_paste_text"></span>
+                      <p class="help-block" i18n-content="opt_protected_sub_text"></p>
                     </label>
                   </div>
                 </div>
               </fieldset>
               <fieldset>
                 <legend i18n-content="opt_misc_header"></legend>
-                <div class="control-group">
-                  <label class="control-label" for="shortcuts" i18n-content="opt_shortcut_label"></label>
-                  <div class="controls">
-                    <label class="checkbox span5 tight-left">
-                      <input type="checkbox" id="shortcuts">
-                      <span i18n-content="opt_shortcut_text"></span>
-                    </label>
-                  </div>
-                </div>
                 <div class="control-group">
                   <label class="control-label" for="analytics" i18n-content="opt_analytics_label"></label>
                   <div class="controls">
@@ -936,6 +949,10 @@
                           <tr>
                             <td>shortcuts</td>
                             <td i18n-content="opt_guide_options_shortcuts_text"></td>
+                          </tr>
+                          <tr>
+                            <td>shortcutsPaste<span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_options_shortcuts_paste_text"></td>
                           </tr>
                           <tr>
                             <td>toolbarClose</td>

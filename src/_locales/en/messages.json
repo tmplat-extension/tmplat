@@ -1662,7 +1662,7 @@
     }
   },
   "opt_guide_options_menu_paste_text": {
-    "message": "Whether or not the Template output is automatically pasted into a contextual (right-clicked) field",
+    "message": "Whether or not the Template output is automatically pasted into the field where the context (right-click) menu was activated",
     "description": "Description of the menuPaste variable on the Guide tab of the Options page under the Options section."
   },
   "opt_guide_options_notification_duration_text": {
@@ -1672,6 +1672,10 @@
   "opt_guide_options_notifications_text": {
     "message": "Whether or not the option to show desktop notifications is enabled",
     "description": "Description of the notifications variable on the Guide tab of the Options page under the Options section."
+  },
+  "opt_guide_options_shortcuts_paste_text": {
+    "message": "Whether or not the Template output is automatically pasted into the field where the keyboard shortcut was detected",
+    "description": "Description of the shortcutsPaste variable on the Guide tab of the Options page under the Options section."
   },
   "opt_guide_options_shortcuts_text": {
     "message": "Whether or not the option to allow keyboard shortcuts is enabled",
@@ -2551,20 +2555,6 @@
     "message": "Automatically Paste",
     "description": "Label for the Automatically Paste field on the General tab of the Options page under the Context Menu section."
   },
-  "opt_menu_paste_sub_text": {
-    "message": "This is not available on internal Chrome pages or the $O_LINK_WEBSTORE$Chrome Web Store$C_LINK$",
-    "description": "Help text for the Automatically Paste field on the General tab of the Options page under the Context Menu section.",
-    "placeholders": {
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_link_webstore": {
-        "content": "<a href=\"https://chrome.google.com/webstore\" target=\"_blank\">",
-        "example": "<a href=\"https://chrome.google.com/webstore\">"
-      }
-    }
-  },
   "opt_menu_paste_text": {
     "message": "Paste the Template result into the right-clicked editable field",
     "description": "Text for the Automatically Paste field on the General tab of the Options page under the Context Menu section."
@@ -2611,13 +2601,39 @@
     "message": "Automatically hide desktop notifications after this time",
     "description": "Text for the Notification Duration field on the General tab of the Options page under the Desktop Notifications section."
   },
-  "opt_shortcut_label": {
-    "message": "Keyboard Shortcuts",
-    "description": "Label for the Keyboard Shortcuts field on the General tab of the Options page under the Miscellaneous section."
+  "opt_protected_sub_text": {
+    "message": "This is not available on internal Chrome pages or the $O_LINK_WEBSTORE$Chrome Web Store$C_LINK$",
+    "description": "Help text for fields on the Options page whose functionality does not work on protected pages.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_webstore": {
+        "content": "<a href=\"https://chrome.google.com/webstore\" target=\"_blank\">",
+        "example": "<a href=\"https://chrome.google.com/webstore\">"
+      }
+    }
   },
-  "opt_shortcut_text": {
-    "message": "Keyboard shortcuts can be used to access templates",
-    "description": "Text for the Keyboard Shortcuts field on the General tab of the Options page under the Miscellaneous section."
+  "opt_shortcuts_header": {
+    "message": "Keyboard Shortcuts",
+    "description": "Header for the Keyboard Shortcuts section on the General tab of the Options page."
+  },
+  "opt_shortcuts_enabled_label": {
+    "message": "Hotkeys",
+    "description": "Label for the Hotkeys field on the General tab of the Options page under the Keyboard Shortcuts section."
+  },
+  "opt_shortcuts_enabled_text": {
+    "message": "Templates are accessible using keyboard shortcuts",
+    "description": "Text for the Hotkeys field on the General tab of the Options page under the Keyboard Shortcuts section."
+  },
+  "opt_shortcuts_paste_label": {
+    "message": "Automatically Paste",
+    "description": "Label for the Automatically Paste field on the General tab of the Options page under the Keyboard Shortcuts section."
+  },
+  "opt_shortcuts_paste_text": {
+    "message": "Paste the Template result into the editable field where the hotkey was used",
+    "description": "Text for the Automatically Paste field on the General tab of the Options page under the Keyboard Shortcuts section."
   },
   "opt_template_content_label": {
     "message": "Content",
