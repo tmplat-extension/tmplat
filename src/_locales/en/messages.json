@@ -2774,8 +2774,8 @@
     "description": "Text for the Template button in the Action field on the General tab of the Options page under the Toolbar Behaviour section.",
     "placeholders": {
       "icon": {
-        "content": "<i class=\"icon-screenshot\"></i>",
-        "example": "<i class=\"icon-screenshot\"></i>"
+        "content": "<i class=\"icon-bookmark\"></i>",
+        "example": "<i class=\"icon-bookmark\"></i>"
       }
     }
   },

@@ -517,7 +517,7 @@ onRequest = (request, sender, sendResponse) ->
         result.success = no
       if result.success
         ext.notification.title       = i18n.get 'result_good_title'
-        ext.notification.titleStyle  = 'color: #050'
+        ext.notification.titleStyle  = 'color: #468847'
         ext.notification.description = result.message ?
           i18n.get 'result_good_description', result.template.title
         ext.copy result.contents
@@ -529,7 +529,7 @@ onRequest = (request, sender, sendResponse) ->
         sendResponse? contents: result.contents
       else
         ext.notification.title       = i18n.get 'result_bad_title'
-        ext.notification.titleStyle  = 'color: #A00'
+        ext.notification.titleStyle  = 'color: #B94A48'
         ext.notification.description = result.message ?
           i18n.get 'result_bad_description', result.template.title
         showNotification()

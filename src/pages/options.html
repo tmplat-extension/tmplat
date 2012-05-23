@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title i18n-content="name"></title>
-    <link rel="stylesheet" href="../vendor/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/options.css">
     <script src="../vendor/jquery.min.js"></script>
     <script src="../vendor/bootstrap.min.js"></script>
@@ -29,7 +29,7 @@
               <li><a id="general_nav" tabify="#general_tab" i18n-content="opt_general_header"></a></li>
               <li><a id="templates_nav" tabify="#templates_tab" i18n-content="opt_template_header"></a></li>
               <li><a id="shorteners_nav" tabify="#shorteners_tab" i18n-content="opt_url_shortener_header"></a></li>
-              <li><a id="guide_nav" tabify="#guide_tab" data-placement="bottom" i18n-values="title:opt_guide_header"><i class="icon-question-sign icon-white"></i></a></li>
+              <li><a id="guide_nav" tabify="#guide_tab" i18n-content="opt_guide_header"></a></li>
               <li><a id="tools_nav" data-placement="bottom" i18n-values="title:opt_tools_header"><i class="icon-cog icon-white"></i></a></li>
             </ul>
           </div>
@@ -43,7 +43,7 @@
             <form class="form-horizontal">
               <fieldset>
                 <legend i18n-content="opt_anchor_header"></legend>
-                <p class="gap-top" i18n-content="opt_anchor_text"></p>
+                <p i18n-content="opt_anchor_text"></p>
                 <div class="control-group">
                   <label class="control-label" for="anchorTitle" i18n-content="opt_anchor_title_label"></label>
                   <div class="controls">
@@ -82,8 +82,7 @@
                   <div class="controls">
                     <div class="span5 tight-left">
                       <label class="input-append gap-bottom">
-                        <input class="span1" id="notificationDuration" max="60" min="0" size="1" step="1" type="number">
-                        <span class="add-on" i18n-content="opt_notification_duration_add_on_text"></span>
+                        <input class="input-mini" id="notificationDuration" max="60" min="0" size="1" step="1" type="number"><span class="add-on" i18n-content="opt_notification_duration_add_on_text"></span>
                       </label>
                       <label for="notificationDuration">
                         <span i18n-content="opt_notification_duration_text"></span>
@@ -111,7 +110,7 @@
                       <label class="control-label" for="toolbarKey" i18n-content="opt_toolbar_key_label"></label>
                       <div class="controls">
                         <label class="span5 tight-bottom tight-left">
-                          <select id="toolbarKey" size="1"></select>
+                          <select id="toolbarKey" class="input-large" size="1"></select>
                           <p class="tight-bottom" i18n-content="opt_toolbar_key_text"></p>
                         </label>
                       </div>
@@ -226,7 +225,7 @@
             <form class="form-vertical">
               <fieldset>
                 <legend i18n-content="opt_template_header"></legend>
-                <div class="row control-group gap-top">
+                <div class="row control-group">
                   <div class="span4">
                     <select class="span4" id="templates" size="5"></select>
                   </div>
@@ -244,7 +243,7 @@
                 <div class="row control-group">
                   <label class="span1 control-label" for="template_image" i18n-content="opt_template_image_label"></label>
                   <div class="span3 controls">
-                    <select id="template_image" class="span2"></select>
+                    <select id="template_image" class="input-medium"></select>
                     <img id="template_image_preview" width="16" height="16">
                   </div>
                 </div>
@@ -255,8 +254,7 @@
                   </label>
                   <div class="span3 controls">
                     <div class="input-prepend">
-                      <span class="add-on" id="template_shortcut_modifier"></span>
-                      <input class="span1" id="template_shortcut" type="text" maxlength="1">
+                      <span class="add-on" id="template_shortcut_modifier"></span><input class="input-mini" id="template_shortcut" type="text" maxlength="1">
                     </div>
                   </div>
                 </div>
@@ -292,8 +290,8 @@
                   <p i18n-content="opt_delete_wizard_text_2"></p>
                 </div>
                 <div class="modal-footer">
-                  <button class="btn btn-primary delete_yes_btn" i18n-content="opt_wizard_yes_button"></button>
                   <button class="btn btn-danger delete_no_btn" i18n-content="opt_wizard_no_button"></button>
+                  <button class="btn btn-primary delete_yes_btn" i18n-content="opt_wizard_yes_button"></button>
                 </div>
               </div>
               <div id="import_con" class="hide modal">
@@ -303,17 +301,20 @@
                 </div>
                 <div class="import_con_stage1">
                   <div class="modal-body">
-                    <div class="import_error alert alert-error">&nbsp;</div>
+                    <div class="import_error alert alert-error">
+                      <a class="close">&times;</a>
+                      <span>&nbsp;</span>
+                    </div>
                     <p i18n-content="opt_import_wizard_stage_1_text"></p>
                     <textarea class="import_content span5" rows="6" readonly></textarea>
                   </div>
                   <div class="modal-footer">
                     <div class="pull-left">
+                      <button class="btn btn-info import_paste_btn" i18n-content="opt_import_wizard_paste_button"></button>
                       <input class="import_file_btn" type="file">
-                      <button class="btn import_paste_btn" i18n-content="opt_import_wizard_paste_button"></button>
                     </div>
+                    <button class="btn import_no_btn" i18n-content="opt_wizard_close_button"></button>
                     <button class="btn btn-primary import_yes_btn" i18n-content="opt_wizard_continue_button"></button>
-                    <button class="btn btn-danger import_no_btn" i18n-content="opt_wizard_close_button"></button>
                   </div>
                 </div>
                 <div class="import_con_stage2">
@@ -324,12 +325,12 @@
                   </div>
                   <div class="modal-footer">
                     <div class="pull-left">
-                      <button class="btn import_deselect_all_btn" i18n-content="opt_wizard_none_button"></button>
-                      <button class="btn import_select_all_btn" i18n-content="opt_wizard_all_button"></button>
+                      <button class="btn btn-info import_select_all_btn" i18n-content="opt_wizard_all_button"></button>
+                      <button class="btn btn-info import_deselect_all_btn" i18n-content="opt_wizard_none_button"></button>
                     </div>
-                    <button class="btn btn-primary import_final_btn" i18n-content="opt_import_wizard_import_button"></button>
+                    <button class="btn import_close_btn" i18n-content="opt_wizard_close_button"></button>
                     <button class="btn import_back_btn" i18n-content="opt_wizard_back_button"></button>
-                    <button class="btn btn-danger import_close_btn" i18n-content="opt_wizard_close_button"></button>
+                    <button class="btn btn-primary import_final_btn" i18n-content="opt_import_wizard_import_button"></button>
                   </div>
                 </div>
                 <div class="import_con_stage3">
@@ -337,8 +338,8 @@
                     <p i18n-content="opt_import_wizard_stage_3_text"></p>
                   </div>
                   <div class="modal-footer">
-                    <button class="btn btn-primary import_back_btn" i18n-content="opt_wizard_back_button"></button>
-                    <button class="btn btn-danger import_close_btn" i18n-content="opt_wizard_close_button"></button>
+                    <button class="btn import_close_btn" i18n-content="opt_wizard_close_button"></button>
+                    <button class="btn import_back_btn" i18n-content="opt_wizard_back_button"></button>
                   </div>
                 </div>
               </div>
@@ -354,26 +355,29 @@
                   </div>
                   <div class="modal-footer">
                     <div class="pull-left">
-                      <button class="btn export_deselect_all_btn" i18n-content="opt_wizard_none_button"></button>
-                      <button class="btn export_select_all_btn" i18n-content="opt_wizard_all_button"></button>
+                      <button class="btn btn-info export_select_all_btn" i18n-content="opt_wizard_all_button"></button>
+                      <button class="btn btn-info export_deselect_all_btn" i18n-content="opt_wizard_none_button"></button>
                     </div>
+                    <button class="btn export_no_btn" i18n-content="opt_wizard_close_button"></button>
                     <button class="btn btn-primary export_yes_btn" disabled i18n-content="opt_wizard_continue_button"></button>
-                    <button class="btn btn-danger export_no_btn" i18n-content="opt_wizard_close_button"></button>
                   </div>
                 </div>
                 <div class="export_con_stage2">
                   <div class="modal-body">
-                    <div class="export_error alert alert-error">&nbsp;</div>
+                    <div class="export_error alert alert-error">
+                      <a class="close">&times;</a>
+                      <span>&nbsp;</span>
+                    </div>
                     <p i18n-content="opt_export_wizard_stage_2_text"></p>
                     <textarea class="export_content span5" rows="6" readonly></textarea>
                   </div>
                   <div class="modal-footer">
                     <div class="pull-left">
-                      <button class="btn export_save_btn" i18n-content="opt_export_wizard_save_as_button"></button>
-                      <button class="btn export_copy_btn" i18n-content="opt_export_wizard_copy_button"></button>
+                      <button class="btn btn-info export_copy_btn" i18n-content="opt_export_wizard_copy_button"></button>
+                      <button class="btn btn-info export_save_btn" i18n-content="opt_export_wizard_save_as_button"></button>
                     </div>
+                    <button class="btn export_close_btn" i18n-content="opt_wizard_close_button"></button>
                     <button class="btn export_back_btn" i18n-content="opt_wizard_back_button"></button>
-                    <button class="btn btn-danger export_close_btn" i18n-content="opt_wizard_close_button"></button>
                   </div>
                 </div>
               </div>
@@ -450,7 +454,7 @@
                     <div class="control-group">
                       <label class="control-label" for="yourlsUrl" i18n-content="opt_url_shortener_url_label"></label>
                       <div class="span4 controls">
-                        <input type="url" id="yourlsUrl" class="span3" />
+                        <input type="url" id="yourlsUrl" class="input-xlarge" />
                         <p class="help-block" i18n-content="opt_url_shortener_url_yourls_sub_text"></p>
                       </div>
                     </div>
@@ -469,7 +473,7 @@
                         <div class="control-group">
                           <label class="control-label" for="yourlsSignature" i18n-content="opt_url_shortener_signature_label"></label>
                           <div class="span4 controls">
-                            <input type="password" id="yourlsSignature" class="span3" />
+                            <input type="password" id="yourlsSignature" class="input-small" />
                             <p class="help-block" i18n-content="opt_url_shortener_signature_yourls_sub_text"></p>
                           </div>
                         </div>
@@ -478,13 +482,13 @@
                         <div class="control-group">
                           <label class="control-label" for="yourlsUsername" i18n-content="opt_url_shortener_username_label"></label>
                           <div class="span4 controls">
-                            <input type="text" id="yourlsUsername" class="span3" />
+                            <input type="text" id="yourlsUsername" class="input-small" />
                           </div>
                         </div>
                         <div class="control-group">
                           <label class="control-label" for="yourlsPassword" i18n-content="opt_url_shortener_password_label"></label>
                           <div class="span4 controls">
-                            <input type="password" id="yourlsPassword" class="span3" />
+                            <input type="password" id="yourlsPassword" class="input-small" />
                             <p class="help-block" i18n-content="opt_url_shortener_password_yourls_sub_text"></p>
                           </div>
                         </div>
@@ -723,7 +727,7 @@
                         <tfoot>
                           <tr>
                             <td colspan="2">
-                              <ul class="unstyled bottomless">
+                              <ul class="unstyled tight-bottom">
                                 <li><a data-goto="#guide_standard_ref_1" id="guide_standard_ref_1" class="ref-link">&sup1;</a> <em i18n-content="opt_guide_definitions_footer_1"></em></li>
                                 <li><a data-goto="#guide_standard_ref_2" id="guide_standard_ref_2" class="ref-link">&sup2;</a> <em i18n-content="opt_guide_definitions_footer_2"></em></li>
                               </ul>
@@ -852,7 +856,7 @@
                         <tfoot>
                           <tr>
                             <td colspan="3">
-                              <ul class="unstyled bottomless">
+                              <ul class="unstyled tight-bottom">
                                 <li><a data-goto="#guide_lists_objects_ref_1" id="guide_lists_objects_ref_1" class="ref-link">&sup1;</a> <em i18n-content="opt_guide_definitions_footer_1"></em></li>
                               </ul>
                             </td>
@@ -1139,7 +1143,7 @@
                         <tfoot>
                           <tr>
                             <td colspan="3">
-                              <ul class="unstyled bottomless">
+                              <ul class="unstyled tight-bottom">
                                 <li><a data-goto="#guide_operations_ref_1" id="guide_operations_ref_1" class="ref-link">&sup1;</a> <em i18n-content="opt_guide_definitions_footer_1"></em></li>
                               </ul>
                             </td>
@@ -1220,7 +1224,7 @@
                 <label class="control-label" for="loggerLevel" i18n-content="opt_logger_level_label"></label>
                 <div class="controls">
                   <label class="span3 tight-left">
-                    <select id="loggerLevel" size="1"></select>
+                    <select id="loggerLevel" class="input-medium" size="1"></select>
                     <p class="tight-bottom" i18n-content="opt_logger_level_text"></p>
                     <p class="help-block" i18n-content="opt_logger_level_sub_text"></p>
                   </label>
@@ -1230,7 +1234,7 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-danger tools_close_btn" i18n-content="opt_wizard_close_button"></button>
+          <button class="btn tools_close_btn" i18n-content="opt_wizard_close_button"></button>
         </div>
       </div>
     </div>

@@ -385,6 +385,9 @@ loadTemplateControlEvents = ->
 loadTemplateExportEvents = ->
   log.trace()
   templates = $ '#templates'
+  # Simulate alert closing without removing alert from the DOM.
+  $('.export_error .close').on 'click', ->
+    $('.export_error').find('span').html('&nbsp').end().hide()
   # Restore the previous view in the export process.
   $('.export_back_btn').click ->
     log.info 'Going back to previous export stage'
@@ -401,7 +404,7 @@ loadTemplateExportEvents = ->
     $('.export_con_stage1').show()
     $('.export_con_stage2').hide()
     $('.export_content').val ''
-    $('.export_error').html('&nbsp;').hide()
+    $('.export_error').find('span').html('&nbsp;').end().hide()
     templates.find('option').each ->
       opt = $ this
       list.append $ '<option/>',
@@ -440,7 +443,7 @@ loadTemplateExportEvents = ->
     # Export-specific error handler for dealing with the FileSystem API.
     exportErrorHandler = fileErrorHandler (message) ->
       log.error message
-      $('.export_error').text(message).show()
+      $('.export_error').find('span').text(message).end().show()
     # Write the contents of the text area in to a temporary file and then
     # prompt the user to download it.
     window.webkitRequestFileSystem window.TEMPORARY, 1024 * 1024, (fs) ->
@@ -452,7 +455,7 @@ loadTemplateExportEvents = ->
           fileWriter.onerror    = exportErrorHandler
           fileWriter.onwriteend = ->
             if done
-              $('.export_error').html('&nbsp;').hide()
+              $('.export_error').find('span').html('&nbsp;').end().hide()
               window.location.href = fileEntry.toURL()
             else
               done = yes
@@ -471,7 +474,7 @@ loadTemplateExportEvents = ->
     keys  = []
     items.filter(':selected').each -> keys.push $(this).val()
     $('.export_content').val createExport keys
-    $('.export_error').html('&nbsp;').hide()
+    $('.export_error').find('span').html('&nbsp;').end().hide()
     $('.export_con_stage1').hide()
     $('.export_con_stage2').show()
 
@@ -480,6 +483,9 @@ loadTemplateImportEvents = ->
   log.trace()
   data      = null
   templates = $ '#templates'
+  # Simulate alert closing without removing alert from the DOM.
+  $('.import_error .close').on 'click', ->
+    $('.import_error').find('span').html('&nbsp').end().hide()
   # Restore the previous view in the import process.
   $('.import_back_btn').click ->
     log.info 'Going back to previous import stage'
@@ -493,7 +499,7 @@ loadTemplateImportEvents = ->
     $('.import_con_stage1').show()
     $('.import_con_stage2, .import_con_stage3').hide()
     $('.import_content').val ''
-    $('.import_error').html('&nbsp;').hide()
+    $('.import_error').find('span').html('&nbsp;').end().hide()
     $('.import_file_btn').val ''
     $('#import_con').modal 'show'
   # Enable/disable the finalize button depending on whether or not any
@@ -514,11 +520,11 @@ loadTemplateImportEvents = ->
     reader = new FileReader()
     reader.onerror = fileErrorHandler (message) ->
       log.error message
-      $('.import_error').text(message).show()
+      $('.import_error').find('span').text(message).end().show()
     reader.onload = (evt) ->
       result = evt.target.result
       log.debug 'Following contents were read from the file...', result
-      $('.import_error').html('&nbsp;').hide()
+      $('.import_error').find('span').html('&nbsp;').end().hide()
       $('.import_content').val result
     reader.readAsText file
   # Finalize the import process.
@@ -562,12 +568,12 @@ loadTemplateImportEvents = ->
     $this = $(this).attr 'disabled', 'disabled'
     list  = $ '.import_con_list'
     str   = $this.parents('.import_con_stage1').find('.import_content').val()
-    $('.import_error').html('&nbsp;').hide()
+    $('.import_error').find('span').html('&nbsp;').end().hide()
     try
       importData = createImport str
     catch error
       log.error error
-      $('.import_error').text(error).show()
+      $('.import_error').find('span').text(error).end().show()
     if importData
       data = readImport importData
       if data.templates.length is 0
@@ -641,14 +647,14 @@ loadToolbar = ->
 loadToolbarControlEvents = ->
   log.trace()
   # Bind a click event to listen for changes to the button selection.
-  $('#toolbarPopup button').click( ->
+  $('#toolbarPopup .btn').click( ->
     $(".#{$(this).attr 'id'}").show().siblings().hide()
   ).filter('.active').click()
 
 # Bind the event handlers required for persisting toolbar behaviour changes.
 loadToolbarSaveEvents = ->
   log.trace()
-  $('#toolbarPopup button').click ->
+  $('#toolbarPopup .btn').click ->
     popup = not $('#toolbarPopupYes').hasClass 'active'
     store.modify 'toolbar', (toolbar) -> toolbar.popup = popup
     ext.updateToolbar()
