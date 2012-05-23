@@ -280,6 +280,11 @@ getBrowserVersion = ->
     idx = str.indexOf ' '
     if idx is -1 then str else str.substring 0, idx
 
+# Build list of shortcuts used by enabled templates.
+getHotkeys = ->
+  log.trace()
+  template.shortcut for template in ext.templates when template.enabled
+
 # Derive the path of the image used by `template`.
 getImagePathForTemplate = (template, relative) ->
   log.trace()
@@ -368,7 +373,11 @@ onRequest = (request, sender, sendResponse) ->
     return sendResponse?()
   # Info requests are simple, just send some useful information back. Done!
   if request.type in ['info', 'version']
-    return sendResponse? id: EXTENSION_ID, version: ext.version
+    return sendResponse?(
+      hotkeys: getHotkeys()
+      id:      EXTENSION_ID
+      version: ext.version
+    )
   data       = null
   editable   = no
   id         = utils.keyGen '', null, 't', no
@@ -584,10 +593,7 @@ showNotification = ->
 # (where valid) of each Chrome window.
 updateHotkeys = ->
   log.trace()
-  # Build list of shortcuts used by enabled templates.
-  hotkeys = (
-    template.shortcut for template in ext.templates when template.enabled
-  )
+  hotkeys = getHotkeys()
   # Create a runner to help manage the asynchronous aspect.
   runner = new utils.Runner()
   runner.push chrome.windows, 'getAll', null, (windows) ->
