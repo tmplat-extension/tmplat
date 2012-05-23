@@ -616,28 +616,28 @@ updateHotkeys = ->
 updateProgress = (percent, toggle) ->
   log.trace()
   popup       = $ chrome.extension.getViews(type: 'popup')[0]
-  item        = if popup.length then $ '#item',    popup[0].document else $()
-  loadDiv     = if popup.length then $ '#loadDiv', popup[0].document else $()
-  progressBar = loadDiv.find '.progress .bar'
+  templates   = if popup.length then $ '#templates', popup[0].document else $()
+  loading     = if popup.length then $ '#loading',   popup[0].document else $()
+  progressBar = loading.find '.bar'
   # Update the progress bar to display the specified `percent`.
   if toggle?
     if toggle
       progressBar.css 'width', '0%'
-      popup.delay          POPUP_DELAY
-      item.hide().delay    POPUP_DELAY
-      loadDiv.show().delay POPUP_DELAY
+      popup.delay            POPUP_DELAY
+      templates.hide().delay POPUP_DELAY
+      loading.show().delay   POPUP_DELAY
     else
       if store.get 'toolbar.close'
         popup.queue -> popup.dequeue()[0]?.close()
       else
-        loadDiv.queue ->
-          loadDiv.hide().dequeue()
+        loading.queue ->
+          loading.hide().dequeue()
           progressBar.css 'width', '0%'
-        item.queue -> item.show().dequeue()
+        templates.queue -> templates.show().dequeue()
   else if percent?
-    popup.dequeue().delay   POPUP_DELAY
-    item.dequeue().delay    POPUP_DELAY
-    loadDiv.dequeue().delay POPUP_DELAY
+    popup.dequeue().delay     POPUP_DELAY
+    templates.dequeue().delay POPUP_DELAY
+    loading.dequeue().delay   POPUP_DELAY
     progressBar.css 'width', "#{percent}%"
 
 # Update the statistical information.
@@ -946,39 +946,27 @@ transformData = (data, deleteOld) ->
 # Build the HTML to populate the popup with to optimize popup loading times.
 buildPopup = ->
   log.trace()
-  item     = $ '<div id="item"/>'
-  itemList = $ '<ul id="itemList"/>'
-  loadDiv  = $ '<div id="loadDiv"/>'
-  loadDiv.append $('<div/>',
-    class: 'progress progress-info progress-striped active'
-  ).append $ '<div/>',
-    class: 'bar'
-    style: 'width: 100%'
+  items = $()
   # Generate the HTML for each template.
   for template in ext.templates when template.enabled
-    itemList.append buildTemplate template
+    items = items.add buildTemplate template
   # Add a generic message to state the obvious... that the list is empty.
-  if itemList.find('li').length is 0
-    itemList.append $('<li/>').append $('<div/>',
-      class: 'menu'
-      style: "background-image: url('../images/spacer.gif')"
-    ).append $ '<span/>',
-      class: 'text'
-      style: 'margin-left: 0'
-      text:  i18n.get 'empty'
+  if items.length is 0
+    items = items.add $('<li/>',
+      class: 'empty'
+    ).append($ '<i/>',
+      class: 'icon-'
+    ).append " #{i18n.get 'empty'}"
   # Add a link to the options page if the user doesn't mind.
   if store.get 'toolbar.options'
-    itemList.append $('<li/>',
+    items = items.add $ '<li/>', class: 'divider'
+    anchor = $ '<a/>',
       class:       'options'
       'data-type': 'options'
-    ).append $('<div/>',
-      class: 'menu'
-      style: "background-image: url('../images/tmpl_tools.png')"
-    ).append $ '<span/>',
-      class: 'text'
-      text:  i18n.get 'options'
-  item.append itemList
-  ext.popupHtml = $('<div/>').append(loadDiv, item).html()
+    anchor.append $ '<i/>', class: 'icon-cog'
+    anchor.append " #{i18n.get 'options'}"
+    items = items.add $('<li/>').append anchor
+  ext.templatesHtml = $('<div/>').append(items).html()
 
 # Create an `li` element to represent `template`.  
 # The element should then be inserted in to the `ul` element in the popup page
@@ -986,23 +974,22 @@ buildPopup = ->
 buildTemplate = (template) ->
   log.trace()
   log.debug "Creating popup list item for #{template.title}"
-  image = getImagePathForTemplate template, yes
-  item  = $ '<li/>',
+  # TODO: image = getImagePathForTemplate template, yes
+  image  = ''
+  anchor = $ '<a/>',
     'data-key':  template.key
     'data-type': 'popup'
-  menu  = $ '<div/>',
-    class: 'menu'
-    style: "background-image: url('#{image}')"
-  menu.append $ '<span/>',
-    class: 'text'
-    text:  template.title
-  if store.get 'shortcuts.enabled'
-    modifiers = ext.SHORTCUT_MODIFIERS
-    modifiers = ext.SHORTCUT_MAC_MODIFIERS if ext.isThisPlatform 'mac'
-    menu.append $ '<span/>',
-      class: 'shortcut',
-      html:  if template.shortcut then modifiers + template.shortcut else ''
-  item.append menu
+  if template.shortcut and store.get 'shortcuts.enabled'
+    if ext.isThisPlatform 'mac'
+      modifiers = ext.SHORTCUT_MAC_MODIFIERS
+    else
+      modifiers = ext.SHORTCUT_MODIFIERS
+    anchor.append $ '<span/>',
+      class: 'pull-right',
+      html:  "#{modifiers}#{template.shortcut}"
+  anchor.append $ '<i/>', class: "icon-#{image}"
+  anchor.append " #{template.title}"
+  $('<li/>').append anchor
 
 # Initialization functions
 # ------------------------
@@ -1400,14 +1387,14 @@ ext = window.ext = new class Extension extends utils.Class
     title:            ''
     titleStyle:       ''
 
-  # Pre-prepared HTML for the popup to be populated using.  
-  # This should be updated whenever templates are changed/updated in any way as
-  # this is generated to improve performance and load times of the popup frame.
-  popupHtml: ''
-
   # Local copy of templates being used, ordered to match that specified by the
   # user.
   templates: []
+
+  # Pre-prepared HTML for the popup to be populated using.  
+  # This should be updated whenever templates are changed/updated in any way as
+  # this is generated to improve performance and load times of the popup frame.
+  templatesHtml: ''
 
   # Current version of Template.
   version: ''

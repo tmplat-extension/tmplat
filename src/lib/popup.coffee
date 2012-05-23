@@ -25,18 +25,17 @@ popup = window.popup = new class Popup extends utils.Class
     log.info 'Initializing the popup'
     analytics.track 'Frames', 'Displayed', 'Popup'
     # Insert the prepared HTML in to the popup's body and bind click events.
-    document.body.innerHTML = ext.popupHtml
-    for item in document.querySelectorAll '#itemList li'
-      item.addEventListener 'click', popup.sendRequest
-    # Calculate the widest text used by the `div` elements in the popup and
-    # assign it to all of the others.
-    items = document.querySelectorAll '.text'
+    document.getElementById('templates').innerHTML = ext.templatesHtml
+    items = document.querySelectorAll '#templates li > a'
+    item.addEventListener 'click', popup.sendRequest for item in items
+    # Calculate the widest text used by the elements in the popup and assign it
+    # to all of the others.
     for item in items when not width? or item.scrollWidth > width
       width = item.scrollWidth
     item.style.width = "#{width}px" for item in items
     log.debug "Widest textual item in popup is #{width}px"
-    width = document.querySelector('#itemList li').scrollWidth
-    document.querySelector('#loadDiv .progress').style.width = "#{width + 2}px"
+    width = document.querySelector('#templates li').scrollWidth
+    document.getElementById('loading').style.width = "#{width + 2}px"
 
   # Send a request to the background page using the information provided.
   sendRequest: ->
