@@ -106,6 +106,8 @@ task 'dist', 'Create distributable file', ->
   wrench.mkdirSyncRecursive DIST_DIR
   wrench.mkdirSyncRecursive "#{DIST_DIR}/#{TEMP_DIR}"
   wrench.copyDirSyncRecursive TARGET_DIR, "#{DIST_DIR}/#{TEMP_DIR}"
+  for file in fs.readdirSync "#{DIST_DIR}/#{TEMP_DIR}"
+    minify "#{DIST_DIR}/#{TEMP_DIR}/#{file}" if /\.json$/i.test file
   for file in fs.readdirSync "#{DIST_DIR}/#{TEMP_DIR}/lib"
     minify "#{DIST_DIR}/#{TEMP_DIR}/lib/#{file}" if /\.js$/i.test file
   minify "#{DIST_DIR}/#{TEMP_DIR}/#{file}" for file in VENDOR_FILES
@@ -118,7 +120,7 @@ task 'dist', 'Create distributable file', ->
     'cd ../'
   ].join('&&'), (err) ->
     throw err if err
-    wrench.rmdirSyncRecursive "#{DIST_DIR}/#{TEMP_DIR}", yes
+    wrench.rmdirRecursive "#{DIST_DIR}/#{TEMP_DIR}"
 
 task 'docs', 'Create documentation', ->
   console.log 'Generating documentation...'
