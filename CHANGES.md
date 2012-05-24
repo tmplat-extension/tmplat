@@ -1,3 +1,17 @@
+2012.05.25, Version 1.1.0
+
+* [#98](https://github.com/neocotic/template/issues/98): Add option to automatically paste Template output into the input field focused when using a keyboard shortcut (available in templates via the new *"shortcutsPaste"* option)
+* [#98](https://github.com/neocotic/template/issues/98): Change keyboard shortcut detection to `keydown` from `keyup`
+* [#102](https://github.com/neocotic/template/issues/102): Update [manifest version][] to 2
+* [#102](https://github.com/neocotic/template/issues/102): Provide and support a [Content Security Policy][]
+* [#103](https://github.com/neocotic/template/issues/103): Move all CSS and inline styles into individual external files
+* [#104](https://github.com/neocotic/template/issues/104): Update [Bootstrap][] to v2.0.3
+* [#104](https://github.com/neocotic/template/issues/104): Many minor UI fixes and tweaks
+* [#105](https://github.com/neocotic/template/issues/105): Redesign popup to be more consistent with look and feel of the Options page
+* [#105](https://github.com/neocotic/template/issues/105): Replace all template icons with the [Glyphicons][] set included in [Bootstrap][]
+* [#105](https://github.com/neocotic/template/issues/105): Remove toolbar button text/icon editing functionality and make the *"toolbarStyle"* option obsolete
+* Minor fixes and tweaks
+
 2012.05.14, Version 1.0.10
 
 * [#101](https://github.com/neocotic/template/issues/101): Fix bug where *"capitalise"* operation wasn't working
@@ -261,18 +275,22 @@
 * Change images to be more consistent
 
 [bit.ly]: http://bit.ly
+[bootstrap]: http://twitter.github.com/bootstrap
 [character set]: http://www.iana.org/assignments/character-sets
 [chrome 13]: http://code.google.com/chrome/extensions/whats_new.html#13
 [chrome 16]: http://code.google.com/chrome/extensions/whats_new.html#16
 [chrome dev]: http://www.chromium.org/getting-involved/dev-channel
 [coffeescript]: http://coffeescript.org
+[content security policy]: http://code.google.com/chrome/extensions/contentSecurityPolicy.html
 [date-ext]: http://neocotic.com/date-ext
+[glyphicons]: http://glyphicons.com
 [goo.gl]: http://goo.gl
 [ie tab]: https://chrome.google.com/webstore/detail/hehijbfgiekmjfkfjpbkbammjbdenadd
 [ie tab classic]: https://chrome.google.com/webstore/detail/miedgcmlgpmdagojnnbemlkgidepfjfi
 [ie tab multi (enhance)]: https://chrome.google.com/webstore/detail/fnfnbeppfinmnjnjhedifcfllpcfgeea
 [inline installation]: http://code.google.com/chrome/webstore/docs/inline_installation.html
 [jquery]: http://jquery.com
+[manifest version]: http://code.google.com/chrome/extensions/manifestVersion.html
 [markdown]: http://en.wikipedia.org/wiki/Markdown
 [mit license]: http://www.opensource.org/licenses/mit-license.php
 [mozilla gecko tab]: https://chrome.google.com/webstore/detail/icoloanbecehinobmflpeglknkplbfbm
