@@ -45,6 +45,7 @@ pre {overflow: auto; white-space: pre; word-wrap: normal;}
 .popover-content > p > p {margin-bottom: 5px;}
 .popover-content > p > p:last-child {margin-bottom: 0;}
 .popover-inner {text-align: left;}
+#template_image_preview {margin-left: 6px; vertical-align: baseline;}
 .help {cursor: help;}
 .tight {margin: 0;}
 .tight-top {margin-top: 0;}
