@@ -22,7 +22,7 @@ BLACKLIST         = []
 DEFAULT_TEMPLATES = [
     content:  '{url}'
     enabled:  yes
-    image:    'tmpl_globe'
+    image:    'globe'
     index:    0
     key:      'PREDEFINED.00001'
     readOnly: yes
@@ -32,7 +32,7 @@ DEFAULT_TEMPLATES = [
   ,
     content:  '{#shorten}{url}{/shorten}'
     enabled:  yes
-    image:    'tmpl_link'
+    image:    'tag'
     index:    1
     key:      'PREDEFINED.00002'
     readOnly: yes
@@ -44,7 +44,7 @@ DEFAULT_TEMPLATES = [
  target=\"_blank\"{/anchorTarget}{#anchorTitle}
  title=\"{{title}}\"{/anchorTitle}>{{title}}</a>"
     enabled:  yes
-    image:    'tmpl_html'
+    image:    'font'
     index:    2
     key:      'PREDEFINED.00003'
     readOnly: yes
@@ -54,7 +54,7 @@ DEFAULT_TEMPLATES = [
   ,
     content:  '{#encode}{url}{/encode}'
     enabled:  yes
-    image:    'tmpl_component'
+    image:    'lock'
     index:    3
     key:      'PREDEFINED.00004'
     readOnly: yes
@@ -64,7 +64,7 @@ DEFAULT_TEMPLATES = [
   ,
     content:  '[url={url}]{title}[/url]'
     enabled:  no
-    image:    'tmpl_discussion'
+    image:    'comment'
     index:    5
     key:      'PREDEFINED.00005'
     readOnly: yes
@@ -74,7 +74,7 @@ DEFAULT_TEMPLATES = [
   ,
     content:  '[{title}]({url})'
     enabled:  no
-    image:    'tmpl_discussion'
+    image:    'asterisk'
     index:    4
     key:      'PREDEFINED.00006'
     readOnly: yes
@@ -84,11 +84,11 @@ DEFAULT_TEMPLATES = [
   ,
     content:  '{selectionMarkdown}'
     enabled:  no
-    image:    'tmpl_note'
+    image:    'italic'
     index:    6
     key:      'PREDEFINED.00007'
     readOnly: yes
-    shortcut: 'C'
+    shortcut: 'I'
     title:    i18n.get 'default_template_markdown_selection'
     usage:    0
 ]
@@ -284,16 +284,6 @@ getBrowserVersion = ->
 getHotkeys = ->
   log.trace()
   template.shortcut for template in ext.templates when template.enabled
-
-# Derive the path of the image used by `template`.
-getImagePathForTemplate = (template, relative) ->
-  log.trace()
-  path = if relative then '../' else ''
-  for image in ext.IMAGES when image is template.image
-    path += "images/#{image}.png"
-    break
-  path += 'images/spacer.gif' if path.length <= 3
-  path
 
 # Derive the operating system being used by the user.
 getOperatingSystem = ->
@@ -839,9 +829,9 @@ buildStandardData = (tab, shortCallback) ->
     decode:                -> (text, render) ->
       decodeURIComponent(render text) ? ''
     depth:                 screen.colorDepth
-    # Deprecated since 1.0.0, use `anchorTarget` instead.
+    # Deprecated since 1.0.0, use `anchortarget` instead.
     doanchortarget:        -> @anchortarget
-    # Deprecated since 1.0.0, use `anchorTitle` instead.
+    # Deprecated since 1.0.0, use `anchortitle` instead.
     doanchortitle:         -> @anchortitle
     encode:                -> (text, render) ->
       encodeURIComponent(render text) ? ''
@@ -859,7 +849,7 @@ buildStandardData = (tab, shortCallback) ->
       ext.queryUrlShortener((shortener) ->
         shortener.name is 'googl'
       ).oauth.hasAccessToken()
-    # Deprecated since 1.0.0, use `googlAccount` instead.
+    # Deprecated since 1.0.0, use `googlaccount` instead.
     googloauth:            -> @googlaccount()
     java:                  navigator.javaEnabled()
     length:                -> (text, render) ->
@@ -873,7 +863,7 @@ buildStandardData = (tab, shortCallback) ->
     notifications:         notifications.enabled
     notificationduration:  notifications.duration * .001
     offline:               not navigator.onLine
-    # Deprecated since 0.1.0.2, use `originalUrl` instead.
+    # Deprecated since 0.1.0.2, use `originalurl` instead.
     originalsource:        -> @originalurl
     originaltitle:         tab.title or url.attr 'source'
     originalurl:           tab.url
@@ -904,16 +894,17 @@ buildStandardData = (tab, shortCallback) ->
       render(text).replace(/([ \t]+)/g, ' ').trim()
     title:                 ctab.title or url.attr 'source'
     toolbarclose:          toolbar.close
-    # Deprecated since 1.0.0, use the inverse of `toolbarPopup` instead.
+    # Deprecated since 1.0.0, use the inverse of `toolbarpopup` instead.
     toolbarfeature:        -> not @toolbarpopup
-    # Deprecated since 1.0.0, use `toolbarStyle` instead.
+    # Deprecated since 1.0.0, use `toolbarstyle` instead.
     toolbarfeaturedetails: -> @toolbarstyle
-    # Deprecated since 1.0.0, use `toolbarKey` instead.
+    # Deprecated since 1.0.0, use `toolbarkey` instead.
     toolbarfeaturename:    -> @toolbarkey
     toolbarkey:            toolbar.key
     toolbaroptions:        toolbar.options
     toolbarpopup:          toolbar.popup
-    toolbarstyle:          toolbar.style
+    # Obsolete since 1.1.0, functionality has been removed.
+    toolbarstyle:          no
     trim:                  -> (text, render) ->
       render(text).trim()
     trimleft:              -> (text, render) ->
@@ -963,7 +954,7 @@ buildPopup = ->
     anchor = $ '<a/>',
       class:       'options'
       'data-type': 'options'
-    anchor.append $ '<i/>', class: 'icon-cog'
+    anchor.append $ '<i/>', class: icons.getClass 'cog'
     anchor.append " #{i18n.get 'options'}"
     items = items.add $('<li/>').append anchor
   ext.templatesHtml = $('<div/>').append(items).html()
@@ -974,8 +965,6 @@ buildPopup = ->
 buildTemplate = (template) ->
   log.trace()
   log.debug "Creating popup list item for #{template.title}"
-  # TODO: image = getImagePathForTemplate template, yes
-  image  = ''
   anchor = $ '<a/>',
     'data-key':  template.key
     'data-type': 'popup'
@@ -987,7 +976,7 @@ buildTemplate = (template) ->
     anchor.append $ '<span/>',
       class: 'pull-right',
       html:  "#{modifiers}#{template.shortcut}"
-  anchor.append $ '<i/>', class: "icon-#{image}"
+  anchor.append $ '<i/>', class: icons.getClass template.image
   anchor.append " #{template.title}"
   $('<li/>').append anchor
 
@@ -1127,17 +1116,17 @@ initTemplates_update = ->
     for name in names when typeof name is 'string'
       store.rename "feat_#{name}_template", "feat_#{name}_content"
       image = store.get "feat_#{name}_image"
-      switch typeof image
-        when 'string'
-          if image in ['', 'spacer.gif', 'spacer.png']
-            store.set "feat_#{name}_image", 0
-          else
-            for img, i in ext.IMAGES
-              oldImg = img.replace /^tmpl/, 'feat'
-              if "#{oldImg}.png" is image
-                store.set "feat_#{name}_image", i + 1
-                break
-        else store.set "feat_#{name}_image", 0
+      if typeof image is 'string'
+        if image in ['', 'spacer.gif', 'spacer.png']
+          store.set "feat_#{name}_image", 0
+        else
+          for legacy, i in icons.LEGACY
+            oldImg = legacy.image.replace /^tmpl/, 'feat'
+            if "#{oldImg}.png" is image
+              store.set "feat_#{name}_image", i + 1
+              break
+      else
+        store.set "feat_#{name}_image", 0
   updater.update '1.0.0', ->
     log.info 'Updating template settings for 1.0.0'
     names              = store.remove('features') ? []
@@ -1146,13 +1135,10 @@ initTemplates_update = ->
     for name in names when typeof name is 'string'
       image = store.remove("feat_#{name}_image") ? 0
       image--
-      if image < 0
-        image = ''
+      image = if image >= 0
+        icons.fromLegacy(image)?.name or ''
       else
-        for img, i in ext.IMAGES when i is image
-          image = img
-          break
-        image = '' if typeof image isnt 'string'
+        ''
       key = ext.getKeyForName name
       if toolbarFeatureName is name
         if store.exists 'toolbar'
@@ -1173,6 +1159,51 @@ initTemplates_update = ->
     store.remove store.search(
       /^feat_.*_(content|enabled|image|index|readonly|shortcut|title)$/
     )...
+  updater.update '1.1.0', ->
+    log.info 'Updating template settings for 1.1.0'
+    store.modify 'templates', (templates) ->
+      for template in templates
+        if template.readOnly
+          break for base in DEFAULT_TEMPLATES when base.key is template.key
+          switch template.key
+            when 'PREDEFINED.00001'
+              template.image = if template.image is 'tmpl_globe'
+                base.image
+              else
+                icons.fromLegacy(template.image)?.name or ''
+            when 'PREDEFINED.00002'
+              template.image = if template.image is 'tmpl_link'
+                base.image
+              else
+                icons.fromLegacy(template.image)?.name or ''
+            when 'PREDEFINED.00003'
+              template.image = if template.image is 'tmpl_html'
+                base.image
+              else
+                icons.fromLegacy(template.image)?.name or ''
+            when 'PREDEFINED.00004'
+              template.image = if template.image is 'tmpl_component'
+                base.image
+              else
+                icons.fromLegacy(template.image)?.name or ''
+            when 'PREDEFINED.00005'
+              template.image = if template.image is 'tmpl_discussion'
+                base.image
+              else
+                icons.fromLegacy(template.image)?.name or ''
+            when 'PREDEFINED.00006'
+              template.image = if template.image is 'tmpl_discussion'
+                base.image
+              else
+                icons.fromLegacy(template.image)?.name or ''
+            when 'PREDEFINED.00007'
+              template.image = if template.image is 'tmpl_note'
+                base.image
+              else
+                icons.fromLegacy(template.image)?.name or ''
+            else template.image = base.image
+        else
+          template.image = icons.fromLegacy(template.image)?.name or ''
 
 # Initialize the settings related to the toolbar/browser action.
 initToolbar = ->
@@ -1183,7 +1214,6 @@ initToolbar = ->
     toolbar.key     ?= 'PREDEFINED.00001'
     toolbar.options ?= yes
     toolbar.popup   ?= yes
-    toolbar.style   ?= no
   ext.updateToolbar()
 
 # Handle the conversion/removal of older version of settings that may have been
@@ -1200,6 +1230,9 @@ initToolbar_update = ->
       toolbar.style = store.get('toolbarFeatureDetails') ? no
     store.remove 'toolbarFeature',     'toolbarFeatureDetails',
                  'toolbarFeatureName', 'toolbarPopup'
+  updater.update '1.1.0', ->
+    log.info 'Updating toolbar settings for 1.1.0'
+    store.modify 'toolbar', (toolbar) -> delete toolbar.style
 
 # Initialize the settings related to the supported URL Shortener services.
 initUrlShorteners = ->
@@ -1348,22 +1381,6 @@ ext = window.ext = new class Extension extends utils.Class
 
   # Public constants
   # ----------------
-
-  # List of images available as template icons.
-  IMAGES: [
-    'tmpl_auction',         'tmpl_bug',        'tmpl_clipboard'
-    'tmpl_clipboard_empty', 'tmpl_component',  'tmpl_cookies'
-    'tmpl_discussion',      'tmpl_globe',      'tmpl_google'
-    'tmpl_heart',           'tmpl_html',       'tmpl_key'
-    'tmpl_lightbulb',       'tmpl_lighthouse', 'tmpl_lightning'
-    'tmpl_link',            'tmpl_linux',      'tmpl_mail'
-    'tmpl_newspaper',       'tmpl_note',       'tmpl_page'
-    'tmpl_plugin',          'tmpl_rss',        'tmpl_script'
-    'tmpl_scull',           'tmpl_sign',       'tmpl_siren'
-    'tmpl_star',            'tmpl_support',    'tmpl_tag'
-    'tmpl_tags',            'tmpl_thumb_down', 'tmpl_thumb_up'
-    'tmpl_tools'
-  ]
 
   # String representation of the keyboard modifiers listened to by Template on
   # Windows/Linux platforms.
@@ -1598,27 +1615,15 @@ ext = window.ext = new class Extension extends utils.Class
   # Update the toolbar/browser action depending on the current settings.
   updateToolbar: ->
     log.trace()
-    image    = 'images/icon_19.png'
     key      = store.get 'toolbar.key'
     template = getTemplateWithKey key if key
-    title    = i18n.get 'name'
     buildPopup()
     if not template or store.get 'toolbar.popup'
       log.info 'Configuring toolbar to display popup'
-      # Use Template's details to style the browser action.
-      chrome.browserAction.setIcon  path:  utils.url image
-      chrome.browserAction.setTitle title: title
       # Show the popup when the browser action is clicked.
       chrome.browserAction.setPopup popup: 'pages/popup.html'
     else
       log.info 'Configuring toolbar to activate specified template'
-      # Replace Template's details with that of the selected template.
-      if store.get 'toolbar.style'
-        image = getImagePathForTemplate template if template.image isnt 0
-        title = template.title
-      # Potentially change the style of the browser action.
-      chrome.browserAction.setIcon  path:  utils.url image
-      chrome.browserAction.setTitle title: title
       # Disable the popup, effectively enabling the listener for
       # `chrome.browserAction.onClicked`.
       chrome.browserAction.setPopup popup: ''

@@ -21,7 +21,6 @@ input[type="file"]:disabled::-webkit-file-upload-button, input[type="file"][disa
 textarea {resize: vertical;}
 .navbar-fixed-top .brand {padding-right: 0; padding-left: 0; margin-left: 20px; float: right; font-weight: bold; color: black; text-shadow: 0 1px 0 rgba(255, 255, 255, .1), 0 0 30px rgba(255, 255, 255, .125); -webkit-transition: all .2s linear; -moz-transition: all .2s linear; transition: all .2s linear;}
 #template_content {resize: both;}
-#template_image_preview {margin-left: 10px; vertical-align: baseline;}
 #template_shortcut {text-transform: uppercase;}
 #moveDown_btn, #moveUp_btn {display: block; margin-top: 11px;}
 .form-vertical .control-group > label, .control-label {padding-top: 6px;}

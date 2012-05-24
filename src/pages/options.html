@@ -12,6 +12,7 @@
     <script src="../lib/i18n.js"></script>
     <script src="../lib/log.js"></script>
     <script src="../lib/analytics.js"></script>
+    <script src="../lib/icons.js"></script>
     <script src="../lib/options.js"></script>
   </head>
   <body id="top">
@@ -112,16 +113,6 @@
                         <label class="span5 tight-bottom tight-left">
                           <select id="toolbarKey" class="input-large" size="1"></select>
                           <p class="tight-bottom" i18n-content="opt_toolbar_key_text"></p>
-                        </label>
-                      </div>
-                    </div>
-                    <div class="control-group">
-                      <label class="control-label" for="toolbarStyle" i18n-content="opt_toolbar_style_label"></label>
-                      <div class="controls">
-                        <label class="checkbox span5 tight-left">
-                          <input type="checkbox" id="toolbarStyle">
-                          <span i18n-content="opt_toolbar_style_text"></span>
-                          <p class="help-block" i18n-content="opt_toolbar_style_sub_text"></p>
                         </label>
                       </div>
                     </div>
@@ -243,8 +234,9 @@
                 <div class="row control-group">
                   <label class="span1 control-label" for="template_image" i18n-content="opt_template_image_label"></label>
                   <div class="span3 controls">
-                    <select id="template_image" class="input-medium"></select>
-                    <img id="template_image_preview" width="16" height="16">
+                    <div class="input-prepend">
+                      <span class="add-on"><i id="template_image_preview" class="icon-"></i></span><select id="template_image" class="input-medium"></select>
+                    </div>
                   </div>
                 </div>
                 <div class="row control-group">
@@ -973,10 +965,6 @@
                           <tr>
                             <td>toolbarPopup</td>
                             <td i18n-content="opt_guide_options_toolbar_popup_text"></td>
-                          </tr>
-                          <tr>
-                            <td>toolbarStyle</td>
-                            <td i18n-content="opt_guide_options_toolbar_style_text"></td>
                           </tr>
                           <tr>
                             <td>yourls</td>

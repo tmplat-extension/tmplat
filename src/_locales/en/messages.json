@@ -59,6 +59,570 @@
     "message": "Some values are missing or corrupt!",
     "description": "Error message for when imported data isn't structured correctly."
   },
+  "icon_adjust": {
+    "message": "Adjust",
+    "description": "Adjust icon caption."
+  },
+  "icon_align_center": {
+    "message": "Align Center",
+    "description": "Align Center icon caption."
+  },
+  "icon_align_justify": {
+    "message": "Align Justify",
+    "description": "Align Justify icon caption."
+  },
+  "icon_align_left": {
+    "message": "Align Left",
+    "description": "Align Left icon caption."
+  },
+  "icon_align_right": {
+    "message": "Align Right",
+    "description": "Align Right icon caption."
+  },
+  "icon_arrow_down": {
+    "message": "Arrow Down",
+    "description": "Arrow Down icon caption."
+  },
+  "icon_arrow_left": {
+    "message": "Arrow Left",
+    "description": "Arrow Left icon caption."
+  },
+  "icon_arrow_right": {
+    "message": "Arrow Right",
+    "description": "Arrow Right icon caption."
+  },
+  "icon_arrow_up": {
+    "message": "Arrow Up",
+    "description": "Arrow Up icon caption."
+  },
+  "icon_asterisk": {
+    "message": "Asterisk",
+    "description": "Asterisk icon caption."
+  },
+  "icon_backward": {
+    "message": "Backward",
+    "description": "Backward icon caption."
+  },
+  "icon_ban_circle": {
+    "message": "Ban Circle",
+    "description": "Ban Circle icon caption."
+  },
+  "icon_barcode": {
+    "message": "Barcode",
+    "description": "Barcode icon caption."
+  },
+  "icon_bell": {
+    "message": "Bell",
+    "description": "Bell icon caption."
+  },
+  "icon_bold": {
+    "message": "Bold",
+    "description": "Bold icon caption."
+  },
+  "icon_book": {
+    "message": "Book",
+    "description": "Book icon caption."
+  },
+  "icon_bookmark": {
+    "message": "Bookmark",
+    "description": "Bookmark icon caption."
+  },
+  "icon_briefcase": {
+    "message": "Briefcase",
+    "description": "Briefcase icon caption."
+  },
+  "icon_bullhorn": {
+    "message": "Bullhorn",
+    "description": "Bullhorn icon caption."
+  },
+  "icon_calendar": {
+    "message": "Calendar",
+    "description": "Calendar icon caption."
+  },
+  "icon_camera": {
+    "message": "Camera",
+    "description": "Camera icon caption."
+  },
+  "icon_certificate": {
+    "message": "Certificate",
+    "description": "Certificate icon caption."
+  },
+  "icon_check": {
+    "message": "Check",
+    "description": "Check icon caption."
+  },
+  "icon_chevron_down": {
+    "message": "Chevron Down",
+    "description": "Chevron Down icon caption."
+  },
+  "icon_chevron_left": {
+    "message": "Chevron Left",
+    "description": "Chevron Left icon caption."
+  },
+  "icon_chevron_right": {
+    "message": "Chevron Right",
+    "description": "Chevron Right icon caption."
+  },
+  "icon_chevron_up": {
+    "message": "Chevron Up",
+    "description": "Chevron Up icon caption."
+  },
+  "icon_circle_arrow_down": {
+    "message": "Circle Arrow Down",
+    "description": "Circle Arrow Down icon caption."
+  },
+  "icon_circle_arrow_left": {
+    "message": "Circle Arrow Left",
+    "description": "Circle Arrow Left icon caption."
+  },
+  "icon_circle_arrow_right": {
+    "message": "Circle Arrow Right",
+    "description": "Circle Arrow Right icon caption."
+  },
+  "icon_circle_arrow_up": {
+    "message": "Circle Arrow Up",
+    "description": "Circle Arrow Up icon caption."
+  },
+  "icon_cog": {
+    "message": "Cog",
+    "description": "Cog icon caption."
+  },
+  "icon_comment": {
+    "message": "Comment",
+    "description": "Comment icon caption."
+  },
+  "icon_download": {
+    "message": "Download",
+    "description": "Download icon caption."
+  },
+  "icon_download_alt": {
+    "message": "Download (alt)",
+    "description": "Download (alt) icon caption."
+  },
+  "icon_edit": {
+    "message": "Edit",
+    "description": "Edit icon caption."
+  },
+  "icon_eject": {
+    "message": "Eject",
+    "description": "Eject icon caption."
+  },
+  "icon_envelope": {
+    "message": "Envelope",
+    "description": "Envelope icon caption."
+  },
+  "icon_exclamation_sign": {
+    "message": "Exclamation Sign",
+    "description": "Exclamation Sign icon caption."
+  },
+  "icon_eye_close": {
+    "message": "Eye Closed",
+    "description": "Eye Closed icon caption."
+  },
+  "icon_eye_open": {
+    "message": "Eye Open",
+    "description": "Eye Open icon caption."
+  },
+  "icon_facetime_video": {
+    "message": "Facetime Video",
+    "description": "Facetime Video icon caption."
+  },
+  "icon_fast_backward": {
+    "message": "Fast Backward",
+    "description": "Fast Backward icon caption."
+  },
+  "icon_fast_forward": {
+    "message": "Fast Forward",
+    "description": "Fast Forward icon caption."
+  },
+  "icon_file": {
+    "message": "File",
+    "description": "File icon caption."
+  },
+  "icon_film": {
+    "message": "Film",
+    "description": "Film icon caption."
+  },
+  "icon_filter": {
+    "message": "Filter",
+    "description": "Filter icon caption."
+  },
+  "icon_fire": {
+    "message": "Fire",
+    "description": "Fire icon caption."
+  },
+  "icon_flag": {
+    "message": "Flag",
+    "description": "Flag icon caption."
+  },
+  "icon_folder_close": {
+    "message": "Folder Closed",
+    "description": "Folder Closed icon caption."
+  },
+  "icon_folder_open": {
+    "message": "Folder Open",
+    "description": "Folder Open icon caption."
+  },
+  "icon_font": {
+    "message": "Font",
+    "description": "Font icon caption."
+  },
+  "icon_forward": {
+    "message": "Forward",
+    "description": "Forward icon caption."
+  },
+  "icon_fullscreen": {
+    "message": "Fullscreen",
+    "description": "Fullscreen icon caption."
+  },
+  "icon_gift": {
+    "message": "Gift",
+    "description": "Gift icon caption."
+  },
+  "icon_glass": {
+    "message": "Glass",
+    "description": "Glass icon caption."
+  },
+  "icon_globe": {
+    "message": "Globe",
+    "description": "Globe icon caption."
+  },
+  "icon_hand_down": {
+    "message": "Hand Down",
+    "description": "Hand Down icon caption."
+  },
+  "icon_hand_left": {
+    "message": "Hand Left",
+    "description": "Hand Left icon caption."
+  },
+  "icon_hand_right": {
+    "message": "Hand Right",
+    "description": "Hand Right icon caption."
+  },
+  "icon_hand_up": {
+    "message": "Hand Up",
+    "description": "Hand Up icon caption."
+  },
+  "icon_hdd": {
+    "message": "HDD",
+    "description": "HDD icon caption."
+  },
+  "icon_headphones": {
+    "message": "Headphones",
+    "description": "Headphones icon caption."
+  },
+  "icon_heart": {
+    "message": "Heart",
+    "description": "Heart icon caption."
+  },
+  "icon_home": {
+    "message": "Home",
+    "description": "Home icon caption."
+  },
+  "icon_inbox": {
+    "message": "Inbox",
+    "description": "Inbox icon caption."
+  },
+  "icon_indent_left": {
+    "message": "Indent Left",
+    "description": "Indent Left icon caption."
+  },
+  "icon_indent_right": {
+    "message": "Indent Right",
+    "description": "Indent Right icon caption."
+  },
+  "icon_info_sign": {
+    "message": "Info Sign",
+    "description": "Info Sign icon caption."
+  },
+  "icon_italic": {
+    "message": "Italic",
+    "description": "Italic icon caption."
+  },
+  "icon_leaf": {
+    "message": "Leaf",
+    "description": "Leaf icon caption."
+  },
+  "icon_list": {
+    "message": "List",
+    "description": "List icon caption."
+  },
+  "icon_list_alt": {
+    "message": "List (alt)",
+    "description": "List (alt) icon caption."
+  },
+  "icon_lock": {
+    "message": "Lock",
+    "description": "Lock icon caption."
+  },
+  "icon_magnet": {
+    "message": "Magnet",
+    "description": "Magnet icon caption."
+  },
+  "icon_map_marker": {
+    "message": "Map Marker",
+    "description": "Map Marker icon caption."
+  },
+  "icon_minus": {
+    "message": "Minus",
+    "description": "Minus icon caption."
+  },
+  "icon_minus_sign": {
+    "message": "Minus Sign",
+    "description": "Minus Sign icon caption."
+  },
+  "icon_move": {
+    "message": "Move",
+    "description": "Move icon caption."
+  },
+  "icon_music": {
+    "message": "Music",
+    "description": "Music icon caption."
+  },
+  "icon_none": {
+    "message": "None",
+    "description": "None icon caption."
+  },
+  "icon_off": {
+    "message": "off",
+    "description": "off icon caption."
+  },
+  "icon_ok": {
+    "message": "OK",
+    "description": "OK icon caption."
+  },
+  "icon_ok_circle": {
+    "message": "OK Circle",
+    "description": "OK Circle icon caption."
+  },
+  "icon_ok_sign": {
+    "message": "OK Sign",
+    "description": "OK Sign icon caption."
+  },
+  "icon_pause": {
+    "message": "Pause",
+    "description": "Pause icon caption."
+  },
+  "icon_pencil": {
+    "message": "Pencil",
+    "description": "Pencil icon caption."
+  },
+  "icon_picture": {
+    "message": "Picture",
+    "description": "Picture icon caption."
+  },
+  "icon_plane": {
+    "message": "Plane",
+    "description": "Plane icon caption."
+  },
+  "icon_play": {
+    "message": "Play",
+    "description": "Play icon caption."
+  },
+  "icon_play_circle": {
+    "message": "Play Circle",
+    "description": "Play Circle icon caption."
+  },
+  "icon_plus": {
+    "message": "Plus",
+    "description": "Plus icon caption."
+  },
+  "icon_plus_sign": {
+    "message": "Plus Sign",
+    "description": "Plus Sign icon caption."
+  },
+  "icon_print": {
+    "message": "Print",
+    "description": "Print icon caption."
+  },
+  "icon_qrcode": {
+    "message": "QR Code",
+    "description": "QR Code icon caption."
+  },
+  "icon_question_sign": {
+    "message": "Question Sign",
+    "description": "Question Sign icon caption."
+  },
+  "icon_random": {
+    "message": "Random",
+    "description": "Random icon caption."
+  },
+  "icon_refresh": {
+    "message": "Refresh",
+    "description": "Refresh icon caption."
+  },
+  "icon_remove": {
+    "message": "Remove",
+    "description": "Remove icon caption."
+  },
+  "icon_remove_circle": {
+    "message": "Remove Circle",
+    "description": "Remove Circle icon caption."
+  },
+  "icon_remove_sign": {
+    "message": "Remove Sign",
+    "description": "Remove Sign icon caption."
+  },
+  "icon_repeat": {
+    "message": "Repeat",
+    "description": "Repeat icon caption."
+  },
+  "icon_resize_full": {
+    "message": "Resize Full",
+    "description": "Resize Full icon caption."
+  },
+  "icon_resize_horizontal": {
+    "message": "Resize Horizontal",
+    "description": "Resize Horizontal icon caption."
+  },
+  "icon_resize_small": {
+    "message": "Resize Small",
+    "description": "Resize Small icon caption."
+  },
+  "icon_resize_vertical": {
+    "message": "Resize Vertical",
+    "description": "Resize Vertical icon caption."
+  },
+  "icon_retweet": {
+    "message": "Retweet",
+    "description": "Retweet icon caption."
+  },
+  "icon_road": {
+    "message": "Road",
+    "description": "Road icon caption."
+  },
+  "icon_screenshot": {
+    "message": "Screenshot",
+    "description": "Screenshot icon caption."
+  },
+  "icon_search": {
+    "message": "Search",
+    "description": "Search icon caption."
+  },
+  "icon_share": {
+    "message": "Share",
+    "description": "Share icon caption."
+  },
+  "icon_share_alt": {
+    "message": "Share (alt)",
+    "description": "Share (alt) icon caption."
+  },
+  "icon_shopping_cart": {
+    "message": "Shopping Cart",
+    "description": "Shopping Cart icon caption."
+  },
+  "icon_signal": {
+    "message": "Signal",
+    "description": "Signal icon caption."
+  },
+  "icon_star": {
+    "message": "Star",
+    "description": "Star icon caption."
+  },
+  "icon_star_empty": {
+    "message": "Star Empty",
+    "description": "Star Empty icon caption."
+  },
+  "icon_step_backward": {
+    "message": "Step Backward",
+    "description": "Step Backward icon caption."
+  },
+  "icon_step_forward": {
+    "message": "Step Forward",
+    "description": "Step Forward icon caption."
+  },
+  "icon_stop": {
+    "message": "Stop",
+    "description": "Stop icon caption."
+  },
+  "icon_tag": {
+    "message": "Tag",
+    "description": "Tag icon caption."
+  },
+  "icon_tags": {
+    "message": "Tags",
+    "description": "Tags icon caption."
+  },
+  "icon_tasks": {
+    "message": "Tasks",
+    "description": "Tasks icon caption."
+  },
+  "icon_text_height": {
+    "message": "Text Height",
+    "description": "Text Height icon caption."
+  },
+  "icon_text_width": {
+    "message": "Text Width",
+    "description": "Text Width icon caption."
+  },
+  "icon_th": {
+    "message": "Thumbnails",
+    "description": "Thumbnails icon caption."
+  },
+  "icon_th_large": {
+    "message": "Thumbnails Large",
+    "description": "Thumbnails Large icon caption."
+  },
+  "icon_th_list": {
+    "message": "Thumbnails List",
+    "description": "Thumbnails List icon caption."
+  },
+  "icon_thumbs_down": {
+    "message": "Thumbs Down",
+    "description": "Thumbs Down icon caption."
+  },
+  "icon_thumbs_up": {
+    "message": "Thumbs Up",
+    "description": "Thumbs Up icon caption."
+  },
+  "icon_time": {
+    "message": "Time",
+    "description": "Time icon caption."
+  },
+  "icon_tint": {
+    "message": "Tint",
+    "description": "Tint icon caption."
+  },
+  "icon_trash": {
+    "message": "Trash",
+    "description": "Trash icon caption."
+  },
+  "icon_upload": {
+    "message": "Upload",
+    "description": "Upload icon caption."
+  },
+  "icon_user": {
+    "message": "User",
+    "description": "User icon caption."
+  },
+  "icon_volume_down": {
+    "message": "Volume Down",
+    "description": "Volume Down icon caption."
+  },
+  "icon_volume_off": {
+    "message": "Volume Off",
+    "description": "Volume Off icon caption."
+  },
+  "icon_volume_up": {
+    "message": "Volume Up",
+    "description": "Volume Up icon caption."
+  },
+  "icon_warning_sign": {
+    "message": "Warning Sign",
+    "description": "Warning Sign icon caption."
+  },
+  "icon_wrench": {
+    "message": "Wrench",
+    "description": "Wrench icon caption."
+  },
+  "icon_zoom_in": {
+    "message": "Zoom In",
+    "description": "Zoom In icon caption."
+  },
+  "icon_zoom_out": {
+    "message": "Zoom Out",
+    "description": "Zoom Out icon caption."
+  },
   "name": {
     "message": "Template",
     "description": "Name of the extension."
@@ -1721,10 +2285,6 @@
     "message": "Whether or not the popup is shown when the toolbar button is clicked",
     "description": "Description of the toolbarPopup variable on the Guide tab of the Options page under the Options section."
   },
-  "opt_guide_options_toolbar_style_text": {
-    "message": "Whether or not the toolbar button's design is based on a template",
-    "description": "Description of the toolbarStyle variable on the Guide tab of the Options page under the Options section."
-  },
   "opt_guide_options_yourls_authentication_text": {
     "message": "The authentication used for the $O_LINK_YOURLS$YOURLS$C_LINK$ service (e.g. $EXAMPLE_1$, $EXAMPLE_2$, or nothing if $EXAMPLE_3$)",
     "description": "Description of the yourlsAuthentication variable on the Guide tab of the Options page under the Options section.",
@@ -2797,36 +3357,6 @@
     "message": "Show a popup when the toolbar icon is clicked",
     "description": "Hover text for the Popup button in the Action field on the General tab of the Options page under the Toolbar Behaviour section."
   },
-  "opt_toolbar_style_label": {
-    "message": "Icon Style",
-    "description": "Label for the Icon Style field on the General tab of the Options page under the Toolbar Behaviour section. This is only visible when Template is the selected Action."
-  },
-  "opt_toolbar_style_sub_text": {
-    "message": "The following aspects of the toolbar icon will be changed;$O_LIST$$O_ITEM$Hover over text will be the template's title$C_ITEM$$O_ITEM$Icon will be the template's image if it has one$C_ITEM$$C_LIST$",
-    "description": "Help text for the Icon Style field on the General tab of the Options page under the Toolbar Behaviour section. This is only visible when Template is the selected Action.",
-    "placeholders": {
-      "c_item": {
-        "content": "</li>",
-        "example": "</li>"
-      },
-      "c_list": {
-        "content": "</ul>",
-        "example": "</ul>"
-      },
-      "o_item": {
-        "content": "<li>",
-        "example": "<li>"
-      },
-      "o_list": {
-        "content": "<ul>",
-        "example": "<ul>"
-      }
-    }
-  },
-  "opt_toolbar_style_text": {
-    "message": "Change the style of the toolbar icon to reflect the selected template",
-    "description": "Text for the Icon Style field on the General tab of the Options page under the Toolbar Behaviour section. This is only visible when Template is the selected Action."
-  },
   "opt_tools_header": {
     "message": "Developer Tools",
     "description": "Header for the Developer Tools dialog on the Options page. This is also displayed as a hover text for the cog symbol in the page's navigation."
@@ -3114,145 +3644,5 @@
   "shortener_yourls": {
     "message": "YOURLS",
     "description": "Name of the YOURLS URL shortener used throughout the extension."
-  },
-  "tmpl_auction": {
-    "message": "Auction",
-    "description": "Auction icon caption."
-  },
-  "tmpl_bug": {
-    "message": "Bug",
-    "description": "Bug icon caption."
-  },
-  "tmpl_clipboard": {
-    "message": "Clipboard",
-    "description": "Clipboard icon caption."
-  },
-  "tmpl_clipboard_empty": {
-    "message": "Clipboard (Empty)",
-    "description": "Clipboard (Empty) icon caption."
-  },
-  "tmpl_component": {
-    "message": "Component",
-    "description": "Component icon caption."
-  },
-  "tmpl_cookies": {
-    "message": "Cookies",
-    "description": "Cookies icon caption."
-  },
-  "tmpl_discussion": {
-    "message": "Discussion",
-    "description": "Discussion icon caption."
-  },
-  "tmpl_globe": {
-    "message": "Globe",
-    "description": "Globe icon caption."
-  },
-  "tmpl_google": {
-    "message": "Google",
-    "description": "Google icon caption."
-  },
-  "tmpl_heart": {
-    "message": "Heart",
-    "description": "Heart icon caption."
-  },
-  "tmpl_html": {
-    "message": "HTML",
-    "description": "HTML icon caption."
-  },
-  "tmpl_key": {
-    "message": "Key",
-    "description": "Key icon caption."
-  },
-  "tmpl_lightbulb": {
-    "message": "Lightbulb",
-    "description": "Lightbulb icon caption."
-  },
-  "tmpl_lighthouse": {
-    "message": "Lighthouse",
-    "description": "Lighthouse icon caption."
-  },
-  "tmpl_lightning": {
-    "message": "Lightning",
-    "description": "Lightning icon caption."
-  },
-  "tmpl_link": {
-    "message": "Link",
-    "description": "Link icon caption."
-  },
-  "tmpl_linux": {
-    "message": "Linux",
-    "description": "Linux icon caption."
-  },
-  "tmpl_mail": {
-    "message": "Mail",
-    "description": "Mail icon caption."
-  },
-  "tmpl_newspaper": {
-    "message": "Newspaper",
-    "description": "Newspaper icon caption."
-  },
-  "tmpl_none": {
-    "message": "None",
-    "description": "None icon caption."
-  },
-  "tmpl_note": {
-    "message": "Note",
-    "description": "Note icon caption."
-  },
-  "tmpl_page": {
-    "message": "Page",
-    "description": "Page icon caption."
-  },
-  "tmpl_plugin": {
-    "message": "Plugin",
-    "description": "Plugin icon caption."
-  },
-  "tmpl_rss": {
-    "message": "RSS",
-    "description": "RSS icon caption."
-  },
-  "tmpl_script": {
-    "message": "Script",
-    "description": "Script icon caption."
-  },
-  "tmpl_scull": {
-    "message": "Scull",
-    "description": "Scull icon caption."
-  },
-  "tmpl_sign": {
-    "message": "Sign",
-    "description": "Sign icon caption."
-  },
-  "tmpl_siren": {
-    "message": "Siren",
-    "description": "Siren icon caption."
-  },
-  "tmpl_star": {
-    "message": "Star",
-    "description": "Star icon caption."
-  },
-  "tmpl_support": {
-    "message": "Support",
-    "description": "Support icon caption."
-  },
-  "tmpl_tag": {
-    "message": "Tag",
-    "description": "Tag icon caption."
-  },
-  "tmpl_tags": {
-    "message": "Tags",
-    "description": "Tags icon caption."
-  },
-  "tmpl_thumb_down": {
-    "message": "Thumb Down",
-    "description": "Thumb Down icon caption."
-  },
-  "tmpl_thumb_up": {
-    "message": "Thumb Up",
-    "description": "Thumb Up icon caption."
-  },
-  "tmpl_tools": {
-    "message": "Tools",
-    "description": "Tools icon caption."
   }
 }

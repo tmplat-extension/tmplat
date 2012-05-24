@@ -105,23 +105,19 @@ loadImages = ->
   log.trace()
   imagePreview = $ '#template_image_preview'
   images       = $ '#template_image'
-  sorted       = (image for image in ext.IMAGES).sort()
-  $('<option/>',
-    text:  i18n.get 'tmpl_none'
+  images.append $ '<option/>',
+    text:  icons.getMessage()
     value: ''
-  ).appendTo(images).data 'file', 'spacer.gif'
   images.append $ '<option/>',
     disabled: 'disabled'
     text:     '---------------'
-  for image in sorted
-    $('<option/>',
-      text:  i18n.get image
-      value: image
-    ).appendTo(images).data 'file', "#{image}.png"
+  for image in icons.ICONS
+    images.append $ '<option/>',
+      text:  image.getMessage()
+      value: image.name
   images.change ->
     opt = images.find 'option:selected'
-    imagePreview.attr 'src', "../images/#{opt.data 'file'}"
-    imagePreview.removeData('tooltip').tooltip title: opt.text()
+    imagePreview.attr 'class', icons.getClass opt.val()
   images.change()
 
 # Update the logging section of the options page with the current settings.
@@ -638,7 +634,6 @@ loadToolbar = ->
     $('#toolbarPopupNo').addClass 'active'
   $('#toolbarClose').attr   'checked', 'checked' if toolbar.close
   $('#toolbarOptions').attr 'checked', 'checked' if toolbar.options
-  $('#toolbarStyle').attr   'checked', 'checked' if toolbar.style
   updateToolbarTemplates()
   loadToolbarControlEvents()
   loadToolbarSaveEvents()
@@ -660,8 +655,8 @@ loadToolbarSaveEvents = ->
     ext.updateToolbar()
     log.debug "Toolbar popup enabled: #{popup}"
     analytics.track 'Toolbars', 'Changed', 'Behaviour', Number popup
-  bindSaveEvent '#toolbarClose, #toolbarKey, #toolbarOptions, #toolbarStyle',
-   'change', 'toolbar', (key) ->
+  bindSaveEvent '#toolbarClose, #toolbarKey, #toolbarOptions', 'change',
+   'toolbar', (key) ->
     value = if key is 'key' then @val() else @is ':checked'
     log.debug "Changing toolbar #{key} to '#{value}'"
     value
@@ -816,7 +811,7 @@ updateImportedTemplate = (template, existing) ->
     existing.title = template.title if 0 < template.title.length <= 32
   existing.enabled = template.enabled
   # Only allow existing images or *None*.
-  if template.image is '' or template.image in ext.IMAGES
+  if template.image is '' or icons.exists template.image
     existing.image = template.image
   # Only allow valid keyboard shortcuts or *empty*.
   if template.shortcut is '' or isShortcutValid template.shortcut
@@ -979,7 +974,7 @@ addImportedTemplate = (template) ->
       title:    i18n.get 'untitled'
       usage:    template.usage
     # Only allow existing images.
-    newTemplate.image = template.image if template.image in ext.IMAGES
+    newTemplate.image = template.image if icons.exists template.image
     # Only allow valid keyboard shortcuts.
     if isShortcutValid template.shortcut
       newTemplate.shortcut = template.shortcut
@@ -1085,11 +1080,13 @@ readImport = (importData) ->
     # Ensure templates imported from previous versions are valid for 1.0.0+.
     if importData.version < '1.0.0'
       template.image = if template.image > 0
-        ext.IMAGES[template.image - 1]
+        icons.fromLegacy(template.image - 1)?.name or ''
       else
         ''
       template.key   = ext.getKeyForName template.name
       template.usage = 0
+    else if importData.version < '1.1.0'
+      template.image = icons.fromLegacy(template.image)?.name or ''
     if validateImportedTemplate template
       if isKeyNew template.key, keys
         # Attempt to create and add the new template.
