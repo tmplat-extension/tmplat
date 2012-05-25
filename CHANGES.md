@@ -1,3 +1,8 @@
+2012.05.25, Version 1.1.1
+
+* [#106](https://github.com/neocotic/template/issues/106): No longer remove `btn-primary` class from inline installation buttons on homepage
+* Minor i18n tweaks
+
 2012.05.25, Version 1.1.0
 
 * [#98](https://github.com/neocotic/template/issues/98): Add option to automatically paste Template output into the input field focused when using a keyboard shortcut (available in templates via the new *"shortcutsPaste"* option)
