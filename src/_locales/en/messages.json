@@ -64,8 +64,8 @@
     "description": "Adjust icon caption."
   },
   "icon_align_center": {
-    "message": "Align Center",
-    "description": "Align Center icon caption."
+    "message": "Align Centre",
+    "description": "Align Centre icon caption."
   },
   "icon_align_justify": {
     "message": "Align Justify",
@@ -384,8 +384,8 @@
     "description": "None icon caption."
   },
   "icon_off": {
-    "message": "off",
-    "description": "off icon caption."
+    "message": "Off",
+    "description": "Off icon caption."
   },
   "icon_ok": {
     "message": "OK",
