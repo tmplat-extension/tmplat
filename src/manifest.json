@@ -35,6 +35,7 @@
   , "content_security_policy": "script-src 'self' https://ssl.google-analytics.com https://widget.uservoice.com; object-src 'self'"
   , "default_locale": "en"
   , "description": "__MSG_description__"
+  , "homepage_url": "http://neocotic.com/template"
   , "icons": {
         "16": "images/icon_16.png"
       , "19": "images/icon_19.png"
