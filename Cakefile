@@ -70,20 +70,29 @@ compile = (path) ->
   ws.end coffee.compile(fs.readFileSync path, ENCODING), ENCODING
   ws.on 'close', -> fs.unlinkSync path
 
-minify = (path) ->
+minify = (path, handler) ->
   switch path.match(/\.([^\.]+)$/)[1].toLowerCase()
     when 'js'
       ast = jsp.parse fs.readFileSync path, ENCODING
       ast = pro.ast_mangle ast
       ast = pro.ast_squeeze ast
+      handler? ast
       ws = fs.createWriteStream path, encoding: ENCODING, mode: MODE
       ws.write COPYRIGHT
       ws.end pro.gen_code ast
     when 'json'
       obj = JSON.parse fs.readFileSync path, ENCODING
+      handler? obj
       ws = fs.createWriteStream path, encoding: ENCODING, mode: MODE
       ws.end JSON.stringify obj
     else throw "Cannot minify file: #{path}"
+
+minifyMessages = (messages) ->
+  for message in Object.keys messages
+    delete messages[message].description
+    if messages[message].placeholders?
+      for placeholder of messages[message].placeholders
+        delete messages[message].placeholders[placeholder].example
 
 # Tasks
 # -----
@@ -112,7 +121,8 @@ task 'dist', 'Create distributable file', ->
     minify "#{DIST_DIR}/#{TEMP_DIR}/lib/#{file}" if /\.js$/i.test file
   minify "#{DIST_DIR}/#{TEMP_DIR}/#{file}" for file in VENDOR_FILES
   for locale in LOCALES
-    minify "#{DIST_DIR}/#{TEMP_DIR}/#{LOCALES_DIR}/#{locale}/#{I18N_FILE}"
+    minify "#{DIST_DIR}/#{TEMP_DIR}/#{LOCALES_DIR}/#{locale}/#{I18N_FILE}",
+        minifyMessages
   # TODO: Support Windows
   exec [
     "cd #{DIST_DIR}/#{TEMP_DIR}"
