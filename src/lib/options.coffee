@@ -1164,7 +1164,7 @@ options = window.options = new class Options extends utils.Class
     $('#tools_nav').click -> $('#tools_wizard').modal 'show'
     $('.tools_close_btn').click -> $('#tools_wizard').modal 'hide'
     # Ensure that form submissions don't reload the page.
-    $('form').submit -> no
+    $('form:not(#donation)').submit -> no
     # Load the current option values.
     load()
     $('#template_shortcut_modifier').html if ext.isThisPlatform 'mac'

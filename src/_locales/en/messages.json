@@ -747,6 +747,16 @@
     "message": "Do you want to continue anyway?",
     "description": "2nd paragraph for the confirmation dialog displayed when deleting a template."
   },
+  "opt_donate_button": {
+    "message": "$ICON$ Donate",
+    "description": "Text for the Donate button.",
+    "placeholders": {
+      "icon": {
+        "content": "<i class=\"icon-heart icon-white\"></i>",
+        "example": "<i class=\"icon-heart icon-white\"></i>"
+      }
+    }
+  },
   "opt_errors_header": {
     "message": "The following problem(s) need to be corrected;",
     "description": "Preceding text for any errors on the Templates tab."
