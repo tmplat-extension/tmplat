@@ -757,6 +757,10 @@
       }
     }
   },
+  "opt_donate_button_title": {
+    "message": "Share the love!",
+    "description": "Hover text for the Donate button."
+  },
   "opt_errors_header": {
     "message": "The following problem(s) need to be corrected;",
     "description": "Preceding text for any errors on the Templates tab."

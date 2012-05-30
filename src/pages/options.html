@@ -1182,15 +1182,13 @@
       </div>
       <hr>
       <footer class="footer">
-        <div class="pull-right">
-          <form id="donation" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-            <input type="hidden" name="cmd" value="_s-xclick">
-            <input type="hidden" name="hosted_button_id" value="BGWG9R5LBNECY">
-            <button type="submit" class="btn btn-mini btn-warning" i18n-content="opt_donate_button"></button>
-          </form>
-          <a data-goto="#top" i18n-content="opt_top_button"></a>
-        </div>
-        <p id="footer">&copy;<span class="year-repl"></span> <a href="http://neocotic.com" target="_blank">Alasdair Mercer</a></p>
+        <p class="pull-right"><a data-goto="#top" i18n-content="opt_top_button"></a></p>
+        &copy;<span class="year-repl"></span> <a href="http://neocotic.com" target="_blank">Alasdair Mercer</a>
+        <form id="donation" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+          <input type="hidden" name="cmd" value="_s-xclick">
+          <input type="hidden" name="hosted_button_id" value="BGWG9R5LBNECY">
+          <button type="submit" class="btn btn-mini btn-warning" data-placement="top" i18n-values=".innerHTML:opt_donate_button;title:opt_donate_button_title"></button>
+        </form>
       </footer>
       <div id="tools_wizard" class="hide modal">
         <div class="modal-header">

@@ -1,3 +1,7 @@
+2012.05.30, Version 1.1.3
+
+* Relocate new donation button and add tooltip
+
 2012.05.29, Version 1.1.2
 
 * [#107](https://github.com/neocotic/template/issues/107): Add donation button to footer of Options page

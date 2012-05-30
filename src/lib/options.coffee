@@ -1164,7 +1164,11 @@ options = window.options = new class Options extends utils.Class
     $('#tools_nav').click -> $('#tools_wizard').modal 'show'
     $('.tools_close_btn').click -> $('#tools_wizard').modal 'hide'
     # Ensure that form submissions don't reload the page.
-    $('form:not(#donation)').submit -> no
+    $('form:not([target="_blank"])').submit -> no
+    # Bind analytical tracking events to key footer buttons and links.
+    $('footer a[href*="neocotic.com"]').click -> analytics.track 'Footer',
+      'Clicked', 'Homepage'
+    $('#donation').submit -> analytics.track 'Footer', 'Clicked', 'Donate'
     # Load the current option values.
     load()
     $('#template_shortcut_modifier').html if ext.isThisPlatform 'mac'
