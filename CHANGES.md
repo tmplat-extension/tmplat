@@ -1,3 +1,7 @@
+2012.05.31, Version 1.1.4
+
+* [#108](https://github.com/neocotic/template/issues/108): Improve inline installation compatibility
+
 2012.05.30, Version 1.1.3
 
 * Relocate new donation button and add tooltip
