@@ -2,11 +2,12 @@
     "name": "Template"
   , "version": "1.1.4"
   , "dependencies": {
-      "coffee-script": "1.4.0"
+        "async": "0.1.22"
+      , "coffee-script": "1.4.0"
+      , "wrench": "1.4.4"
     }
   , "devDependencies": {
         "docco": "0.4.0"
 	    , "uglify-js": "2.2.2"
-	    , "wrench": "1.4.4"
 	  }
 }
