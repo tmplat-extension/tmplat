@@ -1,0 +1,11 @@
+body {padding: 0;}
+#loading {display: none; margin: 8px;}
+#loading .bar {width: 100%;}
+#templates {display: block; min-width: 160px; padding: 4px 0; margin: 1px 0 0; list-style: none;}
+#templates .divider {*width: 100%; height: 1px; margin: 8px 1px; *margin: -5px 0 5px; overflow: hidden; background-color: #E5E5E5; border-bottom: 1px solid #FFF;}
+#templates a {cursor: pointer; display: block; padding: 3px 15px; clear: both; font-weight: normal; line-height: 18px; color: #333; white-space: nowrap;}
+#templates .empty {font-style: italic; padding: 3px 15px;}
+#templates li > a .pull-right {color: #999;}
+#templates li > a:hover, #templates .active > a, #templates .active > a:hover {color: #FFF; text-decoration: none; background-color: #08C;}
+#templates li > a:hover .pull-right {color: #FFF;}
+#templates li:hover [class^="icon-"], #templates li:hover [class*=" icon-"], #templates .active [class^="icon-"], #templates .active [class*=" icon-"] {background-image: url("../images/glyphicons-halflings-white.png");}

@@ -1,141 +1,71 @@
 # Module dependencies
 # -------------------
 
-coffee = require 'coffee-script'
+async  = require 'async'
 {exec} = require 'child_process'
-fs     = require 'fs'
-jsp    = require('uglify-js').parser
-pro    = require('uglify-js').uglify
-wrench = require 'wrench'
 
-# Flags
-# -----
+# Constants
+# ---------
 
-IS_WINDOWS = /^win/i.test process.platform
-
-# Strings
-# -------
-
-COPYRIGHT = """
-  // [Template](http://neocotic.com/template)
-  // (c) #{new Date().getFullYear()} Alasdair Mercer
-  // Freely distributable under the MIT license.
-  // For all details and documentation:
-  // http://neocotic.com/template
-
-"""
-ENCODING  = 'utf8'
-MODE      = 0777
-
-# Files & directories
-# -------------------
-
-DIST_DIR        = 'dist'
-DIST_FILE       = 'Template'
-DOCS_DIR        = 'docs'
-I18N_FILE       = 'messages.json'
-LOCALES         = ['en']
-LOCALES_DIR     = '_locales'
-SOURCE_DIR      = 'src'
-TEMP_DIR        = 'temp'
-TARGET_DIR      = 'bin'
-TARGET_SUB_DIRS = [
-  TARGET_DIR
-  "#{TARGET_DIR}/#{LOCALES_DIR}"
-  "#{TARGET_DIR}/css"
-  "#{TARGET_DIR}/images"
-  "#{TARGET_DIR}/lib"
-  "#{TARGET_DIR}/pages"
-  "#{TARGET_DIR}/vendor"
-  "#{TARGET_DIR}/vendor/adapters"
-].concat ("#{TARGET_DIR}/#{LOCALES_DIR}/#{locale}" for locale in LOCALES)
-VENDOR_FILES    = [
-  'vendor/adapters/bitly.js'
-  'vendor/adapters/google.js'
-  'vendor/jquery.url.js'
-  'vendor/mustache.js'
-  'vendor/oauth2.js'
-  'vendor/oauth2_finish.js'
-  'vendor/oauth2_inject.js'
-]
+BROWSERS = ['chrome']
 
 # Helpers
 # -------
 
-compile = (path) ->
-  ws = fs.createWriteStream path.replace(/\.coffee$/i, '.js'),
-    encoding : ENCODING
-    mode     : MODE
-  ws.write COPYRIGHT
-  ws.end coffee.compile(fs.readFileSync path, ENCODING), ENCODING
-  ws.on 'close', -> fs.unlinkSync path
+finish = (header = '') ->
+  message  = """
+    #{header}
 
-minify = (path, handler) ->
-  switch path.match(/\.([^\.]+)$/)[1].toLowerCase()
-    when 'js'
-      ast = jsp.parse fs.readFileSync path, ENCODING
-      ast = pro.ast_mangle ast
-      ast = pro.ast_squeeze ast
-      handler? ast
-      ws = fs.createWriteStream path, encoding: ENCODING, mode: MODE
-      ws.write COPYRIGHT
-      ws.end pro.gen_code ast
-    when 'json'
-      obj = JSON.parse fs.readFileSync path, ENCODING
-      handler? obj
-      ws = fs.createWriteStream path, encoding: ENCODING, mode: MODE
-      ws.end JSON.stringify obj
-    else throw "Cannot minify file: #{path}"
+    Total time:
+  """
+  time     = process.uptime()
+  secs     = parseInt time
+  mins     = parseInt secs / 60
+  secs    %= 60 if mins > 0
+  secs     = time.toFixed 3 if secs < 1
+  message += " #{secs} second"
+  message += 's' if secs isnt 1
+  if mins > 0
+    message += " #{mins} minute"
+    message += 's' if mins isnt 1
+  console.log message
 
-minifyMessages = (messages) ->
-  for message in Object.keys messages
-    delete messages[message].description
-    if messages[message].placeholders?
-      for placeholder of messages[message].placeholders
-        delete messages[message].placeholders[placeholder].example
+subTask = (name) -> (dir, cb) ->
+  child = exec "cake #{name}", cwd: dir, cb
+  child.stderr.resume()
+  child.stderr.pipe process.stderr
+  child.stdout.resume()
+  child.stdout.pipe process.stdout
 
 # Tasks
 # -----
 
-task 'build', 'Build extension', ->
-  console.log 'Building Template...'
-  wrench.mkdirSyncRecursive path for path in TARGET_SUB_DIRS
-  wrench.copyDirSyncRecursive SOURCE_DIR, TARGET_DIR
-  # TODO: Find & delete .git* files
-  for file in fs.readdirSync "#{TARGET_DIR}/lib" when /\.coffee$/i.test file
-    compile "#{TARGET_DIR}/lib/#{file}"
-
-task 'clean', 'Cleans directories', ->
-  console.log 'Spring cleaning...'
-  wrench.rmdirSyncRecursive TARGET_DIR, yes
-  wrench.rmdirSyncRecursive DIST_DIR, yes
-
-task 'dist', 'Create distributable file', ->
-  console.log 'Generating distributable....'
-  wrench.mkdirSyncRecursive DIST_DIR
-  wrench.mkdirSyncRecursive "#{DIST_DIR}/#{TEMP_DIR}"
-  wrench.copyDirSyncRecursive TARGET_DIR, "#{DIST_DIR}/#{TEMP_DIR}"
-  for file in fs.readdirSync "#{DIST_DIR}/#{TEMP_DIR}"
-    minify "#{DIST_DIR}/#{TEMP_DIR}/#{file}" if /\.json$/i.test file
-  for file in fs.readdirSync "#{DIST_DIR}/#{TEMP_DIR}/lib"
-    minify "#{DIST_DIR}/#{TEMP_DIR}/lib/#{file}" if /\.js$/i.test file
-  minify "#{DIST_DIR}/#{TEMP_DIR}/#{file}" for file in VENDOR_FILES
-  for locale in LOCALES
-    minify "#{DIST_DIR}/#{TEMP_DIR}/#{LOCALES_DIR}/#{locale}/#{I18N_FILE}",
-        minifyMessages
-  # TODO: Support Windows
-  exec [
-    "cd #{DIST_DIR}/#{TEMP_DIR}"
-    "zip -r ../#{DIST_FILE} *"
-    'cd ../'
-  ].join('&&'), (err) ->
+task 'build', 'Build all extensions', ->
+  console.log 'Building Template for all browsers...'
+  async.forEachSeries BROWSERS, subTask('build'), (err) ->
     throw err if err
-    wrench.rmdirRecursive "#{DIST_DIR}/#{TEMP_DIR}"
+    finish 'Builds completed!'
 
-task 'docs', 'Create documentation', ->
-  console.log 'Generating documentation...'
-  files = (
-    for file in fs.readdirSync "#{SOURCE_DIR}/lib" when /\.coffee$/i.test file
-      "#{SOURCE_DIR}/lib/#{file}"
-  )
-  exec "docco #{files.join ' '}", (err) -> throw err if err
+for browser in BROWSERS
+  task "build-#{browser}", "Build #{browser} extension", ->
+    subTask('build') browser, (err) -> throw err if err
+
+task 'dist', 'Create all distributable files', ->
+  console.log 'Generating distributables for all browsers...'
+  async.forEachSeries BROWSERS, subTask('dist'), (err) ->
+    throw err if err
+    finish 'Distributables created!'
+
+for browser in BROWSERS
+  task "dist-#{browser}", "Create #{browser} distributable file", ->
+    subTask('dist') browser, (err) -> throw err if err
+
+task 'docs', 'Create all documentation', ->
+  console.log 'Generating documentation for all browsers...'
+  async.forEachSeries BROWSERS, subTask('docs'), (err) ->
+    throw err if err
+    finish 'Documentation created!'
+
+for browser in BROWSERS
+  task "docs-#{browser}", "Create #{browser} documentation", ->
+    subTask('docs') browser, (err) -> throw err if err
