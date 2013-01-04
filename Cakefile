@@ -14,15 +14,6 @@ wrench   = require 'wrench'
 
 COMMENT_COFFEE   = '#'
 COMMENT_JS       = '//'
-# TODO: Remove if no longer required
-COPYRIGHT        = """
-  // [Template](http://neocotic.com/template)
-  // (c) #{new Date().getFullYear()} Alasdair Mercer
-  // Freely distributable under the MIT license.
-  // For all details and documentation:
-  // http://neocotic.com/template
-
-"""
 DIST_DIR         = 'dist'
 DIST_FILE        = 'Template'
 DOCS_DIR         = 'docs'
@@ -148,6 +139,9 @@ optimize = (path, handler, cb) ->
       ws.end JSON.stringify(optimization), ENCODING
     else throw "Cannot optimize file: #{path}"
 
+optimizeMessage  = (file, cb) -> optimize file, messageHandler, cb
+optimizeStandard = (file, cb) -> optimize file, null, cb
+
 # Tasks
 # -----
 
@@ -177,38 +171,26 @@ task 'dist', 'Create distributable file', ->
         for file in fs.readdirSync TEMP_PATH when R_EXT_JSON.test file
           Path.join TEMP_PATH, file
       )
-      async.forEach files, ((file, cb) -> optimize file, null, cb), (err) ->
-        cb err
+      async.forEach files, optimizeStandard, (err) -> cb err
     (cb) ->
       path  = Path.join TEMP_PATH, 'lib'
       files = (
         for file in fs.readdirSync path when R_EXT_JS.test file
           Path.join path, file
       )
-      async.forEach files, ((file, cb) -> optimize file, null, cb), (err) ->
-        cb err
+      async.forEach files, optimizeStandard, (err) -> cb err
     (cb) ->
       files = (Path.join TEMP_PATH, file for file in VENDOR_FILES)
-      async.forEach files, ((file, cb) -> optimize file, null, cb), (err) ->
-        cb err
-    (cb) ->
-      files = (Path.join TEMP_PATH, file for file in VENDOR_FILES)
-      async.forEach files, ((file, cb) -> optimize file, null, cb), (err) ->
-        cb err
+      async.forEach files, optimizeStandard, (err) -> cb err
     (cb) ->
       files = (
         for locale in LOCALES
           Path.join TEMP_PATH, LOCALES_DIR, locale, I18N_FILE
       )
-      async.forEach files, ((file, cb) -> optimize file, messageHandler, cb), (err) ->
-        cb err
+      async.forEach files, optimizeMessage, (err) -> cb err
     (cb) ->
       # TODO: Support Windows
-      exec [
-        "cd #{TEMP_PATH}"
-        "zip -r ../#{DIST_FILE} *"
-        'cd ../'
-      ].join('&&'), cb
+      exec "zip -r ../#{DIST_FILE} *", cwd: TEMP_PATH, cb
   ], (err) ->
     throw err if err
     wrench.rmdirSyncRecursive TEMP_PATH
