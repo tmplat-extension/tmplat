@@ -48,11 +48,11 @@ TARGET_SUB_DIRS  = [
 VENDOR_FILES     = [
   Path.join 'vendor', 'adapters', 'bitly.js'
   Path.join 'vendor', 'adapters', 'google.js'
-  Path.join 'vendor', 'jquery.url.js'
   Path.join 'vendor', 'mustache.js'
   Path.join 'vendor', 'oauth2.js'
   Path.join 'vendor', 'oauth2_finish.js'
   Path.join 'vendor', 'oauth2_inject.js'
+  Path.join 'vendor', 'purl.js'
 ]
 WRITE_MODE       = 0o777
 
