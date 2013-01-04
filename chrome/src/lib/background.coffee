@@ -1,5 +1,5 @@
 # [Template](http://neocotic.com/template)  
-# (c) 2012 Alasdair Mercer  
+# (c) 2013 Alasdair Mercer  
 # Freely distributable under the MIT license.  
 # For all details and documentation:  
 # <http://neocotic.com/template>
@@ -110,6 +110,9 @@ OPERATING_SYSTEMS = [
 # Milliseconds before the popup automatically resets or closes, depending on
 # user preferences.
 POPUP_DELAY       = 600
+# Regular expression used to extract useful information from `select` tag name
+# variations.
+R_SELECT_TAG      = /^select(all)?(\S*)?$/
 # Regular expression used to detect upper case characters.
 R_UPPER_CASE      = /[A-Z]+/
 # Regular expression used to perform simple URL validation.
@@ -368,16 +371,16 @@ onRequest = (request, sender, sendResponse) ->
       id:      EXTENSION_ID
       version: ext.version
     )
-  data       = null
-  editable   = no
-  id         = utils.keyGen '', null, 't', no
-  link       = no
-  output     = null
-  shortcut   = no
-  shortenMap = {}
-  tab        = null
-  template   = null
-  windowId   = chrome.windows.WINDOW_ID_CURRENT
+  data         = null
+  editable     = no
+  id           = utils.keyGen '', null, 't', no
+  link         = no
+  output       = null
+  placeholders = {}
+  shortcut     = no
+  tab          = null
+  template     = null
+  windowId     = chrome.windows.WINDOW_ID_CURRENT
   # Create a runner to manage this asynchronous mess.
   runner = new utils.Runner()
   unless windowId?
@@ -392,26 +395,31 @@ onRequest = (request, sender, sendResponse) ->
       runner.next()
     ]
   runner.push null, ->
-    # Called whenever the `shorten` (or previously `short`) tag is found to
-    # indicate that a URL needs shortened.  
+    # Return a callback function to be used by a tag to indicate that it
+    # requires further action.  
     # Replace the tag with the unique placeholder so that it can be rendered
-    # again later with the short URL.
-    shortCallback = (text, render) ->
-      text = if text then render text else @url
-      url  = text.trim()
-      log.debug 'Following is the contents of a shorten tag...', text
-      # If `url` doesn't appear to be a valid URL so just return the rendered
+    # again later with the final value.
+    getCallback = (tag) -> (text, render) ->
+      text = render text if text
+      text = @url if tag is 'shorten' and not text
+      trim = text.trim()
+      log.debug "Following is the contents of a #{tag} tag...", text
+      # If `trim` doesn't appear to be a valid so just return the rendered
       # `text`.
-      return text unless R_VALID_URL.test url
-      placeholder = key for own key, value of shortenMap when value is url
+      return text if not trim or tag is 'shorten' and not R_VALID_URL.test trim
+      for own key, val of placeholders when val.data is trim and val.tag is tag
+        placeholder = key
+        break
       unless placeholder?
         placeholder = utils.keyGen '', null, 's', no
-        shortenMap[placeholder] = url
+        placeholders[placeholder] =
+          data: trim
+          tag:  tag
         # Sections are re-rendered so the context must have a property for the
         # placeholder the replaces itself with itself so that it still when it
-        # comes to replacing with the shortened URL.
+        # comes to replacing with the final value.
         this[placeholder] = "{#{placeholder}}"
-      log.debug "Replacing shorten tag with #{placeholder} placeholder"
+      log.debug "Replacing #{tag} tag with #{placeholder} placeholder"
       "{#{placeholder}}"
     # If the popup is currently displayed, hide the template list and show a
     # loading animation.
@@ -423,14 +431,14 @@ onRequest = (request, sender, sendResponse) ->
           template = getTemplateWithMenuId request.data.menuItemId
           if template?
             {data, editable, link} = buildDerivedData tab, request.data,
-              shortCallback
+              getCallback
         when 'popup', 'toolbar'
           template = getTemplateWithKey request.data.key
-          data     = buildStandardData tab, shortCallback if template?
+          data     = buildStandardData tab, getCallback if template?
         when 'shortcut'
           shortcut = yes
           template = getTemplateWithShortcut request.data.key
-          data     = buildStandardData tab, shortCallback if template?
+          data     = buildStandardData tab, getCallback if template?
       updateProgress 20
       if data? then runner.next() else runner.finish()
     catch error
@@ -454,10 +462,10 @@ onRequest = (request, sender, sendResponse) ->
         output = Mustache.to_html template.content, data
         updateProgress 60
         log.debug 'Following string is the rendered result...', output
-        # If any `shorten` (or old `short`) tags are found and replaced, the
-        # URL shortener service needs to be called in order to replace any
-        # placeholders with their corresponding short URL.
-        if $.isEmptyObject shortenMap
+        # If any placeholders were inserted and replaced, they need to be
+        # handled now in order to replace any placeholders with their final
+        # values.
+        if $.isEmptyObject placeholders
           runner.finish
             contents: output
             success:  yes
@@ -472,26 +480,53 @@ onRequest = (request, sender, sendResponse) ->
           success:  yes
           template: template
     ]
-  runner.push null, callUrlShortener, shortenMap, (response) ->
-    log.info 'URL shortener service was called one or more times'
+  runner.push null, ->
     updateProgress 80
-    if response.success
-      updateUrlShortenerUsage response.service.name, response.oauth
-      # Request to the URL shortener service was successful so re-render the
-      # output.
-      newOutput = Mustache.to_html output, shortenMap
-      log.debug 'Following string is the re-rendered result...', newOutput
+    selectMap  = {}
+    shortenMap = {}
+    for own placeholder, info of map
+      if info.tag is 'shorten'
+        shortenMap[placeholder] = info.data
+      else
+        match = info.tag.match R_SELECT_TAG
+        selectMap[placeholder] =
+          all:       match[1]?
+          convertTo: match[2]
+          selector:  info.data
+    # Create another runner to manage these new asynchronous needs.
+    subRunner = new utils.Runner()
+    unless $.isEmptyObject selectMap
+      subRunner.push null, runSelectors, selectMap, ->
+        log.info 'One or more selectors were executed'
+        updateProgress 85
+        for own placeholder, value of selectMap
+          placeholders[placeholder] = value
+        subRunner.next success: yes
+    unless $.isEmptyObject shortenMap
+      subRunner.push null, callUrlShortener, shortenMap, (response) ->
+        log.info 'URL shortener service was called one or more times'
+        updateProgress 90
+        if response.success
+          updateUrlShortenerUsage response.service.name, response.oauth
+          for own placeholder, value of shortenMap
+            placeholders[placeholder] = value
+          subRunner.finish success:  yes
+        else
+          # Aw man, something went wrong. Let the user down gently.
+          response.message ?= i18n.get 'shortener_error', response.service.title
+          log.warn response.message
+          subRunner.finish
+            message: response.message
+            success: no
+    subRunner.run (result) ->
+      if result.success
+        # Request(s) were successful so re-render the output.
+        newOutput = Mustache.to_html output, placeholders
+        log.debug 'Following string is the re-rendered result...', newOutput
       runner.finish
         contents: newOutput
-        success:  yes
-        template: template
-    else
-      # Aw man, something went wrong. Let the user down gently.
-      response.message ?= i18n.get 'shortener_error', response.service.title
-      log.warn response.message
-      runner.finish
-        message:  response.message
-        success:  no
+        message:  result.message
+        success:  result.success
         template: template
   runner.run (result) ->
     type  = request.type[0].toUpperCase() + request.type.substr 1
@@ -751,7 +786,7 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
 
 # Creates an object containing data based on information derived from the
 # specified tab and menu item data.
-buildDerivedData = (tab, onClickData, shortCallback) ->
+buildDerivedData = (tab, onClickData, getCallback) ->
   log.trace()
   obj  = editable: onClickData.editable, link: no
   data =
@@ -765,16 +800,17 @@ buildDerivedData = (tab, onClickData, shortCallback) ->
         onClickData.frameUrl
       else
         onClickData.pageUrl
-  obj.data = buildStandardData data, shortCallback
+  obj.data = buildStandardData data, getCallback
   obj
 
 # Construct a data object based on information extracted from `tab`.  
 # The tab information is then merged with additional information relating to
 # the URL of the tab.  
-# If a shortened URL is requested when parsing the templates contents later,
-# `shortCallback` is called to handle this as we don't want to call a URL
-# shortener service unless it is actually required.
-buildStandardData = (tab, shortCallback) ->
+# If a tag requires further action (e.g. call a URL shortening service) when
+# parsing the templates contents later, the callback method returned by
+# `getCallback` is called to handle this as we don't want to perform these
+# expensive tasks unless it is actually required.
+buildStandardData = (tab, getCallback) ->
   log.trace()
   # Create a copy of the original tab of the tab to run the compatibility
   # scripts on.
@@ -884,12 +920,18 @@ buildStandardData = (tab, shortCallback) ->
     segment:               -> (text, render) ->
       url.segment(parseInt render(text), 10) ? ''
     segments:              url.segment()
+    select:                -> getCallback 'select'
+    selectall:             -> getCallback 'selectall'
+    selectallhtml:         -> getCallback 'selectallhtml'
+    selectallmarkdown:     -> getCallback 'selectallmarkdown'
+    selecthtml:            -> getCallback 'selecthtml'
     selectionmarkdown:     -> md @selectionhtml
+    selectmarkdown:        -> getCallback 'selectmarkdown'
     # Deprecated since 1.0.0, use `shorten` instead.
     short:                 -> @shorten()
     shortcuts:             shortcuts.enabled
     shortcutspaste:        shortcuts.paste
-    shorten:               -> shortCallback
+    shorten:               -> getCallback 'shorten'
     tidy:                  -> (text, render) ->
       render(text).replace(/([ \t]+)/g, ' ').trim()
     title:                 ctab.title or url.attr 'source'
@@ -922,6 +964,22 @@ buildStandardData = (tab, shortCallback) ->
     yourlsurl:             yourls.url
     yourlsusername:        yourls.username
   data
+
+# Run the selectors in `map` within the content scripts of the target tab in
+# order to obtain their corresponding values.  
+# `callback` will be called with the result once all the selectors have been
+# run.
+runSelectors = (tabId, map, callback) ->
+  log.trace()
+  chrome.tabs.sendRequest tabId, selectors: map, (response) ->
+    log.debug 'Retrieved the following data from the content script...',
+      response
+    for own placeholder, value of response.selectors
+      result = value.result or ''
+      result = result.join '\n' if $.isArray result
+      result = md result if value.convertTo is 'markdown'
+      map[placeholder] = result
+    callback()
 
 # Ensure there is a lower case variant of all properties of `data`, optionally
 # removing the original non-lower-case property.

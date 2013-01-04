@@ -1,5 +1,5 @@
 # [Template](http://neocotic.com/template)  
-# (c) 2012 Alasdair Mercer  
+# (c) 2013 Alasdair Mercer  
 # Freely distributable under the MIT license.  
 # For all details and documentation:  
 # <http://neocotic.com/template>
@@ -113,6 +113,27 @@ chrome.extension.sendRequest type: 'info', (data) ->
     if request.hotkeys?
       hotkeys = request.hotkeys
       return sendResponse()
+    if request.selectors?
+      for own key, info of request.selectors
+        if info.all
+          nodes  = document.querySelectorAll info.selector
+          result = []
+          if nodes
+            for node in nodes when node
+              result.push if info.convertTo in ['html', 'markdown']
+                node.innerHTML
+              else
+                node.textContent
+        else
+          node   = document.querySelector info.selector
+          result = ''
+          if node
+            result = if info.convertTo in ['html', 'markdown']
+              node.innerHTML
+            else
+              node.textContent
+        info.result = result
+      return sendResponse selectors: request.selectors
     return sendResponse() unless request.id?
     if request.type is 'paste'
       if request.contents? and

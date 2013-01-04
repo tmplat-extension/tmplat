@@ -1,11 +1,12 @@
 // [Template](http://neocotic.com/template)
-// (c) 2012 Alasdair Mercer
+// (c) 2013 Alasdair Mercer
 // Freely distributable under the MIT license.
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
   var elementBackups, elements, extractAll, getLink, getMeta, hotkeys, isEditable, parentLink, paste,
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
+    __hasProp = {}.hasOwnProperty;
 
   elementBackups = {};
 
@@ -131,16 +132,45 @@
       }
     });
     return chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-      var container, contents, href, images, link, links, selection, src, _i, _j, _len, _len1, _ref, _ref1, _ref2;
+      var container, contents, href, images, info, key, link, links, node, nodes, result, selection, src, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
       if (request.hotkeys != null) {
         hotkeys = request.hotkeys;
         return sendResponse();
+      }
+      if (request.selectors != null) {
+        _ref = request.selectors;
+        for (key in _ref) {
+          if (!__hasProp.call(_ref, key)) continue;
+          info = _ref[key];
+          if (info.all) {
+            nodes = document.querySelectorAll(info.selector);
+            result = [];
+            if (nodes) {
+              for (_i = 0, _len = nodes.length; _i < _len; _i++) {
+                node = nodes[_i];
+                if (node) {
+                  result.push((_ref1 = info.convertTo) === 'html' || _ref1 === 'markdown' ? node.innerHTML : node.textContent);
+                }
+              }
+            }
+          } else {
+            node = document.querySelector(info.selector);
+            result = '';
+            if (node) {
+              result = (_ref2 = info.convertTo) === 'html' || _ref2 === 'markdown' ? node.innerHTML : node.textContent;
+            }
+          }
+          info.result = result;
+        }
+        return sendResponse({
+          selectors: request.selectors
+        });
       }
       if (request.id == null) {
         return sendResponse();
       }
       if (request.type === 'paste') {
-        if ((request.contents != null) && isEditable((_ref = elementBackups[request.id]) != null ? _ref.field : void 0)) {
+        if ((request.contents != null) && isEditable((_ref3 = elementBackups[request.id]) != null ? _ref3.field : void 0)) {
           paste(elementBackups[request.id].field, request.contents);
         }
         delete elementBackups[request.id];
@@ -156,14 +186,14 @@
         if (contents = selection.getRangeAt(0).cloneContents()) {
           container = document.createElement('div');
           container.appendChild(contents);
-          _ref1 = container.querySelectorAll('[href]');
-          for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-            href = _ref1[_i];
+          _ref4 = container.querySelectorAll('[href]');
+          for (_j = 0, _len1 = _ref4.length; _j < _len1; _j++) {
+            href = _ref4[_j];
             href.href = href.href;
           }
-          _ref2 = container.querySelectorAll('[src]');
-          for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-            src = _ref2[_j];
+          _ref5 = container.querySelectorAll('[src]');
+          for (_k = 0, _len2 = _ref5.length; _k < _len2; _k++) {
+            src = _ref5[_k];
             src.src = src.src;
           }
           images = extractAll(container.querySelectorAll('img[src]'), 'src');
