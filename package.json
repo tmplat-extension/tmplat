@@ -21,8 +21,6 @@
         "template"
       , "browser"
       , "chrome"
-      , "safari"
-      , "firefox"
       , "extension"
       , "clipboard"
       , "shortener"
