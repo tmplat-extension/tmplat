@@ -411,7 +411,7 @@ onRequest = (request, sender, sendResponse) ->
         placeholder = key
         break
       unless placeholder?
-        placeholder = utils.keyGen '', null, 's', no
+        placeholder = utils.keyGen '', null, 'c', no
         placeholders[placeholder] =
           data: trim
           tag:  tag
@@ -484,7 +484,7 @@ onRequest = (request, sender, sendResponse) ->
     updateProgress 80
     selectMap  = {}
     shortenMap = {}
-    for own placeholder, info of map
+    for own placeholder, info of placeholders
       if info.tag is 'shorten'
         shortenMap[placeholder] = info.data
       else
@@ -496,7 +496,7 @@ onRequest = (request, sender, sendResponse) ->
     # Create another runner to manage these new asynchronous needs.
     subRunner = new utils.Runner()
     unless $.isEmptyObject selectMap
-      subRunner.push null, runSelectors, selectMap, ->
+      subRunner.push null, runSelectors, tab, selectMap, ->
         log.info 'One or more selectors were executed'
         updateProgress 85
         for own placeholder, value of selectMap
@@ -965,21 +965,25 @@ buildStandardData = (tab, getCallback) ->
     yourlsusername:        yourls.username
   data
 
-# Run the selectors in `map` within the content scripts of the target tab in
-# order to obtain their corresponding values.  
+# Run the selectors in `map` within the content scripts in `tab` in order to
+# obtain their corresponding values.  
 # `callback` will be called with the result once all the selectors have been
 # run.
-runSelectors = (tabId, map, callback) ->
+runSelectors = (tab, map, callback) ->
   log.trace()
-  chrome.tabs.sendRequest tabId, selectors: map, (response) ->
-    log.debug 'Retrieved the following data from the content script...',
-      response
-    for own placeholder, value of response.selectors
-      result = value.result or ''
-      result = result.join '\n' if $.isArray result
-      result = md result if value.convertTo is 'markdown'
-      map[placeholder] = result
+  if isProtectedPage tab
+    map[placeholder] = '' for own placeholder of map
     callback()
+  else
+    chrome.tabs.sendRequest tab.id, selectors: map, (response) ->
+      log.debug 'Retrieved the following data from the content script...',
+        response
+      for own placeholder, value of response.selectors
+        result = value.result or ''
+        result = result.join '\n' if $.isArray result
+        result = md result if value.convertTo is 'markdown'
+        map[placeholder] = result
+      callback()
 
 # Ensure there is a lower case variant of all properties of `data`, optionally
 # removing the original non-lower-case property.

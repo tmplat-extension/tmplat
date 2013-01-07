@@ -32,6 +32,14 @@ extractAll = (array, property) ->
     results.push element[property] if element[property] not in results
   results
 
+# Extract the relevant content of `node` as is required by `info`.
+getContent = (info, node) ->
+  return '' unless node
+  if info?.convertTo in ['html', 'markdown']
+    node.innerHTML
+  else
+    node.textContent
+
 # Attempt to derive the most relevant anchor element from those stored under
 # the `id` provided.
 getLink = (id, url) ->
@@ -119,19 +127,10 @@ chrome.extension.sendRequest type: 'info', (data) ->
           nodes  = document.querySelectorAll info.selector
           result = []
           if nodes
-            for node in nodes when node
-              result.push if info.convertTo in ['html', 'markdown']
-                node.innerHTML
-              else
-                node.textContent
+            result.push getContent info, node for node in nodes when node
         else
           node   = document.querySelector info.selector
-          result = ''
-          if node
-            result = if info.convertTo in ['html', 'markdown']
-              node.innerHTML
-            else
-              node.textContent
+          result = getContent info, node if node
         info.result = result
       return sendResponse selectors: request.selectors
     return sendResponse() unless request.id?

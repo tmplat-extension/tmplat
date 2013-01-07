@@ -284,7 +284,7 @@ again later with the final value.</p>             </td>             <td class="c
         <span class="nv">placeholder = </span><span class="nx">key</span>
         <span class="k">break</span>
       <span class="nx">unless</span> <span class="nx">placeholder</span><span class="o">?</span>
-        <span class="nv">placeholder = </span><span class="nx">utils</span><span class="p">.</span><span class="nx">keyGen</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="s">&#39;s&#39;</span><span class="p">,</span> <span class="kc">no</span>
+        <span class="nv">placeholder = </span><span class="nx">utils</span><span class="p">.</span><span class="nx">keyGen</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="kc">no</span>
         <span class="nx">placeholders</span><span class="p">[</span><span class="nx">placeholder</span><span class="p">]</span> <span class="o">=</span>
           <span class="nv">data: </span><span class="nx">trim</span>
           <span class="nv">tag: </span> <span class="nx">tag</span></pre></div>             </td>           </tr>                               <tr id="section-55">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-55">&#182;</a>               </div>               <p>Sections are re-rendered so the context must have a property for the
@@ -341,7 +341,7 @@ template itself is empty.</p>             </td>             <td class="code">   
     <span class="nx">updateProgress</span> <span class="mi">80</span>
     <span class="nv">selectMap  = </span><span class="p">{}</span>
     <span class="nv">shortenMap = </span><span class="p">{}</span>
-    <span class="k">for</span> <span class="nx">own</span> <span class="nx">placeholder</span><span class="p">,</span> <span class="nx">info</span> <span class="k">of</span> <span class="nx">map</span>
+    <span class="k">for</span> <span class="nx">own</span> <span class="nx">placeholder</span><span class="p">,</span> <span class="nx">info</span> <span class="k">of</span> <span class="nx">placeholders</span>
       <span class="k">if</span> <span class="nx">info</span><span class="p">.</span><span class="nx">tag</span> <span class="o">is</span> <span class="s">&#39;shorten&#39;</span>
         <span class="nx">shortenMap</span><span class="p">[</span><span class="nx">placeholder</span><span class="p">]</span> <span class="o">=</span> <span class="nx">info</span><span class="p">.</span><span class="nx">data</span>
       <span class="k">else</span>
@@ -351,7 +351,7 @@ template itself is empty.</p>             </td>             <td class="code">   
           <span class="nv">convertTo: </span><span class="nx">match</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
           <span class="nv">selector: </span> <span class="nx">info</span><span class="p">.</span><span class="nx">data</span></pre></div>             </td>           </tr>                               <tr id="section-63">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-63">&#182;</a>               </div>               <p>Create another runner to manage these new asynchronous needs.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">subRunner = </span><span class="k">new</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">Runner</span><span class="p">()</span>
     <span class="nx">unless</span> <span class="nx">$</span><span class="p">.</span><span class="nx">isEmptyObject</span> <span class="nx">selectMap</span>
-      <span class="nx">subRunner</span><span class="p">.</span><span class="nx">push</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">runSelectors</span><span class="p">,</span> <span class="nx">selectMap</span><span class="p">,</span> <span class="o">-&gt;</span>
+      <span class="nx">subRunner</span><span class="p">.</span><span class="nx">push</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">runSelectors</span><span class="p">,</span> <span class="nx">tab</span><span class="p">,</span> <span class="nx">selectMap</span><span class="p">,</span> <span class="o">-&gt;</span>
         <span class="nx">log</span><span class="p">.</span><span class="nx">info</span> <span class="s">&#39;One or more selectors were executed&#39;</span>
         <span class="nx">updateProgress</span> <span class="mi">85</span>
         <span class="k">for</span> <span class="nx">own</span> <span class="nx">placeholder</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">selectMap</span>
@@ -721,20 +721,24 @@ ignoring case by our modified version of
     <span class="nv">yourlssignature: </span>      <span class="nx">yourls</span><span class="p">.</span><span class="nx">signature</span>
     <span class="nv">yourlsurl: </span>            <span class="nx">yourls</span><span class="p">.</span><span class="nx">url</span>
     <span class="nv">yourlsusername: </span>       <span class="nx">yourls</span><span class="p">.</span><span class="nx">username</span>
-  <span class="nx">data</span></pre></div>             </td>           </tr>                               <tr id="section-107">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-107">&#182;</a>               </div>               <p>Run the selectors in <code>map</code> within the content scripts of the target tab in
-order to obtain their corresponding values. <br />
+  <span class="nx">data</span></pre></div>             </td>           </tr>                               <tr id="section-107">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-107">&#182;</a>               </div>               <p>Run the selectors in <code>map</code> within the content scripts in <code>tab</code> in order to
+obtain their corresponding values. <br />
 <code>callback</code> will be called with the result once all the selectors have been
-run.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">runSelectors = </span><span class="nf">(tabId, map, callback) -&gt;</span>
+run.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">runSelectors = </span><span class="nf">(tab, map, callback) -&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
-  <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">sendRequest</span> <span class="nx">tabId</span><span class="p">,</span> <span class="nv">selectors: </span><span class="nx">map</span><span class="p">,</span> <span class="nf">(response) -&gt;</span>
-    <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span> <span class="s">&#39;Retrieved the following data from the content script...&#39;</span><span class="p">,</span>
-      <span class="nx">response</span>
-    <span class="k">for</span> <span class="nx">own</span> <span class="nx">placeholder</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">response</span><span class="p">.</span><span class="nx">selectors</span>
-      <span class="nv">result = </span><span class="nx">value</span><span class="p">.</span><span class="nx">result</span> <span class="o">or</span> <span class="s">&#39;&#39;</span>
-      <span class="nv">result = </span><span class="nx">result</span><span class="p">.</span><span class="nx">join</span> <span class="s">&#39;\n&#39;</span> <span class="k">if</span> <span class="nx">$</span><span class="p">.</span><span class="nx">isArray</span> <span class="nx">result</span>
-      <span class="nv">result = </span><span class="nx">md</span> <span class="nx">result</span> <span class="k">if</span> <span class="nx">value</span><span class="p">.</span><span class="nx">convertTo</span> <span class="o">is</span> <span class="s">&#39;markdown&#39;</span>
-      <span class="nx">map</span><span class="p">[</span><span class="nx">placeholder</span><span class="p">]</span> <span class="o">=</span> <span class="nx">result</span>
-    <span class="nx">callback</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-108">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-108">&#182;</a>               </div>               <p>Ensure there is a lower case variant of all properties of <code>data</code>, optionally
+  <span class="k">if</span> <span class="nx">isProtectedPage</span> <span class="nx">tab</span>
+    <span class="nx">map</span><span class="p">[</span><span class="nx">placeholder</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;&#39;</span> <span class="k">for</span> <span class="nx">own</span> <span class="nx">placeholder</span> <span class="k">of</span> <span class="nx">map</span>
+    <span class="nx">callback</span><span class="p">()</span>
+  <span class="k">else</span>
+    <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">sendRequest</span> <span class="nx">tab</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="nv">selectors: </span><span class="nx">map</span><span class="p">,</span> <span class="nf">(response) -&gt;</span>
+      <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span> <span class="s">&#39;Retrieved the following data from the content script...&#39;</span><span class="p">,</span>
+        <span class="nx">response</span>
+      <span class="k">for</span> <span class="nx">own</span> <span class="nx">placeholder</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">response</span><span class="p">.</span><span class="nx">selectors</span>
+        <span class="nv">result = </span><span class="nx">value</span><span class="p">.</span><span class="nx">result</span> <span class="o">or</span> <span class="s">&#39;&#39;</span>
+        <span class="nv">result = </span><span class="nx">result</span><span class="p">.</span><span class="nx">join</span> <span class="s">&#39;\n&#39;</span> <span class="k">if</span> <span class="nx">$</span><span class="p">.</span><span class="nx">isArray</span> <span class="nx">result</span>
+        <span class="nv">result = </span><span class="nx">md</span> <span class="nx">result</span> <span class="k">if</span> <span class="nx">value</span><span class="p">.</span><span class="nx">convertTo</span> <span class="o">is</span> <span class="s">&#39;markdown&#39;</span>
+        <span class="nx">map</span><span class="p">[</span><span class="nx">placeholder</span><span class="p">]</span> <span class="o">=</span> <span class="nx">result</span>
+      <span class="nx">callback</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-108">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-108">&#182;</a>               </div>               <p>Ensure there is a lower case variant of all properties of <code>data</code>, optionally
 removing the original non-lower-case property.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">transformData = </span><span class="nf">(data, deleteOld) -&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
   <span class="k">for</span> <span class="nx">own</span> <span class="nx">prop</span><span class="p">,</span> <span class="nx">value</span> <span class="k">of</span> <span class="nx">data</span> <span class="k">when</span> <span class="nx">R_UPPER_CASE</span><span class="p">.</span><span class="nx">test</span> <span class="nx">prop</span>

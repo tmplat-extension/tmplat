@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var elementBackups, elements, extractAll, getLink, getMeta, hotkeys, isEditable, parentLink, paste,
+  var elementBackups, elements, extractAll, getContent, getLink, getMeta, hotkeys, isEditable, parentLink, paste,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty;
 
@@ -30,6 +30,18 @@
       }
     }
     return results;
+  };
+
+  getContent = function(info, node) {
+    var _ref;
+    if (!node) {
+      return '';
+    }
+    if ((_ref = info != null ? info.convertTo : void 0) === 'html' || _ref === 'markdown') {
+      return node.innerHTML;
+    } else {
+      return node.textContent;
+    }
   };
 
   getLink = function(id, url) {
@@ -132,7 +144,7 @@
       }
     });
     return chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-      var container, contents, href, images, info, key, link, links, node, nodes, result, selection, src, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+      var container, contents, href, images, info, key, link, links, node, nodes, result, selection, src, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
       if (request.hotkeys != null) {
         hotkeys = request.hotkeys;
         return sendResponse();
@@ -149,15 +161,14 @@
               for (_i = 0, _len = nodes.length; _i < _len; _i++) {
                 node = nodes[_i];
                 if (node) {
-                  result.push((_ref1 = info.convertTo) === 'html' || _ref1 === 'markdown' ? node.innerHTML : node.textContent);
+                  result.push(getContent(info, node));
                 }
               }
             }
           } else {
             node = document.querySelector(info.selector);
-            result = '';
             if (node) {
-              result = (_ref2 = info.convertTo) === 'html' || _ref2 === 'markdown' ? node.innerHTML : node.textContent;
+              result = getContent(info, node);
             }
           }
           info.result = result;
@@ -170,7 +181,7 @@
         return sendResponse();
       }
       if (request.type === 'paste') {
-        if ((request.contents != null) && isEditable((_ref3 = elementBackups[request.id]) != null ? _ref3.field : void 0)) {
+        if ((request.contents != null) && isEditable((_ref1 = elementBackups[request.id]) != null ? _ref1.field : void 0)) {
           paste(elementBackups[request.id].field, request.contents);
         }
         delete elementBackups[request.id];
@@ -186,14 +197,14 @@
         if (contents = selection.getRangeAt(0).cloneContents()) {
           container = document.createElement('div');
           container.appendChild(contents);
-          _ref4 = container.querySelectorAll('[href]');
-          for (_j = 0, _len1 = _ref4.length; _j < _len1; _j++) {
-            href = _ref4[_j];
+          _ref2 = container.querySelectorAll('[href]');
+          for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+            href = _ref2[_j];
             href.href = href.href;
           }
-          _ref5 = container.querySelectorAll('[src]');
-          for (_k = 0, _len2 = _ref5.length; _k < _len2; _k++) {
-            src = _ref5[_k];
+          _ref3 = container.querySelectorAll('[src]');
+          for (_k = 0, _len2 = _ref3.length; _k < _len2; _k++) {
+            src = _ref3[_k];
             src.src = src.src;
           }
           images = extractAll(container.querySelectorAll('img[src]'), 'src');

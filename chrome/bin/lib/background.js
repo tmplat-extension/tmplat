@@ -555,7 +555,7 @@
             break;
           }
           if (placeholder == null) {
-            placeholder = utils.keyGen('', null, 's', false);
+            placeholder = utils.keyGen('', null, 'c', false);
             placeholders[placeholder] = {
               data: trim,
               tag: tag
@@ -640,9 +640,9 @@
       updateProgress(80);
       selectMap = {};
       shortenMap = {};
-      for (placeholder in map) {
-        if (!__hasProp.call(map, placeholder)) continue;
-        info = map[placeholder];
+      for (placeholder in placeholders) {
+        if (!__hasProp.call(placeholders, placeholder)) continue;
+        info = placeholders[placeholder];
         if (info.tag === 'shorten') {
           shortenMap[placeholder] = info.data;
         } else {
@@ -656,7 +656,7 @@
       }
       subRunner = new utils.Runner();
       if (!$.isEmptyObject(selectMap)) {
-        subRunner.push(null, runSelectors, selectMap, function() {
+        subRunner.push(null, runSelectors, tab, selectMap, function() {
           var value;
           log.info('One or more selectors were executed');
           updateProgress(85);
@@ -1344,28 +1344,37 @@
     return data;
   };
 
-  runSelectors = function(tabId, map, callback) {
+  runSelectors = function(tab, map, callback) {
+    var placeholder;
     log.trace();
-    return chrome.tabs.sendRequest(tabId, {
-      selectors: map
-    }, function(response) {
-      var placeholder, result, value, _ref;
-      log.debug('Retrieved the following data from the content script...', response);
-      _ref = response.selectors;
-      for (placeholder in _ref) {
-        if (!__hasProp.call(_ref, placeholder)) continue;
-        value = _ref[placeholder];
-        result = value.result || '';
-        if ($.isArray(result)) {
-          result = result.join('\n');
-        }
-        if (value.convertTo === 'markdown') {
-          result = md(result);
-        }
-        map[placeholder] = result;
+    if (isProtectedPage(tab)) {
+      for (placeholder in map) {
+        if (!__hasProp.call(map, placeholder)) continue;
+        map[placeholder] = '';
       }
       return callback();
-    });
+    } else {
+      return chrome.tabs.sendRequest(tab.id, {
+        selectors: map
+      }, function(response) {
+        var result, value, _ref;
+        log.debug('Retrieved the following data from the content script...', response);
+        _ref = response.selectors;
+        for (placeholder in _ref) {
+          if (!__hasProp.call(_ref, placeholder)) continue;
+          value = _ref[placeholder];
+          result = value.result || '';
+          if ($.isArray(result)) {
+            result = result.join('\n');
+          }
+          if (value.convertTo === 'markdown') {
+            result = md(result);
+          }
+          map[placeholder] = result;
+        }
+        return callback();
+      });
+    }
   };
 
   transformData = function(data, deleteOld) {
