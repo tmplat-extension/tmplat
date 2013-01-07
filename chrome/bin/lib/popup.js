@@ -1,5 +1,5 @@
 // [Template](http://neocotic.com/template)
-// (c) 2012 Alasdair Mercer
+// (c) 2013 Alasdair Mercer
 // Freely distributable under the MIT license.
 // For all details and documentation:
 // <http://neocotic.com/template>
@@ -27,7 +27,7 @@
       items = document.querySelectorAll('#templates li > a');
       for (_i = 0, _len = items.length; _i < _len; _i++) {
         item = items[_i];
-        item.addEventListener('click', popup.sendRequest);
+        item.addEventListener('click', popup.sendMessage);
       }
       for (_j = 0, _len1 = items.length; _j < _len1; _j++) {
         item = items[_j];
@@ -44,17 +44,17 @@
       return document.getElementById('loading').style.width = "" + (width + 2) + "px";
     };
 
-    Popup.prototype.sendRequest = function() {
-      var request;
+    Popup.prototype.sendMessage = function() {
+      var message;
       log.trace();
-      request = {
+      message = {
         data: {
           key: this.getAttribute('data-key')
         },
         type: this.getAttribute('data-type')
       };
-      log.debug('Sending the following request to the extension controller', request);
-      return chrome.extension.sendRequest(request);
+      log.debug('Sending the following message to the extension controller', message);
+      return utils.sendMessage('extension', message);
     };
 
     return Popup;

@@ -1,10 +1,10 @@
 // [Template](http://neocotic.com/template)
-// (c) 2012 Alasdair Mercer
+// (c) 2013 Alasdair Mercer
 // Freely distributable under the MIT license.
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, addAdditionalData, browser, buildDerivedData, buildPopup, buildStandardData, buildTemplate, callUrlShortener, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isExtensionGallery, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, nullIfEmpty, onRequest, operatingSystem, selectOrCreateTab, services, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage,
+  var BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, addAdditionalData, browser, buildDerivedData, buildPopup, buildStandardData, buildTemplate, callUrlShortener, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isExtensionGallery, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, nullIfEmpty, onMessage, operatingSystem, runSelectors, selectOrCreateTab, services, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage,
     __hasProp = {}.hasOwnProperty,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -109,6 +109,8 @@
   ];
 
   POPUP_DELAY = 600;
+
+  R_SELECT_TAG = /^select(all)?(\S*)?$/;
 
   R_UPPER_CASE = /[A-Z]+/;
 
@@ -475,13 +477,13 @@
     }
   };
 
-  onRequest = function(request, sender, sendResponse) {
-    var data, editable, id, link, output, runner, shortcut, shortenMap, tab, template, windowId, _ref, _ref1;
+  onMessage = function(message, sender, sendResponse) {
+    var data, editable, id, link, output, placeholders, runner, shortcut, tab, template, windowId, _ref, _ref1;
     log.trace();
-    if (request.type === 'shortcut' && !store.get('shortcuts.enabled')) {
+    if (message.type === 'shortcut' && !store.get('shortcuts.enabled')) {
       return typeof sendResponse === "function" ? sendResponse() : void 0;
     }
-    if (request.type === 'options') {
+    if (message.type === 'options') {
       selectOrCreateTab(utils.url('pages/options.html'));
       if ((_ref = chrome.extension.getViews({
         type: 'popup'
@@ -490,7 +492,7 @@
       }
       return typeof sendResponse === "function" ? sendResponse() : void 0;
     }
-    if ((_ref1 = request.type) === 'info' || _ref1 === 'version') {
+    if ((_ref1 = message.type) === 'info' || _ref1 === 'version') {
       return typeof sendResponse === "function" ? sendResponse({
         hotkeys: getHotkeys(),
         id: EXTENSION_ID,
@@ -502,8 +504,8 @@
     id = utils.keyGen('', null, 't', false);
     link = false;
     output = null;
+    placeholders = {};
     shortcut = false;
-    shortenMap = {};
     tab = null;
     template = null;
     windowId = chrome.windows.WINDOW_ID_CURRENT;
@@ -528,51 +530,63 @@
       ];
     });
     runner.push(null, function() {
-      var shortCallback, _ref2;
-      shortCallback = function(text, render) {
-        var key, placeholder, url, value;
-        text = text ? render(text) : this.url;
-        url = text.trim();
-        log.debug('Following is the contents of a shorten tag...', text);
-        if (!R_VALID_URL.test(url)) {
-          return text;
-        }
-        for (key in shortenMap) {
-          if (!__hasProp.call(shortenMap, key)) continue;
-          value = shortenMap[key];
-          if (value === url) {
-            placeholder = key;
+      var getCallback, _ref2;
+      getCallback = function(tag) {
+        return function(text, render) {
+          var key, placeholder, trim, val;
+          if (text) {
+            text = render(text);
           }
-        }
-        if (placeholder == null) {
-          placeholder = utils.keyGen('', null, 's', false);
-          shortenMap[placeholder] = url;
-          this[placeholder] = "{" + placeholder + "}";
-        }
-        log.debug("Replacing shorten tag with " + placeholder + " placeholder");
-        return "{" + placeholder + "}";
+          if (tag === 'shorten' && !text) {
+            text = this.url;
+          }
+          trim = text.trim();
+          log.debug("Following is the contents of a " + tag + " tag...", text);
+          if (!trim || tag === 'shorten' && !R_VALID_URL.test(trim)) {
+            return text;
+          }
+          for (key in placeholders) {
+            if (!__hasProp.call(placeholders, key)) continue;
+            val = placeholders[key];
+            if (!(val.data === trim && val.tag === tag)) {
+              continue;
+            }
+            placeholder = key;
+            break;
+          }
+          if (placeholder == null) {
+            placeholder = utils.keyGen('', null, 'c', false);
+            placeholders[placeholder] = {
+              data: trim,
+              tag: tag
+            };
+            this[placeholder] = "{" + placeholder + "}";
+          }
+          log.debug("Replacing " + tag + " tag with " + placeholder + " placeholder");
+          return "{" + placeholder + "}";
+        };
       };
       updateProgress(null, true);
       try {
-        switch (request.type) {
+        switch (message.type) {
           case 'menu':
-            template = getTemplateWithMenuId(request.data.menuItemId);
+            template = getTemplateWithMenuId(message.data.menuItemId);
             if (template != null) {
-              _ref2 = buildDerivedData(tab, request.data, shortCallback), data = _ref2.data, editable = _ref2.editable, link = _ref2.link;
+              _ref2 = buildDerivedData(tab, message.data, getCallback), data = _ref2.data, editable = _ref2.editable, link = _ref2.link;
             }
             break;
           case 'popup':
           case 'toolbar':
-            template = getTemplateWithKey(request.data.key);
+            template = getTemplateWithKey(message.data.key);
             if (template != null) {
-              data = buildStandardData(tab, shortCallback);
+              data = buildStandardData(tab, getCallback);
             }
             break;
           case 'shortcut':
             shortcut = true;
-            template = getTemplateWithShortcut(request.data.key);
+            template = getTemplateWithShortcut(message.data.key);
             if (template != null) {
-              data = buildStandardData(tab, shortCallback);
+              data = buildStandardData(tab, getCallback);
             }
         }
         updateProgress(20);
@@ -602,7 +616,7 @@
             output = Mustache.to_html(template.content, data);
             updateProgress(60);
             log.debug('Following string is the rendered result...', output);
-            if ($.isEmptyObject(shortenMap)) {
+            if ($.isEmptyObject(placeholders)) {
               return runner.finish({
                 contents: output,
                 success: true,
@@ -621,36 +635,87 @@
         }
       ];
     });
-    runner.push(null, callUrlShortener, shortenMap, function(response) {
-      var newOutput, _ref2;
-      log.info('URL shortener service was called one or more times');
+    runner.push(null, function() {
+      var info, match, placeholder, selectMap, shortenMap, subRunner;
       updateProgress(80);
-      if (response.success) {
-        updateUrlShortenerUsage(response.service.name, response.oauth);
-        newOutput = Mustache.to_html(output, shortenMap);
-        log.debug('Following string is the re-rendered result...', newOutput);
-        return runner.finish({
-          contents: newOutput,
-          success: true,
-          template: template
-        });
-      } else {
-        if ((_ref2 = response.message) == null) {
-          response.message = i18n.get('shortener_error', response.service.title);
+      selectMap = {};
+      shortenMap = {};
+      for (placeholder in placeholders) {
+        if (!__hasProp.call(placeholders, placeholder)) continue;
+        info = placeholders[placeholder];
+        if (info.tag === 'shorten') {
+          shortenMap[placeholder] = info.data;
+        } else {
+          match = info.tag.match(R_SELECT_TAG);
+          selectMap[placeholder] = {
+            all: match[1] != null,
+            convertTo: match[2],
+            selector: info.data
+          };
         }
-        log.warn(response.message);
-        return runner.finish({
-          message: response.message,
-          success: false,
-          template: template
+      }
+      subRunner = new utils.Runner();
+      if (!$.isEmptyObject(selectMap)) {
+        subRunner.push(null, runSelectors, tab, selectMap, function() {
+          var value;
+          log.info('One or more selectors were executed');
+          updateProgress(85);
+          for (placeholder in selectMap) {
+            if (!__hasProp.call(selectMap, placeholder)) continue;
+            value = selectMap[placeholder];
+            placeholders[placeholder] = value;
+          }
+          return subRunner.next({
+            success: true
+          });
         });
       }
+      if (!$.isEmptyObject(shortenMap)) {
+        subRunner.push(null, callUrlShortener, shortenMap, function(response) {
+          var value, _ref2;
+          log.info('URL shortener service was called one or more times');
+          updateProgress(90);
+          if (response.success) {
+            updateUrlShortenerUsage(response.service.name, response.oauth);
+            for (placeholder in shortenMap) {
+              if (!__hasProp.call(shortenMap, placeholder)) continue;
+              value = shortenMap[placeholder];
+              placeholders[placeholder] = value;
+            }
+            return subRunner.finish({
+              success: true
+            });
+          } else {
+            if ((_ref2 = response.message) == null) {
+              response.message = i18n.get('shortener_error', response.service.title);
+            }
+            log.warn(response.message);
+            return subRunner.finish({
+              message: response.message,
+              success: false
+            });
+          }
+        });
+      }
+      return subRunner.run(function(result) {
+        var newOutput;
+        if (result.success) {
+          newOutput = Mustache.to_html(output, placeholders);
+          log.debug('Following string is the re-rendered result...', newOutput);
+        }
+        return runner.finish({
+          contents: newOutput,
+          message: result.message,
+          success: result.success,
+          template: template
+        });
+      });
     });
     return runner.run(function(result) {
       var type, value, _ref2, _ref3;
-      type = request.type[0].toUpperCase() + request.type.substr(1);
+      type = message.type[0].toUpperCase() + message.type.substr(1);
       if (shortcut) {
-        value = request.data.key.charCodeAt(0);
+        value = message.data.key.charCodeAt(0);
       }
       analytics.track('Requests', 'Processed', type, value);
       updateProgress(100);
@@ -665,7 +730,7 @@
           ext.notification.description = (_ref2 = result.message) != null ? _ref2 : i18n.get('result_good_description', result.template.title);
           ext.copy(result.contents);
           if (!isProtectedPage(tab) && (editable && store.get('menu.paste')) || (shortcut && store.get('shortcuts.paste'))) {
-            chrome.tabs.sendRequest(tab.id, {
+            utils.sendMessage('tabs', tab.id, {
               contents: result.contents,
               id: id,
               type: 'paste'
@@ -769,7 +834,7 @@
           for (_j = 0, _len1 = tabs.length; _j < _len1; _j++) {
             tab = tabs[_j];
             if (!isProtectedPage(tab)) {
-              chrome.tabs.sendRequest(tab.id, {
+              utils.sendMessage('tabs', tab.id, {
                 hotkeys: hotkeys
               });
             }
@@ -969,7 +1034,7 @@
         return runner.next();
       }
     });
-    runner.push(chrome.tabs, 'sendRequest', tab.id, {
+    runner.push(utils, 'sendMessage', 'tabs', tab.id, {
       editable: editable,
       id: id,
       link: link,
@@ -1017,7 +1082,7 @@
     });
   };
 
-  buildDerivedData = function(tab, onClickData, shortCallback) {
+  buildDerivedData = function(tab, onClickData, getCallback) {
     var data, obj;
     log.trace();
     obj = {
@@ -1028,11 +1093,11 @@
       title: tab.title,
       url: onClickData.linkUrl ? (obj.link = true, onClickData.linkUrl) : onClickData.srcUrl ? onClickData.srcUrl : onClickData.frameUrl ? onClickData.frameUrl : onClickData.pageUrl
     };
-    obj.data = buildStandardData(data, shortCallback);
+    obj.data = buildStandardData(data, getCallback);
     return obj;
   };
 
-  buildStandardData = function(tab, shortCallback) {
+  buildStandardData = function(tab, getCallback) {
     var anchor, bitly, ctab, data, extension, googl, handler, menu, notifications, plugin, prop, results, shortcuts, stats, toolbar, url, value, yourls;
     log.trace();
     ctab = {};
@@ -1198,8 +1263,26 @@
         };
       },
       segments: url.segment(),
+      select: function() {
+        return getCallback('select');
+      },
+      selectall: function() {
+        return getCallback('selectall');
+      },
+      selectallhtml: function() {
+        return getCallback('selectallhtml');
+      },
+      selectallmarkdown: function() {
+        return getCallback('selectallmarkdown');
+      },
+      selecthtml: function() {
+        return getCallback('selecthtml');
+      },
       selectionmarkdown: function() {
         return md(this.selectionhtml);
+      },
+      selectmarkdown: function() {
+        return getCallback('selectmarkdown');
       },
       short: function() {
         return this.shorten();
@@ -1207,7 +1290,7 @@
       shortcuts: shortcuts.enabled,
       shortcutspaste: shortcuts.paste,
       shorten: function() {
-        return shortCallback;
+        return getCallback('shorten');
       },
       tidy: function() {
         return function(text, render) {
@@ -1259,6 +1342,39 @@
       yourlsusername: yourls.username
     });
     return data;
+  };
+
+  runSelectors = function(tab, map, callback) {
+    var placeholder;
+    log.trace();
+    if (isProtectedPage(tab)) {
+      for (placeholder in map) {
+        if (!__hasProp.call(map, placeholder)) continue;
+        map[placeholder] = '';
+      }
+      return callback();
+    } else {
+      return utils.sendMessage('tabs', tab.id, {
+        selectors: map
+      }, function(response) {
+        var result, value, _ref;
+        log.debug('Retrieved the following data from the content script...', response);
+        _ref = response.selectors;
+        for (placeholder in _ref) {
+          if (!__hasProp.call(_ref, placeholder)) continue;
+          value = _ref[placeholder];
+          result = value.result || '';
+          if ($.isArray(result)) {
+            result = result.join('\n');
+          }
+          if (value.convertTo === 'markdown') {
+            result = md(result);
+          }
+          map[placeholder] = result;
+        }
+        return callback();
+      });
+    }
   };
 
   transformData = function(data, deleteOld) {
@@ -2007,15 +2123,15 @@
         initStatistics();
         initUrlShorteners();
         chrome.browserAction.onClicked.addListener(function(tab) {
-          return onRequest({
+          return onMessage({
             data: {
               key: store.get('toolbar.key')
             },
             type: 'toolbar'
           });
         });
-        chrome.extension.onRequest.addListener(onRequest);
-        chrome.extension.onRequestExternal.addListener(function(req, sender, cb) {
+        utils.onMessage('extension', false, onMessage);
+        utils.onMessage('extension', true, function(msg, sender, cb) {
           var block;
           block = isBlacklisted(sender.id);
           analytics.track('External Requests', 'Started', sender.id, Number(!block));
@@ -2024,7 +2140,7 @@
             return typeof cb === "function" ? cb() : void 0;
           } else {
             log.debug("Accepting external request from " + sender.id);
-            return onRequest(req, sender, cb);
+            return onMessage(msg, sender, cb);
           }
         });
         browser.version = getBrowserVersion();
@@ -2089,7 +2205,7 @@
       return chrome.contextMenus.removeAll(function() {
         var menu, menuId, notEmpty, onMenuClick, parentId, template, _i, _len, _ref;
         onMenuClick = function(info, tab) {
-          return onRequest({
+          return onMessage({
             data: info,
             type: 'menu'
           });
@@ -2131,7 +2247,7 @@
             return chrome.contextMenus.create({
               contexts: ['all'],
               onclick: function(info, tab) {
-                return onRequest({
+                return onMessage({
                   type: 'options'
                 });
               },

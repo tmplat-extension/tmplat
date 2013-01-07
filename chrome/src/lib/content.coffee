@@ -1,5 +1,5 @@
 # [Template](http://neocotic.com/template)  
-# (c) 2012 Alasdair Mercer  
+# (c) 2013 Alasdair Mercer  
 # Freely distributable under the MIT license.  
 # For all details and documentation:  
 # <http://neocotic.com/template>
@@ -32,6 +32,14 @@ extractAll = (array, property) ->
     results.push element[property] if element[property] not in results
   results
 
+# Extract the relevant content of `node` as is required by `info`.
+getContent = (info, node) ->
+  return '' unless node
+  if info?.convertTo in ['html', 'markdown']
+    node.innerHTML
+  else
+    node.textContent
+
 # Attempt to derive the most relevant anchor element from those stored under
 # the `id` provided.
 getLink = (id, url) ->
@@ -59,6 +67,13 @@ getMeta = (name, csv) ->
 isEditable = (node) ->
   node? and not node.disabled and not node.readOnly
 
+# Convenient shorthand for the `onMessage` method in the chrome API which
+# supports the old `onRequest` variation for backwards compatibility.
+onMessage = (args...) ->
+  base = chrome.extension
+  base = base.onMessage or base.onRequest
+  base.addListener args...
+
 # Traverse the parents of `node` in search of the first anchor element, if any.
 parentLink = (node) ->
   return unless node?
@@ -74,12 +89,18 @@ paste = (node, value) ->
   str += node.value.substr node.selectionEnd, node.value.length
   node.value = str
 
+# Convenient shorthand for the `sendMessage` method in the chrome API which
+# supports the old `sendRequest` variation for backwards compatibility.
+sendMessage = (args...) ->
+  base = chrome.extension
+  (base.sendMessage or base.sendRequest).apply base, args
+
 # Functionality
 # -------------
 
-# Wrap the function functionality in a request for Template's extension ID and
+# Wrap the function functionality in a message for Template's extension ID and
 # current version so that it can be used to detect previous injections.
-chrome.extension.sendRequest type: 'info', (data) ->
+sendMessage type: 'info', (data) ->
   hotkeys = data.hotkeys
   isMac   = navigator.userAgent.toLowerCase().indexOf('mac') isnt -1
   # Only add the listeners if a previous injection isn't detected for version
@@ -102,30 +123,42 @@ chrome.extension.sendRequest type: 'info', (data) ->
           elements.field = e.target
         else
           elements.field = null
-        chrome.extension.sendRequest
+        sendMessage
           data: key: key
           type: 'shortcut'
         e.preventDefault()
   # Add a listener to provide the background page with information that is
   # extracted from the DOM or perform auto-paste functionality.
-  chrome.extension.onRequest.addListener (request, sender, sendResponse) ->
+  onMessage (message, sender, sendResponse) ->
     # Ensure local hotkeys are up-to-date.
-    if request.hotkeys?
-      hotkeys = request.hotkeys
+    if message.hotkeys?
+      hotkeys = message.hotkeys
       return sendResponse()
-    return sendResponse() unless request.id?
-    if request.type is 'paste'
-      if request.contents? and
-         isEditable elementBackups[request.id]?.field
-        paste elementBackups[request.id].field, request.contents
+    if message.selectors?
+      for own key, info of message.selectors
+        if info.all
+          nodes  = document.querySelectorAll info.selector
+          result = []
+          if nodes
+            result.push getContent info, node for node in nodes when node
+        else
+          node   = document.querySelector info.selector
+          result = getContent info, node if node
+        info.result = result
+      return sendResponse selectors: message.selectors
+    return sendResponse() unless message.id?
+    if message.type is 'paste'
+      if message.contents? and
+         isEditable elementBackups[message.id]?.field
+        paste elementBackups[message.id].field, message.contents
       # Backups no longer required so might as well clean up a bit.
-      delete elementBackups[request.id]
+      delete elementBackups[message.id]
       return sendResponse()
     # Create a backup of the relevant elements for this request.
-    elementBackups[request.id] =
-      field: if request.editable or request.shortcut then elements.field
-      link:  if request.link then elements.link
-      other: if request.link then elements.other
+    elementBackups[message.id] =
+      field: if message.editable or message.shortcut then elements.field
+      link:  if message.link then elements.link
+      other: if message.link then elements.other
     selection = window.getSelection()
     unless selection.isCollapsed
       if contents = selection.getRangeAt(0).cloneContents()
@@ -137,7 +170,7 @@ chrome.extension.sendRequest type: 'info', (data) ->
         # Capture addresses for links and images.
         images = extractAll container.querySelectorAll('img[src]'), 'src'
         links  = extractAll container.querySelectorAll('a[href]'),  'href'
-    link = getLink request.id, request.url
+    link = getLink message.id, message.url
     # Build response with values derived from the DOM.
     sendResponse
       author:         getMeta 'author'

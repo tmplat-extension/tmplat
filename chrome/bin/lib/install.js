@@ -1,11 +1,20 @@
 // [Template](http://neocotic.com/template)
-// (c) 2012 Alasdair Mercer
+// (c) 2013 Alasdair Mercer
 // Freely distributable under the MIT license.
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
+  var sendMessage,
+    __slice = [].slice;
 
-  chrome.extension.sendRequest({
+  sendMessage = function() {
+    var args, base;
+    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    base = chrome.extension;
+    return (base.sendMessage || base.sendRequest).apply(base, args);
+  };
+
+  sendMessage({
     type: 'info'
   }, function(data) {
     var cls, link, newClasses, oldClasses, _i, _j, _len, _len1, _ref, _results;

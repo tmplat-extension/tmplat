@@ -1969,6 +1969,78 @@
     "message": "Get the segment at the index provided",
     "description": "Description of the segment variable on the Guide tab of the Options page under the Operations section."
   },
+  "opt_guide_operations_select_all_html_text": {
+    "message": "Concatenate the $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of all matching elements",
+    "description": "Description of the selectAllHTML variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>",
+        "example": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\"",
+        "example": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">",
+        "example": "\">"
+      }
+    }
+  },
+  "opt_guide_operations_select_all_markdown_text": {
+    "message": "Concatenate the contents of all matching elements as $O_LINK_MARKDOWN$Markdown$C_LINK$",
+    "description": "Description of the selectAllMarkdown variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_markdown": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\">"
+      }
+    }
+  },
+  "opt_guide_operations_select_all_text": {
+    "message": "Concatenate the text of all matching elements",
+    "description": "Description of the selectAll variable on the Guide tab of the Options page under the Operations section."
+  },
+  "opt_guide_operations_select_html_text": {
+    "message": "Get the $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of the first matching element",
+    "description": "Description of the selectHTML variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>",
+        "example": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\"",
+        "example": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">",
+        "example": "\">"
+      }
+    }
+  },
+  "opt_guide_operations_select_markdown_text": {
+    "message": "Get the contents of the first matching element as $O_LINK_MARKDOWN$Markdown$C_LINK$",
+    "description": "Description of the selectMarkdown variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_markdown": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\">"
+      }
+    }
+  },
+  "opt_guide_operations_select_text": {
+    "message": "Get the text of first matching element",
+    "description": "Description of the select variable on the Guide tab of the Options page under the Operations section."
+  },
   "opt_guide_operations_shorten_text": {
     "message": "Shorten the $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ provided using the active $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ shortener",
     "description": "Description of the shorten variable on the Guide tab of the Options page under the Operations section.",

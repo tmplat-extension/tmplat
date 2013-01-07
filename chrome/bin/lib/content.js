@@ -1,11 +1,13 @@
 // [Template](http://neocotic.com/template)
-// (c) 2012 Alasdair Mercer
+// (c) 2013 Alasdair Mercer
 // Freely distributable under the MIT license.
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var elementBackups, elements, extractAll, getLink, getMeta, hotkeys, isEditable, parentLink, paste,
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+  var elementBackups, elements, extractAll, getContent, getLink, getMeta, hotkeys, isEditable, onMessage, parentLink, paste, sendMessage,
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
+    __slice = [].slice,
+    __hasProp = {}.hasOwnProperty;
 
   elementBackups = {};
 
@@ -29,6 +31,18 @@
       }
     }
     return results;
+  };
+
+  getContent = function(info, node) {
+    var _ref;
+    if (!node) {
+      return '';
+    }
+    if ((_ref = info != null ? info.convertTo : void 0) === 'html' || _ref === 'markdown') {
+      return node.innerHTML;
+    } else {
+      return node.textContent;
+    }
   };
 
   getLink = function(id, url) {
@@ -67,6 +81,14 @@
     return (node != null) && !node.disabled && !node.readOnly;
   };
 
+  onMessage = function() {
+    var args, base;
+    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    base = chrome.extension;
+    base = base.onMessage || base.onRequest;
+    return base.addListener.apply(base, args);
+  };
+
   parentLink = function(node) {
     if (node == null) {
       return;
@@ -89,7 +111,14 @@
     return node.value = str;
   };
 
-  chrome.extension.sendRequest({
+  sendMessage = function() {
+    var args, base;
+    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    base = chrome.extension;
+    return (base.sendMessage || base.sendRequest).apply(base, args);
+  };
+
+  sendMessage({
     type: 'info'
   }, function(data) {
     var isMac;
@@ -120,7 +149,7 @@
           } else {
             elements.field = null;
           }
-          chrome.extension.sendRequest({
+          sendMessage({
             data: {
               key: key
             },
@@ -130,47 +159,75 @@
         }
       }
     });
-    return chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
-      var container, contents, href, images, link, links, selection, src, _i, _j, _len, _len1, _ref, _ref1, _ref2;
-      if (request.hotkeys != null) {
-        hotkeys = request.hotkeys;
+    return onMessage(function(message, sender, sendResponse) {
+      var container, contents, href, images, info, key, link, links, node, nodes, result, selection, src, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
+      if (message.hotkeys != null) {
+        hotkeys = message.hotkeys;
         return sendResponse();
       }
-      if (request.id == null) {
-        return sendResponse();
-      }
-      if (request.type === 'paste') {
-        if ((request.contents != null) && isEditable((_ref = elementBackups[request.id]) != null ? _ref.field : void 0)) {
-          paste(elementBackups[request.id].field, request.contents);
+      if (message.selectors != null) {
+        _ref = message.selectors;
+        for (key in _ref) {
+          if (!__hasProp.call(_ref, key)) continue;
+          info = _ref[key];
+          if (info.all) {
+            nodes = document.querySelectorAll(info.selector);
+            result = [];
+            if (nodes) {
+              for (_i = 0, _len = nodes.length; _i < _len; _i++) {
+                node = nodes[_i];
+                if (node) {
+                  result.push(getContent(info, node));
+                }
+              }
+            }
+          } else {
+            node = document.querySelector(info.selector);
+            if (node) {
+              result = getContent(info, node);
+            }
+          }
+          info.result = result;
         }
-        delete elementBackups[request.id];
+        return sendResponse({
+          selectors: message.selectors
+        });
+      }
+      if (message.id == null) {
         return sendResponse();
       }
-      elementBackups[request.id] = {
-        field: request.editable || request.shortcut ? elements.field : void 0,
-        link: request.link ? elements.link : void 0,
-        other: request.link ? elements.other : void 0
+      if (message.type === 'paste') {
+        if ((message.contents != null) && isEditable((_ref1 = elementBackups[message.id]) != null ? _ref1.field : void 0)) {
+          paste(elementBackups[message.id].field, message.contents);
+        }
+        delete elementBackups[message.id];
+        return sendResponse();
+      }
+      elementBackups[message.id] = {
+        field: message.editable || message.shortcut ? elements.field : void 0,
+        link: message.link ? elements.link : void 0,
+        other: message.link ? elements.other : void 0
       };
       selection = window.getSelection();
       if (!selection.isCollapsed) {
         if (contents = selection.getRangeAt(0).cloneContents()) {
           container = document.createElement('div');
           container.appendChild(contents);
-          _ref1 = container.querySelectorAll('[href]');
-          for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-            href = _ref1[_i];
+          _ref2 = container.querySelectorAll('[href]');
+          for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+            href = _ref2[_j];
             href.href = href.href;
           }
-          _ref2 = container.querySelectorAll('[src]');
-          for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-            src = _ref2[_j];
+          _ref3 = container.querySelectorAll('[src]');
+          for (_k = 0, _len2 = _ref3.length; _k < _len2; _k++) {
+            src = _ref3[_k];
             src.src = src.src;
           }
           images = extractAll(container.querySelectorAll('img[src]'), 'src');
           links = extractAll(container.querySelectorAll('a[href]'), 'href');
         }
       }
-      link = getLink(request.id, request.url);
+      link = getLink(message.id, message.url);
       return sendResponse({
         author: getMeta('author'),
         characterSet: document.characterSet,
