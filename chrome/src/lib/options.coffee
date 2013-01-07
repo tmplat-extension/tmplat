@@ -1,5 +1,5 @@
 # [Template](http://neocotic.com/template)  
-# (c) 2012 Alasdair Mercer  
+# (c) 2013 Alasdair Mercer  
 # Freely distributable under the MIT license.  
 # For all details and documentation:  
 # <http://neocotic.com/template>
@@ -1113,6 +1113,10 @@ readImport = (importData) ->
   log.debug 'Following data was derived from that imported...', data
   data
 
+# Convenient shorthand for safely trimming a string to lower case.
+trimToLower = (str = '') ->
+  str.trim().toLowerCase()
+
 # Options page setup
 # ------------------
 
@@ -1177,23 +1181,30 @@ options = window.options = new class Options extends utils.Class
       ext.SHORTCUT_MODIFIERS
     # Initialize all popovers, tooltips and *go-to* links.
     $('[popover]').each ->
-      $this   = $ this
-      trigger = $this.attr 'data-trigger'
-      trigger = if trigger? then trigger.trim().toLowerCase() else 'hover'
+      $this     = $ this
+      placement = $this.attr 'data-placement'
+      placement = if placement? then trimToLower placement else 'right'
+      trigger   = $this.attr 'data-trigger'
+      trigger   = if trigger? then trimToLower trigger else 'hover'
       $this.popover
-        content: -> i18n.get $this.attr 'popover'
-        trigger: trigger
+        content:   -> i18n.get $this.attr 'popover'
+        html:      yes
+        placement: placement
+        trigger:   trigger
       if trigger is 'manual'
         $this.click -> $this.popover 'toggle'
     $('[title]').each ->
       $this     = $ this
       placement = $this.attr 'data-placement'
-      placement = if placement? then placement.trim().toLowerCase() else 'top'
+      placement = if placement? then trimToLower placement else 'top'
       $this.tooltip placement: placement
+    navHeight = $('.navbar').height()
     $('[data-goto]').click ->
       goto = $ $(this).attr 'data-goto'
-      log.debug "Relocating view to include '#{goto.selector}'"
-      $(window).scrollTop goto.position()?.top or 0
+      pos  = goto.position()?.top or 0
+      pos -= navHeight if pos and pos >= navHeight
+      log.debug "Relocating view to include '#{goto.selector}' at #{pos}"
+      $(window).scrollTop pos
 
 # Initialize `options` when the DOM is ready.
 utils.ready -> options.init()

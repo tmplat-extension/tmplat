@@ -1,10 +1,10 @@
 // [Template](http://neocotic.com/template)
-// (c) 2012 Alasdair Mercer
+// (c) 2013 Alasdair Mercer
 // Freely distributable under the MIT license.
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var Options, R_VALID_KEY, R_VALID_SHORTCUT, WIDGET_SOURCE, addImportedTemplate, bindSaveEvent, bindTemplateSaveEvent, clearErrors, createExport, createImport, deriveTemplate, ext, feedback, feedbackAdded, fileErrorHandler, isKeyNew, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateSaveEvents, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, options, readImport, saveTemplates, showErrors, updateImportedTemplate, updateTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate,
+  var Options, R_VALID_KEY, R_VALID_SHORTCUT, WIDGET_SOURCE, addImportedTemplate, bindSaveEvent, bindTemplateSaveEvent, clearErrors, createExport, createImport, deriveTemplate, ext, feedback, feedbackAdded, fileErrorHandler, isKeyNew, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateSaveEvents, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, options, readImport, saveTemplates, showErrors, trimToLower, updateImportedTemplate, updateTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -1288,6 +1288,13 @@
     return data;
   };
 
+  trimToLower = function(str) {
+    if (str == null) {
+      str = '';
+    }
+    return str.trim().toLowerCase();
+  };
+
   options = window.options = new (Options = (function(_super) {
 
     __extends(Options, _super);
@@ -1297,7 +1304,7 @@
     }
 
     Options.prototype.init = function() {
-      var initialTabChange, optionsActiveTab;
+      var initialTabChange, navHeight, optionsActiveTab;
       log.trace();
       log.info('Initializing the options page');
       if (store.get('analytics')) {
@@ -1359,14 +1366,18 @@
       load();
       $('#template_shortcut_modifier').html(ext.isThisPlatform('mac') ? ext.SHORTCUT_MAC_MODIFIERS : ext.SHORTCUT_MODIFIERS);
       $('[popover]').each(function() {
-        var $this, trigger;
+        var $this, placement, trigger;
         $this = $(this);
+        placement = $this.attr('data-placement');
+        placement = placement != null ? trimToLower(placement) : 'right';
         trigger = $this.attr('data-trigger');
-        trigger = trigger != null ? trigger.trim().toLowerCase() : 'hover';
+        trigger = trigger != null ? trimToLower(trigger) : 'hover';
         $this.popover({
           content: function() {
             return i18n.get($this.attr('popover'));
           },
+          html: true,
+          placement: placement,
           trigger: trigger
         });
         if (trigger === 'manual') {
@@ -1379,16 +1390,21 @@
         var $this, placement;
         $this = $(this);
         placement = $this.attr('data-placement');
-        placement = placement != null ? placement.trim().toLowerCase() : 'top';
+        placement = placement != null ? trimToLower(placement) : 'top';
         return $this.tooltip({
           placement: placement
         });
       });
+      navHeight = $('.navbar').height();
       return $('[data-goto]').click(function() {
-        var goto, _ref;
+        var goto, pos, _ref;
         goto = $($(this).attr('data-goto'));
-        log.debug("Relocating view to include '" + goto.selector + "'");
-        return $(window).scrollTop(((_ref = goto.position()) != null ? _ref.top : void 0) || 0);
+        pos = ((_ref = goto.position()) != null ? _ref.top : void 0) || 0;
+        if (pos && pos >= navHeight) {
+          pos -= navHeight;
+        }
+        log.debug("Relocating view to include '" + goto.selector + "' at " + pos);
+        return $(window).scrollTop(pos);
       });
     };
 
