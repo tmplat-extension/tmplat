@@ -1,0 +1,4 @@
+body {direction: __MSG_@@bidi_dir__; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 13px; line-height: 18px; color: #333;}
+#icon {float: left; height: 32px; width: 32px;}
+#title {font-weight: bold; margin-left: 38px;}
+#description {margin-left: 38px;}
