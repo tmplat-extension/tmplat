@@ -15,8 +15,8 @@ String::capitalize = ->
 # Private constants
 # -----------------
 
-# List of blacklisted extension IDs that should be prevented from making
-# external requests to Template.
+# List of blacklisted extension IDs that should be prevented from sending
+# external messages to Template.
 BLACKLIST         = []
 # Predefined templates to be used by default.
 DEFAULT_TEMPLATES = [
@@ -349,23 +349,23 @@ nullIfEmpty = (object) ->
   log.trace()
   if $.isEmptyObject object then null else object
 
-# Listener for internal requests to the extension.  
-# External requests are also routed through here, but only after being checked
+# Listener for internal messages sent to the extension.  
+# External messages are also routed through here, but only after being checked
 # that they do not originate from a blacklisted extension.
-onRequest = (request, sender, sendResponse) ->
+onMessage = (message, sender, sendResponse) ->
   log.trace()
   # Don't allow shortcut requests when shortcuts are disabled.
-  if request.type is 'shortcut' and not store.get 'shortcuts.enabled'
+  if message.type is 'shortcut' and not store.get 'shortcuts.enabled'
     return sendResponse?()
   # Select or create a tab for the Options page.
-  if request.type is 'options'
+  if message.type is 'options'
     selectOrCreateTab utils.url 'pages/options.html'
     # Close the popup if it's currently open. This should happen naturally but
     # is being forced to ensure consistency.
     chrome.extension.getViews(type: 'popup')[0]?.close()
     return sendResponse?()
   # Info requests are simple, just send some useful information back. Done!
-  if request.type in ['info', 'version']
+  if message.type in ['info', 'version']
     return sendResponse?(
       hotkeys: getHotkeys()
       id:      EXTENSION_ID
@@ -426,18 +426,18 @@ onRequest = (request, sender, sendResponse) ->
     updateProgress null, on
     # Attempt to derive the contextual template data.
     try
-      switch request.type
+      switch message.type
         when 'menu'
-          template = getTemplateWithMenuId request.data.menuItemId
+          template = getTemplateWithMenuId message.data.menuItemId
           if template?
-            {data, editable, link} = buildDerivedData tab, request.data,
+            {data, editable, link} = buildDerivedData tab, message.data,
               getCallback
         when 'popup', 'toolbar'
-          template = getTemplateWithKey request.data.key
+          template = getTemplateWithKey message.data.key
           data     = buildStandardData tab, getCallback if template?
         when 'shortcut'
           shortcut = yes
-          template = getTemplateWithShortcut request.data.key
+          template = getTemplateWithShortcut message.data.key
           data     = buildStandardData tab, getCallback if template?
       updateProgress 20
       if data? then runner.next() else runner.finish()
@@ -529,8 +529,8 @@ onRequest = (request, sender, sendResponse) ->
         success:  result.success
         template: template
   runner.run (result) ->
-    type  = request.type[0].toUpperCase() + request.type.substr 1
-    value = request.data.key.charCodeAt 0 if shortcut
+    type  = message.type[0].toUpperCase() + message.type.substr 1
+    value = message.data.key.charCodeAt 0 if shortcut
     analytics.track 'Requests', 'Processed', type, value
     updateProgress 100
     if result?
@@ -549,7 +549,7 @@ onRequest = (request, sender, sendResponse) ->
         if not isProtectedPage(tab) and
            (editable and store.get 'menu.paste') or
            (shortcut and store.get 'shortcuts.paste')
-          chrome.tabs.sendRequest tab.id,
+          utils.sendMessage 'tabs', tab.id,
             contents: result.contents, id: id, type: 'paste'
         sendResponse? contents: result.contents
       else
@@ -627,9 +627,9 @@ updateHotkeys = ->
       do (win) -> runner.push chrome.tabs, 'query', windowId: win.id, (tabs) ->
         log.info 'Retrieved the following tabs...', tabs
         # Check tabs are not displaying a *protected* page (i.e. one that
-        # will cause an error if an attempt is made to send a request to it).
+        # will cause an error if an attempt is made to send a message to it).
         for tab in tabs when not isProtectedPage tab
-          chrome.tabs.sendRequest tab.id, hotkeys: hotkeys
+          utils.sendMessage 'tabs', tab.id, hotkeys: hotkeys
         runner.next()
     runner.next()
   runner.run()
@@ -750,7 +750,7 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
     # Try to prevent pages hanging because content script should not have been
     # executed.
     if isProtectedPage tab then runner.finish() else runner.next()
-  runner.push chrome.tabs, 'sendRequest', tab.id,
+  runner.push utils, 'sendMessage', 'tabs', tab.id,
     editable: editable, id: id, link: link, shortcut: shortcut, url: data.url,
       (response) ->
         log.debug 'Retrieved the following data from the content script...',
@@ -975,7 +975,7 @@ runSelectors = (tab, map, callback) ->
     map[placeholder] = '' for own placeholder of map
     callback()
   else
-    chrome.tabs.sendRequest tab.id, selectors: map, (response) ->
+    utils.sendMessage 'tabs', tab.id, selectors: map, (response) ->
       log.debug 'Retrieved the following data from the content script...',
         response
       for own placeholder, value of response.selectors
@@ -1509,7 +1509,7 @@ ext = window.ext = new class Extension extends utils.Class
     key
 
   # Initialize the background page.  
-  # This will involve initializing the settings and adding the request
+  # This will involve initializing the settings and adding the message
   # listeners.
   init: ->
     log.trace()
@@ -1556,12 +1556,12 @@ ext = window.ext = new class Extension extends utils.Class
       initUrlShorteners()
       # Add listener for toolbar/browser action clicks.  
       # This listener will be ignored whenever the popup is enabled.
-      chrome.browserAction.onClicked.addListener (tab) -> onRequest
+      chrome.browserAction.onClicked.addListener (tab) -> onMessage
         data: key: store.get 'toolbar.key'
         type: 'toolbar'
-      # Add listeners for internal and external requests.
-      chrome.extension.onRequest.addListener onRequest
-      chrome.extension.onRequestExternal.addListener (req, sender, cb) ->
+      # Add listeners for internal and external messages.
+      utils.onMessage 'extension', no,  onMessage
+      utils.onMessage 'extension', yes, (msg, sender, cb) ->
         block = isBlacklisted sender.id
         analytics.track 'External Requests', 'Started', sender.id,
           Number !block
@@ -1570,7 +1570,7 @@ ext = window.ext = new class Extension extends utils.Class
           cb?()
         else
           log.debug "Accepting external request from #{sender.id}"
-          onRequest req, sender, cb
+          onMessage msg, sender, cb
       # Derive the browser and OS information.
       browser.version = getBrowserVersion()
       operatingSystem = getOperatingSystem()
@@ -1628,8 +1628,8 @@ ext = window.ext = new class Extension extends utils.Class
     # Ensure that any previously added context menu items are removed.
     chrome.contextMenus.removeAll =>
       # Called whenever a template menu item is clicked.  
-      # Send a self request, passing along the available information.
-      onMenuClick = (info, tab) -> onRequest data: info, type: 'menu'
+      # Message self, passing along the available information.
+      onMenuClick = (info, tab) -> onMessage data: info, type: 'menu'
       menu = store.get 'menu'
       if menu.enabled
         # Create and add the top-level Template menu.
@@ -1658,7 +1658,7 @@ ext = window.ext = new class Extension extends utils.Class
             type:     'separator'
           chrome.contextMenus.create
             contexts: ['all']
-            onclick:  (info, tab) -> onRequest type: 'options'
+            onclick:  (info, tab) -> onMessage type: 'options'
             parentId: parentId
             title:    i18n.get 'options'
 
