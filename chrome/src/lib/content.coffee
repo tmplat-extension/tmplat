@@ -1,5 +1,5 @@
 # [Template](http://neocotic.com/template)  
-# (c) 2012 Alasdair Mercer  
+# (c) 2013 Alasdair Mercer  
 # Freely distributable under the MIT license.  
 # For all details and documentation:  
 # <http://neocotic.com/template>
@@ -31,6 +31,14 @@ extractAll = (array, property) ->
   for element in array when element[property]?
     results.push element[property] if element[property] not in results
   results
+
+# Extract the relevant content of `node` as is required by `info`.
+getContent = (info, node) ->
+  return '' unless node
+  if info?.convertTo in ['html', 'markdown']
+    node.innerHTML
+  else
+    node.textContent
 
 # Attempt to derive the most relevant anchor element from those stored under
 # the `id` provided.
@@ -113,6 +121,18 @@ chrome.extension.sendRequest type: 'info', (data) ->
     if request.hotkeys?
       hotkeys = request.hotkeys
       return sendResponse()
+    if request.selectors?
+      for own key, info of request.selectors
+        if info.all
+          nodes  = document.querySelectorAll info.selector
+          result = []
+          if nodes
+            result.push getContent info, node for node in nodes when node
+        else
+          node   = document.querySelector info.selector
+          result = getContent info, node if node
+        info.result = result
+      return sendResponse selectors: request.selectors
     return sendResponse() unless request.id?
     if request.type is 'paste'
       if request.contents? and
