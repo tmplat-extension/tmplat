@@ -3141,6 +3141,10 @@
       }
     }
   },
+  "opt_logger_help_label": {
+    "message": "How can I view the logs?",
+    "description": "Help label for the Logging section in the Developer Tools dialog on the Options page."
+  },
   "opt_logger_level_debug_text": {
     "message": "Debug",
     "description": "Text for the Debug option for the Level field in the Developer Tools dialog on the Options page under the Logging section."
