@@ -4,8 +4,9 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var elementBackups, elements, extractAll, getContent, getLink, getMeta, hotkeys, isEditable, parentLink, paste,
+  var elementBackups, elements, extractAll, getContent, getLink, getMeta, hotkeys, isEditable, onMessage, parentLink, paste, sendMessage,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
+    __slice = [].slice,
     __hasProp = {}.hasOwnProperty;
 
   elementBackups = {};
@@ -80,6 +81,14 @@
     return (node != null) && !node.disabled && !node.readOnly;
   };
 
+  onMessage = function() {
+    var args, base;
+    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    base = chrome.extension;
+    base = base.onMessage || base.onRequest;
+    return base.addListener.apply(base, args);
+  };
+
   parentLink = function(node) {
     if (node == null) {
       return;
@@ -102,7 +111,14 @@
     return node.value = str;
   };
 
-  chrome.extension.sendRequest({
+  sendMessage = function() {
+    var args, base;
+    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    base = chrome.extension;
+    return (base.sendMessage || base.sendRequest).apply(base, args);
+  };
+
+  sendMessage({
     type: 'info'
   }, function(data) {
     var isMac;
@@ -133,7 +149,7 @@
           } else {
             elements.field = null;
           }
-          chrome.extension.sendRequest({
+          sendMessage({
             data: {
               key: key
             },
@@ -143,14 +159,14 @@
         }
       }
     });
-    return chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+    return onMessage(function(message, sender, sendResponse) {
       var container, contents, href, images, info, key, link, links, node, nodes, result, selection, src, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
-      if (request.hotkeys != null) {
-        hotkeys = request.hotkeys;
+      if (message.hotkeys != null) {
+        hotkeys = message.hotkeys;
         return sendResponse();
       }
-      if (request.selectors != null) {
-        _ref = request.selectors;
+      if (message.selectors != null) {
+        _ref = message.selectors;
         for (key in _ref) {
           if (!__hasProp.call(_ref, key)) continue;
           info = _ref[key];
@@ -174,23 +190,23 @@
           info.result = result;
         }
         return sendResponse({
-          selectors: request.selectors
+          selectors: message.selectors
         });
       }
-      if (request.id == null) {
+      if (message.id == null) {
         return sendResponse();
       }
-      if (request.type === 'paste') {
-        if ((request.contents != null) && isEditable((_ref1 = elementBackups[request.id]) != null ? _ref1.field : void 0)) {
-          paste(elementBackups[request.id].field, request.contents);
+      if (message.type === 'paste') {
+        if ((message.contents != null) && isEditable((_ref1 = elementBackups[message.id]) != null ? _ref1.field : void 0)) {
+          paste(elementBackups[message.id].field, message.contents);
         }
-        delete elementBackups[request.id];
+        delete elementBackups[message.id];
         return sendResponse();
       }
-      elementBackups[request.id] = {
-        field: request.editable || request.shortcut ? elements.field : void 0,
-        link: request.link ? elements.link : void 0,
-        other: request.link ? elements.other : void 0
+      elementBackups[message.id] = {
+        field: message.editable || message.shortcut ? elements.field : void 0,
+        link: message.link ? elements.link : void 0,
+        other: message.link ? elements.other : void 0
       };
       selection = window.getSelection();
       if (!selection.isCollapsed) {
@@ -211,7 +227,7 @@
           links = extractAll(container.querySelectorAll('a[href]'), 'href');
         }
       }
-      link = getLink(request.id, request.url);
+      link = getLink(message.id, message.url);
       return sendResponse({
         author: getMeta('author'),
         characterSet: document.characterSet,

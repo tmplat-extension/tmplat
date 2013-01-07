@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, addAdditionalData, browser, buildDerivedData, buildPopup, buildStandardData, buildTemplate, callUrlShortener, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isExtensionGallery, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, nullIfEmpty, onRequest, operatingSystem, runSelectors, selectOrCreateTab, services, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage,
+  var BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, addAdditionalData, browser, buildDerivedData, buildPopup, buildStandardData, buildTemplate, callUrlShortener, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isExtensionGallery, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, nullIfEmpty, onMessage, operatingSystem, runSelectors, selectOrCreateTab, services, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage,
     __hasProp = {}.hasOwnProperty,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -477,13 +477,13 @@
     }
   };
 
-  onRequest = function(request, sender, sendResponse) {
+  onMessage = function(message, sender, sendResponse) {
     var data, editable, id, link, output, placeholders, runner, shortcut, tab, template, windowId, _ref, _ref1;
     log.trace();
-    if (request.type === 'shortcut' && !store.get('shortcuts.enabled')) {
+    if (message.type === 'shortcut' && !store.get('shortcuts.enabled')) {
       return typeof sendResponse === "function" ? sendResponse() : void 0;
     }
-    if (request.type === 'options') {
+    if (message.type === 'options') {
       selectOrCreateTab(utils.url('pages/options.html'));
       if ((_ref = chrome.extension.getViews({
         type: 'popup'
@@ -492,7 +492,7 @@
       }
       return typeof sendResponse === "function" ? sendResponse() : void 0;
     }
-    if ((_ref1 = request.type) === 'info' || _ref1 === 'version') {
+    if ((_ref1 = message.type) === 'info' || _ref1 === 'version') {
       return typeof sendResponse === "function" ? sendResponse({
         hotkeys: getHotkeys(),
         id: EXTENSION_ID,
@@ -568,23 +568,23 @@
       };
       updateProgress(null, true);
       try {
-        switch (request.type) {
+        switch (message.type) {
           case 'menu':
-            template = getTemplateWithMenuId(request.data.menuItemId);
+            template = getTemplateWithMenuId(message.data.menuItemId);
             if (template != null) {
-              _ref2 = buildDerivedData(tab, request.data, getCallback), data = _ref2.data, editable = _ref2.editable, link = _ref2.link;
+              _ref2 = buildDerivedData(tab, message.data, getCallback), data = _ref2.data, editable = _ref2.editable, link = _ref2.link;
             }
             break;
           case 'popup':
           case 'toolbar':
-            template = getTemplateWithKey(request.data.key);
+            template = getTemplateWithKey(message.data.key);
             if (template != null) {
               data = buildStandardData(tab, getCallback);
             }
             break;
           case 'shortcut':
             shortcut = true;
-            template = getTemplateWithShortcut(request.data.key);
+            template = getTemplateWithShortcut(message.data.key);
             if (template != null) {
               data = buildStandardData(tab, getCallback);
             }
@@ -713,9 +713,9 @@
     });
     return runner.run(function(result) {
       var type, value, _ref2, _ref3;
-      type = request.type[0].toUpperCase() + request.type.substr(1);
+      type = message.type[0].toUpperCase() + message.type.substr(1);
       if (shortcut) {
-        value = request.data.key.charCodeAt(0);
+        value = message.data.key.charCodeAt(0);
       }
       analytics.track('Requests', 'Processed', type, value);
       updateProgress(100);
@@ -730,7 +730,7 @@
           ext.notification.description = (_ref2 = result.message) != null ? _ref2 : i18n.get('result_good_description', result.template.title);
           ext.copy(result.contents);
           if (!isProtectedPage(tab) && (editable && store.get('menu.paste')) || (shortcut && store.get('shortcuts.paste'))) {
-            chrome.tabs.sendRequest(tab.id, {
+            utils.sendMessage('tabs', tab.id, {
               contents: result.contents,
               id: id,
               type: 'paste'
@@ -834,7 +834,7 @@
           for (_j = 0, _len1 = tabs.length; _j < _len1; _j++) {
             tab = tabs[_j];
             if (!isProtectedPage(tab)) {
-              chrome.tabs.sendRequest(tab.id, {
+              utils.sendMessage('tabs', tab.id, {
                 hotkeys: hotkeys
               });
             }
@@ -1034,7 +1034,7 @@
         return runner.next();
       }
     });
-    runner.push(chrome.tabs, 'sendRequest', tab.id, {
+    runner.push(utils, 'sendMessage', 'tabs', tab.id, {
       editable: editable,
       id: id,
       link: link,
@@ -1354,7 +1354,7 @@
       }
       return callback();
     } else {
-      return chrome.tabs.sendRequest(tab.id, {
+      return utils.sendMessage('tabs', tab.id, {
         selectors: map
       }, function(response) {
         var result, value, _ref;
@@ -2123,15 +2123,15 @@
         initStatistics();
         initUrlShorteners();
         chrome.browserAction.onClicked.addListener(function(tab) {
-          return onRequest({
+          return onMessage({
             data: {
               key: store.get('toolbar.key')
             },
             type: 'toolbar'
           });
         });
-        chrome.extension.onRequest.addListener(onRequest);
-        chrome.extension.onRequestExternal.addListener(function(req, sender, cb) {
+        utils.onMessage('extension', false, onMessage);
+        utils.onMessage('extension', true, function(msg, sender, cb) {
           var block;
           block = isBlacklisted(sender.id);
           analytics.track('External Requests', 'Started', sender.id, Number(!block));
@@ -2140,7 +2140,7 @@
             return typeof cb === "function" ? cb() : void 0;
           } else {
             log.debug("Accepting external request from " + sender.id);
-            return onRequest(req, sender, cb);
+            return onMessage(msg, sender, cb);
           }
         });
         browser.version = getBrowserVersion();
@@ -2205,7 +2205,7 @@
       return chrome.contextMenus.removeAll(function() {
         var menu, menuId, notEmpty, onMenuClick, parentId, template, _i, _len, _ref;
         onMenuClick = function(info, tab) {
-          return onRequest({
+          return onMessage({
             data: info,
             type: 'menu'
           });
@@ -2247,7 +2247,7 @@
             return chrome.contextMenus.create({
               contexts: ['all'],
               onclick: function(info, tab) {
-                return onRequest({
+                return onMessage({
                   type: 'options'
                 });
               },
