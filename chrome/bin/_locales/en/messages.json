@@ -837,6 +837,20 @@
     "message": "Only available when Template is accessed via the context menu of a link",
     "description": "Second optional footer displayed below Definitions tables."
   },
+  "opt_guide_definitions_footer_3": {
+    "message": "Learn more about the $O_LINK_SELECTORS$Selectors API$C_LINK$",
+    "description": "Third optional footer displayed below Definitions tables.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_selectors": {
+        "content": "<a href=\"http://www.w3.org/TR/selectors-api/\" target=\"_blank\">",
+        "example": "<a href=\"http://www.w3.org/TR/selectors-api/\">"
+      }
+    }
+  },
   "opt_guide_description_header": {
     "message": "Description",
     "description": "Header for the Description column."
