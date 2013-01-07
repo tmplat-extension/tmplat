@@ -1,5 +1,5 @@
 // [Template](http://neocotic.com/template)
-// (c) 2012 Alasdair Mercer
+// (c) 2013 Alasdair Mercer
 // Freely distributable under the MIT license.
 // For all details and documentation:
 // <http://neocotic.com/template>
@@ -80,6 +80,24 @@
       }
     };
 
+    Utils.prototype.onMessage = function() {
+      var args, base, external, type;
+      type = arguments[0], external = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
+      if (type == null) {
+        type = 'extension';
+      }
+      base = chrome[type];
+      if (!base && type === 'runtime') {
+        base = chrome.extension;
+      }
+      if (external) {
+        base = base.onMessageExternal || base.onRequestExternal;
+      } else {
+        base = base.onMessage || base.onRequest;
+      }
+      return base.addListener.apply(base, args);
+    };
+
     Utils.prototype.query = function(entities, singular, filter) {
       var entity, _i, _j, _len, _len1, _results;
       if (singular) {
@@ -141,6 +159,19 @@
         }
       }
       return str;
+    };
+
+    Utils.prototype.sendMessage = function() {
+      var args, base, type;
+      type = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      if (type == null) {
+        type = 'extension';
+      }
+      base = chrome[type];
+      if (!base && type === 'runtime') {
+        base = chrome.extension;
+      }
+      return (base.sendMessage || base.sendRequest).apply(base, args);
     };
 
     Utils.prototype.time = function(key) {

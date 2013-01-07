@@ -1,5 +1,5 @@
 # [Template](http://neocotic.com/template)  
-# (c) 2012 Alasdair Mercer  
+# (c) 2013 Alasdair Mercer  
 # Freely distributable under the MIT license.  
 # For all details and documentation:  
 # <http://neocotic.com/template>
@@ -58,6 +58,19 @@ utils = window.utils = new class Utils extends Class
     key = prefix + parts.join separator
     if upperCase then key.toUpperCase() else key.toLowerCase()
 
+  # Convenient shorthand for the different types of `onMessage` methods
+  # available in the chrome API.  
+  # This also supports the old `onRequest` variations for backwards
+  # compatibility.
+  onMessage: (type = 'extension', external, args...) ->
+    base = chrome[type]
+    base = chrome.extension if not base and type is 'runtime'
+    if external
+      base = base.onMessageExternal or base.onRequestExternal
+    else
+      base = base.onMessage or base.onRequest
+    base.addListener args...
+
   # Retrieve the first entity/all entities that pass the specified `filter`.
   query: (entities, singular, filter) ->
     if singular
@@ -86,6 +99,15 @@ utils = window.utils = new class Utils extends Class
       # Repeat to the left if `count` is negative.
       str = repeatStr + str for i in [1..count*-1] if count < 0
     str
+
+  # Convenient shorthand for the different types of `sendMessage` methods
+  # available in the chrome API.  
+  # This also supports the old `sendRequest` variations for backwards
+  # compatibility.
+  sendMessage: (type = 'extension', args...) ->
+    base = chrome[type]
+    base = chrome.extension if not base and type is 'runtime'
+    (base.sendMessage or base.sendRequest).apply base, args
 
   # Start a new timer for the specified `key`.  
   # If a timer already exists for `key`, return the time difference in
