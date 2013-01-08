@@ -3275,6 +3275,30 @@
       }
     }
   },
+  "opt_reset_button": {
+    "message": "Reset",
+    "description": "Text for the Reset button."
+  },
+  "opt_save_button": {
+    "message": "Save",
+    "description": "Text for the Save button."
+  },
+  "opt_select_all_box": {
+    "message": "Select All",
+    "description": "Title for the Select All checkbox."
+  },
+  "opt_select_all_box_checked": {
+    "message": "Deselect All",
+    "description": "Title for the Select All checkbox when checked."
+  },
+  "opt_select_box": {
+    "message": "Select",
+    "description": "Title for the Select checkbox."
+  },
+  "opt_select_box_checked": {
+    "message": "Deselect",
+    "description": "Title for the Select checkbox when checked."
+  },
   "opt_shortcuts_header": {
     "message": "Keyboard Shortcuts",
     "description": "Header for the Keyboard Shortcuts section on the General tab of the Options page."
@@ -3328,6 +3352,26 @@
   "opt_template_image_label": {
     "message": "Image",
     "description": "Label for the Image field on the Templates tab of the Options page."
+  },
+  "opt_template_modify_title": {
+    "message": "Modify $TEMPLATE$",
+    "description": "Hover text for a template link on the Templates tab of the Options page.",
+    "placeholders": {
+      "template": {
+        "content": "$1",
+        "example": "URL"
+      }
+    }
+  },
+  "opt_template_move_title": {
+    "message": "Drag and drop $TEMPLATE$ to change its order",
+    "description": "Hover text for a drag and drop indicator on the Templates tab of the Options page.",
+    "placeholders": {
+      "template": {
+        "content": "$1",
+        "example": "URL"
+      }
+    }
   },
   "opt_template_shortcut_help": {
     "message": "$O_PARA$The following rules apply to this field;$C_PARA$$O_LIST$$O_ITEM$Must be an alphanumeric key$C_ITEM$$O_ITEM$Where duplicated, the first template will be activated$C_ITEM$$O_ITEM$When blank, the template cannot be activated using keyboard shortcuts$C_ITEM$$C_LIST$",

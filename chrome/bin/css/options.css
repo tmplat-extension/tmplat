@@ -10,12 +10,17 @@ input[type="file"]:first-child::-webkit-file-upload-button {*margin-left: 0;}
 input[type="file"]::-webkit-file-upload-button:hover {color: #333333; text-decoration: none; background-color: #e6e6e6; *background-color: #d9d9d9; background-position: 0 -15px; -webkit-transition: background-position 0.1s linear; -moz-transition: background-position 0.1s linear; -ms-transition: background-position 0.1s linear; -o-transition: background-position 0.1s linear; transition: background-position 0.1s linear;}
 input[type="file"]::-webkit-file-upload-button:focus {outline: thin dotted #333; outline: 5px auto -webkit-focus-ring-color; outline-offset: -2px;}
 input[type="file"]:disabled::-webkit-file-upload-button, input[type="file"][disabled]::-webkit-file-upload-button {cursor: default; background-color: #e6e6e6; background-image: none; opacity: 0.65; filter: alpha(opacity=65); -webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none;}
-.left {text-align: left;}
-.center {text-align: center;}
-.right {text-align: right;}
-.top {vertical-align: top;}
-.middle {vertical-align: middle;}
-.bottom {vertical-align: bottom;}
+#templatesNew {table-layout: fixed;}
+#templatesNew tbody tr {cursor: pointer;}
+#templatesNew tbody td:nth-child(2) span, #templatesNew tbody td:nth-child(5) span {display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+#templatesNew tbody td:last-child span {cursor: row-resize; display: block; font-weight: bold; margin: -3px 0 0 0; transform: rotate(90deg); -webkit-transform: rotate(90deg);}
+#templatesNew input[type="checkbox"] {margin: 0;}
+#templatesNew thead th:first-child {text-align: center; width: 13px;}
+#templatesNew thead th:nth-child(2) {width: 30%;}
+#templatesNew thead th:nth-child(3) {width: 10%;}
+#templatesNew thead th:nth-child(4) {text-align: center; width: 10%;}
+#templatesNew thead th:nth-child(5) {width: 50%;}
+#templatesNew thead th:last-child {width: 10px;}
 .import_error, .export_error {margin-bottom: 8px;}
 .import_content, .export_content {max-height: 284px;}
 textarea {resize: vertical;}
@@ -52,6 +57,15 @@ a[popover="opt_template_shortcut_help"] {position: relative; top: -25px; left: 1
 .gap-bottom {margin-bottom: 5px;}
 .w-quarter {width: 25%;}
 .w-tenth {width: 10%;}
+.left {text-align: left;}
+.center {text-align: center;}
+.right {text-align: right;}
+.top {vertical-align: top;}
+.middle {vertical-align: middle;}
+.bottom {vertical-align: bottom;}
+[draggable] {user-select: none; -webkit-user-select: none;}
+[draggable].dnd-moving {opacity: 0.4;}
+[draggable].dnd-over {background: #f5f5f5;border: 1px dashed #ddd;}
 @media (max-width: 979px) {
   body {padding-top: 0;}
   #navigation li:last-child {display: none;}

@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var Options, R_VALID_KEY, R_VALID_SHORTCUT, WIDGET_SOURCE, addImportedTemplate, bindSaveEvent, bindTemplateSaveEvent, clearErrors, createExport, createImport, deriveTemplate, ext, feedback, feedbackAdded, fileErrorHandler, isKeyNew, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateSaveEvents, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, options, readImport, saveTemplates, showErrors, trimToLower, updateImportedTemplate, updateTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate,
+  var Options, R_VALID_KEY, R_VALID_SHORTCUT, WIDGET_SOURCE, activateTooltips, addImportedTemplate, bindSaveEvent, bindTemplateSaveEvent, clearErrors, createExport, createImport, deriveTemplate, ext, feedback, feedbackAdded, fileErrorHandler, getRowKey, isKeyNew, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateNew, loadTemplateSaveEvents, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, options, readImport, reorderTemplates, saveTemplates, showErrors, trimToLower, updateImportedTemplate, updateTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -276,14 +276,18 @@
   };
 
   loadTemplates = function() {
-    var template, templates, _i, _len, _ref;
+    var shortcutModifiers, template, templates, templatesNew, _i, _len, _ref;
     log.trace();
     templates = $('#templates');
+    templatesNew = $('#templatesNew');
     templates.remove('option');
+    templatesNew.remove('tbody > tr');
+    shortcutModifiers = ext.isThisPlatform('mac') ? ext.SHORTCUT_MAC_MODIFIERS : ext.SHORTCUT_MODIFIERS;
     _ref = ext.templates;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       template = _ref[_i];
       templates.append(loadTemplate(template));
+      templatesNew.append(loadTemplateNew(template, shortcutModifiers));
     }
     loadTemplateControlEvents();
     loadTemplateImportEvents();
@@ -308,10 +312,113 @@
     return option;
   };
 
+  loadTemplateNew = function(template, shortcutModifiers) {
+    var alignCenter, enabledIcon, row;
+    log.trace();
+    log.debug('Creating a row for the following template...', template);
+    row = $('<tr/>', {
+      draggable: true,
+      title: i18n.get('opt_template_modify_title', template.title)
+    });
+    alignCenter = {
+      css: {
+        'text-align': 'center'
+      }
+    };
+    row.append($('<td/>', alignCenter).append($('<input/>', {
+      title: i18n.get('opt_select_box'),
+      type: 'checkbox',
+      value: template.key
+    })));
+    row.append($('<td/>').append($('<span/>', {
+      html: "<i class=\"" + (icons.getClass(template.image)) + "\"></i> " + template.title
+    })));
+    row.append($('<td/>', {
+      html: "" + shortcutModifiers + template.shortcut
+    }));
+    enabledIcon = template.enabled ? 'ok' : 'remove';
+    row.append($('<td/>', alignCenter).append($('<i/>', {
+      'class': "icon-" + enabledIcon
+    })));
+    row.append($('<td/>').append($('<span/>', {
+      text: template.content,
+      title: template.content
+    })));
+    row.append($('<td/>').append($('<span/>', {
+      'class': 'muted',
+      text: '::::',
+      title: i18n.get('opt_template_move_title', template.title)
+    })));
+    return row;
+  };
+
   loadTemplateControlEvents = function() {
-    var templates;
+    var dragSource, draggables, selectBoxes, templates, templatesNew;
     log.trace();
     templates = $('#templates');
+    templatesNew = $('#templatesNew');
+    selectBoxes = templatesNew.find('tbody input[type="checkbox"]');
+    selectBoxes.change(function() {
+      var $this, messageKey;
+      $this = $(this);
+      messageKey = 'opt_select_box';
+      if ($this.is(':checked')) {
+        messageKey += '_checked';
+      }
+      return $this.attr('data-original-title', i18n.get(messageKey));
+    });
+    templatesNew.find('thead input[type="checkbox"]').change(function() {
+      var $this, checked, messageKey;
+      $this = $(this);
+      checked = $this.is(':checked');
+      messageKey = 'opt_select_all_box';
+      if (checked) {
+        messageKey += '_checked';
+      }
+      $this.attr('data-original-title', i18n.get(messageKey));
+      return selectBoxes.prop('checked', checked);
+    });
+    dragSource = null;
+    draggables = templatesNew.find('[draggable]');
+    draggables.on('dragstart', function(e) {
+      var $this;
+      $this = $(this);
+      dragSource = this;
+      templatesNew.removeClass('table-hover');
+      $this.addClass('dnd-moving');
+      $this.find('[data-original-title]').tooltip('hide');
+      e.originalEvent.dataTransfer.effectAllowed = 'move';
+      return e.originalEvent.dataTransfer.setData('text/html', $this.html());
+    });
+    draggables.on('dragend', function(e) {
+      draggables.removeClass('dnd-moving dnd-over');
+      templatesNew.addClass('table-hover');
+      return dragSource = null;
+    });
+    draggables.on('dragenter', function(e) {
+      var $this;
+      $this = $(this);
+      draggables.not($this).removeClass('dnd-over');
+      return $this.addClass('dnd-over');
+    });
+    draggables.on('dragover', function(e) {
+      e.preventDefault();
+      e.originalEvent.dataTransfer.dropEffect = 'move';
+      return false;
+    });
+    draggables.on('drop', function(e) {
+      var $dragSource, $this;
+      $dragSource = $(dragSource);
+      e.stopPropagation();
+      if (dragSource !== this) {
+        $this = $(this);
+        $dragSource.html($this.html());
+        $this.html(e.originalEvent.dataTransfer.getData('text/html'));
+        activateTooltips(templatesNew, true);
+        reorderTemplates($dragSource.index(), $this.index());
+      }
+      return false;
+    });
     templates.change(function() {
       var $this, imgOpt, lastSelectedTemplate, opt;
       $this = $(this);
@@ -906,6 +1013,21 @@
     });
   };
 
+  reorderTemplates = function(oldIndex, newIndex) {
+    var templates;
+    log.trace();
+    templates = store.get('templates');
+    if ((oldIndex != null) && (newIndex != null)) {
+      templates[oldIndex].index = newIndex;
+      templates[newIndex].index = oldIndex;
+    }
+    templates.sort(function(a, b) {
+      return a.index - b.index;
+    });
+    store.set('templates', templates);
+    return ext.updateTemplates();
+  };
+
   saveTemplates = function(updateUI) {
     var errors, templates;
     log.trace();
@@ -1139,6 +1261,29 @@
     return newTemplate;
   };
 
+  activateTooltips = function(selector, clean) {
+    var base;
+    base = selector ? $(selector) : $();
+    if (clean) {
+      base.find('[data-original-title]').each(function() {
+        var $this;
+        $this = $(this);
+        $this.tooltip('destroy');
+        $this.attr('title', $this.attr('data-original-title'));
+        return $this.removeAttr('data-original-title');
+      });
+    }
+    return base.find('[title]').each(function() {
+      var $this, placement;
+      $this = $(this);
+      placement = $this.attr('data-placement');
+      placement = placement != null ? trimToLower(placement) : 'top';
+      return $this.tooltip({
+        placement: placement
+      });
+    });
+  };
+
   createExport = function(keys) {
     var data, key, _i, _len;
     log.trace();
@@ -1235,6 +1380,10 @@
         }
       })()));
     };
+  };
+
+  getRowKey = function(row) {
+    return $(row).find('input[type="checkbox"]').val();
   };
 
   readImport = function(importData) {
@@ -1386,15 +1535,7 @@
           });
         }
       });
-      $('[title]').each(function() {
-        var $this, placement;
-        $this = $(this);
-        placement = $this.attr('data-placement');
-        placement = placement != null ? trimToLower(placement) : 'top';
-        return $this.tooltip({
-          placement: placement
-        });
-      });
+      activateTooltips();
       navHeight = $('.navbar').height();
       return $('[data-goto]').click(function() {
         var goto, pos, _ref;

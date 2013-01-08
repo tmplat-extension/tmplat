@@ -225,11 +225,21 @@ loadSaveEvents = ->
 # Update the templates section of the options page with the current settings.
 loadTemplates = ->
   log.trace()
-  templates = $ '#templates'
+  # TODO: Remove legacy code
+  templates    = $ '#templates'
+  templatesNew = $ '#templatesNew'
   # Start from a clean slate.
   templates.remove 'option'
-  # Create and insert options representing each template.
-  templates.append loadTemplate template for template in ext.templates
+  templatesNew.remove 'tbody > tr'
+  # Determine keyboard shortcut modifier for current system.
+  shortcutModifiers = if ext.isThisPlatform 'mac'
+    ext.SHORTCUT_MAC_MODIFIERS
+  else
+    ext.SHORTCUT_MODIFIERS
+  # Create and insert rows representing each template.
+  for template in ext.templates
+    templates.append loadTemplate template
+    templatesNew.append loadTemplateNew template, shortcutModifiers
   # Load all of the event handlers required for managing the templates.
   loadTemplateControlEvents()
   loadTemplateImportEvents()
@@ -253,10 +263,91 @@ loadTemplate = (template) ->
   option.data 'usage',    "#{template.usage}"
   option
 
+# TODO: Comment
+# TODO: Replace `loadTemplate`
+loadTemplateNew = (template, shortcutModifiers) ->
+  log.trace()
+  log.debug 'Creating a row for the following template...', template
+  row = $ '<tr/>',
+    draggable: yes
+    title:     i18n.get 'opt_template_modify_title', template.title
+  alignCenter = css: 'text-align': 'center'
+  row.append $('<td/>', alignCenter).append $ '<input/>',
+    title: i18n.get 'opt_select_box'
+    type:  'checkbox'
+    value: template.key
+  row.append $('<td/>').append $ '<span/>',
+    html: """
+      <i class="#{icons.getClass template.image}"></i> #{template.title}
+    """
+  row.append $ '<td/>', html: "#{shortcutModifiers}#{template.shortcut}"
+  enabledIcon = if template.enabled then 'ok' else 'remove'
+  row.append $('<td/>', alignCenter).append $ '<i/>',
+    'class': "icon-#{enabledIcon}"
+  row.append $('<td/>').append $ '<span/>',
+    text:  template.content
+    title: template.content
+  row.append $('<td/>').append $ '<span/>',
+    'class': 'muted'
+    text:    '::::'
+    title:   i18n.get 'opt_template_move_title', template.title
+  row
+
 # Bind the event handlers required for controlling the templates.
 loadTemplateControlEvents = ->
   log.trace()
-  templates = $ '#templates'
+  # TODO: Remove legacy code
+  templates    = $ '#templates'
+  templatesNew = $ '#templatesNew'
+  # Support basic select/deselect one/all functionality.
+  selectBoxes = templatesNew.find 'tbody input[type="checkbox"]'
+  selectBoxes.change ->
+    $this       = $ this
+    messageKey  = 'opt_select_box'
+    messageKey += '_checked' if $this.is ':checked'
+    $this.attr 'data-original-title', i18n.get messageKey
+    # TODO: Trigger button state changes...
+  templatesNew.find('thead input[type="checkbox"]').change ->
+    $this       = $ this
+    checked     = $this.is ':checked'
+    messageKey  = 'opt_select_all_box'
+    messageKey += '_checked' if checked
+    $this.attr 'data-original-title', i18n.get messageKey
+    selectBoxes.prop 'checked', checked
+    # TODO: Trigger button state changes...
+  # Implement drag and drop functionality for reordering templates.
+  dragSource = null
+  draggables = templatesNew.find '[draggable]'
+  draggables.on 'dragstart', (e) ->
+    $this      = $ this
+    dragSource = this
+    templatesNew.removeClass 'table-hover'
+    $this.addClass 'dnd-moving'
+    $this.find('[data-original-title]').tooltip 'hide'
+    e.originalEvent.dataTransfer.effectAllowed = 'move'
+    e.originalEvent.dataTransfer.setData 'text/html', $this.html()
+  draggables.on 'dragend', (e) ->
+    draggables.removeClass 'dnd-moving dnd-over'
+    templatesNew.addClass 'table-hover'
+    dragSource = null
+  draggables.on 'dragenter', (e) ->
+    $this = $ this
+    draggables.not($this).removeClass 'dnd-over'
+    $this.addClass 'dnd-over'
+  draggables.on 'dragover', (e) ->
+    e.preventDefault()
+    e.originalEvent.dataTransfer.dropEffect = 'move'
+    false
+  draggables.on 'drop', (e) ->
+    $dragSource = $ dragSource
+    e.stopPropagation()
+    if dragSource isnt this
+      $this = $ this
+      $dragSource.html $this.html()
+      $this.html e.originalEvent.dataTransfer.getData 'text/html'
+      activateTooltips templatesNew, yes
+      reorderTemplates $dragSource.index(), $this.index()
+    false
   # Whenever the selected option changes we want all the controls to represent
   # the current selection (where possible).
   templates.change ->
@@ -767,6 +858,20 @@ loadUrlShortenerSaveEvents = ->
 # Save functions
 # --------------
 
+# Reorder the templates after a drag and drop *swap* by updating their indices
+# and sorting them accordingly.  
+# These changes are then persisted and should be reflected throughout the
+# extension.
+reorderTemplates = (oldIndex, newIndex) ->
+  log.trace()
+  templates = store.get 'templates'
+  if oldIndex? and newIndex?
+    templates[oldIndex].index = newIndex
+    templates[newIndex].index = oldIndex
+  templates.sort (a, b) -> a.index - b.index
+  store.set 'templates', templates
+  ext.updateTemplates()
+
 # Update the settings with the values from the template section of the options
 # page.
 saveTemplates = (updateUI) ->
@@ -983,6 +1088,23 @@ addImportedTemplate = (template) ->
   log.debug 'Following template was created...', newTemplate
   newTemplate
 
+# Activate tooltip effects, optionally only within a specific context.  
+# A clean activation can be enforced to ensure that previously activated
+# tooltips are reactivated.
+activateTooltips = (selector, clean) ->
+  base = if selector then $ selector else $()
+  if clean
+    base.find('[data-original-title]').each ->
+      $this = $ this
+      $this.tooltip 'destroy'
+      $this.attr 'title', $this.attr 'data-original-title'
+      $this.removeAttr 'data-original-title'
+  base.find('[title]').each ->
+    $this     = $ this
+    placement = $this.attr 'data-placement'
+    placement = if placement? then trimToLower placement else 'top'
+    $this.tooltip placement: placement
+
 # Create a JSON string to export the templates with the specified `keys`.
 createExport = (keys) ->
   log.trace()
@@ -1062,6 +1184,10 @@ fileErrorHandler = (callback) ->
       when FileError.NOT_FOUND_ERR then 'error_file_not_found'
       when FileError.ABORT_ERR then 'error_file_aborted'
       else 'error_file_default'
+
+# Derive the unique key of a Template from the elements within a table row.
+getRowKey = (row) ->
+  $(row).find('input[type="checkbox"]').val()
 
 # Read the imported data created by `createImport` and extract all of the
 # imported templates that appear to be valid.  
@@ -1193,11 +1319,7 @@ options = window.options = new class Options extends utils.Class
         trigger:   trigger
       if trigger is 'manual'
         $this.click -> $this.popover 'toggle'
-    $('[title]').each ->
-      $this     = $ this
-      placement = $this.attr 'data-placement'
-      placement = if placement? then trimToLower placement else 'top'
-      $this.tooltip placement: placement
+    activateTooltips()
     navHeight = $('.navbar').height()
     $('[data-goto]').click ->
       goto = $ $(this).attr 'data-goto'
