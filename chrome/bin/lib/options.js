@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var Options, R_VALID_KEY, R_VALID_SHORTCUT, WIDGET_SOURCE, activateTooltips, addImportedTemplate, bindSaveEvent, bindTemplateSaveEvent, clearErrors, createExport, createImport, deriveTemplate, ext, feedback, feedbackAdded, fileErrorHandler, getRowKey, isKeyNew, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateNew, loadTemplateSaveEvents, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, options, readImport, reorderTemplates, saveTemplates, showErrors, trimToLower, updateImportedTemplate, updateTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate,
+  var Options, R_VALID_KEY, R_VALID_SHORTCUT, ValidationError, ValidationWarning, WIDGET_SOURCE, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, bindTemplateSaveEvent, clearContext, clearErrors, closeWizard, createExport, createImport, deleteTemplates, deriveTemplate, deriveTemplateNew, ext, feedback, feedbackAdded, fileErrorHandler, getSelectedTemplates, isKeyNew, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateNew, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, readImport, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, saveTemplates, setContext, showErrors, trimToLower, trimToUpper, updateImportedTemplate, updateTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate, validateTemplateNew,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -14,6 +14,8 @@
   R_VALID_SHORTCUT = /[A-Z0-9]/i;
 
   WIDGET_SOURCE = "https://widget.uservoice.com/RSRS5SpMkMxvKOCs27g.js";
+
+  activeTemplate = null;
 
   ext = chrome.extension.getBackgroundPage().ext;
 
@@ -276,23 +278,11 @@
   };
 
   loadTemplates = function() {
-    var shortcutModifiers, template, templates, templatesNew, _i, _len, _ref;
     log.trace();
-    templates = $('#templates');
-    templatesNew = $('#templatesNew');
-    templates.remove('option');
-    templatesNew.remove('tbody > tr');
-    shortcutModifiers = ext.isThisPlatform('mac') ? ext.SHORTCUT_MAC_MODIFIERS : ext.SHORTCUT_MODIFIERS;
-    _ref = ext.templates;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      template = _ref[_i];
-      templates.append(loadTemplate(template));
-      templatesNew.append(loadTemplateNew(template, shortcutModifiers));
-    }
+    loadTemplateRows();
     loadTemplateControlEvents();
     loadTemplateImportEvents();
-    loadTemplateExportEvents();
-    return loadTemplateSaveEvents();
+    return loadTemplateExportEvents();
   };
 
   loadTemplate = function(template) {
@@ -317,8 +307,7 @@
     log.trace();
     log.debug('Creating a row for the following template...', template);
     row = $('<tr/>', {
-      draggable: true,
-      title: i18n.get('opt_template_modify_title', template.title)
+      draggable: true
     });
     alignCenter = {
       css: {
@@ -331,21 +320,22 @@
       value: template.key
     })));
     row.append($('<td/>').append($('<span/>', {
-      html: "<i class=\"" + (icons.getClass(template.image)) + "\"></i> " + template.title
+      html: "<i class=\"" + (icons.getClass(template.image)) + "\"></i> " + template.title,
+      title: i18n.get('opt_template_modify_title', template.title)
     })));
     row.append($('<td/>', {
       html: "" + shortcutModifiers + template.shortcut
     }));
     enabledIcon = template.enabled ? 'ok' : 'remove';
     row.append($('<td/>', alignCenter).append($('<i/>', {
-      'class': "icon-" + enabledIcon
+      "class": "icon-" + enabledIcon
     })));
     row.append($('<td/>').append($('<span/>', {
       text: template.content,
       title: template.content
     })));
     row.append($('<td/>').append($('<span/>', {
-      'class': 'muted',
+      "class": 'muted',
       text: '::::',
       title: i18n.get('opt_template_move_title', template.title)
     })));
@@ -353,127 +343,57 @@
   };
 
   loadTemplateControlEvents = function() {
-    var dragSource, draggables, selectBoxes, templates, templatesNew;
+    var selectedTemplates, templates, templatesNew, validationErrors;
     log.trace();
     templates = $('#templates');
     templatesNew = $('#templatesNew');
-    selectBoxes = templatesNew.find('tbody input[type="checkbox"]');
-    selectBoxes.change(function() {
-      var $this, messageKey;
-      $this = $(this);
-      messageKey = 'opt_select_box';
-      if ($this.is(':checked')) {
-        messageKey += '_checked';
+    $('#template_wizard [tabify]').click(function() {
+      return closeWizard();
+    });
+    $('#template_cancel_btn').click(function() {
+      return closeWizard();
+    });
+    $('#template_reset_btn').click(function() {
+      return resetWizard();
+    });
+    $('#template_delete_btn').click(function() {
+      deleteTemplates([activeTemplate]);
+      return closeWizard();
+    });
+    validationErrors = [];
+    $('#template_wizard').on('hide', function() {
+      var error, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = validationErrors.length; _i < _len; _i++) {
+        error = validationErrors[_i];
+        _results.push(error.hide());
       }
-      return $this.attr('data-original-title', i18n.get(messageKey));
+      return _results;
     });
-    templatesNew.find('thead input[type="checkbox"]').change(function() {
-      var $this, checked, messageKey;
-      $this = $(this);
-      checked = $this.is(':checked');
-      messageKey = 'opt_select_all_box';
-      if (checked) {
-        messageKey += '_checked';
+    $('#template_save_btn').click(function() {
+      var error, _i, _j, _len, _len1, _results;
+      for (_i = 0, _len = validationErrors.length; _i < _len; _i++) {
+        error = validationErrors[_i];
+        error.hide();
       }
-      $this.attr('data-original-title', i18n.get(messageKey));
-      return selectBoxes.prop('checked', checked);
-    });
-    dragSource = null;
-    draggables = templatesNew.find('[draggable]');
-    draggables.on('dragstart', function(e) {
-      var $this;
-      $this = $(this);
-      dragSource = this;
-      templatesNew.removeClass('table-hover');
-      $this.addClass('dnd-moving');
-      $this.find('[data-original-title]').tooltip('hide');
-      e.originalEvent.dataTransfer.effectAllowed = 'move';
-      return e.originalEvent.dataTransfer.setData('text/html', $this.html());
-    });
-    draggables.on('dragend', function(e) {
-      draggables.removeClass('dnd-moving dnd-over');
-      templatesNew.addClass('table-hover');
-      return dragSource = null;
-    });
-    draggables.on('dragenter', function(e) {
-      var $this;
-      $this = $(this);
-      draggables.not($this).removeClass('dnd-over');
-      return $this.addClass('dnd-over');
-    });
-    draggables.on('dragover', function(e) {
-      e.preventDefault();
-      e.originalEvent.dataTransfer.dropEffect = 'move';
-      return false;
-    });
-    draggables.on('drop', function(e) {
-      var $dragSource, $this;
-      $dragSource = $(dragSource);
-      e.stopPropagation();
-      if (dragSource !== this) {
-        $this = $(this);
-        $dragSource.html($this.html());
-        $this.html(e.originalEvent.dataTransfer.getData('text/html'));
-        activateTooltips(templatesNew, true);
-        reorderTemplates($dragSource.index(), $this.index());
-      }
-      return false;
-    });
-    templates.change(function() {
-      var $this, imgOpt, lastSelectedTemplate, opt;
-      $this = $(this);
-      opt = $this.find('option:selected');
-      clearErrors();
-      templates.data('quiet', 'true');
-      if (opt.length === 0) {
-        lastSelectedTemplate = {};
-        i18n.content('#add_btn', 'opt_add_button');
-        $('#moveUp_btn, #moveDown_btn').attr('disabled', 'disabled');
-        $('.toggle-disabled').attr('disabled', 'disabled');
-        $('.toggle-readonly').removeAttr('readonly');
-        $('#template_content, #template_shortcut, #template_title').val('');
-        $('#template_enabled').attr('checked', 'checked');
-        $('#template_image option:first-child').attr('selected', 'selected');
-        $('#template_image').change();
+      validationErrors = validateTemplateNew();
+      if (validationErrors.length) {
+        _results = [];
+        for (_j = 0, _len1 = validationErrors.length; _j < _len1; _j++) {
+          error = validationErrors[_j];
+          _results.push(error.show());
+        }
+        return _results;
       } else {
-        i18n.content('#add_btn', 'opt_add_new_button');
-        if (opt.is(':first-child')) {
-          $('#moveUp_btn').attr('disabled', 'disabled');
-        } else {
-          $('#moveUp_btn').removeAttr('disabled');
-        }
-        if (opt.is(':last-child')) {
-          $('#moveDown_btn').attr('disabled', 'disabled');
-        } else {
-          $('#moveDown_btn').removeAttr('disabled');
-        }
-        imgOpt = $("#template_image option[value='" + (opt.data('image')) + "']");
-        if (imgOpt.length === 0) {
-          $('#template_image option:first-child').attr('selected', 'selected');
-        } else {
-          imgOpt.attr('selected', 'selected');
-        }
-        $('#template_content').val(opt.data('content'));
-        $('#template_image').change();
-        $('#template_shortcut').val(opt.data('shortcut'));
-        $('#template_title').val(opt.text());
-        if (opt.data('enabled') === 'true') {
-          $('#template_enabled').attr('checked', 'checked');
-        } else {
-          $('#template_enabled').removeAttr('checked');
-        }
-        if (opt.data('readOnly') === 'true') {
-          $('.toggle-disabled').attr('disabled', 'disabled');
-          $('.toggle-readonly').attr('readonly', 'readonly');
-        } else {
-          $('.toggle-disabled').removeAttr('disabled');
-          $('.toggle-readonly').removeAttr('readonly');
-        }
+        $.extend(activeTemplate, deriveTemplateNew());
+        saveTemplate(activeTemplate);
+        return closeWizard();
       }
-      return templates.data('quiet', 'false');
     });
-    templates.change();
     $('#add_btn').click(function() {
+      return openWizard(null);
+    });
+    $('#add_btn_TODO_REMOVE').click(function() {
       var errors, opt;
       opt = templates.find('option:selected');
       if (opt.length) {
@@ -505,40 +425,38 @@
         }
       }
     });
+    selectedTemplates = [];
+    $('#delete_con').on('hide', function() {
+      selectedTemplates = [];
+      return $('#delete_items li').remove();
+    });
     $('#delete_btn').click(function() {
-      $('.delete_hdr').html(i18n.get('opt_delete_wizard_header', templates.find('option:selected').text()));
-      return $('#delete_con').modal('show');
+      var deleteItems, predefinedTemplates, template, _i, _len;
+      deleteItems = $('#delete_items');
+      predefinedTemplates = [];
+      selectedTemplates = getSelectedTemplates();
+      deleteItems.find('li').remove();
+      for (_i = 0, _len = selectedTemplates.length; _i < _len; _i++) {
+        template = selectedTemplates[_i];
+        if (template.readOnly) {
+          predefinedTemplates.push(template);
+        }
+        deleteItems.append($('<li/>', {
+          text: template.title
+        }));
+      }
+      if (predefinedTemplates.length) {
+
+      } else {
+        return $('#delete_con').modal('show');
+      }
     });
     $('.delete_no_btn').click(function() {
       return $('#delete_con').modal('hide');
     });
-    $('.delete_yes_btn').click(function() {
-      var opt, title;
-      opt = templates.find('option:selected');
-      if (opt.data('readOnly') !== 'true') {
-        title = opt.text();
-        opt.remove();
-        templates.scrollTop(0).change().focus();
-        saveTemplates();
-        log.debug("Deleted " + title + " template");
-        analytics.track('Templates', 'Deleted', title);
-      }
-      $('#delete_con').modal('hide');
-      return updateToolbarTemplates();
-    });
-    $('#moveDown_btn').click(function() {
-      var opt;
-      opt = templates.find('option:selected');
-      opt.insertAfter(opt.next());
-      templates.change().focus();
-      return saveTemplates();
-    });
-    return $('#moveUp_btn').click(function() {
-      var opt;
-      opt = templates.find('option:selected');
-      opt.insertBefore(opt.prev());
-      templates.change().focus();
-      return saveTemplates();
+    return $('.delete_yes_btn').click(function() {
+      deleteTemplates(selectedTemplates);
+      return $('#delete_con').modal('hide');
     });
   };
 
@@ -782,58 +700,23 @@
     });
   };
 
-  loadTemplateSaveEvents = function() {
+  loadTemplateRows = function(templates) {
+    var shortcutModifiers, template, templatesNew, _i, _len;
+    if (templates == null) {
+      templates = ext.templates;
+    }
     log.trace();
-    bindTemplateSaveEvent('#template_enabled, #template_image', 'change', function(opt, key) {
-      var value;
-      value = (function() {
-        switch (key) {
-          case 'enabled':
-            return "" + (this.is(':checked'));
-          case 'image':
-            return this.val();
-        }
-      }).call(this);
-      log.debug("Changing template " + key + " to '" + value + "'");
-      return opt.data(key, value);
-    }, saveTemplates);
-    return bindTemplateSaveEvent("#template_content, #template_shortcut  , #template_title", 'input', function(opt, key) {
-      var value;
-      switch (key) {
-        case 'content':
-          return opt.data(key, this.val());
-        case 'shortcut':
-          value = this.val().toUpperCase().trim();
-          if (value && !isShortcutValid(value)) {
-            return opt.data('error', i18n.get('opt_template_shortcut_invalid'));
-          } else {
-            log.debug("Changing template " + key + " to '" + value + "'");
-            return opt.data(key, value);
-          }
-          break;
-        case 'title':
-          value = this.val().trim();
-          if (value.length === 0) {
-            return opt.data('error', i18n.get('opt_template_title_invalid'));
-          } else {
-            return opt.text(value);
-          }
-      }
-    }, function(jel, opt, key) {
-      var selector;
-      clearErrors(selector = "#" + (jel.attr('id')));
-      if (opt.data('error')) {
-        showErrors([
-          {
-            message: opt.data('error'),
-            selector: selector
-          }
-        ]);
-        return opt.removeData('error');
-      } else {
-        return saveTemplates();
-      }
-    });
+    templatesNew = $('#templatesNew');
+    templatesNew.find('tbody tr').remove();
+    shortcutModifiers = ext.isThisPlatform('mac') ? ext.SHORTCUT_MAC_MODIFIERS : ext.SHORTCUT_MODIFIERS;
+    for (_i = 0, _len = templates.length; _i < _len; _i++) {
+      template = templates[_i];
+      templatesNew.append(loadTemplateNew(template, shortcutModifiers));
+    }
+    activateTooltips(templatesNew);
+    activateDraggables();
+    activateModifications();
+    return activateSelections();
   };
 
   loadToolbar = function() {
@@ -925,9 +808,9 @@
   loadUrlShortenerAccounts = function() {
     var shortener, _i, _len, _ref, _results;
     log.trace();
-    _ref = ext.queryUrlShortener((function(shortener) {
+    _ref = ext.queryUrlShorteners(function(shortener) {
       return shortener.oauth != null;
-    }), false);
+    });
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       shortener = _ref[_i];
@@ -1013,19 +896,80 @@
     });
   };
 
-  reorderTemplates = function(oldIndex, newIndex) {
+  deleteTemplates = function(templates) {
+    var keep, keys, list, template, _i, _len;
+    log.trace();
+    keys = [];
+    list = [];
+    for (_i = 0, _len = templates.length; _i < _len; _i++) {
+      template = templates[_i];
+      if (!(!template.readOnly)) {
+        continue;
+      }
+      keys.push(template.key);
+      list.push(template);
+    }
+    if (keys.length) {
+      keep = ext.queryTemplates(function(template) {
+        var _ref;
+        return _ref = template.key, __indexOf.call(keys, _ref) < 0;
+      });
+      store.set('templates', keep);
+      ext.updateTemplates();
+      if (keys.length > 1) {
+        log.debug("Deleted " + keys.length + " templates");
+        analytics.track('Templates', 'Deleted', "Count[" + keys.length + "]");
+      } else {
+        template = list[0];
+        log.debug("Deleted " + template.title + " template");
+        analytics.track('Templates', 'Deleted', template.title);
+      }
+      loadTemplateRows();
+      return updateToolbarTemplates();
+    }
+  };
+
+  reorderTemplates = function(fromIndex, toIndex) {
     var templates;
     log.trace();
     templates = store.get('templates');
-    if ((oldIndex != null) && (newIndex != null)) {
-      templates[oldIndex].index = newIndex;
-      templates[newIndex].index = oldIndex;
+    if ((fromIndex != null) && (toIndex != null)) {
+      templates[fromIndex].index = toIndex;
+      templates[toIndex].index = fromIndex;
     }
     templates.sort(function(a, b) {
       return a.index - b.index;
     });
     store.set('templates', templates);
     return ext.updateTemplates();
+  };
+
+  saveTemplate = function(template) {
+    var action, i, isNew, temp, templates, _i, _len;
+    log.trace();
+    log.debug('Saving the following template...', template);
+    isNew = !(template.key != null);
+    templates = store.get('templates');
+    if (isNew) {
+      template.key = utils.keyGen();
+      templates.push(template);
+    } else {
+      for (i = _i = 0, _len = templates.length; _i < _len; i = ++_i) {
+        temp = templates[i];
+        if (!(temp.key === template.key)) {
+          continue;
+        }
+        templates[i] = template;
+        break;
+      }
+    }
+    store.set('templates', templates);
+    ext.updateTemplates();
+    loadTemplateRows();
+    updateToolbarTemplates();
+    action = isNew ? 'Added' : 'Saved';
+    analytics.track('Templates', action, template.title);
+    return template;
   };
 
   saveTemplates = function(updateUI) {
@@ -1139,6 +1083,51 @@
     return _results;
   };
 
+  ValidationError = (function(_super) {
+
+    __extends(ValidationError, _super);
+
+    function ValidationError(id, key) {
+      this.id = id;
+      this.key = key;
+      this.className = 'error';
+    }
+
+    ValidationError.prototype.hide = function() {
+      var field;
+      field = $("#" + this.id);
+      field.parents('.control-group:first').removeClass(this.className);
+      return field.parents('.controls:first').find('.help-block').remove();
+    };
+
+    ValidationError.prototype.show = function() {
+      var field;
+      field = $("#" + this.id);
+      field.parents('.control-group:first').addClass(this.className);
+      return field.parents('.controls:first').append($('<span/>', {
+        "class": 'help-block',
+        html: i18n.get(this.key)
+      }));
+    };
+
+    return ValidationError;
+
+  })(utils.Class);
+
+  ValidationWarning = (function(_super) {
+
+    __extends(ValidationWarning, _super);
+
+    function ValidationWarning(id, key) {
+      this.id = id;
+      this.key = key;
+      this.className = 'warning';
+    }
+
+    return ValidationWarning;
+
+  })(ValidationError);
+
   clearErrors = function(selector) {
     var group;
     log.trace();
@@ -1232,6 +1221,24 @@
     return errors;
   };
 
+  validateTemplateNew = function() {
+    var errors, isNew, template;
+    log.trace();
+    template = deriveTemplateNew();
+    isNew = !(template.key != null);
+    errors = [];
+    if (!template.readOnly) {
+      if (!template.title) {
+        errors.push(new ValidationError('template_title', 'opt_template_title_invalid'));
+      }
+    }
+    if (template.shortcut && !isShortcutValid(template.shortcut)) {
+      errors.push(new ValidationError('template_shortcut', 'opt_template_shortcut_invalid'));
+    }
+    log.debug('Following validation errors were found...', errors);
+    return errors;
+  };
+
   addImportedTemplate = function(template) {
     var newTemplate, _ref;
     log.trace();
@@ -1261,18 +1268,107 @@
     return newTemplate;
   };
 
-  activateTooltips = function(selector, clean) {
-    var base;
-    base = selector ? $(selector) : $();
-    if (clean) {
-      base.find('[data-original-title]').each(function() {
-        var $this;
+  activateDraggables = function() {
+    var dragSource, draggables, templatesNew;
+    log.trace();
+    templatesNew = $('#templatesNew');
+    dragSource = null;
+    draggables = templatesNew.find('[draggable]');
+    draggables.off('dragstart dragend dragenter dragover drop');
+    draggables.on('dragstart', function(e) {
+      var $this;
+      $this = $(this);
+      dragSource = this;
+      templatesNew.removeClass('table-hover');
+      $this.addClass('dnd-moving');
+      $this.find('[data-original-title]').tooltip('hide');
+      e.originalEvent.dataTransfer.effectAllowed = 'move';
+      return e.originalEvent.dataTransfer.setData('text/html', $this.html());
+    });
+    draggables.on('dragend', function(e) {
+      draggables.removeClass('dnd-moving dnd-over');
+      templatesNew.addClass('table-hover');
+      return dragSource = null;
+    });
+    draggables.on('dragenter', function(e) {
+      var $this;
+      $this = $(this);
+      draggables.not($this).removeClass('dnd-over');
+      return $this.addClass('dnd-over');
+    });
+    draggables.on('dragover', function(e) {
+      e.preventDefault();
+      e.originalEvent.dataTransfer.dropEffect = 'move';
+      return false;
+    });
+    return draggables.on('drop', function(e) {
+      var $dragSource, $this;
+      $dragSource = $(dragSource);
+      e.stopPropagation();
+      if (dragSource !== this) {
         $this = $(this);
-        $this.tooltip('destroy');
-        $this.attr('title', $this.attr('data-original-title'));
-        return $this.removeAttr('data-original-title');
-      });
-    }
+        $dragSource.html($this.html());
+        $this.html(e.originalEvent.dataTransfer.getData('text/html'));
+        activateTooltips(templatesNew);
+        activateModifications();
+        activateSelections();
+        reorderTemplates($dragSource.index(), $this.index());
+      }
+      return false;
+    });
+  };
+
+  activateModifications = function() {
+    log.trace();
+    return $('#templatesNew tbody tr td:not(:first-child)').off('click').click(function() {
+      var activeKey;
+      activeKey = $(this).parents('tr:first').find(':checkbox').val();
+      return openWizard(ext.queryTemplate(function(template) {
+        return template.key === activeKey;
+      }));
+    });
+  };
+
+  activateSelections = function() {
+    var selectBoxes, templatesNew;
+    log.trace();
+    templatesNew = $('#templatesNew');
+    selectBoxes = templatesNew.find('tbody :checkbox');
+    selectBoxes.off('change').change(function() {
+      var $this, messageKey;
+      $this = $(this);
+      messageKey = 'opt_select_box';
+      if ($this.is(':checked')) {
+        messageKey += '_checked';
+      }
+      $this.attr('data-original-title', i18n.get(messageKey));
+      return refreshSelectButtons();
+    });
+    return templatesNew.find('thead :checkbox').off('change').change(function() {
+      var $this, checked, messageKey;
+      $this = $(this);
+      checked = $this.is(':checked');
+      messageKey = 'opt_select_all_box';
+      if (checked) {
+        messageKey += '_checked';
+      }
+      $this.attr('data-original-title', i18n.get(messageKey));
+      selectBoxes.prop('checked', checked);
+      return refreshSelectButtons();
+    });
+  };
+
+  activateTooltips = function(selector) {
+    var base;
+    log.trace();
+    base = selector ? $(selector) : $();
+    base.find('[data-original-title]').each(function() {
+      var $this;
+      $this = $(this);
+      $this.tooltip('destroy');
+      $this.attr('title', $this.attr('data-original-title'));
+      return $this.removeAttr('data-original-title');
+    });
     return base.find('[title]').each(function() {
       var $this, placement;
       $this = $(this);
@@ -1282,6 +1378,15 @@
         placement: placement
       });
     });
+  };
+
+  clearContext = function() {
+    return setContext(null);
+  };
+
+  closeWizard = function() {
+    clearContext();
+    return $('#template_wizard').modal('hide');
   };
 
   createExport = function(keys) {
@@ -1340,8 +1445,28 @@
     return template;
   };
 
+  deriveTemplateNew = function() {
+    var readOnly, template, _ref, _ref1, _ref2;
+    log.trace();
+    readOnly = (_ref = activeTemplate.readOnly) != null ? _ref : false;
+    template = {
+      content: readOnly ? activeTemplate.content : $('#template_content').val(),
+      enabled: $('#template_enabled').is(':checked'),
+      image: $('#template_image').val(),
+      index: (_ref1 = activeTemplate.index) != null ? _ref1 : ext.templates.length,
+      key: activeTemplate.key,
+      readOnly: readOnly,
+      shortcut: trimToUpper($('#template_shortcut').val()),
+      title: readOnly ? activeTemplate.title : $('#template_title').val().trim(),
+      usage: (_ref2 = activeTemplate.usage) != null ? _ref2 : 0
+    };
+    log.debug('Following template was derived...', template);
+    return template;
+  };
+
   feedback = function() {
     var script, uv, uvTabLabel, uvwDialogClose;
+    log.trace();
     if (!feedbackAdded) {
       uvwDialogClose = $('#uvw-dialog-close[onclick]');
       uvwDialogClose.live('hover', function() {
@@ -1382,8 +1507,23 @@
     };
   };
 
-  getRowKey = function(row) {
-    return $(row).find('input[type="checkbox"]').val();
+  getSelectedTemplates = function() {
+    var selectedKeys;
+    selectedKeys = [];
+    $('#templatesNew tbody :checkbox:checked').each(function() {
+      return selectedKeys.push($(this).val());
+    });
+    return ext.queryTemplates(function(template) {
+      var _ref;
+      return _ref = template.key, __indexOf.call(selectedKeys, _ref) >= 0;
+    });
+  };
+
+  openWizard = function(template) {
+    if (arguments.length) {
+      setContext(template);
+    }
+    return $('#template_wizard').modal('show');
   };
 
   readImport = function(importData) {
@@ -1437,11 +1577,66 @@
     return data;
   };
 
+  refreshSelectButtons = function() {
+    var selections;
+    log.trace();
+    selections = $('#templatesNew tbody :checkbox:checked');
+    return $('#delete_btn, #export_btn').prop('disabled', selections.length === 0);
+  };
+
+  resetWizard = function() {
+    var imgOpt, _ref;
+    log.trace();
+    if (activeTemplate == null) {
+      activeTemplate = {};
+    }
+    $('#template_wizard .modal-header h3').html(activeTemplate.key != null ? i18n.get('opt_template_modify_title', activeTemplate.title) : i18n.get('opt_template_new_header'));
+    $('#template_content').val(activeTemplate.content || '');
+    $('#template_enabled').prop('checked', (_ref = activeTemplate.enabled) != null ? _ref : true);
+    $('#template_shortcut').val(activeTemplate.shortcut || '');
+    $('#template_title').val(activeTemplate.title || '');
+    imgOpt = $("#template_image option[value='" + activeTemplate.image + "']");
+    if (imgOpt.length === 0) {
+      $('#template_image option:first-child').attr('selected', 'selected');
+    } else {
+      imgOpt.attr('selected', 'selected');
+    }
+    $('#template_image').change();
+    $('#template_content, #template_title').prop('disabled', !!activeTemplate.readOnly);
+    return $('#template_delete_btn').each(function() {
+      var $this;
+      $this = $(this);
+      $this.prop('disabled', !!activeTemplate.readOnly);
+      if (activeTemplate.key != null) {
+        return $this.show();
+      } else {
+        return $this.hide();
+      }
+    });
+  };
+
+  setContext = function(template) {
+    if (template == null) {
+      template = {};
+    }
+    log.trace();
+    activeTemplate = {};
+    $.extend(activeTemplate, template);
+    return resetWizard();
+  };
+
   trimToLower = function(str) {
     if (str == null) {
       str = '';
     }
     return str.trim().toLowerCase();
+  };
+
+  trimToUpper = function(str) {
+    if (str == null) {
+      str = '';
+    }
+    return str.trim().toUpperCase();
   };
 
   options = window.options = new (Options = (function(_super) {

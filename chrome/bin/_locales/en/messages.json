@@ -720,17 +720,11 @@
     }
   },
   "opt_delete_wizard_header": {
-    "message": "Delete $TEMPLATE$",
-    "description": "Header for the confirmation dialog displayed when deleting a template.",
-    "placeholders": {
-      "template": {
-        "content": "$1",
-        "example": "Encoded"
-      }
-    }
+    "message": "Confirm Deletion",
+    "description": "Header for the confirmation dialog displayed when deleting template(s)."
   },
   "opt_delete_wizard_text_1": {
-    "message": "This action is $O_BOLD$permanent$C_BOLD$ and cannot be reversed.",
+    "message": "This action is $O_BOLD$permanent$C_BOLD$ and cannot be reversed. The following template(s) will be removed;",
     "description": "1st paragraph for the confirmation dialog displayed when deleting a template.",
     "placeholders": {
       "c_bold": {
@@ -3275,13 +3269,9 @@
       }
     }
   },
-  "opt_reset_button": {
-    "message": "Reset",
-    "description": "Text for the Reset button."
-  },
-  "opt_save_button": {
-    "message": "Save",
-    "description": "Text for the Save button."
+  "opt_search_placeholder_text": {
+    "message": "Search...",
+    "description": "Placeholder text for a Search field."
   },
   "opt_select_all_box": {
     "message": "Select All",
@@ -3318,6 +3308,14 @@
   "opt_shortcuts_paste_text": {
     "message": "Paste the Template result into the editable field where the hotkey was used",
     "description": "Text for the Automatically Paste field on the General tab of the Options page under the Keyboard Shortcuts section."
+  },
+  "opt_show_all_text": {
+    "message": "All",
+    "description": "Text for the All option in a selection of limits for visible results."
+  },
+  "opt_show_label": {
+    "message": "Show:",
+    "description": "Label for a selection of limits for visible results."
   },
   "opt_template_content_label": {
     "message": "Content",
@@ -3372,6 +3370,10 @@
         "example": "URL"
       }
     }
+  },
+  "opt_template_new_header": {
+    "message": "New Template",
+    "description": "Header for the template wizard when creating a new template."
   },
   "opt_template_shortcut_help": {
     "message": "$O_PARA$The following rules apply to this field;$C_PARA$$O_LIST$$O_ITEM$Must be an alphanumeric key$C_ITEM$$O_ITEM$Where duplicated, the first template will be activated$C_ITEM$$O_ITEM$When blank, the template cannot be activated using keyboard shortcuts$C_ITEM$$C_LIST$",
@@ -3673,6 +3675,10 @@
     "message": "Back",
     "description": "Text for Back buttons commonly found in dialogs."
   },
+  "opt_wizard_cancel_button": {
+    "message": "Cancel",
+    "description": "Text for Cancel buttons commonly found in dialogs."
+  },
   "opt_wizard_close_button": {
     "message": "Close",
     "description": "Text for Close buttons commonly found in dialogs."
@@ -3681,6 +3687,10 @@
     "message": "Continue",
     "description": "Text for Continue buttons commonly found in dialogs."
   },
+  "opt_wizard_delete_button": {
+    "message": "Delete",
+    "description": "Text for Delete buttons commonly found in dialogs."
+  },
   "opt_wizard_no_button": {
     "message": "No",
     "description": "Text for No buttons commonly found in dialogs."
@@ -3688,6 +3698,14 @@
   "opt_wizard_none_button": {
     "message": "None",
     "description": "Text for None buttons commonly found in dialogs."
+  },
+  "opt_wizard_reset_button": {
+    "message": "Reset",
+    "description": "Text for Reset buttons commonly found in dialogs."
+  },
+  "opt_wizard_save_button": {
+    "message": "Save",
+    "description": "Text for Save buttons commonly found in dialogs."
   },
   "opt_wizard_yes_button": {
     "message": "Yes",

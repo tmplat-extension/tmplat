@@ -20,7 +20,7 @@ input[type="file"]:disabled::-webkit-file-upload-button, input[type="file"][disa
 #templatesNew thead th:nth-child(3) {width: 10%;}
 #templatesNew thead th:nth-child(4) {text-align: center; width: 10%;}
 #templatesNew thead th:nth-child(5) {width: 50%;}
-#templatesNew thead th:last-child {width: 10px;}
+#templatesNew thead th:last-child {padding-left: 4px; width: 10px;}
 .import_error, .export_error {margin-bottom: 8px;}
 .import_content, .export_content {max-height: 284px;}
 textarea {resize: vertical;}
@@ -45,6 +45,7 @@ pre {overflow: auto; white-space: pre; word-wrap: normal;}
 .popover-inner {text-align: left;}
 a[popover="opt_template_shortcut_help"] {position: relative; top: -25px; left: 145px; float: left; height: 0;}
 #template_image_preview {margin: -4px 0 0 6px;}
+#template_wizard .modal-body {position: static;}
 #donation {display: inline; margin: 0;}
 #donation .btn {margin: -4px 0 0 12px;}
 .help {cursor: help;}

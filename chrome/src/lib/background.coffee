@@ -1599,11 +1599,17 @@ ext = window.ext = new class Extension extends utils.Class
     log.trace()
     utils.query @templates, singular, filter
 
+  # Retrieve all templates that pass the specified `filter`.
+  queryTemplates: (filter) -> @queryTemplate filter, no
+
   # Retrieve the first URL shortener service that passes the specified
   # `filter`.
   queryUrlShortener: (filter, singular = yes) ->
     log.trace()
     utils.query SHORTENERS, singular, filter
+
+  # Retrieve all URL shortener services that pass the specified `filter`.
+  queryUrlShorteners: (filter) -> @queryUrlShortener filter, no
 
   # Reset the notification information associated with the current copy
   # request.  

@@ -216,6 +216,24 @@
             <form class="form-vertical">
               <fieldset>
                 <legend i18n-content="opt_template_header"></legend>
+                <div class="form-inline well">
+                  <div class="row">
+                    <div class="span12">
+                      <label for="template_filter" i18n-content="opt_show_label"></label>
+                      <select id="template_filter" class="input-mini">
+                        <option>25</option>
+                        <option>50</option>
+                        <option>75</option>
+                        <option>100</option>
+                        <option i18n-content="opt_show_all_text"></option>
+                      </select>
+                      <div class="pull-right input-append">
+                        <input type="text" id="template_search" class="input-medium" i18n-values="placeholder:opt_search_placeholder_text">
+                        <button class="btn" type="button"><i class="icon-search"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div class="row control-group">
                   <div class="span12">
                     <table id="templatesNew" class="table table-hover">
@@ -225,74 +243,86 @@
                         <th i18n-content="opt_template_shortcut_label"></th>
                         <th i18n-content="opt_template_enabled_label"></th>
                         <th i18n-content="opt_template_content_label"></th>
-                        <th>&nbsp;</th>
+                        <th><i class="icon-resize-vertical"></i></th>
                       </thead>
                       <tbody></tbody>
                     </table>
                   </div>
                 </div>
-                <div class="row control-group">
-                  <div class="span4">
-                    <select class="span4" id="templates" size="5"></select>
-                  </div>
-                  <div class="span8">
-                    <button id="moveUp_btn" class="btn"><i class="icon-chevron-up"></i></button>
-                    <button id="moveDown_btn" class="btn"><i class="icon-chevron-down"></i></button>
-                  </div>
-                </div>
-                <div class="row control-group">
-                  <label class="span1 control-label" for="template_title" i18n-content="opt_template_title_label"></label>
-                  <div class="span3 controls">
-                    <input id="template_title" class="span3 toggle-readonly" type="text" maxlength="32">
-                  </div>
-                </div>
-                <div class="row control-group">
-                  <label class="span1 control-label" for="template_image" i18n-content="opt_template_image_label"></label>
-                  <div class="span3 controls">
-                    <select id="template_image" class="input-medium"></select>
-                    <i id="template_image_preview" class="icon-"></i>
-                  </div>
-                </div>
-                <div class="row control-group">
-                  <label class="span1 control-label" for="template_shortcut">
-                    <span i18n-content="opt_template_shortcut_label"></span>
-                  </label>
-                  <div class="span3 controls">
-                    <div class="input-prepend">
-                      <span class="add-on" id="template_shortcut_modifier"></span><input class="input-mini" id="template_shortcut" type="text" maxlength="1">
-                    </div>
-                    <a class="help" popover="opt_template_shortcut_help" i18n-values="title:opt_template_shortcut_label"><i class="icon-question-sign"></i></a>
-                  </div>
-                </div>
-                <div class="row control-group">
-                  <label class="span1 control-label" for="template_enabled" i18n-content="opt_template_enabled_label"></label>
-                  <div class="span3 controls">
-                    <label class="checkbox">
-                      <input type="checkbox" id="template_enabled">
-                      <span i18n-content="opt_template_enabled_text"></span>
-                    </label>
-                  </div>
-                </div>
-                <div class="row control-group">
-                  <div class="span4 controls">
-                    <textarea id="template_content" class="span4 toggle-readonly" rows="5" spellcheck="false" i18n-values="placeholder:opt_template_content_label"></textarea>
-                    <p class="help-block" i18n-content="opt_template_content_sub_text"></p>
-                  </div>
-                </div>
                 <div class="form-actions">
                   <button id="import_btn" class="btn" i18n-content="opt_import_button"></button>
-                  <button id="export_btn" class="btn" i18n-content="opt_export_button"></button>
-                  <button id="delete_btn" class="btn btn-danger toggle-disabled" i18n-content="opt_delete_button"></button>
+                  <button id="export_btn" class="btn" disabled i18n-content="opt_export_button"></button>
+                  <button id="delete_btn" class="btn btn-danger" disabled i18n-content="opt_delete_button"></button>
                   <button id="add_btn" class="btn btn-success" i18n-content="opt_add_button"></button>
                 </div>
               </fieldset>
+              <div id="template_wizard" class="hide modal">
+                <div class="modal-header">
+                  <a class="close" data-dismiss="modal">&times;</a>
+                  <h3></h3>
+                </div>
+                <div class="modal-body">
+                  <div class="hide alert alert-error">
+                    <a class="close">&times;</a>
+                    <span>&nbsp;</span>
+                  </div>
+                  <div class="row control-group">
+                    <label class="span1 control-label" for="template_title" i18n-content="opt_template_title_label"></label>
+                    <div class="span3 controls">
+                      <input id="template_title" class="span3" type="text" maxlength="32">
+                    </div>
+                  </div>
+                  <div class="row control-group">
+                    <label class="span1 control-label" for="template_image" i18n-content="opt_template_image_label"></label>
+                    <div class="span3 controls">
+                      <select id="template_image" class="input-medium"></select>
+                      <i id="template_image_preview" class="icon-"></i>
+                    </div>
+                  </div>
+                  <div class="row control-group">
+                    <label class="span1 control-label" for="template_shortcut">
+                      <span i18n-content="opt_template_shortcut_label"></span>
+                    </label>
+                    <div class="span3 controls">
+                      <div class="input-prepend">
+                        <span class="add-on" id="template_shortcut_modifier"></span><input class="input-mini" id="template_shortcut" type="text" maxlength="1">
+                      </div>
+                      <a class="help" popover="opt_template_shortcut_help" i18n-values="title:opt_template_shortcut_label"><i class="icon-question-sign"></i></a>
+                    </div>
+                  </div>
+                  <div class="row control-group">
+                    <label class="span1 control-label" for="template_enabled" i18n-content="opt_template_enabled_label"></label>
+                    <div class="span3 controls">
+                      <label class="checkbox">
+                        <input type="checkbox" id="template_enabled">
+                        <span i18n-content="opt_template_enabled_text"></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="row control-group">
+                    <div class="span4 controls">
+                      <textarea id="template_content" class="span4" rows="5" spellcheck="false" i18n-values="placeholder:opt_template_content_label"></textarea>
+                      <p class="help-block" i18n-content="opt_template_content_sub_text"></p>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <div class="pull-left">
+                    <button id="template_cancel_btn" class="btn" i18n-content="opt_wizard_cancel_button"></button>
+                    <button id="template_reset_btn" class="btn" i18n-content="opt_wizard_reset_button"></button>
+                  </div>
+                  <button id="template_delete_btn" class="btn btn-danger" i18n-content="opt_wizard_delete_button"></button>
+                  <button id="template_save_btn" class="btn btn-primary" i18n-content="opt_wizard_save_button"></button>
+                </div>
+              </div>
               <div id="delete_con" class="hide modal">
                 <div class="modal-header">
                   <a class="close" data-dismiss="modal">&times;</a>
-                  <h3 class="delete_hdr"></h3>
+                  <h3 i18n-content="opt_delete_wizard_header"></h3>
                 </div>
                 <div class="modal-body">
                   <p i18n-content="opt_delete_wizard_text_1"></p>
+                  <ul id="delete_items"></ul>
                   <p i18n-content="opt_delete_wizard_text_2"></p>
                 </div>
                 <div class="modal-footer">

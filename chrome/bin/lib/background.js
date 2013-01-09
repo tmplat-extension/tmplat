@@ -2178,12 +2178,20 @@
       return utils.query(this.templates, singular, filter);
     };
 
+    Extension.prototype.queryTemplates = function(filter) {
+      return this.queryTemplate(filter, false);
+    };
+
     Extension.prototype.queryUrlShortener = function(filter, singular) {
       if (singular == null) {
         singular = true;
       }
       log.trace();
       return utils.query(SHORTENERS, singular, filter);
+    };
+
+    Extension.prototype.queryUrlShorteners = function(filter) {
+      return this.queryUrlShortener(filter, false);
     };
 
     Extension.prototype.reset = function() {
