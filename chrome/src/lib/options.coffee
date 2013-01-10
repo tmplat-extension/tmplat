@@ -7,10 +7,14 @@
 # Private constants
 # -----------------
 
+# Regular expression used to sanitize search queries.
+R_CLEAN_QUERY    = /[^\w\s]/g
 # Regular expression used to validate template keys.
 R_VALID_KEY      = /^[A-Z0-9]*\.[A-Z0-9]*$/i
 # Regular expression used to validate keyboard shortcut inputs.
 R_VALID_SHORTCUT = /[A-Z0-9]/i
+# Regular expression used to identify whitespace.
+R_WHITESPACE     = /\s+/
 # Source URL of the user feedback widget script.
 WIDGET_SOURCE    = "https://widget.uservoice.com/RSRS5SpMkMxvKOCs27g.js"
 
@@ -23,6 +27,8 @@ activeTemplate = null
 {ext}          = chrome.extension.getBackgroundPage()
 # Indicate whether or not the user feedback feature has been added to the page.
 feedbackAdded  = no
+# Templates matching the current search query.
+searchResults  = null
 
 # Load functions
 # --------------
@@ -41,22 +47,6 @@ bindSaveEvent = (selector, type, option, evaluate, callback) ->
       key = key[0].toLowerCase() + key.substr 1
       data[key] = value = evaluate.call $this, key
     callback? $this, key, value
-
-# Bind an event of the specified `type` to the elements included by
-# `selector` that, when triggered, manipulates the selected template `option`
-# element via `assign`.
-bindTemplateSaveEvent = (selector, type, assign, callback) ->
-  log.trace()
-  $(selector).on type, ->
-    $this     = $ this
-    key       = ''
-    templates = $ '#templates'
-    option    = templates.find 'option:selected'
-    if option.length and templates.data('quiet') isnt 'true'
-      key = $this.attr('id').match(/^template_(\S*)/)[1]
-      key = key[0].toLowerCase() + key.substr 1
-      assign.call $this, option, key
-      callback? $this, option, key
 
 # Update the options page with the values from the current settings.
 load = ->
@@ -233,28 +223,16 @@ loadTemplates = ->
   loadTemplateImportEvents()
   loadTemplateExportEvents()
 
-# Create an `option` element representing the `template` provided.  
-# The element returned should then be inserted in to the `select` element that
-# is managing the templates on the options page.
-loadTemplate = (template) ->
-  log.trace()
-  log.debug 'Creating an option for the following template...', template
-  option = $ '<option/>',
-    text:  template.title
-    value: template.key
-  option.data 'content',  template.content
-  option.data 'enabled',  "#{template.enabled}"
-  option.data 'image',    template.image
-  option.data 'readOnly', "#{template.readOnly}"
-  option.data 'shortcut', template.shortcut
-  option.data 'usage',    "#{template.usage}"
-  option
-
-# TODO: Comment and rename
-# TODO: Replace `loadTemplate`
-loadTemplateNew = (template, shortcutModifiers) ->
+# Create a `tr` element representing the `template` provided.  
+# The element returned should then be inserted in to the table that is
+# displaying the templates.
+loadTemplate = (template, shortcutModifiers) ->
   log.trace()
   log.debug 'Creating a row for the following template...', template
+  shortcutModifiers ?= if ext.isThisPlatform 'mac'
+      ext.SHORTCUT_MAC_MODIFIERS
+    else
+      ext.SHORTCUT_MODIFIERS
   row = $ '<tr/>', draggable: yes
   alignCenter = css: 'text-align': 'center'
   row.append $('<td/>', alignCenter).append $ '<input/>',
@@ -282,14 +260,19 @@ loadTemplateNew = (template, shortcutModifiers) ->
 # Bind the event handlers required for controlling the templates.
 loadTemplateControlEvents = ->
   log.trace()
-  # TODO: Remove legacy code
-  templates    = $ '#templates'
-  templatesNew = $ '#templatesNew'
   # Ensure template wizard is closed if/when tabify links are clicked within
   # it.
   $('#template_wizard [tabify]').click -> closeWizard()
   $('#template_cancel_btn').click -> closeWizard()
   $('#template_reset_btn').click -> resetWizard()
+  # Support search functionality for templates.
+  $('#template_filter').change ->
+    loadTemplateRows searchResults ? ext.templates
+  $('#template_search :reset').click ->
+    $('#template_search :text').val ''
+    searchTemplates()
+  $('#template_controls').submit ->
+    searchTemplates $('#template_search :text').val()
   $('#template_delete_btn').click ->
     # TODO: Prompt for confirmation
     deleteTemplates [activeTemplate]
@@ -298,9 +281,10 @@ loadTemplateControlEvents = ->
   $('#template_wizard').on 'hide', ->
     error.hide() for error in validationErrors
   $('#template_save_btn').click ->
+    deriveTemplateNew()
     # Clear all existing validation errors.
     error.hide() for error in validationErrors
-    validationErrors = validateTemplateNew()
+    validationErrors = validateTemplateNew activeTemplate
     if validationErrors.length
       error.show() for error in validationErrors
     else
@@ -309,66 +293,54 @@ loadTemplateControlEvents = ->
       closeWizard()
   # Open the template wizard without any context.
   $('#add_btn').click -> openWizard null
-  # TODO: Handle pagination and searching
-  # TODO: Remove once contents no longer needed
-  $('#add_btn_TODO_REMOVE').click ->
-    opt = templates.find 'option:selected'
-    if opt.length
-      # Template was selected; clear that selection and allow creation.
-      templates.val([]).change()
-      $('#template_title').focus()
-    else
-      # User submitted new template so check it out already.
-      opt = loadTemplate
-        content:  $('#template_content').val()
-        enabled:  String $('#template_enabled').is ':checked'
-        image:    $('#template_image option:selected').val()
-        key:      utils.keyGen()
-        readOnly: no
-        shortcut: $('#template_shortcut').val().trim().toUpperCase()
-        title:    $('#template_title').val().trim()
-        usage:    0
-      # Wipe any pre-existing error messages.
-      clearErrors()
-      # Confirm that the template meets the criteria.
-      errors = validateTemplate opt, yes
-      if errors.length is 0
-        log.debug 'Adding the following option...', opt
-        templates.append opt
-        opt.attr 'selected', 'selected'
-        updateToolbarTemplates()
-        templates.change().focus()
-        saveTemplates()
-        analytics.track 'Templates', 'Added', opt.text()
-      else
-        # Show the error message(s) to the user.
-        showErrors errors
   selectedTemplates = []
-  $('#delete_con').on 'hide', ->
+  $('#delete_wizard').on 'hide', ->
       selectedTemplates = []
       $('#delete_items li').remove()
   # Prompt the user to confirm removal of the selected template(s).
+  warningMsg = null
   $('#delete_btn').click ->
     deleteItems         = $ '#delete_items'
-    predefinedTemplates = []
+    predefinedTemplates = $ '<ul/>'
     selectedTemplates   = getSelectedTemplates()
     deleteItems.find('li').remove()
+    # Create list items for each template and allocate them accordingly.
     for template in selectedTemplates
-      predefinedTemplates.push template if template.readOnly
-      deleteItems.append $ '<li/>', text: template.title
-    if predefinedTemplates.length
-      # TODO: Show error message
+      item = $ '<li/>', text: template.title
+      if template.readOnly
+        predefinedTemplates.append item
+      else
+        deleteItems.append item
+    # Show warning message if user attempted to delete predefined template(s);
+    # otherwise begin the removal process by showing the dialog.
+    predefinedCount = predefinedTemplates.find('li').length
+    if predefinedCount
+      warningMsg?.hide()
+      div = $ '<div/>'
+      div.append $ '<p/>', html: i18n.get if predefinedCount is 1
+        'opt_template_delete_predefined_error_1'
+      else
+        'opt_template_delete_multiple_predefined_error_1'
+      div.append predefinedTemplates
+      div.append $ '<p/>', html: i18n.get if predefinedCount is 1
+        'opt_template_delete_predefined_error_2'
+      else
+        'opt_template_delete_multiple_predefined_error_2'
+      warningMsg = new WarningMessage yes
+      warningMsg.message = div.html()
+      warningMsg.show()
     else
-      $('#delete_con').modal 'show'
+      $('#delete_wizard').modal 'show'
   # Cancel the template removal process.
-  $('.delete_no_btn').click -> $('#delete_con').modal 'hide'
+  $('.delete_no_btn').click -> $('#delete_wizard').modal 'hide'
   # Finalize the template removal process.
   $('.delete_yes_btn').click ->
     deleteTemplates selectedTemplates
-    $('#delete_con').modal 'hide'
+    $('#delete_wizard').modal 'hide'
 
 # Bind the event handlers required for exporting templates.
 loadTemplateExportEvents = ->
+  # TODO: Fix for new structure
   log.trace()
   templates = $ '#templates'
   # Simulate alert closing without removing alert from the DOM.
@@ -466,6 +438,7 @@ loadTemplateExportEvents = ->
 
 # Bind the event handlers required for importing templates.
 loadTemplateImportEvents = ->
+  # TODO: Fix for new structure
   log.trace()
   data      = null
   templates = $ '#templates'
@@ -574,25 +547,33 @@ loadTemplateImportEvents = ->
         $('.import_con_stage1, .import_con_stage3').hide()
     $this.removeAttr 'disabled'
 
-# TODO: Comment
-loadTemplateRows = (templates = ext.templates) ->
+# Load the `templates` into the table to be displayed to the user.  
+# Optionally, pagination can be disabled but this should only really be used
+# internally by the pagination process.
+loadTemplateRows = (templates = ext.templates, pagination = yes) ->
   log.trace()
-  templatesNew = $ '#templatesNew'
+  table = $ '#templatesNew'
   # Start from a clean slate.
-  templatesNew.find('tbody tr').remove()
-  # Determine keyboard shortcut modifier for current system.
-  shortcutModifiers = if ext.isThisPlatform 'mac'
-    ext.SHORTCUT_MAC_MODIFIERS
+  table.find('tbody tr').remove()
+  if templates.length
+    # Determine keyboard shortcut modifier for current system.
+    shortcutModifiers = if ext.isThisPlatform 'mac'
+      ext.SHORTCUT_MAC_MODIFIERS
+    else
+      ext.SHORTCUT_MODIFIERS
+    # Create and insert rows representing each template.
+    for template in templates
+      table.append loadTemplate template, shortcutModifiers
+    paginate templates if pagination
+    activateTooltips table
+    activateDraggables()
+    activateModifications()
+    activateSelections()
   else
-    ext.SHORTCUT_MODIFIERS
-  # Create and insert rows representing each template.
-  for template in templates
-    templatesNew.append loadTemplateNew template, shortcutModifiers
-  # TODO: Handle pagination and searching
-  activateTooltips templatesNew
-  activateDraggables()
-  activateModifications()
-  activateSelections()
+    # Show single row to indicate no templates were found.
+    table.find('tbody').append $('<tr/>').append $ '<td/>',
+      colspan: table.find('thead th').length
+      html:    i18n.get 'opt_no_templates_found_text'
 
 # Update the toolbar behaviour section of the options page with the current
 # settings.
@@ -738,7 +719,8 @@ loadUrlShortenerSaveEvents = ->
 # Save functions
 # --------------
 
-# TODO: Comment
+# Delete all of the `templates` provided.  
+# A check is performed to ensure that no predefined templates are removed.
 deleteTemplates = (templates) ->
   log.trace()
   keys = []
@@ -758,7 +740,7 @@ deleteTemplates = (templates) ->
       template = list[0]
       log.debug "Deleted #{template.title} template"
       analytics.track 'Templates', 'Deleted', template.title
-    loadTemplateRows()
+    loadTemplateRows searchResults ? ext.templates
     updateToolbarTemplates()
 
 # Reorder the templates after a drag and drop *swap* by updating their indices
@@ -767,17 +749,16 @@ deleteTemplates = (templates) ->
 # extension.
 reorderTemplates = (fromIndex, toIndex) ->
   log.trace()
-  templates = store.get 'templates'
+  templates = ext.templates
   if fromIndex? and toIndex?
     templates[fromIndex].index = toIndex
     templates[toIndex].index   = fromIndex
-  templates.sort (a, b) -> a.index - b.index
   store.set 'templates', templates
   ext.updateTemplates()
 
-# TODO: Comment
+# Update and persist the `template` provided.  
+# Any required validation should be performed perior to calling this method.
 saveTemplate = (template) ->
-  # TODO: Add more logging and analytics tracking
   log.trace()
   log.debug 'Saving the following template...', template
   isNew     = not template.key?
@@ -797,6 +778,7 @@ saveTemplate = (template) ->
   analytics.track 'Templates', action, template.title
   template
 
+# TODO: Remove once usage removed
 # Update the settings with the values from the template section of the options
 # page.
 saveTemplates = (updateUI) ->
@@ -896,20 +878,21 @@ updateToolbarTemplates = ->
 # Validation classes
 # ------------------
 
-# TODO: Comment
+# `ValidationError` allows easy management and display of validation error
+# messages that are associated with specific fields.
 class ValidationError extends utils.Class
 
-  # TODO: Comment
+  # Create a new instance of `ValidationError`.
   constructor: (@id, @key) ->
     @className = 'error'
 
-  # TODO: Comment
+  # Hide any validation messages currently displayed for the associated field.
   hide: ->
     field = $ "##{@id}"
     field.parents('.control-group:first').removeClass @className
     field.parents('.controls:first').find('.help-block').remove()
 
-  # TODO: Comment
+  # Display the validation message for the associated field.
   show: ->
     field = $ "##{@id}"
     field.parents('.control-group:first').addClass @className
@@ -917,10 +900,11 @@ class ValidationError extends utils.Class
       class: 'help-block'
       html:  i18n.get @key
 
-# TODO: Comment
+# `ValidationWarning` allows easy management and display of validation warning
+# messages that are associated with specific fields.
 class ValidationWarning extends ValidationError
 
-  # TODO: Comment
+  # Create a new instance of `ValidationWarning`.
   constructor: (@id, @key) ->
     @className = 'warning'
 
@@ -1013,14 +997,14 @@ validateTemplate = (object, isNew) ->
   log.debug 'Following validation errors were found...', errors
   errors
 
-# Validate the template information derived from the wizard and return any
-# validation errors/warnings that were encountered.
+# Validate the `template` and return any validation errors/warnings that were
+# encountered.
 # TODO: Replace `validateTemplate`
-validateTemplateNew = ->
+validateTemplateNew = (template) ->
   log.trace()
-  template = deriveTemplateNew()
-  isNew    = not template.key?
-  errors   = []
+  isNew  = not template.key?
+  errors = []
+  log.debug 'Validating the following template...', template
   unless template.readOnly
     # Title is missing but is required.
     unless template.title
@@ -1033,6 +1017,61 @@ validateTemplateNew = ->
   # Indicate whether or not any validation errors were encountered.
   log.debug 'Following validation errors were found...', errors
   errors
+
+# Miscellaneous classes
+# ---------------------
+
+# `Message` allows simple management and display of alert messages.
+class Message extends utils.Class
+
+  # Create a new instance of `Message`.
+  constructor: (@block) ->
+    @className = 'alert-info'
+    @headerKey = 'opt_message_header'
+
+  # Hide this `Message` if it has previously been displayed.
+  hide: -> @alert?.alert 'close'
+
+  # Display this `Message` at the top of the current tab.
+  show: ->
+    @header  = i18n.get @headerKey if @headerKey and not @header?
+    @message = i18n.get @messageKey if @messageKey and not @message?
+    @alert   = $ '<div/>', class: "alert #{@className}"
+    @alert.addClass 'alert-block' if @block
+    @alert.append $ '<button/>',
+      class:          'close'
+      'data-dismiss': 'alert'
+      html:           '&times;'
+      type:           'button'
+    if @header
+      @alert.append $ "<#{if @block then 'h4' else 'strong'}/>", html: @header
+    if @message
+      @alert.append if @block then @message else " #{@message}"
+    @alert.prependTo $ $('#navigation li.active a').attr 'tabify'
+
+# `ErrorMessage` allows simple management and display of error messages.
+class ErrorMessage extends Message
+
+  # Create a new instance of `ErrorMessage`.
+  constructor: (@block) ->
+    @className = 'alert-error'
+    @headerKey = 'opt_message_error_header'
+
+# `SuccessMessage` allows simple management and display of success messages.
+class SuccessMessage extends Message
+
+  # Create a new instance of `SuccessMessage`.
+  constructor: (@block) ->
+    @className = 'alert-success'
+    @headerKey = 'opt_message_success_header'
+
+# `WarningMessage` allows simple management and display of warning messages.
+class WarningMessage extends Message
+
+  # Create a new instance of `WarningMessage`.
+  constructor: (@block) ->
+    @className = ''
+    @headerKey = 'opt_message_warning_header'
 
 # Miscellaneous functions
 # -----------------------
@@ -1104,7 +1143,12 @@ activateDraggables = ->
       activateTooltips templatesNew
       activateModifications()
       activateSelections()
-      reorderTemplates $dragSource.index(), $this.index()
+      fromIndex = $dragSource.index()
+      toIndex   = $this.index()
+      if searchResults?
+        fromIndex = searchResults[fromIndex].index
+        toIndex   = searchResults[toIndex].index
+      reorderTemplates fromIndex, toIndex
     false
 
 # Activate functionality to open template wizard when a row is clicked.  
@@ -1208,7 +1252,8 @@ deriveTemplate = (option) ->
   log.debug 'Following template was derived from the option...', template
   template
 
-# TODO: Comment
+# Create a template based on the current context and the information derived
+# from the wizard fields.
 # TODO: Replace `deriveTemplate`
 deriveTemplateNew = ->
   log.trace()
@@ -1280,6 +1325,67 @@ openWizard = (template) ->
   setContext template if arguments.length
   $('#template_wizard').modal 'show'
 
+# Update the pagination UI for the specified `templates`.
+paginate = (templates) ->
+  log.trace()
+  limit      = parseInt $('#template_filter').val()
+  pagination = $ '#pagination'
+  if templates.length > limit > 0
+    children = pagination.find 'ul li'
+    pages    = Math.ceil templates.length / limit
+    # Refresh the pagination link states based on the new `page`.
+    refreshPagination = (page = 1) ->
+      # Select and display the desired templates subset.
+      start = limit * (page - 1)
+      end   = start + limit
+      loadTemplateRows templates[start...end], no
+      # Ensure the *previous* link is only enabled when a previous page exists.
+      pagination.find('ul li:first-child').each ->
+        $this = $ this
+        if page is 1
+          $this.addClass 'disabled'
+        else
+          $this.removeClass 'disabled'
+      # Ensure only the active page is highlighted.
+      pagination.find('ul li:not(:first-child, :last-child)').each ->
+        $this = $ this
+        if page is parseInt $this.text()
+          $this.addClass 'active'
+        else
+          $this.removeClass 'active'
+      # Ensure the *next* link is only enabled when a next page exists.
+      pagination.find('ul li:last-child').each ->
+        $this = $ this
+        if page is pages
+          $this.addClass 'disabled'
+        else
+          $this.removeClass 'disabled'
+    if pages isnt children.length - 2
+      children.remove()
+      list = pagination.find 'ul'
+      # Create and insert pagination links.
+      list.append $('<li/>').append $ '<a>&laquo;</a>'
+      for page in [1..pages]
+        list.append $('<li/>').append $ "<a>#{page}</a>"
+      list.append $('<li/>').append $ '<a>&raquo;</a>'
+      # Bind event handlers to manage navigating pages.
+      pagination.find('ul li:first-child').click ->
+        unless $(this).hasClass 'disabled'
+          refreshPagination pagination.find('ul li.active').index() - 1
+      pagination.find('ul li:not(:first-child, :last-child)').click ->
+        $this = $ this
+        unless $this.hasClass 'active'
+          refreshPagination $this.index()
+      pagination.find('ul li:last-child').click ->
+        unless $(this).hasClass 'disabled'
+          refreshPagination pagination.find('ul li.active').index() + 1
+    refreshPagination()
+    pagination.show()
+  else
+    # Hide the pagination and remove all links as the results fit on a single
+    # page.
+    pagination.hide().find('ul li').remove()
+
 # Read the imported data created by `createImport` and extract all of the
 # imported templates that appear to be valid.  
 # When overwriting an existing template, only the properties with valid values
@@ -1330,6 +1436,18 @@ readImport = (importData) ->
   log.debug 'Following data was derived from that imported...', data
   data
 
+# Update the state of the reset button depending on the current search input.
+refreshResetButton = ->
+  log.trace()
+  container = $ '#template_search'
+  resetBtn  = container.find ':reset'
+  if container.find(':text').val()
+    container.addClass 'input-prepend'
+    resetBtn.show()
+  else
+    resetBtn.hide()
+    container.removeClass 'input-prepend'
+
 # Update the state of certain buttons depending on whether any select boxes
 # have been checked.
 refreshSelectButtons = ->
@@ -1337,7 +1455,7 @@ refreshSelectButtons = ->
   selections = $ '#templatesNew tbody :checkbox:checked'
   $('#delete_btn, #export_btn').prop 'disabled', selections.length is 0
 
-# TODO: Comment
+# Reset the wizard field values based on the current context.
 resetWizard = ->
   log.trace()
   activeTemplate ?= {}
@@ -1364,6 +1482,19 @@ resetWizard = ->
     $this = $ this
     $this.prop 'disabled', !!activeTemplate.readOnly
     if activeTemplate.key? then $this.show() else $this.hide()
+
+# Search the templates for the specified `query` and filter those displayed.
+searchTemplates = (query = '') ->
+  log.trace()
+  keywords = query.replace(R_CLEAN_QUERY, '').split R_WHITESPACE
+  if keywords.length
+    expression    = /// #{(keyword for keyword in keywords).join '|'} ///i
+    searchResults = ext.queryTemplates (template) ->
+      expression.test "#{template.content} #{template.title}"
+  else
+    searchResults = null
+  loadTemplateRows searchResults ? ext.templates
+  refreshResetButton()
 
 # Set the current context of the template wizard.
 setContext = (template = {}) ->

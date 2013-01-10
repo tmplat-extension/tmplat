@@ -633,16 +633,6 @@
       }
     }
   },
-  "opt_add_new_button": {
-    "message": "$ICON$ Add New",
-    "description": "Text of button used to clear template selection, allowing a new template to be created.",
-    "placeholders": {
-      "icon": {
-        "content": "<i class=\"icon-plus icon-white\"></i>",
-        "example": "<i class=\"icon-plus icon-white\"></i>"
-      }
-    }
-  },
   "opt_analytics_label": {
     "message": "Analytics",
     "description": "Label for the Analytics field."
@@ -3213,9 +3203,29 @@
     "message": "Paste the Template result into the right-clicked editable field",
     "description": "Text for the Automatically Paste field on the General tab of the Options page under the Context Menu section."
   },
+  "opt_message_error_header": {
+    "message": "Oh snap!",
+    "description": "Header for standard error alert message."
+  },
+  "opt_message_header": {
+    "message": "Heads up!",
+    "description": "Header for standard informative alert message."
+  },
+  "opt_message_success_header": {
+    "message": "Well done!",
+    "description": "Header for standard success alert message."
+  },
+  "opt_message_warning_header": {
+    "message": "Warning!",
+    "description": "Header for standard warning alert message."
+  },
   "opt_misc_header": {
     "message": "Miscellaneous",
     "description": "Header for the Miscellaneous section on the General tab of the Options page."
+  },
+  "opt_no_templates_found_text": {
+    "message": "No templates found...",
+    "description": "Text for table when no templates could be found."
   },
   "opt_notification_header": {
     "message": "Desktop Notifications",
@@ -3268,6 +3278,10 @@
         "example": "<a href=\"https://chrome.google.com/webstore\">"
       }
     }
+  },
+  "opt_reset_text": {
+    "message": "Reset",
+    "description": "Text for a Reset button."
   },
   "opt_search_placeholder_text": {
     "message": "Search...",
@@ -3334,6 +3348,22 @@
         "example": "<a tabify=\"#guide_tab\">"
       }
     }
+  },
+  "opt_template_delete_multiple_predefined_error_1": {
+    "message": "The following templates cannot be deleted as they are predefined:",
+    "description": "First paragraph of the error message displayed when a user attempts to delete multiple predefined templates."
+  },
+  "opt_template_delete_multiple_predefined_error_2": {
+    "message": "Deselect all of these templates and try again.",
+    "description": "Second paragraph of the error message displayed when a user attempts to delete multiple predefined templates."
+  },
+  "opt_template_delete_predefined_error_1": {
+    "message": "The following template cannot be deleted as it is predefined:",
+    "description": "First paragraph of the error message displayed when a user attempts to delete a single predefined template."
+  },
+  "opt_template_delete_predefined_error_2": {
+    "message": "Deselect this template and try again.",
+    "description": "Second paragraph of the error message displayed when a user attempts to delete a single predefined template."
   },
   "opt_template_enabled_label": {
     "message": "Enabled",

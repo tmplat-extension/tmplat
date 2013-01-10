@@ -213,7 +213,7 @@
       <div id="templates_tab" class="tab">
         <div class="row">
           <div class="span12">
-            <form class="form-vertical">
+            <form id="template_controls" class="form-vertical">
               <fieldset>
                 <legend i18n-content="opt_template_header"></legend>
                 <div class="form-inline well">
@@ -225,11 +225,13 @@
                         <option>50</option>
                         <option>75</option>
                         <option>100</option>
-                        <option i18n-content="opt_show_all_text"></option>
+                        <option disabled>-----</option>
+                        <option value="0" selected i18n-content="opt_show_all_text"></option>
                       </select>
-                      <div class="pull-right input-append">
-                        <input type="text" id="template_search" class="input-medium" i18n-values="placeholder:opt_search_placeholder_text">
-                        <button class="btn" type="button"><i class="icon-search"></i></button>
+                      <div id="template_search" class="pull-right input-append">
+                        <button type="reset" class="btn hide" i18n-content="opt_reset_text"></button>
+                        <input id="template_query" type="text" class="input-medium" i18n-values="placeholder:opt_search_placeholder_text">
+                        <button type="submit" class="btn"><i class="icon-search"></i></button>
                       </div>
                     </div>
                   </div>
@@ -247,13 +249,16 @@
                       </thead>
                       <tbody></tbody>
                     </table>
+                    <div id="pagination" class="hide pagination pagination-right">
+                      <ul></ul>
+                    </div>
                   </div>
                 </div>
                 <div class="form-actions">
-                  <button id="import_btn" class="btn" i18n-content="opt_import_button"></button>
-                  <button id="export_btn" class="btn" disabled i18n-content="opt_export_button"></button>
-                  <button id="delete_btn" class="btn btn-danger" disabled i18n-content="opt_delete_button"></button>
-                  <button id="add_btn" class="btn btn-success" i18n-content="opt_add_button"></button>
+                  <button id="import_btn" type="button" class="btn" i18n-content="opt_import_button"></button>
+                  <button id="export_btn" type="button" class="btn" disabled i18n-content="opt_export_button"></button>
+                  <button id="delete_btn" type="button" class="btn btn-danger" disabled i18n-content="opt_delete_button"></button>
+                  <button id="add_btn" type="button" class="btn btn-success" i18n-content="opt_add_button"></button>
                 </div>
               </fieldset>
               <div id="template_wizard" class="hide modal">
@@ -315,7 +320,7 @@
                   <button id="template_save_btn" class="btn btn-primary" i18n-content="opt_wizard_save_button"></button>
                 </div>
               </div>
-              <div id="delete_con" class="hide modal">
+              <div id="delete_wizard" class="hide modal">
                 <div class="modal-header">
                   <a class="close" data-dismiss="modal">&times;</a>
                   <h3 i18n-content="opt_delete_wizard_header"></h3>

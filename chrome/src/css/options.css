@@ -11,9 +11,9 @@ input[type="file"]::-webkit-file-upload-button:hover {color: #333333; text-decor
 input[type="file"]::-webkit-file-upload-button:focus {outline: thin dotted #333; outline: 5px auto -webkit-focus-ring-color; outline-offset: -2px;}
 input[type="file"]:disabled::-webkit-file-upload-button, input[type="file"][disabled]::-webkit-file-upload-button {cursor: default; background-color: #e6e6e6; background-image: none; opacity: 0.65; filter: alpha(opacity=65); -webkit-box-shadow: none; -moz-box-shadow: none; box-shadow: none;}
 #templatesNew {table-layout: fixed;}
-#templatesNew tbody tr {cursor: pointer;}
+#templatesNew tbody td:not(:only-child) {cursor: pointer;}
 #templatesNew tbody td:nth-child(2) span, #templatesNew tbody td:nth-child(5) span {display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
-#templatesNew tbody td:last-child span {cursor: row-resize; display: block; font-weight: bold; margin: -3px 0 0 0; transform: rotate(90deg); -webkit-transform: rotate(90deg);}
+#templatesNew tbody td:last-child span {cursor: move; display: block; font-weight: bold; margin: -3px 0 0 0; transform: rotate(90deg); -webkit-transform: rotate(90deg);}
 #templatesNew input[type="checkbox"] {margin: 0;}
 #templatesNew thead th:first-child {text-align: center; width: 13px;}
 #templatesNew thead th:nth-child(2) {width: 30%;}
@@ -64,9 +64,9 @@ a[popover="opt_template_shortcut_help"] {position: relative; top: -25px; left: 1
 .top {vertical-align: top;}
 .middle {vertical-align: middle;}
 .bottom {vertical-align: bottom;}
-[draggable] {user-select: none; -webkit-user-select: none;}
-[draggable].dnd-moving {opacity: 0.4;}
-[draggable].dnd-over {background: #f5f5f5;border: 1px dashed #ddd;}
+*[draggable], .pagination {user-select: none; -webkit-user-select: none;}
+*[draggable].dnd-moving {opacity: 0.4;}
+*[draggable].dnd-over {background: #f5f5f5;border: 1px dashed #ddd;}
 @media (max-width: 979px) {
   body {padding-top: 0;}
   #navigation li:last-child {display: none;}
