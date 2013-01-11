@@ -340,6 +340,16 @@
       return searchTemplates($('#template_search :text').val());
     });
     $('#template_delete_btn').click(function() {
+      $(this).hide();
+      return $('#template_confirm_delete').css('display', 'inline-block');
+    });
+    $('#template_undo_delete_btn').click(function() {
+      $('#template_confirm_delete').hide();
+      return $('#template_delete_btn').show();
+    });
+    $('#template_confirm_delete_btn').click(function() {
+      $('#template_confirm_delete').hide();
+      $('#template_delete_btn').show();
       deleteTemplates([activeTemplate]);
       return closeWizard();
     });
@@ -354,13 +364,13 @@
       return _results;
     });
     $('#template_save_btn').click(function() {
-      var error, _i, _j, _len, _len1, _results;
-      deriveTemplateNew();
+      var error, template, _i, _j, _len, _len1, _results;
+      template = deriveTemplateNew();
       for (_i = 0, _len = validationErrors.length; _i < _len; _i++) {
         error = validationErrors[_i];
         error.hide();
       }
-      validationErrors = validateTemplateNew(activeTemplate);
+      validationErrors = validateTemplateNew(template);
       if (validationErrors.length) {
         _results = [];
         for (_j = 0, _len1 = validationErrors.length; _j < _len1; _j++) {
@@ -369,7 +379,7 @@
         }
         return _results;
       } else {
-        $.extend(activeTemplate, deriveTemplateNew());
+        $.extend(activeTemplate, template);
         saveTemplate(activeTemplate);
         return closeWizard();
       }

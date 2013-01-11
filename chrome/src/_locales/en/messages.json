@@ -699,6 +699,10 @@
     "message": "Links show the contextual title when hovered over",
     "description": "Text for the Hover Text field."
   },
+  "opt_confirm_button": {
+    "message": "Confirm",
+    "description": "Text for a Confirm button."
+  },
   "opt_delete_button": {
     "message": "$ICON$ Delete",
     "description": "Text for the Delete button.",
@@ -3544,6 +3548,10 @@
   "opt_top_button": {
     "message": "Back to top",
     "description": "Text for the link in the footer of the Options page that takes the user to the top of the page."
+  },
+  "opt_undo_button": {
+    "message": "Undo",
+    "description": "Text for a Undo button."
   },
   "opt_url_shortener_account_label": {
     "message": "Account",

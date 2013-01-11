@@ -273,22 +273,30 @@ loadTemplateControlEvents = ->
     searchTemplates()
   $('#template_controls').submit ->
     searchTemplates $('#template_search :text').val()
+  # Ensure user confirms deletion of template.
   $('#template_delete_btn').click ->
-    # TODO: Prompt for confirmation
+    $(this).hide()
+    $('#template_confirm_delete').css 'display', 'inline-block'
+  $('#template_undo_delete_btn').click ->
+    $('#template_confirm_delete').hide()
+    $('#template_delete_btn').show()
+  $('#template_confirm_delete_btn').click ->
+    $('#template_confirm_delete').hide()
+    $('#template_delete_btn').show()
     deleteTemplates [activeTemplate]
     closeWizard()
   validationErrors = []
   $('#template_wizard').on 'hide', ->
     error.hide() for error in validationErrors
   $('#template_save_btn').click ->
-    deriveTemplateNew()
+    template = deriveTemplateNew()
     # Clear all existing validation errors.
     error.hide() for error in validationErrors
-    validationErrors = validateTemplateNew activeTemplate
+    validationErrors = validateTemplateNew template
     if validationErrors.length
       error.show() for error in validationErrors
     else
-      $.extend activeTemplate, deriveTemplateNew()
+      $.extend activeTemplate, template
       saveTemplate activeTemplate
       closeWizard()
   # Open the template wizard without any context.
