@@ -563,17 +563,38 @@
       return reader.readAsText(file);
     });
     $('#import_final_btn').click(function() {
-      var selectedKeys;
-      selectedKeys = [];
-      $('#import_items').find(':selected').each(function() {
-        return selectedKeys.push($(this).val());
-      });
+      var existing, existingFound, i, template, _i, _j, _len, _len1, _ref, _ref1;
+      if (data != null) {
+        _ref = data.templates;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          template = _ref[_i];
+          if ($("#import_items option[value='" + template.key + "']").is(':selected')) {
+            existingFound = false;
+            _ref1 = ext.templates;
+            for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
+              existing = _ref1[i];
+              if (!(existing.key === template.key)) {
+                continue;
+              }
+              existingFound = true;
+              template.index = i;
+              ext.templates[i] = template;
+            }
+            if (!existingFound) {
+              template.index = ext.templates.length;
+              ext.templates.push(template);
+            }
+          }
+        }
+        store.set('templates', ext.templates);
+        ext.updateTemplates();
+        loadTemplateRows();
+        updateToolbarTemplates();
+        analytics.track('Templates', 'Imported', data.version, data.templates.length);
+      }
       $('#import_wizard').modal('hide');
       $('#template_search :reset').hide();
-      $('#template_search :text').val('');
-      if (data != null) {
-        return analytics.track('Templates', 'Imported', data.version, data.templates.length);
-      }
+      return $('#template_search :text').val('');
     });
     $('#import_close_btn').click(function() {
       return $('#import_wizard').modal('hide');
@@ -833,7 +854,7 @@
   };
 
   deleteTemplates = function(templates) {
-    var keep, keys, list, template, _i, _len;
+    var i, keep, keys, list, template, _i, _j, _len, _len1, _ref, _ref1;
     log.trace();
     keys = [];
     list = [];
@@ -846,10 +867,16 @@
       list.push(template);
     }
     if (keys.length) {
-      keep = ext.queryTemplates(function(template) {
-        var _ref;
-        return _ref = template.key, __indexOf.call(keys, _ref) < 0;
-      });
+      keep = [];
+      _ref = ext.templates;
+      for (i = _j = 0, _len1 = _ref.length; _j < _len1; i = ++_j) {
+        template = _ref[i];
+        if (!(_ref1 = template.key, __indexOf.call(keys, _ref1) < 0)) {
+          continue;
+        }
+        template.index = i;
+        keep.push(template);
+      }
       store.set('templates', keep);
       ext.updateTemplates();
       if (keys.length > 1) {
@@ -1654,6 +1681,7 @@
         if ((_ref3 = template.key, __indexOf.call(storedKeys, _ref3) < 0) && (_ref4 = template.key, __indexOf.call(keys, _ref4) < 0)) {
           template = addImportedTemplate(template);
           if (template) {
+            template.index = storedKeys.length + keys.length;
             data.templates.push(template);
             keys.push(template.key);
           }

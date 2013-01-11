@@ -447,6 +447,7 @@ loadTemplateImportEvents = ->
     $('#import_final_btn').prop 'disabled', yes
   # Read the contents of the loaded file in to the text area and perform simple
   # error handling.
+  # TODO: Fix cosmetic bug.
   $('#import_file_btn').change (e) ->
     file   = e.target.files[0]
     reader = new FileReader()
@@ -461,17 +462,27 @@ loadTemplateImportEvents = ->
     reader.readAsText file
   # Finalize the import process.
   $('#import_final_btn').click ->
-    selectedKeys = []
-    $('#import_items').find(':selected').each ->
-      selectedKeys.push $(this).val()
-    # TODO: Iterate over data and update/insert selected templates
-    # TODO: Properly save data
+    # TODO: Fix issue where new templates are not being added
+    if data?
+      for template in data.templates
+        if $("#import_items option[value='#{template.key}']").is ':selected'
+          existingFound = no
+          for existing, i in ext.templates when existing.key is template.key
+            existingFound    = yes
+            template.index   = i
+            ext.templates[i] = template
+          unless existingFound
+            template.index = ext.templates.length
+            ext.templates.push template
+      store.set 'templates', ext.templates
+      ext.updateTemplates()
+      loadTemplateRows()
+      updateToolbarTemplates()
+      analytics.track 'Templates', 'Imported', data.version,
+        data.templates.length
     $('#import_wizard').modal 'hide'
     $('#template_search :reset').hide()
     $('#template_search :text').val ''
-    if data?
-      analytics.track 'Templates', 'Imported', data.version,
-        data.templates.length
   # Cancel the import process.
   $('#import_close_btn').click -> $('#import_wizard').modal 'hide'
   # Paste the contents of the system clipboard in to the textarea.
@@ -691,8 +702,10 @@ deleteTemplates = (templates) ->
     keys.push template.key
     list.push template
   if keys.length
-    keep = ext.queryTemplates (template) ->
-      template.key not in keys
+    keep = []
+    for template, i in ext.templates when template.key not in keys
+      template.index = i
+      keep.push template
     store.set 'templates', keep
     ext.updateTemplates()
     if keys.length > 1
@@ -1369,6 +1382,7 @@ readImport = (importData) ->
         # Attempt to create and add the new template.
         template = addImportedTemplate template
         if template
+          template.index = storedKeys.length + keys.length
           data.templates.push template
           keys.push template.key
       else
