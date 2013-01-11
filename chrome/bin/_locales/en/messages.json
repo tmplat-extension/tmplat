@@ -779,13 +779,9 @@
     "message": "Save As...",
     "description": "Text for the Save As... button."
   },
-  "opt_export_wizard_stage_1_text": {
-    "message": "Select the template(s) to be exported.",
-    "description": "Text for the 1st step of the Export dialog."
-  },
-  "opt_export_wizard_stage_2_text": {
-    "message": "Copy or download the template data.",
-    "description": "Text for the 2nd step of the Export dialog."
+  "opt_export_wizard_text": {
+    "message": "Copy or download the exported template data.",
+    "description": "Text for the Export dialog."
   },
   "opt_general_header": {
     "message": "General",

@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var ErrorMessage, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WIDGET_SOURCE, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, clearErrors, closeWizard, createExport, createImport, deleteTemplates, deriveTemplate, deriveTemplateNew, ext, feedback, feedbackAdded, fileErrorHandler, getSelectedTemplates, isKeyNew, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, saveTemplates, searchResults, searchTemplates, setContext, showErrors, trimToLower, trimToUpper, updateImportedTemplate, updateTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate, validateTemplateNew,
+  var ErrorMessage, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WIDGET_SOURCE, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, clearErrors, closeWizard, createExport, createExportNew, createImport, deleteTemplates, deriveTemplate, deriveTemplateNew, ext, feedback, feedbackAdded, fileErrorHandler, getSelectedTemplates, isKeyNew, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, saveTemplates, searchResults, searchTemplates, setContext, showErrors, trimToLower, trimToUpper, updateImportedTemplate, updateTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate, validateTemplateNew,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -268,10 +268,10 @@
 
   loadTemplates = function() {
     log.trace();
-    loadTemplateRows();
     loadTemplateControlEvents();
     loadTemplateImportEvents();
-    return loadTemplateExportEvents();
+    loadTemplateExportEvents();
+    return loadTemplateRows();
   };
 
   loadTemplate = function(template, shortcutModifiers) {
@@ -318,7 +318,7 @@
   };
 
   loadTemplateControlEvents = function() {
-    var selectedTemplates, validationErrors, warningMsg;
+    var limit, selectedTemplates, validationErrors, warningMsg;
     log.trace();
     $('#template_wizard [tabify]').click(function() {
       return closeWizard();
@@ -329,7 +329,15 @@
     $('#template_reset_btn').click(function() {
       return resetWizard();
     });
+    store.init('options_limit', parseInt($('#template_filter').val()));
+    limit = store.get('options_limit');
+    $('#template_filter option').each(function() {
+      var $this;
+      $this = $(this);
+      return $this.prop('selected', limit === parseInt($this.val()));
+    });
     $('#template_filter').change(function() {
+      store.set('options_limit', parseInt($(this).val()));
       return loadTemplateRows(searchResults != null ? searchResults : ext.templates);
     });
     $('#template_search :reset').click(function() {
@@ -379,6 +387,7 @@
         }
         return _results;
       } else {
+        validationErrors = [];
         $.extend(activeTemplate, template);
         saveTemplate(activeTemplate);
         return closeWizard();
@@ -440,114 +449,62 @@
   };
 
   loadTemplateExportEvents = function() {
-    var templates;
     log.trace();
-    templates = $('#templates');
-    $('.export_error .close').on('click', function() {
-      return $('.export_error').find('span').html('&nbsp').end().hide();
+    $('#export_error .close').click(function() {
+      return $(this).next().html('&nbsp').parent().hide();
     });
-    $('.export_back_btn').click(function() {
-      log.info('Going back to previous export stage');
-      $('.export_con_stage1').show();
-      return $('.export_con_stage2').hide();
+    $('#export_wizard').on('hide', function() {
+      $('#export_content').val('');
+      return $('#export_error').find('span').html('&nbsp;').end().hide();
     });
     $('#export_btn').click(function() {
-      var list;
       log.info('Launching export wizard');
-      list = $('.export_con_list');
-      list.find('option').remove();
-      updateTemplate(templates.find('option:selected'));
-      templates.val([]).change();
-      $('.export_yes_btn').attr('disabled', 'disabled');
-      $('.export_con_stage1').show();
-      $('.export_con_stage2').hide();
-      $('.export_content').val('');
-      $('.export_error').find('span').html('&nbsp;').end().hide();
-      templates.find('option').each(function() {
-        var opt;
-        opt = $(this);
-        return list.append($('<option/>', {
-          text: opt.text(),
-          value: opt.val()
-        }));
-      });
-      return $('#export_con').modal('show');
+      $('#export_content').val(createExportNew(getSelectedTemplates()));
+      return $('#export_wizard').modal('show');
     });
-    $('.export_con_list').change(function() {
-      if ($(this).find('option:selected').length > 0) {
-        return $('.export_yes_btn').removeAttr('disabled');
-      } else {
-        return $('.export_yes_btn').attr('disabled', 'disabled');
-      }
+    $('#export_close_btn').click(function() {
+      return $('#export_wizard').modal('hide');
     });
-    $('.export_copy_btn').click(function(event) {
+    $('#export_copy_btn').click(function() {
       var $this;
       $this = $(this);
-      ext.copy($('.export_content').val(), true);
+      ext.copy($('#export_content').val(), true);
       $this.text(i18n.get('opt_export_wizard_copy_alt_button'));
-      $this.delay(800);
-      $this.queue(function() {
+      return $this.delay(800).queue(function() {
         $this.text(i18n.get('opt_export_wizard_copy_button'));
         return $this.dequeue();
       });
-      return event.preventDefault();
     });
-    $('.export_deselect_all_btn').click(function() {
-      $('.export_con_list option').removeAttr('selected').parent().focus();
-      return $('.export_yes_btn').attr('disabled', 'disabled');
-    });
-    $('.export_no_btn, .export_close_btn').click(function(event) {
-      $('#export_con').modal('hide');
-      return event.preventDefault();
-    });
-    $('.export_save_btn').click(function() {
-      var $this, exportErrorHandler, str;
-      $this = $(this);
-      str = $this.parents('.export_con_stage2').find('.export_content').val();
+    return $('#export_save_btn').click(function() {
+      var exportErrorHandler, str;
+      str = $('#export_content').val();
       exportErrorHandler = fileErrorHandler(function(message) {
         log.error(message);
-        return $('.export_error').find('span').text(message).end().show();
+        return $('#export_error').find('span').text(message).end().show();
       });
       return window.webkitRequestFileSystem(window.TEMPORARY, 1024 * 1024, function(fs) {
-        return fs.root.getFile('export.json', {
+        return fs.root.getFile('templates.json', {
           create: true
-        }, function(fileEntry) {
-          return fileEntry.createWriter(function(fileWriter) {
+        }, function(fe) {
+          return fe.createWriter(function(fw) {
             var builder, done;
             builder = new WebKitBlobBuilder();
             done = false;
             builder.append(str);
-            fileWriter.onerror = exportErrorHandler;
-            fileWriter.onwriteend = function() {
+            fw.onerror = exportErrorHandler;
+            fw.onwriteend = function() {
               if (done) {
-                $('.export_error').find('span').html('&nbsp;').end().hide();
-                return window.location.href = fileEntry.toURL();
+                $('#export_error').find('span').html('&nbsp;').end().hide();
+                return window.location.href = fe.toURL();
               } else {
                 done = true;
-                return fileWriter.write(builder.getBlob('application/json'));
+                return fw.write(builder.getBlob('application/json'));
               }
             };
-            return fileWriter.truncate(0);
+            return fw.truncate(0);
           });
         }, exportErrorHandler);
       }, exportErrorHandler);
-    });
-    $('.export_select_all_btn').click(function() {
-      $('.export_con_list option').attr('selected', 'selected').parent().focus();
-      return $('.export_yes_btn').removeAttr('disabled');
-    });
-    return $('.export_yes_btn').click(function() {
-      var $this, items, keys;
-      $this = $(this);
-      items = $this.parents('.export_con_stage1').find('.export_con_list option');
-      keys = [];
-      items.filter(':selected').each(function() {
-        return keys.push($(this).val());
-      });
-      $('.export_content').val(createExport(keys));
-      $('.export_error').find('span').html('&nbsp;').end().hide();
-      $('.export_con_stage1').hide();
-      return $('.export_con_stage2').show();
     });
   };
 
@@ -1494,6 +1451,29 @@
     return JSON.stringify(data);
   };
 
+  createExportNew = function(templates) {
+    var data, template, _i, _len, _ref;
+    if (templates == null) {
+      templates = [];
+    }
+    log.trace();
+    log.debug('Creating an export string for the following templates...', templates);
+    data = {
+      templates: templates.slice(0),
+      version: ext.version
+    };
+    _ref = data.templates;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      template = _ref[_i];
+      delete template.menuId;
+    }
+    if (data.templates.length) {
+      analytics.track('Templates', 'Exported', ext.version, data.templates.length);
+    }
+    log.debug('Following export data has been created...', data);
+    return JSON.stringify(data);
+  };
+
   createImport = function(str) {
     var data;
     log.trace();
@@ -1805,7 +1785,9 @@
         _results = [];
         for (_i = 0, _len = keywords.length; _i < _len; _i++) {
           keyword = keywords[_i];
-          _results.push(keyword);
+          if (keyword) {
+            _results.push(keyword);
+          }
         }
         return _results;
       })()).join('|')), "i");

@@ -226,7 +226,7 @@
                         <option>75</option>
                         <option>100</option>
                         <option disabled>-----</option>
-                        <option value="0" selected i18n-content="opt_show_all_text"></option>
+                        <option value="0" i18n-content="opt_show_all_text"></option>
                       </select>
                       <div id="template_search" class="pull-right input-append">
                         <button type="reset" class="btn hide" i18n-content="opt_reset_text"></button>
@@ -388,42 +388,23 @@
                   </div>
                 </div>
               </div>
-              <div id="export_con" class="hide modal">
+              <div id="export_wizard" class="hide modal">
                 <div class="modal-header">
                   <a class="close" data-dismiss="modal">&times;</a>
                   <h3 i18n-content="opt_export_wizard_header"></h3>
                 </div>
-                <div class="export_con_stage1">
-                  <div class="modal-body">
-                    <p i18n-content="opt_export_wizard_stage_1_text"></p>
-                    <select class="export_con_list span5" size="5" multiple></select>
+                <div class="modal-body">
+                  <div id="export_error" class="alert alert-error hide">
+                    <a class="close">&times;</a>
+                    <span>&nbsp;</span>
                   </div>
-                  <div class="modal-footer">
-                    <div class="pull-left">
-                      <button class="btn btn-info export_select_all_btn" i18n-content="opt_wizard_all_button"></button>
-                      <button class="btn btn-info export_deselect_all_btn" i18n-content="opt_wizard_none_button"></button>
-                    </div>
-                    <button class="btn export_no_btn" i18n-content="opt_wizard_close_button"></button>
-                    <button class="btn btn-primary export_yes_btn" disabled i18n-content="opt_wizard_continue_button"></button>
-                  </div>
+                  <p i18n-content="opt_export_wizard_text"></p>
+                  <textarea id="export_content" class="span5" rows="6" readonly></textarea>
                 </div>
-                <div class="export_con_stage2">
-                  <div class="modal-body">
-                    <div class="export_error alert alert-error">
-                      <a class="close">&times;</a>
-                      <span>&nbsp;</span>
-                    </div>
-                    <p i18n-content="opt_export_wizard_stage_2_text"></p>
-                    <textarea class="export_content span5" rows="6" readonly></textarea>
-                  </div>
-                  <div class="modal-footer">
-                    <div class="pull-left">
-                      <button class="btn btn-info export_copy_btn" i18n-content="opt_export_wizard_copy_button"></button>
-                      <button class="btn btn-info export_save_btn" i18n-content="opt_export_wizard_save_as_button"></button>
-                    </div>
-                    <button class="btn export_close_btn" i18n-content="opt_wizard_close_button"></button>
-                    <button class="btn export_back_btn" i18n-content="opt_wizard_back_button"></button>
-                  </div>
+                <div class="modal-footer">
+                  <button id="export_close_btn" type="button" class="btn pull-left" i18n-content="opt_wizard_cancel_button"></button>
+                  <button id="export_copy_btn" type="button" class="btn btn-primary" i18n-content="opt_export_wizard_copy_button"></button>
+                  <button id="export_save_btn" type="button" class="btn btn-primary" i18n-content="opt_export_wizard_save_as_button"></button>
                 </div>
               </div>
             </form>

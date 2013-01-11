@@ -217,11 +217,12 @@ loadSaveEvents = ->
 # Update the templates section of the options page with the current settings.
 loadTemplates = ->
   log.trace()
-  loadTemplateRows()
   # Load all of the event handlers required for managing the templates.
   loadTemplateControlEvents()
   loadTemplateImportEvents()
   loadTemplateExportEvents()
+  # Load the template data into the table.
+  loadTemplateRows()
 
 # Create a `tr` element representing the `template` provided.  
 # The element returned should then be inserted in to the table that is
@@ -266,7 +267,13 @@ loadTemplateControlEvents = ->
   $('#template_cancel_btn').click -> closeWizard()
   $('#template_reset_btn').click -> resetWizard()
   # Support search functionality for templates.
+  store.init 'options_limit', parseInt $('#template_filter').val()
+  limit = store.get 'options_limit'
+  $('#template_filter option').each ->
+    $this = $ this
+    $this.prop 'selected', limit is parseInt $this.val()
   $('#template_filter').change ->
+    store.set 'options_limit', parseInt $(this).val()
     loadTemplateRows searchResults ? ext.templates
   $('#template_search :reset').click ->
     $('#template_search :text').val ''
@@ -296,6 +303,7 @@ loadTemplateControlEvents = ->
     if validationErrors.length
       error.show() for error in validationErrors
     else
+      validationErrors = []
       $.extend activeTemplate, template
       saveTemplate activeTemplate
       closeWizard()
@@ -348,101 +356,56 @@ loadTemplateControlEvents = ->
 
 # Bind the event handlers required for exporting templates.
 loadTemplateExportEvents = ->
-  # TODO: Fix for new structure
   log.trace()
-  templates = $ '#templates'
   # Simulate alert closing without removing alert from the DOM.
-  $('.export_error .close').on 'click', ->
-    $('.export_error').find('span').html('&nbsp').end().hide()
-  # Restore the previous view in the export process.
-  $('.export_back_btn').click ->
-    log.info 'Going back to previous export stage'
-    $('.export_con_stage1').show()
-    $('.export_con_stage2').hide()
-  # Prompt the user to selected the templates to be exported.
+  $('#export_error .close').click ->
+    $(this).next().html('&nbsp').parent().hide()
+  $('#export_wizard').on 'hide', ->
+    $('#export_content').val ''
+    $('#export_error').find('span').html('&nbsp;').end().hide()
+  # Show the wizard and create the exported data based on the selected
+  # templates.
   $('#export_btn').click ->
     log.info 'Launching export wizard'
-    list = $ '.export_con_list'
-    list.find('option').remove()
-    updateTemplate templates.find 'option:selected'
-    templates.val([]).change()
-    $('.export_yes_btn').attr 'disabled', 'disabled'
-    $('.export_con_stage1').show()
-    $('.export_con_stage2').hide()
-    $('.export_content').val ''
-    $('.export_error').find('span').html('&nbsp;').end().hide()
-    templates.find('option').each ->
-      opt = $ this
-      list.append $ '<option/>',
-        text:  opt.text()
-        value: opt.val()
-    $('#export_con').modal 'show'
-  # Enable/disable the continue button depending on whether or not any
-  # templates are currently selected.
-  $('.export_con_list').change ->
-    if $(this).find('option:selected').length > 0
-      $('.export_yes_btn').removeAttr 'disabled'
-    else
-      $('.export_yes_btn').attr 'disabled', 'disabled'
-  # Copy the text area contents to the system clipboard.
-  $('.export_copy_btn').click (event) ->
+    $('#export_content').val createExportNew getSelectedTemplates()
+    $('#export_wizard').modal 'show'
+  # Cancel the export process and hide the export wizard.
+  $('#export_close_btn').click -> $('#export_wizard').modal 'hide'
+  # Copy the JSON string into the system clipboard.
+  $('#export_copy_btn').click ->
     $this = $ this
-    ext.copy $('.export_content').val(), yes
+    ext.copy $('#export_content').val(), yes
     $this.text i18n.get 'opt_export_wizard_copy_alt_button'
-    $this.delay 800
-    $this.queue ->
+    $this.delay(800).queue ->
       $this.text i18n.get 'opt_export_wizard_copy_button'
       $this.dequeue()
-    event.preventDefault()
-  # Deselect all of the templates in the list.
-  $('.export_deselect_all_btn').click ->
-    $('.export_con_list option').removeAttr('selected').parent().focus()
-    $('.export_yes_btn').attr 'disabled', 'disabled'
-  # Cancel the export process.
-  $('.export_no_btn, .export_close_btn').click (event) ->
-    $('#export_con').modal 'hide'
-    event.preventDefault()
   # Prompt the user to select a file location to save the exported data.
-  $('.export_save_btn').click ->
-    $this = $ this
-    str   = $this.parents('.export_con_stage2').find('.export_content').val()
+  $('#export_save_btn').click ->
+    str = $('#export_content').val()
     # Export-specific error handler for dealing with the FileSystem API.
     exportErrorHandler = fileErrorHandler (message) ->
       log.error message
-      $('.export_error').find('span').text(message).end().show()
-    # Write the contents of the text area in to a temporary file and then
-    # prompt the user to download it.
+      $('#export_error').find('span').text(message).end().show()
+    # Write the contents of the textarea in to a temporary file and then prompt
+    # the user to download it.
+    # TODO: Fix as this method no longer initiates download
     window.webkitRequestFileSystem window.TEMPORARY, 1024 * 1024, (fs) ->
-      fs.root.getFile 'export.json', create: yes, (fileEntry) ->
-        fileEntry.createWriter (fileWriter) ->
+      fs.root.getFile 'templates.json', create: yes, (fe) ->
+        fe.createWriter (fw) ->
           builder = new WebKitBlobBuilder()
           done    = no
           builder.append str
-          fileWriter.onerror    = exportErrorHandler
-          fileWriter.onwriteend = ->
+          fw.onerror    = exportErrorHandler
+          fw.onwriteend = ->
             if done
-              $('.export_error').find('span').html('&nbsp;').end().hide()
-              window.location.href = fileEntry.toURL()
+              $('#export_error').find('span').html('&nbsp;').end().hide()
+              window.location.href = fe.toURL()
             else
               done = yes
-              fileWriter.write builder.getBlob 'application/json'
-          fileWriter.truncate 0
+              fw.write builder.getBlob 'application/json'
+          fw.truncate 0
       , exportErrorHandler
     , exportErrorHandler
-  # Select all of the templates in the list.
-  $('.export_select_all_btn').click ->
-    $('.export_con_list option').attr('selected', 'selected').parent().focus()
-    $('.export_yes_btn').removeAttr 'disabled'
-  # Create the exported data based on the selected templates.
-  $('.export_yes_btn').click ->
-    $this = $ this
-    items = $this.parents('.export_con_stage1').find '.export_con_list option'
-    keys  = []
-    items.filter(':selected').each -> keys.push $(this).val()
-    $('.export_content').val createExport keys
-    $('.export_error').find('span').html('&nbsp;').end().hide()
-    $('.export_con_stage1').hide()
-    $('.export_con_stage2').show()
 
 # Bind the event handlers required for importing templates.
 loadTemplateImportEvents = ->
@@ -1227,6 +1190,19 @@ createExport = (keys) ->
   log.debug 'Following export data has been created...', data
   JSON.stringify data
 
+# Create a JSON string to export the specified `templates`.
+# TODO: Replace `createExport`
+createExportNew = (templates = []) ->
+  log.trace()
+  log.debug 'Creating an export string for the following templates...',
+    templates
+  data = templates: templates[..], version: ext.version
+  delete template.menuId for template in data.templates
+  if data.templates.length
+    analytics.track 'Templates', 'Exported', ext.version, data.templates.length
+  log.debug 'Following export data has been created...', data
+  JSON.stringify data
+
 # Create a JSON object from the imported string specified.
 createImport = (str) ->
   log.trace()
@@ -1496,7 +1472,9 @@ searchTemplates = (query = '') ->
   log.trace()
   keywords = query.replace(R_CLEAN_QUERY, '').split R_WHITESPACE
   if keywords.length
-    expression    = /// #{(keyword for keyword in keywords).join '|'} ///i
+    expression    = ///
+      #{(keyword for keyword in keywords when keyword).join '|'}
+    ///i
     searchResults = ext.queryTemplates (template) ->
       expression.test "#{template.content} #{template.title}"
   else
