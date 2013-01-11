@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var ErrorMessage, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WIDGET_SOURCE, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, clearErrors, closeWizard, createExport, createExportNew, createImport, deleteTemplates, deriveTemplate, deriveTemplateNew, ext, feedback, feedbackAdded, fileErrorHandler, getSelectedTemplates, isKeyNew, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, saveTemplates, searchResults, searchTemplates, setContext, showErrors, trimToLower, trimToUpper, updateImportedTemplate, updateTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate, validateTemplateNew,
+  var ErrorMessage, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WIDGET_SOURCE, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, clearErrors, closeWizard, createExport, createImport, deleteTemplates, deriveTemplate, deriveTemplateNew, ext, feedback, feedbackAdded, fileErrorHandler, getSelectedTemplates, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, saveTemplates, searchResults, searchTemplates, setContext, showErrors, trimToLower, trimToUpper, updateImportedTemplate, updateTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate, validateTemplateNew,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -390,6 +390,8 @@
         validationErrors = [];
         $.extend(activeTemplate, template);
         saveTemplate(activeTemplate);
+        $('#template_search :reset').hide();
+        $('#template_search :text').val('');
         return closeWizard();
       }
     });
@@ -459,7 +461,7 @@
     });
     $('#export_btn').click(function() {
       log.info('Launching export wizard');
-      $('#export_content').val(createExportNew(getSelectedTemplates()));
+      $('#export_content').val(createExport(getSelectedTemplates()));
       return $('#export_wizard').modal('show');
     });
     $('#export_close_btn').click(function() {
@@ -509,130 +511,115 @@
   };
 
   loadTemplateImportEvents = function() {
-    var data, templates;
+    var data;
     log.trace();
     data = null;
-    templates = $('#templates');
-    $('.import_error .close').on('click', function() {
-      return $('.import_error').find('span').html('&nbsp').end().hide();
+    $('#import_error .close').click(function() {
+      return $(this).next().html('&nbsp').parent().hide();
     });
-    $('.import_back_btn').click(function() {
+    $('#import_wizard').on('hide', function() {
+      $('#import_final_btn').prop('disabled', true);
+      $('#import_wizard_stage2, #import_back_btn, #import_final_btn').hide();
+      $('#import_wizard_stage1, #import_continue_btn').show();
+      $('#import_content, #import_file_btn').val('');
+      $('#import_file_btn').val('');
+      return $('#import_error').find('span').html('&nbsp;').end().hide();
+    });
+    $('#import_back_btn').click(function() {
       log.info('Going back to previous import stage');
-      $('.import_con_stage1').show();
-      return $('.import_con_stage2, .import_con_stage3').hide();
+      $('#import_wizard_stage2, #import_back_btn, #import_final_btn').hide();
+      return $('#import_wizard_stage1, #import_continue_btn').show();
     });
     $('#import_btn').click(function() {
       log.info('Launching import wizard');
-      updateTemplate(templates.find('option:selected'));
-      templates.val([]).change();
-      $('.import_con_stage1').show();
-      $('.import_con_stage2, .import_con_stage3').hide();
-      $('.import_content').val('');
-      $('.import_error').find('span').html('&nbsp;').end().hide();
-      $('.import_file_btn').val('');
-      return $('#import_con').modal('show');
+      return $('#import_wizard').modal('show');
     });
-    $('.import_con_list').change(function() {
-      if ($(this).find('option:selected').length > 0) {
-        return $('.import_final_btn').removeAttr('disabled');
-      } else {
-        return $('.import_final_btn').attr('disabled', 'disabled');
-      }
+    $('#import_items').change(function() {
+      return $('#import_final_btn').prop('disabled', !$(this).find(':selected').length);
     });
-    $('.import_deselect_all_btn').click(function() {
-      $('.import_con_list option').removeAttr('selected').parent().focus();
-      return $('.import_final_btn').attr('disabled', 'disabled');
+    $('#import_select_all_btn').click(function() {
+      $('#import_items option').prop('selected', true).parent().focus();
+      return $('#import_final_btn').prop('disabled', false);
     });
-    $('.import_file_btn').change(function(event) {
+    $('#import_deselect_all_btn').click(function() {
+      $('#import_items option').prop('selected', false).parent().focus();
+      return $('#import_final_btn').prop('disabled', true);
+    });
+    $('#import_file_btn').change(function(e) {
       var file, reader;
-      file = event.target.files[0];
+      file = e.target.files[0];
       reader = new FileReader();
       reader.onerror = fileErrorHandler(function(message) {
         log.error(message);
-        return $('.import_error').find('span').text(message).end().show();
+        return $('#import_error').find('span').text(message).end().show();
       });
-      reader.onload = function(evt) {
+      reader.onload = function(e) {
         var result;
-        result = evt.target.result;
+        result = e.target.result;
         log.debug('Following contents were read from the file...', result);
-        $('.import_error').find('span').html('&nbsp;').end().hide();
-        return $('.import_content').val(result);
+        $('#import_error').find('span').html('&nbsp;').end().hide();
+        return $('#import_content').val(result);
       };
       return reader.readAsText(file);
     });
-    $('.import_final_btn').click(function() {
-      var $this, list;
-      $this = $(this);
-      list = $this.parents('.import_con_stage2').find('.import_con_list');
-      list.find('option:selected').each(function() {
-        var existingOpt, opt;
-        opt = $(this);
-        existingOpt = templates.find("option[value='" + (opt.val()) + "']");
-        opt.removeAttr('selected');
-        if (existingOpt.length === 0) {
-          return templates.append(opt);
-        } else {
-          return existingOpt.replaceWith(opt);
-        }
+    $('#import_final_btn').click(function() {
+      var selectedKeys;
+      selectedKeys = [];
+      $('#import_items').find(':selected').each(function() {
+        return selectedKeys.push($(this).val());
       });
-      $('#import_con').modal('hide');
-      updateToolbarTemplates();
-      templates.focus();
-      saveTemplates(true);
+      $('#import_wizard').modal('hide');
+      $('#template_search :reset').hide();
+      $('#template_search :text').val('');
       if (data != null) {
         return analytics.track('Templates', 'Imported', data.version, data.templates.length);
       }
     });
-    $('.import_no_btn, .import_close_btn').click(function() {
-      return $('#import_con').modal('hide');
+    $('#import_close_btn').click(function() {
+      return $('#import_wizard').modal('hide');
     });
-    $('.import_paste_btn').click(function() {
+    $('#import_paste_btn').click(function() {
       var $this;
       $this = $(this);
-      $('.import_file_btn').val('');
-      $('.import_content').val(ext.paste());
+      $('#import_file_btn').val('');
+      $('#import_content').val(ext.paste());
       $this.text(i18n.get('opt_import_wizard_paste_alt_button'));
-      $this.delay(800);
-      return $this.queue(function() {
+      return $this.delay(800).queue(function() {
         $this.text(i18n.get('opt_import_wizard_paste_button'));
         return $this.dequeue();
       });
     });
-    $('.import_select_all_btn').click(function() {
-      $('.import_con_list option').attr('selected', 'selected').parent().focus();
-      return $('.import_final_btn').removeAttr('disabled');
-    });
-    return $('.import_yes_btn').click(function() {
+    return $('#import_continue_btn').click(function() {
       var $this, importData, list, str, template, _i, _len, _ref;
-      $this = $(this).attr('disabled', 'disabled');
-      list = $('.import_con_list');
-      str = $this.parents('.import_con_stage1').find('.import_content').val();
-      $('.import_error').find('span').html('&nbsp;').end().hide();
+      $this = $(this).prop('disabled', true);
+      list = $('#import_items');
+      str = $('#import_content').val();
+      $('#import_error').find('span').html('&nbsp;').end().hide();
+      list.find('option').remove();
       try {
         importData = createImport(str);
       } catch (error) {
         log.error(error);
-        $('.import_error').find('span').text(error).end().show();
+        $('#import_error').find('span').text(error).end().show();
       }
       if (importData) {
         data = readImport(importData);
-        if (data.templates.length === 0) {
-          $('.import_con_stage3').show();
-          $('.import_con_stage1, .import_con_stage2').hide();
-        } else {
-          list.find('option').remove();
-          $('.import_count').text(data.templates.length);
+        if (data.templates.length) {
+          $('#import_count').text(data.templates.length);
           _ref = data.templates;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             template = _ref[_i];
-            list.append(loadTemplate(template));
+            list.append($('<option/>', {
+              text: template.title,
+              value: template.key
+            }));
           }
-          $('.import_final_btn').attr('disabled', 'disabled');
-          $('.import_con_stage2').show();
-          $('.import_con_stage1, .import_con_stage3').hide();
+          $('#import_final_btn').prop('disabled', true);
+          $('#import_wizard_stage1, #import_continue_btn').hide();
+          $('#import_wizard_stage2, #import_back_btn, #import_final_btn').show();
         }
       }
-      return $this.removeAttr('disabled');
+      return $this.prop('disabled', false);
     });
   };
 
@@ -1088,22 +1075,6 @@
     }
   };
 
-  isKeyNew = function(key, additionalKeys) {
-    var available;
-    if (additionalKeys == null) {
-      additionalKeys = [];
-    }
-    log.trace();
-    log.debug("Checking if template key '" + key + "' is new");
-    available = true;
-    $('#templates option').each(function() {
-      if ($(this).val() === key) {
-        return available = false;
-      }
-    });
-    return available && __indexOf.call(additionalKeys, key) < 0;
-  };
-
   isKeyValid = function(key) {
     log.trace();
     log.debug("Validating template key '" + key + "'");
@@ -1432,26 +1403,7 @@
     return $('#template_wizard').modal('hide');
   };
 
-  createExport = function(keys) {
-    var data, key, _i, _len;
-    log.trace();
-    log.debug('Creating an export string for the following keys...', keys);
-    data = {
-      templates: [],
-      version: ext.version
-    };
-    for (_i = 0, _len = keys.length; _i < _len; _i++) {
-      key = keys[_i];
-      data.templates.push(deriveTemplate($("#templates option[value='" + key + "']")));
-    }
-    if (data.templates.length) {
-      analytics.track('Templates', 'Exported', ext.version, data.templates.length);
-    }
-    log.debug('Following export data has been created...', data);
-    return JSON.stringify(data);
-  };
-
-  createExportNew = function(templates) {
+  createExport = function(templates) {
     var data, template, _i, _len, _ref;
     if (templates == null) {
       templates = [];
@@ -1670,13 +1622,23 @@
   };
 
   readImport = function(importData) {
-    var data, existing, i, imported, keys, template, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3;
+    var data, existing, i, imported, keys, storedKeys, template, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
     log.trace();
     log.debug('Importing the following data...', importData);
     data = {
       templates: []
     };
     keys = [];
+    storedKeys = (function() {
+      var _i, _len, _ref, _results;
+      _ref = ext.templates;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        template = _ref[_i];
+        _results.push(template.key);
+      }
+      return _results;
+    })();
     _ref = importData.templates;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       template = _ref[_i];
@@ -1689,24 +1651,27 @@
         template.image = ((_ref2 = icons.fromLegacy(template.image)) != null ? _ref2.name : void 0) || '';
       }
       if (validateImportedTemplate(template)) {
-        if (isKeyNew(template.key, keys)) {
+        if ((_ref3 = template.key, __indexOf.call(storedKeys, _ref3) < 0) && (_ref4 = template.key, __indexOf.call(keys, _ref4) < 0)) {
           template = addImportedTemplate(template);
           if (template) {
             data.templates.push(template);
             keys.push(template.key);
           }
         } else {
-          _ref3 = data.templates;
-          for (i = _j = 0, _len1 = _ref3.length; _j < _len1; i = ++_j) {
-            imported = _ref3[i];
-            if (imported.key === template.key) {
-              existing = updateImportedTemplate(template, imported);
-              data.templates[i] = existing;
-              break;
+          _ref5 = data.templates;
+          for (i = _j = 0, _len1 = _ref5.length; _j < _len1; i = ++_j) {
+            imported = _ref5[i];
+            if (!(imported.key === template.key)) {
+              continue;
             }
+            existing = updateImportedTemplate(template, imported);
+            data.templates[i] = existing;
+            break;
           }
           if (!existing.key) {
-            existing = deriveTemplate($("#templates            option[value='" + template.key + "']"));
+            existing = utils.clone(ext.queryTemplate(function(temp) {
+              return temp.key === template.key;
+            }), true);
             if (existing) {
               existing = updateImportedTemplate(template, existing);
               data.templates.push(existing);
@@ -1798,7 +1763,8 @@
       searchResults = null;
     }
     loadTemplateRows(searchResults != null ? searchResults : ext.templates);
-    return refreshResetButton();
+    refreshResetButton();
+    return refreshSelectButtons();
   };
 
   setContext = function(template) {

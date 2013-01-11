@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var Class, Utils, timings, utils,
+  var Class, Utils, timings, typeMap, utils,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __slice = [].slice;
@@ -22,6 +22,12 @@
   })();
 
   timings = {};
+
+  typeMap = {};
+
+  ['Boolean', 'Number', 'String', 'Function', 'Array', 'Date', 'RegExp', 'Object'].forEach(function(name) {
+    return typeMap["[object " + name + "]"] = name.toLowerCase();
+  });
 
   utils = window.utils = new (Utils = (function(_super) {
 
@@ -43,6 +49,31 @@
         result = fn.apply(null, args);
         return typeof callback === "function" ? callback(result) : void 0;
       }, 0);
+    };
+
+    Utils.prototype.clone = function(obj, deep) {
+      var copy, key, value;
+      if (!this.isObject(obj)) {
+        return obj;
+      }
+      if (this.isArray(obj)) {
+        return obj.slice();
+      }
+      copy = {};
+      for (key in obj) {
+        if (!__hasProp.call(obj, key)) continue;
+        value = obj[key];
+        copy[key] = deep ? this.clone(value, true) : value;
+      }
+      return copy;
+    };
+
+    Utils.prototype.isArray = Array.isArray || function(obj) {
+      return 'array' === this.type(obj);
+    };
+
+    Utils.prototype.isObject = function(obj) {
+      return obj === Object(obj);
     };
 
     Utils.prototype.keyGen = function(separator, length, prefix, upperCase) {
@@ -190,6 +221,14 @@
         return new Date().getTime() - start;
       } else {
         return 0;
+      }
+    };
+
+    Utils.prototype.type = function(obj) {
+      if (obj != null) {
+        return typeMap[Object.prototype.toString.call(obj)] || 'object';
+      } else {
+        return String(obj);
       }
     };
 

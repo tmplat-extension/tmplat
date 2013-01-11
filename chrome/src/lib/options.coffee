@@ -306,6 +306,8 @@ loadTemplateControlEvents = ->
       validationErrors = []
       $.extend activeTemplate, template
       saveTemplate activeTemplate
+      $('#template_search :reset').hide()
+      $('#template_search :text').val ''
       closeWizard()
   # Open the template wizard without any context.
   $('#add_btn').click -> openWizard null
@@ -367,7 +369,7 @@ loadTemplateExportEvents = ->
   # templates.
   $('#export_btn').click ->
     log.info 'Launching export wizard'
-    $('#export_content').val createExportNew getSelectedTemplates()
+    $('#export_content').val createExport getSelectedTemplates()
     $('#export_wizard').modal 'show'
   # Cancel the export process and hide the export wizard.
   $('#export_close_btn').click -> $('#export_wizard').modal 'hide'
@@ -409,114 +411,103 @@ loadTemplateExportEvents = ->
 
 # Bind the event handlers required for importing templates.
 loadTemplateImportEvents = ->
-  # TODO: Fix for new structure
   log.trace()
-  data      = null
-  templates = $ '#templates'
+  data = null
   # Simulate alert closing without removing alert from the DOM.
-  $('.import_error .close').on 'click', ->
-    $('.import_error').find('span').html('&nbsp').end().hide()
+  $('#import_error .close').click ->
+    $(this).next().html('&nbsp').parent().hide()
+  $('#import_wizard').on 'hide', ->
+    $('#import_final_btn').prop 'disabled', yes
+    $('#import_wizard_stage2, #import_back_btn, #import_final_btn').hide()
+    $('#import_wizard_stage1, #import_continue_btn').show()
+    $('#import_content, #import_file_btn').val ''
+    $('#import_file_btn').val ''
+    $('#import_error').find('span').html('&nbsp;').end().hide()
   # Restore the previous view in the import process.
-  $('.import_back_btn').click ->
+  $('#import_back_btn').click ->
     log.info 'Going back to previous import stage'
-    $('.import_con_stage1').show()
-    $('.import_con_stage2, .import_con_stage3').hide()
+    $('#import_wizard_stage2, #import_back_btn, #import_final_btn').hide()
+    $('#import_wizard_stage1, #import_continue_btn').show()
   # Prompt the user to input/load the data to be imported.
   $('#import_btn').click ->
     log.info 'Launching import wizard'
-    updateTemplate templates.find 'option:selected'
-    templates.val([]).change()
-    $('.import_con_stage1').show()
-    $('.import_con_stage2, .import_con_stage3').hide()
-    $('.import_content').val ''
-    $('.import_error').find('span').html('&nbsp;').end().hide()
-    $('.import_file_btn').val ''
-    $('#import_con').modal 'show'
+    $('#import_wizard').modal 'show'
   # Enable/disable the finalize button depending on whether or not any
   # templates are currently selected.
-  $('.import_con_list').change ->
-    if $(this).find('option:selected').length > 0
-      $('.import_final_btn').removeAttr 'disabled'
-    else
-      $('.import_final_btn').attr 'disabled', 'disabled'
+  $('#import_items').change ->
+    $('#import_final_btn').prop 'disabled',
+      not $(this).find(':selected').length
+  # Select all of the templates in the list.
+  $('#import_select_all_btn').click ->
+    $('#import_items option').prop('selected', yes).parent().focus()
+    $('#import_final_btn').prop 'disabled', no
   # Deselect all of the templates in the list.
-  $('.import_deselect_all_btn').click ->
-    $('.import_con_list option').removeAttr('selected').parent().focus()
-    $('.import_final_btn').attr 'disabled', 'disabled'
+  $('#import_deselect_all_btn').click ->
+    $('#import_items option').prop('selected', no).parent().focus()
+    $('#import_final_btn').prop 'disabled', yes
   # Read the contents of the loaded file in to the text area and perform simple
   # error handling.
-  $('.import_file_btn').change (event) ->
-    file   = event.target.files[0]
+  $('#import_file_btn').change (e) ->
+    file   = e.target.files[0]
     reader = new FileReader()
     reader.onerror = fileErrorHandler (message) ->
       log.error message
-      $('.import_error').find('span').text(message).end().show()
-    reader.onload = (evt) ->
-      result = evt.target.result
+      $('#import_error').find('span').text(message).end().show()
+    reader.onload = (e) ->
+      result = e.target.result
       log.debug 'Following contents were read from the file...', result
-      $('.import_error').find('span').html('&nbsp;').end().hide()
-      $('.import_content').val result
+      $('#import_error').find('span').html('&nbsp;').end().hide()
+      $('#import_content').val result
     reader.readAsText file
   # Finalize the import process.
-  $('.import_final_btn').click ->
-    $this = $ this
-    list  = $this.parents('.import_con_stage2').find '.import_con_list'
-    list.find('option:selected').each ->
-      opt         = $ this
-      existingOpt = templates.find "option[value='#{opt.val()}']"
-      opt.removeAttr 'selected'
-      if existingOpt.length is 0
-        templates.append opt
-      else
-        existingOpt.replaceWith opt
-    $('#import_con').modal 'hide'
-    updateToolbarTemplates()
-    templates.focus()
-    saveTemplates yes
+  $('#import_final_btn').click ->
+    selectedKeys = []
+    $('#import_items').find(':selected').each ->
+      selectedKeys.push $(this).val()
+    # TODO: Iterate over data and update/insert selected templates
+    # TODO: Properly save data
+    $('#import_wizard').modal 'hide'
+    $('#template_search :reset').hide()
+    $('#template_search :text').val ''
     if data?
       analytics.track 'Templates', 'Imported', data.version,
         data.templates.length
   # Cancel the import process.
-  $('.import_no_btn, .import_close_btn').click -> $('#import_con').modal 'hide'
-  # Paste the contents of the system clipboard in to the text area.
-  $('.import_paste_btn').click ->
+  $('#import_close_btn').click -> $('#import_wizard').modal 'hide'
+  # Paste the contents of the system clipboard in to the textarea.
+  $('#import_paste_btn').click ->
     $this = $ this
-    $('.import_file_btn').val ''
-    $('.import_content').val ext.paste()
+    $('#import_file_btn').val ''
+    $('#import_content').val ext.paste()
     $this.text i18n.get 'opt_import_wizard_paste_alt_button'
-    $this.delay 800
-    $this.queue ->
+    $this.delay(800).queue ->
       $this.text i18n.get 'opt_import_wizard_paste_button'
       $this.dequeue()
-  # Select all of the templates in the list.
-  $('.import_select_all_btn').click ->
-    $('.import_con_list option').attr('selected', 'selected').parent().focus()
-    $('.import_final_btn').removeAttr 'disabled'
   # Read the imported data and attempt to extract any valid templates and list
   # the changes to user for them to check and finalize.
-  $('.import_yes_btn').click ->
-    $this = $(this).attr 'disabled', 'disabled'
-    list  = $ '.import_con_list'
-    str   = $this.parents('.import_con_stage1').find('.import_content').val()
-    $('.import_error').find('span').html('&nbsp;').end().hide()
+  $('#import_continue_btn').click ->
+    $this = $(this).prop 'disabled', yes
+    list  = $ '#import_items'
+    str   = $('#import_content').val()
+    $('#import_error').find('span').html('&nbsp;').end().hide()
+    list.find('option').remove()
     try
       importData = createImport str
     catch error
       log.error error
-      $('.import_error').find('span').text(error).end().show()
+      $('#import_error').find('span').text(error).end().show()
     if importData
       data = readImport importData
-      if data.templates.length is 0
-        $('.import_con_stage3').show()
-        $('.import_con_stage1, .import_con_stage2').hide()
-      else
-        list.find('option').remove()
-        $('.import_count').text data.templates.length
-        list.append loadTemplate template for template in data.templates
-        $('.import_final_btn').attr 'disabled', 'disabled'
-        $('.import_con_stage2').show()
-        $('.import_con_stage1, .import_con_stage3').hide()
-    $this.removeAttr 'disabled'
+      if data.templates.length
+        $('#import_count').text data.templates.length
+        for template in data.templates
+          list.append $ '<option/>',
+            text:  template.title
+            value: template.key
+        $('#import_final_btn').prop 'disabled', yes
+        $('#import_wizard_stage1, #import_continue_btn').hide()
+        $('#import_wizard_stage2, #import_back_btn, #import_final_btn').show()
+    $this.prop 'disabled', no
 
 # Load the `templates` into the table to be displayed to the user.  
 # Optionally, pagination can be disabled but this should only really be used
@@ -894,15 +885,6 @@ clearErrors = (selector) ->
     $('.control-group.error').removeClass 'error'
     $('.error-message').remove()
 
-# Indicate whether or not the specified `key` is new to this instance of
-# Template.
-isKeyNew = (key, additionalKeys = []) ->
-  log.trace()
-  log.debug "Checking if template key '#{key}' is new"
-  available = yes
-  $('#templates option').each -> available = no if $(this).val() is key
-  available and key not in additionalKeys
-
 # Indicate whether or not the specified `key` is valid.
 isKeyValid = (key) ->
   log.trace()
@@ -1178,21 +1160,8 @@ closeWizard = ->
   clearContext()
   $('#template_wizard').modal 'hide'
 
-# Create a JSON string to export the templates with the specified `keys`.
-createExport = (keys) ->
-  log.trace()
-  log.debug 'Creating an export string for the following keys...', keys
-  data = templates: [], version: ext.version
-  for key in keys
-    data.templates.push deriveTemplate $ "#templates option[value='#{key}']"
-  if data.templates.length
-    analytics.track 'Templates', 'Exported', ext.version, data.templates.length
-  log.debug 'Following export data has been created...', data
-  JSON.stringify data
-
 # Create a JSON string to export the specified `templates`.
-# TODO: Replace `createExport`
-createExportNew = (templates = []) ->
+createExport = (templates = []) ->
   log.trace()
   log.debug 'Creating an export string for the following templates...',
     templates
@@ -1380,8 +1349,9 @@ paginate = (templates) ->
 readImport = (importData) ->
   log.trace()
   log.debug 'Importing the following data...', importData
-  data = templates: []
-  keys = []
+  data       = templates: []
+  keys       = []
+  storedKeys = (template.key for template in ext.templates)
   for template in importData.templates
     existing = {}
     # Ensure templates imported from previous versions are valid for 1.0.0+.
@@ -1395,7 +1365,7 @@ readImport = (importData) ->
     else if importData.version < '1.1.0'
       template.image = icons.fromLegacy(template.image)?.name or ''
     if validateImportedTemplate template
-      if isKeyNew template.key, keys
+      if template.key not in storedKeys and template.key not in keys
         # Attempt to create and add the new template.
         template = addImportedTemplate template
         if template
@@ -1403,15 +1373,15 @@ readImport = (importData) ->
           keys.push template.key
       else
         # Attempt to update the previously imported template.
-        for imported, i in data.templates
-          if imported.key is template.key
-            existing          = updateImportedTemplate template, imported
-            data.templates[i] = existing
-            break
+        for imported, i in data.templates when imported.key is template.key
+          existing          = updateImportedTemplate template, imported
+          data.templates[i] = existing
+          break
         unless existing.key
-          # Attempt to derive the existing template from the available options.
-          existing = deriveTemplate $ "#templates
-            option[value='#{template.key}']"
+          # Attempt to locate the existing template and clone it.
+          existing = utils.clone (ext.queryTemplate (temp) ->
+            temp.key is template.key
+          ), yes
           # Attempt to update the derived template.
           if existing
             existing = updateImportedTemplate template, existing
@@ -1481,6 +1451,7 @@ searchTemplates = (query = '') ->
     searchResults = null
   loadTemplateRows searchResults ? ext.templates
   refreshResetButton()
+  refreshSelectButtons()
 
 # Set the current context of the template wizard.
 setContext = (template = {}) ->

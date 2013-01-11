@@ -339,53 +339,44 @@
                   <button class="btn btn-primary delete_yes_btn" i18n-content="opt_wizard_yes_button"></button>
                 </div>
               </div>
-              <div id="import_con" class="hide modal">
+              <div id="import_wizard" class="hide modal">
                 <div class="modal-header">
                   <a class="close" data-dismiss="modal">&times;</a>
                   <h3 i18n-content="opt_import_wizard_header"></h3>
                 </div>
-                <div class="import_con_stage1">
-                  <div class="modal-body">
-                    <div class="import_error alert alert-error">
+                <div class="modal-body">
+                  <div id="import_wizard_stage1">
+                    <div id="import_error" class="alert alert-error hide">
                       <a class="close">&times;</a>
                       <span>&nbsp;</span>
                     </div>
                     <p i18n-content="opt_import_wizard_stage_1_text"></p>
-                    <textarea class="import_content span5" rows="6" readonly></textarea>
-                  </div>
-                  <div class="modal-footer">
-                    <div class="pull-left">
-                      <button class="btn btn-info import_paste_btn" i18n-content="opt_import_wizard_paste_button"></button>
-                      <input class="import_file_btn" type="file">
+                    <textarea id="import_content" class="span5" rows="6" readonly></textarea>
+                    <div>
+                      <button id="import_paste_btn" class="btn" i18n-content="opt_import_wizard_paste_button"></button>
+                      <input id="import_file_btn" type="file">
                     </div>
-                    <button class="btn import_no_btn" i18n-content="opt_wizard_close_button"></button>
-                    <button class="btn btn-primary import_yes_btn" i18n-content="opt_wizard_continue_button"></button>
                   </div>
-                </div>
-                <div class="import_con_stage2">
-                  <div class="modal-body">
-                    <p i18n-content="opt_import_wizard_stage_2_text_1"></p>
+                  <div id="import_wizard_stage2" class="hide">
+                    <p>
+                      <span id="import_count"></span>
+                      <span i18n-content="opt_import_wizard_stage_2_text_1"></span>
+                    </p>
                     <p i18n-content="opt_import_wizard_stage_2_text_2"></p>
-                    <select class="import_con_list span5" size="5" multiple></select>
-                  </div>
-                  <div class="modal-footer">
-                    <div class="pull-left">
-                      <button class="btn btn-info import_select_all_btn" i18n-content="opt_wizard_all_button"></button>
-                      <button class="btn btn-info import_deselect_all_btn" i18n-content="opt_wizard_none_button"></button>
+                    <select id="import_items" class="span5" size="5" multiple></select>
+                    <div class="btn-group">
+                      <button id="import_select_all_btn" class="btn" i18n-content="opt_wizard_all_button"></button>
+                      <button id="import_deselect_all_btn" class="btn" i18n-content="opt_wizard_none_button"></button>
                     </div>
-                    <button class="btn import_close_btn" i18n-content="opt_wizard_close_button"></button>
-                    <button class="btn import_back_btn" i18n-content="opt_wizard_back_button"></button>
-                    <button class="btn btn-primary import_final_btn" i18n-content="opt_import_wizard_import_button"></button>
                   </div>
                 </div>
-                <div class="import_con_stage3">
-                  <div class="modal-body">
-                    <p i18n-content="opt_import_wizard_stage_3_text"></p>
+                <div class="modal-footer">
+                  <div class="pull-left">
+                    <button id="import_close_btn" class="btn" i18n-content="opt_wizard_cancel_button"></button>
+                    <button id="import_back_btn" class="btn hide" i18n-content="opt_wizard_back_button"></button>
                   </div>
-                  <div class="modal-footer">
-                    <button class="btn import_close_btn" i18n-content="opt_wizard_close_button"></button>
-                    <button class="btn import_back_btn" i18n-content="opt_wizard_back_button"></button>
-                  </div>
+                  <button id="import_continue_btn" class="btn btn-primary" i18n-content="opt_wizard_continue_button"></button>
+                  <button id="import_final_btn" class="btn btn-primary hide" disabled i18n-content="opt_import_wizard_import_button"></button>
                 </div>
               </div>
               <div id="export_wizard" class="hide modal">

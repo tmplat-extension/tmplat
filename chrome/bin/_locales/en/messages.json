@@ -3068,22 +3068,12 @@
     "description": "Text for the initial step of the Import dialog."
   },
   "opt_import_wizard_stage_2_text_1": {
-    "message": "$COUNT$ valid template(s) were found.",
-    "description": "1st paragraph for the final successful step of the Import dialog.",
-    "placeholders": {
-      "count": {
-        "content": "<span class=\"import_count\"></span>",
-        "example": "3"
-      }
-    }
+    "message": "valid template(s) were found.",
+    "description": "1st paragraph for the final successful step of the Import dialog."
   },
   "opt_import_wizard_stage_2_text_2": {
     "message": "Select those to be imported;",
     "description": "2nd paragraph for the final successful step of the Import dialog."
-  },
-  "opt_import_wizard_stage_3_text": {
-    "message": "No valid templates were found.",
-    "description": "Text for the final unsuccessful step of the Import dialog."
   },
   "opt_logger_enabled_label": {
     "message": "Enabled",
