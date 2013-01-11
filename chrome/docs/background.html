@@ -389,6 +389,9 @@ empty string to the system clipboard.</p>             </td>             <td clas
         <span class="nv">result.message = </span><span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;result_bad_empty_description&#39;</span><span class="p">,</span>
           <span class="nx">result</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">title</span>
         <span class="nv">result.success = </span><span class="kc">no</span>
+      <span class="k">if</span> <span class="nx">result</span><span class="p">.</span><span class="nx">template</span><span class="o">?</span>
+        <span class="nx">updateTemplateUsage</span> <span class="nx">result</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">key</span>
+        <span class="nx">updateStatistics</span><span class="p">()</span>
       <span class="k">if</span> <span class="nx">result</span><span class="p">.</span><span class="nx">success</span>
         <span class="nv">ext.notification.title       = </span><span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;result_good_title&#39;</span>
         <span class="nv">ext.notification.titleStyle  = </span><span class="s">&#39;color: #468847&#39;</span>
@@ -408,9 +411,6 @@ empty string to the system clipboard.</p>             </td>             <td clas
           <span class="nx">i18n</span><span class="p">.</span><span class="nx">get</span> <span class="s">&#39;result_bad_description&#39;</span><span class="p">,</span> <span class="nx">result</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">title</span>
         <span class="nx">showNotification</span><span class="p">()</span>
         <span class="nx">sendResponse</span><span class="o">?</span><span class="p">()</span>
-      <span class="k">if</span> <span class="nx">result</span><span class="p">.</span><span class="nx">template</span><span class="o">?</span>
-        <span class="nx">updateTemplateUsage</span> <span class="nx">result</span><span class="p">.</span><span class="nx">template</span><span class="p">.</span><span class="nx">key</span>
-        <span class="nx">updateStatistics</span><span class="p">()</span>
     <span class="k">else</span>
       <span class="nx">updateProgress</span> <span class="kc">null</span><span class="p">,</span> <span class="kc">off</span>
     <span class="nx">log</span><span class="p">.</span><span class="nx">debug</span> <span class="s">&quot;Finished handling </span><span class="si">#{</span><span class="nx">type</span><span class="si">}</span><span class="s"> request&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-67">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-67">&#182;</a>               </div>               <p>Attempt to select a tab in the current window displaying a page whose

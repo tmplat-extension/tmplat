@@ -540,6 +540,9 @@ onMessage = (message, sender, sendResponse) ->
         result.message = i18n.get 'result_bad_empty_description',
           result.template.title
         result.success = no
+      if result.template?
+        updateTemplateUsage result.template.key
+        updateStatistics()
       if result.success
         ext.notification.title       = i18n.get 'result_good_title'
         ext.notification.titleStyle  = 'color: #468847'
@@ -559,9 +562,6 @@ onMessage = (message, sender, sendResponse) ->
           i18n.get 'result_bad_description', result.template.title
         showNotification()
         sendResponse?()
-      if result.template?
-        updateTemplateUsage result.template.key
-        updateStatistics()
     else
       updateProgress null, off
     log.debug "Finished handling #{type} request"
