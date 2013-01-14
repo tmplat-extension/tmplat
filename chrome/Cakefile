@@ -185,7 +185,10 @@ task 'dist', "Create #{CWD} distributable file", ->
       async.forEach files, optimizeMessage, (err) -> cb err
     (cb) ->
       # TODO: Support Windows
-      exec "zip -r ../#{DIST_FILE} *", cwd: TEMP_PATH, cb
+      exec [
+        "rm ../#{DIST_FILE}.zip"
+        "zip -r ../#{DIST_FILE} *"
+      ].join('&&'), cwd: TEMP_PATH, cb
   ], (err) ->
     throw err if err
     wrench.rmdirSyncRecursive TEMP_PATH

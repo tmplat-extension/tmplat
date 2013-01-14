@@ -130,8 +130,8 @@ SHORTENERS        = [
     if @oauth.hasAccessToken()
       params.access_token = @oauth.getAccessToken()
     else
-      params.apiKey = services.bitly.api_key
-      params.login  = services.bitly.login
+      params.apiKey = ext.config.services.bitly.api_key
+      params.login  = ext.config.services.bitly.login
     params
   getUsage:      -> store.get 'bitly.usage'
   input:         -> null
@@ -139,11 +139,11 @@ SHORTENERS        = [
   method:        'GET'
   name:          'bitly'
   oauth:         -> new OAuth2 'bitly'
-    client_id:     services.bitly.client_id
-    client_secret: services.bitly.client_secret
+    client_id:     ext.config.services.bitly.client_id
+    client_secret: ext.config.services.bitly.client_secret
   output:        (resp) -> JSON.parse(resp).data.url
   title:         i18n.get 'shortener_bitly'
-  url:           -> services.bitly.url
+  url:           -> ext.config.services.bitly.url
 ,
   # Setup [Google URL Shortener](http://goo.gl).
   getHeaders:    ->
@@ -152,19 +152,19 @@ SHORTENERS        = [
       headers.Authorization = "OAuth #{@oauth.getAccessToken()}"
     headers
   getParameters: -> unless @oauth.hasAccessToken()
-    key: services.googl.api_key
+    key: ext.config.services.googl.api_key
   getUsage:      -> store.get 'googl.usage'
   input:         (url) -> JSON.stringify longUrl: url
   isEnabled:     -> store.get 'googl.enabled'
   method:        'POST'
   name:          'googl'
   oauth:         -> new OAuth2 'google'
-    api_scope:     services.googl.api_scope
-    client_id:     services.googl.client_id
-    client_secret: services.googl.client_secret
+    api_scope:     ext.config.services.googl.api_scope
+    client_id:     ext.config.services.googl.client_id
+    client_secret: ext.config.services.googl.client_secret
   output:        (resp) -> JSON.parse(resp).id
   title:         i18n.get 'shortener_googl'
-  url:           -> services.googl.url
+  url:           -> ext.config.services.googl.url
 ,
   # Setup [YOURLS](http://yourls.org).
   getHeaders:    -> 'Content-Type': 'application/json'
@@ -243,8 +243,6 @@ isNewInstall      = no
 isProductionBuild = EXTENSION_ID is REAL_EXTENSION_ID
 # Name of the user's operating system.
 operatingSystem   = ''
-# Details of web services used by Template.
-services          = {}
 
 # Private functions
 # -----------------
@@ -1455,6 +1453,9 @@ ext = window.ext = new class Extension extends utils.Class
   # Public variables
   # ----------------
 
+  # Configuration data loaded at runtime.
+  config: {}
+
   # Information specifying what should be displaying in the notification.  
   # This should be reset after every copy request.
   notification:
@@ -1518,12 +1519,13 @@ ext = window.ext = new class Extension extends utils.Class
     analytics.add() if store.get 'analytics'
     # Create a runner to ensure asynchronous dependencies are met.
     runner = new utils.Runner()
+    # It's nice knowing what version is running.
     runner.push jQuery, 'getJSON', utils.url('manifest.json'), (data) =>
-      # It's nice knowing what version is running.
       @version = data.version
       runner.next()
-    runner.push jQuery, 'getJSON', utils.url('services.json'), (data) ->
-      services = data
+    # Load and store the configuration data.
+    runner.push jQuery, 'getJSON', utils.url('configuration.json'), (data) =>
+      @config = data
       shortener.oauth = shortener.oauth?() for shortener in SHORTENERS
       runner.next()
     runner.run =>
