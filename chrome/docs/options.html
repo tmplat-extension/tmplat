@@ -50,12 +50,15 @@ This should be removed if/when it's no longer required.</p>             </td>   
       <span class="nb">Number</span> <span class="nx">value</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Load the contents for the specified <code>tab</code> into the options page.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">loadTab = </span><span class="nf">(tab, callback) -&gt;</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">trace</span><span class="p">()</span>
   <span class="nx">log</span><span class="p">.</span><span class="nx">info</span> <span class="s">&quot;Loading </span><span class="si">#{</span><span class="nx">tab</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s"> tab resources&quot;</span>
-  <span class="nx">$</span><span class="p">.</span><span class="nx">get</span> <span class="nx">utils</span><span class="p">.</span><span class="nx">url</span><span class="p">(</span><span class="s">&quot;pages/options-</span><span class="si">#{</span><span class="nx">tab</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">.html&quot;</span><span class="p">),</span> <span class="nf">(data) -&gt;</span>
-    <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#tabs&#39;</span><span class="p">).</span><span class="nx">prepend</span> <span class="nx">$</span> <span class="s">&#39;&lt;div/&gt;&#39;</span><span class="p">,</span>
-      <span class="k">class</span><span class="o">:</span> <span class="s">&#39;hide tab&#39;</span>
-      <span class="nv">html: </span> <span class="nx">data</span>
-      <span class="nv">id: </span>   <span class="s">&quot;</span><span class="si">#{</span><span class="nx">tab</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">_tab&quot;</span>
-    <span class="nx">callback</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>Load all of the contents for the configured tabs into the options page,
+  <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span>
+    <span class="nv">cache: </span>  <span class="kc">no</span>
+    <span class="nv">success: </span><span class="nf">(data) -&gt;</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s">&#39;#tabs&#39;</span><span class="p">).</span><span class="nx">prepend</span> <span class="nx">$</span> <span class="s">&#39;&lt;div/&gt;&#39;</span><span class="p">,</span>
+        <span class="k">class</span><span class="o">:</span> <span class="s">&#39;hide tab&#39;</span>
+        <span class="nv">html: </span> <span class="nx">data</span>
+        <span class="nv">id: </span>   <span class="s">&quot;</span><span class="si">#{</span><span class="nx">tab</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">_tab&quot;</span>
+      <span class="nx">callback</span><span class="p">()</span>
+    <span class="nv">url: </span>    <span class="nx">utils</span><span class="p">.</span><span class="nx">url</span> <span class="s">&quot;pages/options-</span><span class="si">#{</span><span class="nx">tab</span><span class="p">.</span><span class="nx">id</span><span class="si">}</span><span class="s">.html&quot;</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>Load all of the contents for the configured tabs into the options page,
 including the navigation panel. <br />
 A dialog is displayed during this process to update the user of the current
 progress. It's the responsibility of the caller to ensure that this dialog is

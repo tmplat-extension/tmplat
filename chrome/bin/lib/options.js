@@ -89,13 +89,17 @@
   loadTab = function(tab, callback) {
     log.trace();
     log.info("Loading " + tab.id + " tab resources");
-    return $.get(utils.url("pages/options-" + tab.id + ".html"), function(data) {
-      $('#tabs').prepend($('<div/>', {
-        "class": 'hide tab',
-        html: data,
-        id: "" + tab.id + "_tab"
-      }));
-      return callback();
+    return $.ajax({
+      cache: false,
+      success: function(data) {
+        $('#tabs').prepend($('<div/>', {
+          "class": 'hide tab',
+          html: data,
+          id: "" + tab.id + "_tab"
+        }));
+        return callback();
+      },
+      url: utils.url("pages/options-" + tab.id + ".html")
     });
   };
 

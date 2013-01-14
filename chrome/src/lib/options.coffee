@@ -87,12 +87,15 @@ loadSaveEvents = ->
 loadTab = (tab, callback) ->
   log.trace()
   log.info "Loading #{tab.id} tab resources"
-  $.get utils.url("pages/options-#{tab.id}.html"), (data) ->
-    $('#tabs').prepend $ '<div/>',
-      class: 'hide tab'
-      html:  data
-      id:    "#{tab.id}_tab"
-    callback()
+  $.ajax
+    cache:   no
+    success: (data) ->
+      $('#tabs').prepend $ '<div/>',
+        class: 'hide tab'
+        html:  data
+        id:    "#{tab.id}_tab"
+      callback()
+    url:     utils.url "pages/options-#{tab.id}.html"
 
 # Load all of the contents for the configured tabs into the options page,
 # including the navigation panel.  
