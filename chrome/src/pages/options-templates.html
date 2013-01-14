@@ -1,0 +1,186 @@
+<link rel="stylesheet" href="../css/options-templates.css">
+<div class="row">
+  <div class="span12">
+    <form id="template_controls" class="form-vertical">
+      <fieldset>
+        <legend i18n-content="opt_template_header"></legend>
+        <div class="form-inline well">
+          <div class="row">
+            <div class="span12">
+              <label for="template_filter" i18n-content="opt_show_label"></label>
+              <select id="template_filter" class="input-mini"></select>
+              <div id="template_search" class="pull-right input-append">
+                <button type="reset" class="btn hide" i18n-content="opt_reset_text"></button>
+                <input id="template_query" type="text" class="input-medium" i18n-values="placeholder:opt_search_placeholder_text">
+                <button type="submit" class="btn"><i class="icon-search"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row control-group">
+          <div class="span12">
+            <table id="templates" class="table table-hover">
+              <thead>
+                <th><input type="checkbox" i18n-values="title:opt_select_all_box"></th>
+                <th i18n-content="opt_template_title_label"></th>
+                <th i18n-content="opt_template_shortcut_label"></th>
+                <th i18n-content="opt_template_enabled_label"></th>
+                <th i18n-content="opt_template_content_label"></th>
+                <th><i class="icon-resize-vertical"></i></th>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <div id="pagination" class="hide pagination pagination-right">
+              <ul></ul>
+            </div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button id="import_btn" type="button" class="btn" i18n-content="opt_import_button"></button>
+          <button id="export_btn" type="button" class="btn" disabled i18n-content="opt_export_button"></button>
+          <button id="delete_btn" type="button" class="btn btn-danger" disabled i18n-content="opt_delete_button"></button>
+          <button id="add_btn" type="button" class="btn btn-success" i18n-content="opt_add_button"></button>
+        </div>
+      </fieldset>
+      <div id="template_wizard" class="hide modal">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">&times;</a>
+          <h3></h3>
+        </div>
+        <div class="modal-body">
+          <div class="hide alert alert-error">
+            <a class="close">&times;</a>
+            <span>&nbsp;</span>
+          </div>
+          <div class="row control-group">
+            <label class="span1 control-label" for="template_title" i18n-content="opt_template_title_label"></label>
+            <div class="span3 controls">
+              <input id="template_title" class="span3" type="text" maxlength="32">
+            </div>
+          </div>
+          <div class="row control-group">
+            <label class="span1 control-label" for="template_image" i18n-content="opt_template_image_label"></label>
+            <div class="span3 controls">
+              <select id="template_image" class="input-medium"></select>
+              <i id="template_image_preview" class="icon-"></i>
+            </div>
+          </div>
+          <div class="row control-group">
+            <label class="span1 control-label" for="template_shortcut">
+              <span i18n-content="opt_template_shortcut_label"></span>
+            </label>
+            <div class="span3 controls">
+              <div class="input-prepend">
+                <span class="add-on" id="template_shortcut_modifier"></span><input class="input-mini" id="template_shortcut" type="text" maxlength="1">
+              </div>
+              <a class="help" popover="opt_template_shortcut_help" i18n-values="title:opt_template_shortcut_label"><i class="icon-question-sign"></i></a>
+            </div>
+          </div>
+          <div class="row control-group">
+            <label class="span1 control-label" for="template_enabled" i18n-content="opt_template_enabled_label"></label>
+            <div class="span3 controls">
+              <label class="checkbox">
+                <input type="checkbox" id="template_enabled">
+                <span i18n-content="opt_template_enabled_text"></span>
+              </label>
+            </div>
+          </div>
+          <div class="row control-group">
+            <div class="span4 controls">
+              <textarea id="template_content" class="span4" rows="5" spellcheck="false" i18n-values="placeholder:opt_template_content_label"></textarea>
+              <p class="help-block" i18n-content="opt_template_content_sub_text"></p>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="pull-left">
+            <button id="template_cancel_btn" class="btn" i18n-content="opt_wizard_cancel_button"></button>
+            <button id="template_reset_btn" class="btn" i18n-content="opt_wizard_reset_button"></button>
+          </div>
+          <div id="template_confirm_delete" class="btn-group hide">
+            <button id="template_undo_delete_btn" class="btn" i18n-content="opt_undo_button"></button>
+            <button id="template_confirm_delete_btn" class="btn btn-danger" i18n-content="opt_confirm_button"></button>
+          </div>
+          <button id="template_delete_btn" class="btn btn-danger" i18n-content="opt_wizard_delete_button"></button>
+          <button id="template_save_btn" class="btn btn-primary" i18n-content="opt_wizard_save_button"></button>
+        </div>
+      </div>
+      <div id="delete_wizard" class="hide modal">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">&times;</a>
+          <h3 i18n-content="opt_delete_wizard_header"></h3>
+        </div>
+        <div class="modal-body">
+          <p i18n-content="opt_delete_wizard_text_1"></p>
+          <ul id="delete_items"></ul>
+          <p i18n-content="opt_delete_wizard_text_2"></p>
+        </div>
+        <div class="modal-footer">
+          <button id="delete_cancel_btn" class="btn pull-left" i18n-content="opt_wizard_cancel_button"></button>
+          <button id="delete_no_btn" class="btn btn-primary" i18n-content="opt_wizard_no_button"></button>
+          <button id="delete_yes_btn" class="btn btn-danger" i18n-content="opt_wizard_yes_button"></button>
+        </div>
+      </div>
+      <div id="import_wizard" class="hide modal">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">&times;</a>
+          <h3 i18n-content="opt_import_wizard_header"></h3>
+        </div>
+        <div class="modal-body">
+          <div id="import_wizard_stage1">
+            <div id="import_error" class="alert alert-error hide">
+              <a class="close">&times;</a>
+              <span>&nbsp;</span>
+            </div>
+            <p i18n-content="opt_import_wizard_stage_1_text"></p>
+            <textarea id="import_content" class="span5" rows="6" readonly></textarea>
+            <div>
+              <button id="import_paste_btn" class="btn" i18n-content="opt_import_wizard_paste_button"></button>
+              <input id="import_file_btn" type="file">
+            </div>
+          </div>
+          <div id="import_wizard_stage2" class="hide">
+            <p>
+              <span id="import_count"></span>
+              <span i18n-content="opt_import_wizard_stage_2_text_1"></span>
+            </p>
+            <p i18n-content="opt_import_wizard_stage_2_text_2"></p>
+            <select id="import_items" class="span5" size="5" multiple></select>
+            <div class="btn-group">
+              <button id="import_select_all_btn" class="btn" i18n-content="opt_wizard_all_button"></button>
+              <button id="import_deselect_all_btn" class="btn" i18n-content="opt_wizard_none_button"></button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="pull-left">
+            <button id="import_close_btn" class="btn" i18n-content="opt_wizard_cancel_button"></button>
+            <button id="import_back_btn" class="btn hide" i18n-content="opt_wizard_back_button"></button>
+          </div>
+          <button id="import_continue_btn" class="btn btn-primary" i18n-content="opt_wizard_continue_button"></button>
+          <button id="import_final_btn" class="btn btn-primary hide" disabled i18n-content="opt_import_wizard_import_button"></button>
+        </div>
+      </div>
+      <div id="export_wizard" class="hide modal">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">&times;</a>
+          <h3 i18n-content="opt_export_wizard_header"></h3>
+        </div>
+        <div class="modal-body">
+          <div id="export_error" class="alert alert-error hide">
+            <a class="close">&times;</a>
+            <span>&nbsp;</span>
+          </div>
+          <p i18n-content="opt_export_wizard_text"></p>
+          <textarea id="export_content" class="span5" rows="6" readonly></textarea>
+        </div>
+        <div class="modal-footer">
+          <button id="export_close_btn" type="button" class="btn pull-left" i18n-content="opt_wizard_cancel_button"></button>
+          <button id="export_copy_btn" type="button" class="btn btn-primary" i18n-content="opt_export_wizard_copy_button"></button>
+          <button id="export_save_btn" type="button" class="btn btn-primary" i18n-content="opt_export_wizard_save_as_button"></button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<script src="../lib/options-templates.js"></script>

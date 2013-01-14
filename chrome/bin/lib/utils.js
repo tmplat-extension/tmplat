@@ -224,6 +224,20 @@
       }
     };
 
+    Utils.prototype.trimToLower = function(str) {
+      if (str == null) {
+        str = '';
+      }
+      return str.trim().toLowerCase();
+    };
+
+    Utils.prototype.trimToUpper = function(str) {
+      if (str == null) {
+        str = '';
+      }
+      return str.trim().toUpperCase();
+    };
+
     Utils.prototype.type = function(obj) {
       if (obj != null) {
         return typeMap[Object.prototype.toString.call(obj)] || 'object';
