@@ -1280,7 +1280,7 @@
   activateTooltips = function(selector) {
     var base;
     log.trace();
-    base = selector ? $(selector) : $();
+    base = $(selector || document);
     base.find('[data-original-title]').each(function() {
       var $this;
       $this = $(this);

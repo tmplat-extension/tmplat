@@ -1051,7 +1051,7 @@ activateSelections = ->
 # been previously bound.
 activateTooltips = (selector) ->
   log.trace()
-  base = if selector then $ selector else $()
+  base = $ selector or document
   base.find('[data-original-title]').each ->
     $this = $ this
     $this.tooltip 'destroy'
