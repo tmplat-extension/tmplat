@@ -350,9 +350,10 @@ loadTemplateControlEvents = ->
     else
       $('#delete_wizard').modal 'show'
   # Cancel the template removal process.
-  $('.delete_no_btn').click -> $('#delete_wizard').modal 'hide'
+  $('#delete_cancel_btn, #delete_no_btn').click ->
+    $('#delete_wizard').modal 'hide'
   # Finalize the template removal process.
-  $('.delete_yes_btn').click ->
+  $('#delete_yes_btn').click ->
     deleteTemplates selectedTemplates
     $('#delete_wizard').modal 'hide'
 
@@ -777,19 +778,6 @@ updateImportedTemplate = (template, existing) ->
   existing.usage = template.usage
   log.debug 'Updated the following template...', existing
   existing
-
-# Update the specified `option` element that represents a template with the
-# values taken from the available input fields.
-updateTemplate = (option) ->
-  log.trace()
-  if option.length
-    option.data 'content',  $('#template_content').val()
-    option.data 'enabled',  String $('#template_enabled').is ':checked'
-    option.data 'image',    $('#template_image option:selected').val()
-    option.data 'shortcut', $('#template_shortcut').val().trim().toUpperCase()
-    option.text $('#template_title').val().trim()
-  log.debug 'Updated the following option with field values...', option
-  option
 
 # Update the selection of templates in the toolbar behaviour section to reflect
 # those available in the templates section.
@@ -1216,25 +1204,26 @@ paginate = (templates) ->
           $this.addClass 'disabled'
         else
           $this.removeClass 'disabled'
+    # Create and insert pagination links.
     if pages isnt children.length - 2
       children.remove()
       list = pagination.find 'ul'
-      # Create and insert pagination links.
       list.append $('<li/>').append $ '<a>&laquo;</a>'
       for page in [1..pages]
         list.append $('<li/>').append $ "<a>#{page}</a>"
       list.append $('<li/>').append $ '<a>&raquo;</a>'
-      # Bind event handlers to manage navigating pages.
-      pagination.find('ul li:first-child').click ->
-        unless $(this).hasClass 'disabled'
-          refreshPagination pagination.find('ul li.active').index() - 1
-      pagination.find('ul li:not(:first-child, :last-child)').click ->
-        $this = $ this
-        unless $this.hasClass 'active'
-          refreshPagination $this.index()
-      pagination.find('ul li:last-child').click ->
-        unless $(this).hasClass 'disabled'
-          refreshPagination pagination.find('ul li.active').index() + 1
+    # Bind event handlers to manage navigating pages.
+    pagination.find('ul li').off 'click'
+    pagination.find('ul li:first-child').click ->
+      unless $(this).hasClass 'disabled'
+        refreshPagination pagination.find('ul li.active').index() - 1
+    pagination.find('ul li:not(:first-child, :last-child)').click ->
+      $this = $ this
+      unless $this.hasClass 'active'
+        refreshPagination $this.index()
+    pagination.find('ul li:last-child').click ->
+      unless $(this).hasClass 'disabled'
+        refreshPagination pagination.find('ul li.active').index() + 1
     refreshPagination()
     pagination.show()
   else

@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var ErrorMessage, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WIDGET_SOURCE, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, closeWizard, createExport, createImport, deleteTemplates, deriveTemplate, ext, feedback, feedbackAdded, fileErrorHandler, getSelectedTemplates, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, searchResults, searchTemplates, setContext, trimToLower, trimToUpper, updateImportedTemplate, updateTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate,
+  var ErrorMessage, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WIDGET_SOURCE, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, closeWizard, createExport, createImport, deleteTemplates, deriveTemplate, ext, feedback, feedbackAdded, fileErrorHandler, getSelectedTemplates, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, searchResults, searchTemplates, setContext, trimToLower, trimToUpper, updateImportedTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -441,10 +441,10 @@
         return $('#delete_wizard').modal('show');
       }
     });
-    $('.delete_no_btn').click(function() {
+    $('#delete_cancel_btn, #delete_no_btn').click(function() {
       return $('#delete_wizard').modal('hide');
     });
-    return $('.delete_yes_btn').click(function() {
+    return $('#delete_yes_btn').click(function() {
       deleteTemplates(selectedTemplates);
       return $('#delete_wizard').modal('hide');
     });
@@ -953,19 +953,6 @@
     existing.usage = template.usage;
     log.debug('Updated the following template...', existing);
     return existing;
-  };
-
-  updateTemplate = function(option) {
-    log.trace();
-    if (option.length) {
-      option.data('content', $('#template_content').val());
-      option.data('enabled', String($('#template_enabled').is(':checked')));
-      option.data('image', $('#template_image option:selected').val());
-      option.data('shortcut', $('#template_shortcut').val().trim().toUpperCase());
-      option.text($('#template_title').val().trim());
-    }
-    log.debug('Updated the following option with field values...', option);
-    return option;
   };
 
   updateToolbarTemplates = function() {
@@ -1493,24 +1480,25 @@
           list.append($('<li/>').append($("<a>" + page + "</a>")));
         }
         list.append($('<li/>').append($('<a>&raquo;</a>')));
-        pagination.find('ul li:first-child').click(function() {
-          if (!$(this).hasClass('disabled')) {
-            return refreshPagination(pagination.find('ul li.active').index() - 1);
-          }
-        });
-        pagination.find('ul li:not(:first-child, :last-child)').click(function() {
-          var $this;
-          $this = $(this);
-          if (!$this.hasClass('active')) {
-            return refreshPagination($this.index());
-          }
-        });
-        pagination.find('ul li:last-child').click(function() {
-          if (!$(this).hasClass('disabled')) {
-            return refreshPagination(pagination.find('ul li.active').index() + 1);
-          }
-        });
       }
+      pagination.find('ul li').off('click');
+      pagination.find('ul li:first-child').click(function() {
+        if (!$(this).hasClass('disabled')) {
+          return refreshPagination(pagination.find('ul li.active').index() - 1);
+        }
+      });
+      pagination.find('ul li:not(:first-child, :last-child)').click(function() {
+        var $this;
+        $this = $(this);
+        if (!$this.hasClass('active')) {
+          return refreshPagination($this.index());
+        }
+      });
+      pagination.find('ul li:last-child').click(function() {
+        if (!$(this).hasClass('disabled')) {
+          return refreshPagination(pagination.find('ul li.active').index() + 1);
+        }
+      });
       refreshPagination();
       return pagination.show();
     } else {
