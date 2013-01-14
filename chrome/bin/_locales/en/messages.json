@@ -633,16 +633,6 @@
       }
     }
   },
-  "opt_add_new_button": {
-    "message": "$ICON$ Add New",
-    "description": "Text of button used to clear template selection, allowing a new template to be created.",
-    "placeholders": {
-      "icon": {
-        "content": "<i class=\"icon-plus icon-white\"></i>",
-        "example": "<i class=\"icon-plus icon-white\"></i>"
-      }
-    }
-  },
   "opt_analytics_label": {
     "message": "Analytics",
     "description": "Label for the Analytics field."
@@ -709,6 +699,10 @@
     "message": "Links show the contextual title when hovered over",
     "description": "Text for the Hover Text field."
   },
+  "opt_confirm_button": {
+    "message": "Confirm",
+    "description": "Text for a Confirm button."
+  },
   "opt_delete_button": {
     "message": "$ICON$ Delete",
     "description": "Text for the Delete button.",
@@ -720,17 +714,11 @@
     }
   },
   "opt_delete_wizard_header": {
-    "message": "Delete $TEMPLATE$",
-    "description": "Header for the confirmation dialog displayed when deleting a template.",
-    "placeholders": {
-      "template": {
-        "content": "$1",
-        "example": "Encoded"
-      }
-    }
+    "message": "Confirm Deletion",
+    "description": "Header for the confirmation dialog displayed when deleting template(s)."
   },
   "opt_delete_wizard_text_1": {
-    "message": "This action is $O_BOLD$permanent$C_BOLD$ and cannot be reversed.",
+    "message": "This action is $O_BOLD$permanent$C_BOLD$ and cannot be reversed. The following template(s) will be removed;",
     "description": "1st paragraph for the confirmation dialog displayed when deleting a template.",
     "placeholders": {
       "c_bold": {
@@ -791,13 +779,9 @@
     "message": "Save As...",
     "description": "Text for the Save As... button."
   },
-  "opt_export_wizard_stage_1_text": {
-    "message": "Select the template(s) to be exported.",
-    "description": "Text for the 1st step of the Export dialog."
-  },
-  "opt_export_wizard_stage_2_text": {
-    "message": "Copy or download the template data.",
-    "description": "Text for the 2nd step of the Export dialog."
+  "opt_export_wizard_text": {
+    "message": "Copy or download the exported template data.",
+    "description": "Text for the Export dialog."
   },
   "opt_general_header": {
     "message": "General",
@@ -3084,22 +3068,12 @@
     "description": "Text for the initial step of the Import dialog."
   },
   "opt_import_wizard_stage_2_text_1": {
-    "message": "$COUNT$ valid template(s) were found.",
-    "description": "1st paragraph for the final successful step of the Import dialog.",
-    "placeholders": {
-      "count": {
-        "content": "<span class=\"import_count\"></span>",
-        "example": "3"
-      }
-    }
+    "message": "valid template(s) were found.",
+    "description": "1st paragraph for the final successful step of the Import dialog."
   },
   "opt_import_wizard_stage_2_text_2": {
     "message": "Select those to be imported;",
     "description": "2nd paragraph for the final successful step of the Import dialog."
-  },
-  "opt_import_wizard_stage_3_text": {
-    "message": "No valid templates were found.",
-    "description": "Text for the final unsuccessful step of the Import dialog."
   },
   "opt_logger_enabled_label": {
     "message": "Enabled",
@@ -3219,9 +3193,29 @@
     "message": "Paste the Template result into the right-clicked editable field",
     "description": "Text for the Automatically Paste field on the General tab of the Options page under the Context Menu section."
   },
+  "opt_message_error_header": {
+    "message": "Oh snap!",
+    "description": "Header for standard error alert message."
+  },
+  "opt_message_header": {
+    "message": "Heads up!",
+    "description": "Header for standard informative alert message."
+  },
+  "opt_message_success_header": {
+    "message": "Well done!",
+    "description": "Header for standard success alert message."
+  },
+  "opt_message_warning_header": {
+    "message": "Warning!",
+    "description": "Header for standard warning alert message."
+  },
   "opt_misc_header": {
     "message": "Miscellaneous",
     "description": "Header for the Miscellaneous section on the General tab of the Options page."
+  },
+  "opt_no_templates_found_text": {
+    "message": "No templates found...",
+    "description": "Text for table when no templates could be found."
   },
   "opt_notification_header": {
     "message": "Desktop Notifications",
@@ -3275,6 +3269,30 @@
       }
     }
   },
+  "opt_reset_text": {
+    "message": "Reset",
+    "description": "Text for a Reset button."
+  },
+  "opt_search_placeholder_text": {
+    "message": "Search...",
+    "description": "Placeholder text for a Search field."
+  },
+  "opt_select_all_box": {
+    "message": "Select All",
+    "description": "Title for the Select All checkbox."
+  },
+  "opt_select_all_box_checked": {
+    "message": "Deselect All",
+    "description": "Title for the Select All checkbox when checked."
+  },
+  "opt_select_box": {
+    "message": "Select",
+    "description": "Title for the Select checkbox."
+  },
+  "opt_select_box_checked": {
+    "message": "Deselect",
+    "description": "Title for the Select checkbox when checked."
+  },
   "opt_shortcuts_header": {
     "message": "Keyboard Shortcuts",
     "description": "Header for the Keyboard Shortcuts section on the General tab of the Options page."
@@ -3295,6 +3313,14 @@
     "message": "Paste the Template result into the editable field where the hotkey was used",
     "description": "Text for the Automatically Paste field on the General tab of the Options page under the Keyboard Shortcuts section."
   },
+  "opt_show_all_text": {
+    "message": "All",
+    "description": "Text for the All option in a selection of limits for visible results."
+  },
+  "opt_show_label": {
+    "message": "Show:",
+    "description": "Label for a selection of limits for visible results."
+  },
   "opt_template_content_label": {
     "message": "Content",
     "description": "Label for the Content field on the Templates tab of the Options page."
@@ -3313,6 +3339,22 @@
       }
     }
   },
+  "opt_template_delete_multiple_predefined_error_1": {
+    "message": "The following templates cannot be deleted as they are predefined:",
+    "description": "First paragraph of the error message displayed when a user attempts to delete multiple predefined templates."
+  },
+  "opt_template_delete_multiple_predefined_error_2": {
+    "message": "Deselect all of these templates and try again.",
+    "description": "Second paragraph of the error message displayed when a user attempts to delete multiple predefined templates."
+  },
+  "opt_template_delete_predefined_error_1": {
+    "message": "The following template cannot be deleted as it is predefined:",
+    "description": "First paragraph of the error message displayed when a user attempts to delete a single predefined template."
+  },
+  "opt_template_delete_predefined_error_2": {
+    "message": "Deselect this template and try again.",
+    "description": "Second paragraph of the error message displayed when a user attempts to delete a single predefined template."
+  },
   "opt_template_enabled_label": {
     "message": "Enabled",
     "description": "Label for the Enabled field on the Templates tab of the Options page."
@@ -3328,6 +3370,30 @@
   "opt_template_image_label": {
     "message": "Image",
     "description": "Label for the Image field on the Templates tab of the Options page."
+  },
+  "opt_template_modify_title": {
+    "message": "Modify $TEMPLATE$",
+    "description": "Hover text for a template link on the Templates tab of the Options page.",
+    "placeholders": {
+      "template": {
+        "content": "$1",
+        "example": "URL"
+      }
+    }
+  },
+  "opt_template_move_title": {
+    "message": "Drag and drop $TEMPLATE$ to change its order",
+    "description": "Hover text for a drag and drop indicator on the Templates tab of the Options page.",
+    "placeholders": {
+      "template": {
+        "content": "$1",
+        "example": "URL"
+      }
+    }
+  },
+  "opt_template_new_header": {
+    "message": "New Template",
+    "description": "Header for the template wizard when creating a new template."
   },
   "opt_template_shortcut_help": {
     "message": "$O_PARA$The following rules apply to this field;$C_PARA$$O_LIST$$O_ITEM$Must be an alphanumeric key$C_ITEM$$O_ITEM$Where duplicated, the first template will be activated$C_ITEM$$O_ITEM$When blank, the template cannot be activated using keyboard shortcuts$C_ITEM$$C_LIST$",
@@ -3468,6 +3534,10 @@
   "opt_top_button": {
     "message": "Back to top",
     "description": "Text for the link in the footer of the Options page that takes the user to the top of the page."
+  },
+  "opt_undo_button": {
+    "message": "Undo",
+    "description": "Text for a Undo button."
   },
   "opt_url_shortener_account_label": {
     "message": "Account",
@@ -3629,6 +3699,10 @@
     "message": "Back",
     "description": "Text for Back buttons commonly found in dialogs."
   },
+  "opt_wizard_cancel_button": {
+    "message": "Cancel",
+    "description": "Text for Cancel buttons commonly found in dialogs."
+  },
   "opt_wizard_close_button": {
     "message": "Close",
     "description": "Text for Close buttons commonly found in dialogs."
@@ -3637,6 +3711,10 @@
     "message": "Continue",
     "description": "Text for Continue buttons commonly found in dialogs."
   },
+  "opt_wizard_delete_button": {
+    "message": "Delete",
+    "description": "Text for Delete buttons commonly found in dialogs."
+  },
   "opt_wizard_no_button": {
     "message": "No",
     "description": "Text for No buttons commonly found in dialogs."
@@ -3644,6 +3722,14 @@
   "opt_wizard_none_button": {
     "message": "None",
     "description": "Text for None buttons commonly found in dialogs."
+  },
+  "opt_wizard_reset_button": {
+    "message": "Reset",
+    "description": "Text for Reset buttons commonly found in dialogs."
+  },
+  "opt_wizard_save_button": {
+    "message": "Save",
+    "description": "Text for Save buttons commonly found in dialogs."
   },
   "opt_wizard_yes_button": {
     "message": "Yes",
