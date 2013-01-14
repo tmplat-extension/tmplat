@@ -296,10 +296,10 @@ loadTemplateControlEvents = ->
   $('#template_wizard').on 'hide', ->
     error.hide() for error in validationErrors
   $('#template_save_btn').click ->
-    template = deriveTemplateNew()
+    template = deriveTemplate()
     # Clear all existing validation errors.
     error.hide() for error in validationErrors
-    validationErrors = validateTemplateNew template
+    validationErrors = validateTemplate template
     if validationErrors.length
       error.show() for error in validationErrors
     else
@@ -447,7 +447,6 @@ loadTemplateImportEvents = ->
     $('#import_final_btn').prop 'disabled', yes
   # Read the contents of the loaded file in to the text area and perform simple
   # error handling.
-  # TODO: Fix cosmetic bug.
   $('#import_file_btn').change (e) ->
     file   = e.target.files[0]
     reader = new FileReader()
@@ -462,7 +461,6 @@ loadTemplateImportEvents = ->
     reader.readAsText file
   # Finalize the import process.
   $('#import_final_btn').click ->
-    # TODO: Fix issue where new templates are not being added
     if data?
       for template in data.templates
         if $("#import_items option[value='#{template.key}']").is ':selected'
@@ -525,7 +523,7 @@ loadTemplateImportEvents = ->
 # internally by the pagination process.
 loadTemplateRows = (templates = ext.templates, pagination = yes) ->
   log.trace()
-  table = $ '#templatesNew'
+  table = $ '#templates'
   # Start from a clean slate.
   table.find('tbody tr').remove()
   if templates.length
@@ -730,6 +728,7 @@ reorderTemplates = (fromIndex, toIndex) ->
     templates[toIndex].index   = fromIndex
   store.set 'templates', templates
   ext.updateTemplates()
+  updateToolbarTemplates()
 
 # Update and persist the `template` provided.  
 # Any required validation should be performed perior to calling this method.
@@ -752,34 +751,6 @@ saveTemplate = (template) ->
   action = if isNew then 'Added' else 'Saved'
   analytics.track 'Templates', action, template.title
   template
-
-# TODO: Remove once usage removed
-# Update the settings with the values from the template section of the options
-# page.
-saveTemplates = (updateUI) ->
-  log.trace()
-  # Validate all the `option` elements that represent templates.
-  errors    = []
-  templates = []
-  # Update the settings for each template based on their corresponding options.
-  $('#templates option').each ->
-    $this    = $ this
-    template = deriveTemplate $this
-    errors   = validateTemplate template, no
-    return templates.push template if errors.length is 0
-    # Show the user which template failed validation.
-    if updateUI
-      $this.attr 'selected', 'selected'
-      $('#templates').change().focus()
-    no
-  # Determine whether or not any validation errors were encountered.
-  if errors.length is 0
-    clearErrors() if updateUI
-    # Ensure the data for all changes to templates are persisted.
-    store.set 'templates', templates
-    ext.updateTemplates()
-  else
-    showErrors errors if updateUI
 
 # Update the existing template with information extracted from the imported
 # template provided.  
@@ -824,7 +795,6 @@ updateTemplate = (option) ->
 # those available in the templates section.
 updateToolbarTemplates = ->
   log.trace()
-  templates               = []
   toolbarKey              = store.get 'toolbar.key'
   toolbarTemplates        = $ '#toolbarKey'
   lastSelectedTemplate    = toolbarTemplates.find 'option:selected'
@@ -832,23 +802,12 @@ updateToolbarTemplates = ->
   if lastSelectedTemplate.length
     lastSelectedTemplateKey = lastSelectedTemplate.val()
   toolbarTemplates.find('option').remove()
-  $('#templates option').each ->
-    $this    = $ this
-    template =
-      key:      $this.val()
-      selected: no
-      title:    $this.text()
-    if lastSelectedTemplateKey
-      template.selected = yes if template.key is lastSelectedTemplateKey
-    else if template.key is toolbarKey
-      template.selected = yes
-    templates.push template
-  for template in templates
-    option = $ '<option/>',
+  for template in ext.templates
+    opt = $ '<option/>',
       text:  template.title
       value: template.key
-    option.attr 'selected', 'selected' if template.selected
-    toolbarTemplates.append option
+    opt.prop 'selected', template.key in [lastSelectedTemplateKey, toolbarKey]
+    toolbarTemplates.append opt
 
 # Validation classes
 # ------------------
@@ -886,18 +845,6 @@ class ValidationWarning extends ValidationError
 # Validation functions
 # --------------------
 
-# Remove all validation errors from the fields.
-clearErrors = (selector) ->
-  log.trace()
-  if selector?
-    log.debug "Clearing displayed validation errors for '#{selector}'"
-    group = $(selector).parents('.control-group').first()
-    group.removeClass('error').find('.controls .error-message').remove()
-  else
-    log.debug 'Clearing all displayed validation errors'
-    $('.control-group.error').removeClass 'error'
-    $('.error-message').remove()
-
 # Indicate whether or not the specified `key` is valid.
 isKeyValid = (key) ->
   log.trace()
@@ -910,16 +857,6 @@ isShortcutValid = (shortcut) ->
   log.trace()
   log.debug "Validating keyboard shortcut '#{shortcut}'"
   R_VALID_SHORTCUT.test shortcut
-
-# Display all of the specified `errors` against their corresponding fields.
-showErrors = (errors) ->
-  log.trace()
-  log.debug 'Creating an alert for the following errors...', errors
-  for error in errors
-    group = $(error.selector).focus().parents('.control-group').first()
-    group.addClass('error').find('.controls').append $ '<p/>',
-      class: 'error-message help-block'
-      html:  error.message
 
 # Indicate whether or not `template` contains the required fields of the
 # correct types.
@@ -937,36 +874,9 @@ validateImportedTemplate = (template) ->
   'string'  is typeof template.title    and
   'number'  is typeof template.usage
 
-# Validate the specified `object` that represents a template and return any
-# validation errors that are encountered.
-validateTemplate = (object, isNew) ->
-  log.trace()
-  errors   = []
-  template = if $.isPlainObject object then object else deriveTemplate object
-  log.debug 'Validating the following template...', template
-  # Only validate the key and title of user-defined templates.
-  unless template.readOnly
-    # Only validate keys of new templates.
-    if isNew and not isKeyValid template.key
-      errors.push message: i18n.get 'opt_template_key_invalid'
-    # Title is missing but is required.
-    if template.title.length is 0
-      errors.push
-        message:  i18n.get 'opt_template_title_invalid'
-        selector: '#template_title'
-  # Validate whether or not the shortcut is valid.
-  if template.shortcut and not isShortcutValid template.shortcut
-    errors.push
-      message:  i18n.get 'opt_template_shortcut_invalid'
-      selector: '#template_shortcut'
-  # Indicate whether or not any validation errors were encountered.
-  log.debug 'Following validation errors were found...', errors
-  errors
-
 # Validate the `template` and return any validation errors/warnings that were
 # encountered.
-# TODO: Replace `validateTemplate`
-validateTemplateNew = (template) ->
+validateTemplate = (template) ->
   log.trace()
   isNew  = not template.key?
   errors = []
@@ -1075,21 +985,21 @@ addImportedTemplate = (template) ->
 # been previously bound.
 activateDraggables = ->
   log.trace()
-  templatesNew = $ '#templatesNew'
-  dragSource   = null
-  draggables   = templatesNew.find '[draggable]'
+  table      = $ '#templates'
+  dragSource = null
+  draggables = table.find '[draggable]'
   draggables.off 'dragstart dragend dragenter dragover drop'
   draggables.on 'dragstart', (e) ->
     $this      = $ this
     dragSource = this
-    templatesNew.removeClass 'table-hover'
+    table.removeClass 'table-hover'
     $this.addClass 'dnd-moving'
     $this.find('[data-original-title]').tooltip 'hide'
     e.originalEvent.dataTransfer.effectAllowed = 'move'
     e.originalEvent.dataTransfer.setData 'text/html', $this.html()
   draggables.on 'dragend', (e) ->
     draggables.removeClass 'dnd-moving dnd-over'
-    templatesNew.addClass 'table-hover'
+    table.addClass 'table-hover'
     dragSource = null
   draggables.on 'dragenter', (e) ->
     $this = $ this
@@ -1106,7 +1016,7 @@ activateDraggables = ->
       $this = $ this
       $dragSource.html $this.html()
       $this.html e.originalEvent.dataTransfer.getData 'text/html'
-      activateTooltips templatesNew
+      activateTooltips table
       activateModifications()
       activateSelections()
       fromIndex = $dragSource.index()
@@ -1122,7 +1032,7 @@ activateDraggables = ->
 # been previously bound.
 activateModifications = ->
   log.trace()
-  $('#templatesNew tbody tr td:not(:first-child)').off('click').click ->
+  $('#templates tbody tr td:not(:first-child)').off('click').click ->
     activeKey = $(this).parents('tr:first').find(':checkbox').val()
     openWizard ext.queryTemplate (template) -> template.key is activeKey
 
@@ -1131,15 +1041,15 @@ activateModifications = ->
 # been previously bound.
 activateSelections = ->
   log.trace()
-  templatesNew = $ '#templatesNew'
-  selectBoxes  = templatesNew.find 'tbody :checkbox'
+  table       = $ '#templates'
+  selectBoxes = table.find 'tbody :checkbox'
   selectBoxes.off('change').change ->
     $this       = $ this
     messageKey  = 'opt_select_box'
     messageKey += '_checked' if $this.is ':checked'
     $this.attr 'data-original-title', i18n.get messageKey
     refreshSelectButtons()
-  templatesNew.find('thead :checkbox').off('change').change ->
+  table.find('thead :checkbox').off('change').change ->
     $this       = $ this
     checked     = $this.is ':checked'
     messageKey  = 'opt_select_all_box'
@@ -1199,29 +1109,9 @@ createImport = (str) ->
   log.debug 'Following data was created from the string...', data
   data
 
-# Create a template with the information derived from the specified `option` 
-# element.
-deriveTemplate = (option) ->
-  log.trace()
-  log.debug 'Deriving a template from the following option...', option
-  if option.length > 0
-    template =
-      content:  option.data 'content'
-      enabled:  option.data('enabled') is 'true'
-      image:    option.data 'image'
-      index:    option.parent().find('option').index option
-      key:      option.val()
-      readOnly: option.data('readOnly') is 'true'
-      shortcut: option.data 'shortcut'
-      title:    option.text()
-      usage:    parseInt option.data('usage'), 10
-  log.debug 'Following template was derived from the option...', template
-  template
-
 # Create a template based on the current context and the information derived
 # from the wizard fields.
-# TODO: Replace `deriveTemplate`
-deriveTemplateNew = ->
+deriveTemplate = ->
   log.trace()
   readOnly = activeTemplate.readOnly ? no
   template =
@@ -1282,7 +1172,7 @@ fileErrorHandler = (callback) ->
 # Retrieve all currently selected templates.
 getSelectedTemplates = ->
   selectedKeys      = []
-  $('#templatesNew tbody :checkbox:checked').each ->
+  $('#templates tbody :checkbox:checked').each ->
     selectedKeys.push $(this).val()
   ext.queryTemplates (template) -> template.key in selectedKeys
 
@@ -1420,7 +1310,7 @@ refreshResetButton = ->
 # have been checked.
 refreshSelectButtons = ->
   log.trace()
-  selections = $ '#templatesNew tbody :checkbox:checked'
+  selections = $ '#templates tbody :checkbox:checked'
   $('#delete_btn, #export_btn').prop 'disabled', selections.length is 0
 
 # Reset the wizard field values based on the current context.

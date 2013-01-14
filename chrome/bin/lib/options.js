@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var ErrorMessage, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WIDGET_SOURCE, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, clearErrors, closeWizard, createExport, createImport, deleteTemplates, deriveTemplate, deriveTemplateNew, ext, feedback, feedbackAdded, fileErrorHandler, getSelectedTemplates, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, saveTemplates, searchResults, searchTemplates, setContext, showErrors, trimToLower, trimToUpper, updateImportedTemplate, updateTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate, validateTemplateNew,
+  var ErrorMessage, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WIDGET_SOURCE, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, closeWizard, createExport, createImport, deleteTemplates, deriveTemplate, ext, feedback, feedbackAdded, fileErrorHandler, getSelectedTemplates, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, searchResults, searchTemplates, setContext, trimToLower, trimToUpper, updateImportedTemplate, updateTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -373,12 +373,12 @@
     });
     $('#template_save_btn').click(function() {
       var error, template, _i, _j, _len, _len1, _results;
-      template = deriveTemplateNew();
+      template = deriveTemplate();
       for (_i = 0, _len = validationErrors.length; _i < _len; _i++) {
         error = validationErrors[_i];
         error.hide();
       }
-      validationErrors = validateTemplateNew(template);
+      validationErrors = validateTemplate(template);
       if (validationErrors.length) {
         _results = [];
         for (_j = 0, _len1 = validationErrors.length; _j < _len1; _j++) {
@@ -653,7 +653,7 @@
       pagination = true;
     }
     log.trace();
-    table = $('#templatesNew');
+    table = $('#templates');
     table.find('tbody tr').remove();
     if (templates.length) {
       shortcutModifiers = ext.isThisPlatform('mac') ? ext.SHORTCUT_MAC_MODIFIERS : ext.SHORTCUT_MODIFIERS;
@@ -901,7 +901,8 @@
       templates[toIndex].index = fromIndex;
     }
     store.set('templates', templates);
-    return ext.updateTemplates();
+    ext.updateTemplates();
+    return updateToolbarTemplates();
   };
 
   saveTemplate = function(template) {
@@ -930,38 +931,6 @@
     action = isNew ? 'Added' : 'Saved';
     analytics.track('Templates', action, template.title);
     return template;
-  };
-
-  saveTemplates = function(updateUI) {
-    var errors, templates;
-    log.trace();
-    errors = [];
-    templates = [];
-    $('#templates option').each(function() {
-      var $this, template;
-      $this = $(this);
-      template = deriveTemplate($this);
-      errors = validateTemplate(template, false);
-      if (errors.length === 0) {
-        return templates.push(template);
-      }
-      if (updateUI) {
-        $this.attr('selected', 'selected');
-        $('#templates').change().focus();
-      }
-      return false;
-    });
-    if (errors.length === 0) {
-      if (updateUI) {
-        clearErrors();
-      }
-      store.set('templates', templates);
-      return ext.updateTemplates();
-    } else {
-      if (updateUI) {
-        return showErrors(errors);
-      }
-    }
   };
 
   updateImportedTemplate = function(template, existing) {
@@ -1000,9 +969,8 @@
   };
 
   updateToolbarTemplates = function() {
-    var lastSelectedTemplate, lastSelectedTemplateKey, option, template, templates, toolbarKey, toolbarTemplates, _i, _len, _results;
+    var lastSelectedTemplate, lastSelectedTemplateKey, opt, template, toolbarKey, toolbarTemplates, _i, _len, _ref, _ref1, _results;
     log.trace();
-    templates = [];
     toolbarKey = store.get('toolbar.key');
     toolbarTemplates = $('#toolbarKey');
     lastSelectedTemplate = toolbarTemplates.find('option:selected');
@@ -1011,34 +979,16 @@
       lastSelectedTemplateKey = lastSelectedTemplate.val();
     }
     toolbarTemplates.find('option').remove();
-    $('#templates option').each(function() {
-      var $this, template;
-      $this = $(this);
-      template = {
-        key: $this.val(),
-        selected: false,
-        title: $this.text()
-      };
-      if (lastSelectedTemplateKey) {
-        if (template.key === lastSelectedTemplateKey) {
-          template.selected = true;
-        }
-      } else if (template.key === toolbarKey) {
-        template.selected = true;
-      }
-      return templates.push(template);
-    });
+    _ref = ext.templates;
     _results = [];
-    for (_i = 0, _len = templates.length; _i < _len; _i++) {
-      template = templates[_i];
-      option = $('<option/>', {
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      template = _ref[_i];
+      opt = $('<option/>', {
         text: template.title,
         value: template.key
       });
-      if (template.selected) {
-        option.attr('selected', 'selected');
-      }
-      _results.push(toolbarTemplates.append(option));
+      opt.prop('selected', (_ref1 = template.key) === lastSelectedTemplateKey || _ref1 === toolbarKey);
+      _results.push(toolbarTemplates.append(opt));
     }
     return _results;
   };
@@ -1088,20 +1038,6 @@
 
   })(ValidationError);
 
-  clearErrors = function(selector) {
-    var group;
-    log.trace();
-    if (selector != null) {
-      log.debug("Clearing displayed validation errors for '" + selector + "'");
-      group = $(selector).parents('.control-group').first();
-      return group.removeClass('error').find('.controls .error-message').remove();
-    } else {
-      log.debug('Clearing all displayed validation errors');
-      $('.control-group.error').removeClass('error');
-      return $('.error-message').remove();
-    }
-  };
-
   isKeyValid = function(key) {
     log.trace();
     log.debug("Validating template key '" + key + "'");
@@ -1114,58 +1050,13 @@
     return R_VALID_SHORTCUT.test(shortcut);
   };
 
-  showErrors = function(errors) {
-    var error, group, _i, _len, _results;
-    log.trace();
-    log.debug('Creating an alert for the following errors...', errors);
-    _results = [];
-    for (_i = 0, _len = errors.length; _i < _len; _i++) {
-      error = errors[_i];
-      group = $(error.selector).focus().parents('.control-group').first();
-      _results.push(group.addClass('error').find('.controls').append($('<p/>', {
-        "class": 'error-message help-block',
-        html: error.message
-      })));
-    }
-    return _results;
-  };
-
   validateImportedTemplate = function(template) {
     log.trace();
     log.debug('Validating property types of the following template...', template);
     return 'object' === typeof template && 'string' === typeof template.content && 'boolean' === typeof template.enabled && 'string' === typeof template.image && 'string' === typeof template.key && 'string' === typeof template.shortcut && 'string' === typeof template.title && 'number' === typeof template.usage;
   };
 
-  validateTemplate = function(object, isNew) {
-    var errors, template;
-    log.trace();
-    errors = [];
-    template = $.isPlainObject(object) ? object : deriveTemplate(object);
-    log.debug('Validating the following template...', template);
-    if (!template.readOnly) {
-      if (isNew && !isKeyValid(template.key)) {
-        errors.push({
-          message: i18n.get('opt_template_key_invalid')
-        });
-      }
-      if (template.title.length === 0) {
-        errors.push({
-          message: i18n.get('opt_template_title_invalid'),
-          selector: '#template_title'
-        });
-      }
-    }
-    if (template.shortcut && !isShortcutValid(template.shortcut)) {
-      errors.push({
-        message: i18n.get('opt_template_shortcut_invalid'),
-        selector: '#template_shortcut'
-      });
-    }
-    log.debug('Following validation errors were found...', errors);
-    return errors;
-  };
-
-  validateTemplateNew = function(template) {
+  validateTemplate = function(template) {
     var errors, isNew;
     log.trace();
     isNew = !(template.key != null);
@@ -1304,17 +1195,17 @@
   };
 
   activateDraggables = function() {
-    var dragSource, draggables, templatesNew;
+    var dragSource, draggables, table;
     log.trace();
-    templatesNew = $('#templatesNew');
+    table = $('#templates');
     dragSource = null;
-    draggables = templatesNew.find('[draggable]');
+    draggables = table.find('[draggable]');
     draggables.off('dragstart dragend dragenter dragover drop');
     draggables.on('dragstart', function(e) {
       var $this;
       $this = $(this);
       dragSource = this;
-      templatesNew.removeClass('table-hover');
+      table.removeClass('table-hover');
       $this.addClass('dnd-moving');
       $this.find('[data-original-title]').tooltip('hide');
       e.originalEvent.dataTransfer.effectAllowed = 'move';
@@ -1322,7 +1213,7 @@
     });
     draggables.on('dragend', function(e) {
       draggables.removeClass('dnd-moving dnd-over');
-      templatesNew.addClass('table-hover');
+      table.addClass('table-hover');
       return dragSource = null;
     });
     draggables.on('dragenter', function(e) {
@@ -1344,7 +1235,7 @@
         $this = $(this);
         $dragSource.html($this.html());
         $this.html(e.originalEvent.dataTransfer.getData('text/html'));
-        activateTooltips(templatesNew);
+        activateTooltips(table);
         activateModifications();
         activateSelections();
         fromIndex = $dragSource.index();
@@ -1361,7 +1252,7 @@
 
   activateModifications = function() {
     log.trace();
-    return $('#templatesNew tbody tr td:not(:first-child)').off('click').click(function() {
+    return $('#templates tbody tr td:not(:first-child)').off('click').click(function() {
       var activeKey;
       activeKey = $(this).parents('tr:first').find(':checkbox').val();
       return openWizard(ext.queryTemplate(function(template) {
@@ -1371,10 +1262,10 @@
   };
 
   activateSelections = function() {
-    var selectBoxes, templatesNew;
+    var selectBoxes, table;
     log.trace();
-    templatesNew = $('#templatesNew');
-    selectBoxes = templatesNew.find('tbody :checkbox');
+    table = $('#templates');
+    selectBoxes = table.find('tbody :checkbox');
     selectBoxes.off('change').change(function() {
       var $this, messageKey;
       $this = $(this);
@@ -1385,7 +1276,7 @@
       $this.attr('data-original-title', i18n.get(messageKey));
       return refreshSelectButtons();
     });
-    return templatesNew.find('thead :checkbox').off('change').change(function() {
+    return table.find('thead :checkbox').off('change').change(function() {
       var $this, checked, messageKey;
       $this = $(this);
       checked = $this.is(':checked');
@@ -1469,28 +1360,7 @@
     return data;
   };
 
-  deriveTemplate = function(option) {
-    var template;
-    log.trace();
-    log.debug('Deriving a template from the following option...', option);
-    if (option.length > 0) {
-      template = {
-        content: option.data('content'),
-        enabled: option.data('enabled') === 'true',
-        image: option.data('image'),
-        index: option.parent().find('option').index(option),
-        key: option.val(),
-        readOnly: option.data('readOnly') === 'true',
-        shortcut: option.data('shortcut'),
-        title: option.text(),
-        usage: parseInt(option.data('usage'), 10)
-      };
-    }
-    log.debug('Following template was derived from the option...', template);
-    return template;
-  };
-
-  deriveTemplateNew = function() {
+  deriveTemplate = function() {
     var readOnly, template, _ref, _ref1, _ref2;
     log.trace();
     readOnly = (_ref = activeTemplate.readOnly) != null ? _ref : false;
@@ -1555,7 +1425,7 @@
   getSelectedTemplates = function() {
     var selectedKeys;
     selectedKeys = [];
-    $('#templatesNew tbody :checkbox:checked').each(function() {
+    $('#templates tbody :checkbox:checked').each(function() {
       return selectedKeys.push($(this).val());
     });
     return ext.queryTemplates(function(template) {
@@ -1730,7 +1600,7 @@
   refreshSelectButtons = function() {
     var selections;
     log.trace();
-    selections = $('#templatesNew tbody :checkbox:checked');
+    selections = $('#templates tbody :checkbox:checked');
     return $('#delete_btn, #export_btn').prop('disabled', selections.length === 0);
   };
 
