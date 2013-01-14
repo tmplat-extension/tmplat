@@ -4,20 +4,28 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var Options, R_VALID_KEY, R_VALID_SHORTCUT, WIDGET_SOURCE, addImportedTemplate, bindSaveEvent, bindTemplateSaveEvent, clearErrors, createExport, createImport, deriveTemplate, ext, feedback, feedbackAdded, fileErrorHandler, isKeyNew, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateSaveEvents, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, options, readImport, saveTemplates, showErrors, trimToLower, updateImportedTemplate, updateTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate,
+  var ErrorMessage, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WIDGET_SOURCE, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, closeWizard, createExport, createImport, deleteTemplates, deriveTemplate, ext, feedback, feedbackAdded, fileErrorHandler, getSelectedTemplates, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, searchResults, searchTemplates, setContext, trimToLower, trimToUpper, updateImportedTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+  R_CLEAN_QUERY = /[^\w\s]/g;
 
   R_VALID_KEY = /^[A-Z0-9]*\.[A-Z0-9]*$/i;
 
   R_VALID_SHORTCUT = /[A-Z0-9]/i;
 
+  R_WHITESPACE = /\s+/;
+
   WIDGET_SOURCE = "https://widget.uservoice.com/RSRS5SpMkMxvKOCs27g.js";
+
+  activeTemplate = null;
 
   ext = chrome.extension.getBackgroundPage().ext;
 
   feedbackAdded = false;
+
+  searchResults = null;
 
   bindSaveEvent = function(selector, type, option, evaluate, callback) {
     log.trace();
@@ -32,23 +40,6 @@
         return data[key] = value = evaluate.call($this, key);
       });
       return typeof callback === "function" ? callback($this, key, value) : void 0;
-    });
-  };
-
-  bindTemplateSaveEvent = function(selector, type, assign, callback) {
-    log.trace();
-    return $(selector).on(type, function() {
-      var $this, key, option, templates;
-      $this = $(this);
-      key = '';
-      templates = $('#templates');
-      option = templates.find('option:selected');
-      if (option.length && templates.data('quiet') !== 'true') {
-        key = $this.attr('id').match(/^template_(\S*)/)[1];
-        key = key[0].toLowerCase() + key.substr(1);
-        assign.call($this, option, key);
-        return typeof callback === "function" ? callback($this, option, key) : void 0;
-      }
     });
   };
 
@@ -276,457 +267,413 @@
   };
 
   loadTemplates = function() {
-    var template, templates, _i, _len, _ref;
     log.trace();
-    templates = $('#templates');
-    templates.remove('option');
-    _ref = ext.templates;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      template = _ref[_i];
-      templates.append(loadTemplate(template));
-    }
     loadTemplateControlEvents();
     loadTemplateImportEvents();
     loadTemplateExportEvents();
-    return loadTemplateSaveEvents();
+    return loadTemplateRows();
   };
 
-  loadTemplate = function(template) {
-    var option;
+  loadTemplate = function(template, shortcutModifiers) {
+    var alignCenter, enabledIcon, row;
     log.trace();
-    log.debug('Creating an option for the following template...', template);
-    option = $('<option/>', {
-      text: template.title,
-      value: template.key
+    log.debug('Creating a row for the following template...', template);
+    if (shortcutModifiers == null) {
+      shortcutModifiers = ext.isThisPlatform('mac') ? ext.SHORTCUT_MAC_MODIFIERS : ext.SHORTCUT_MODIFIERS;
+    }
+    row = $('<tr/>', {
+      draggable: true
     });
-    option.data('content', template.content);
-    option.data('enabled', "" + template.enabled);
-    option.data('image', template.image);
-    option.data('readOnly', "" + template.readOnly);
-    option.data('shortcut', template.shortcut);
-    option.data('usage', "" + template.usage);
-    return option;
+    alignCenter = {
+      css: {
+        'text-align': 'center'
+      }
+    };
+    row.append($('<td/>', alignCenter).append($('<input/>', {
+      title: i18n.get('opt_select_box'),
+      type: 'checkbox',
+      value: template.key
+    })));
+    row.append($('<td/>').append($('<span/>', {
+      html: "<i class=\"" + (icons.getClass(template.image)) + "\"></i> " + template.title,
+      title: i18n.get('opt_template_modify_title', template.title)
+    })));
+    row.append($('<td/>', {
+      html: "" + shortcutModifiers + template.shortcut
+    }));
+    enabledIcon = template.enabled ? 'ok' : 'remove';
+    row.append($('<td/>', alignCenter).append($('<i/>', {
+      "class": "icon-" + enabledIcon
+    })));
+    row.append($('<td/>').append($('<span/>', {
+      text: template.content,
+      title: template.content
+    })));
+    row.append($('<td/>').append($('<span/>', {
+      "class": 'muted',
+      text: '::::',
+      title: i18n.get('opt_template_move_title', template.title)
+    })));
+    return row;
   };
 
   loadTemplateControlEvents = function() {
-    var templates;
+    var limit, selectedTemplates, validationErrors, warningMsg;
     log.trace();
-    templates = $('#templates');
-    templates.change(function() {
-      var $this, imgOpt, lastSelectedTemplate, opt;
+    $('#template_wizard [tabify]').click(function() {
+      return closeWizard();
+    });
+    $('#template_cancel_btn').click(function() {
+      return closeWizard();
+    });
+    $('#template_reset_btn').click(function() {
+      return resetWizard();
+    });
+    store.init('options_limit', parseInt($('#template_filter').val()));
+    limit = store.get('options_limit');
+    $('#template_filter option').each(function() {
+      var $this;
       $this = $(this);
-      opt = $this.find('option:selected');
-      clearErrors();
-      templates.data('quiet', 'true');
-      if (opt.length === 0) {
-        lastSelectedTemplate = {};
-        i18n.content('#add_btn', 'opt_add_button');
-        $('#moveUp_btn, #moveDown_btn').attr('disabled', 'disabled');
-        $('.toggle-disabled').attr('disabled', 'disabled');
-        $('.toggle-readonly').removeAttr('readonly');
-        $('#template_content, #template_shortcut, #template_title').val('');
-        $('#template_enabled').attr('checked', 'checked');
-        $('#template_image option:first-child').attr('selected', 'selected');
-        $('#template_image').change();
-      } else {
-        i18n.content('#add_btn', 'opt_add_new_button');
-        if (opt.is(':first-child')) {
-          $('#moveUp_btn').attr('disabled', 'disabled');
-        } else {
-          $('#moveUp_btn').removeAttr('disabled');
-        }
-        if (opt.is(':last-child')) {
-          $('#moveDown_btn').attr('disabled', 'disabled');
-        } else {
-          $('#moveDown_btn').removeAttr('disabled');
-        }
-        imgOpt = $("#template_image option[value='" + (opt.data('image')) + "']");
-        if (imgOpt.length === 0) {
-          $('#template_image option:first-child').attr('selected', 'selected');
-        } else {
-          imgOpt.attr('selected', 'selected');
-        }
-        $('#template_content').val(opt.data('content'));
-        $('#template_image').change();
-        $('#template_shortcut').val(opt.data('shortcut'));
-        $('#template_title').val(opt.text());
-        if (opt.data('enabled') === 'true') {
-          $('#template_enabled').attr('checked', 'checked');
-        } else {
-          $('#template_enabled').removeAttr('checked');
-        }
-        if (opt.data('readOnly') === 'true') {
-          $('.toggle-disabled').attr('disabled', 'disabled');
-          $('.toggle-readonly').attr('readonly', 'readonly');
-        } else {
-          $('.toggle-disabled').removeAttr('disabled');
-          $('.toggle-readonly').removeAttr('readonly');
-        }
-      }
-      return templates.data('quiet', 'false');
+      return $this.prop('selected', limit === parseInt($this.val()));
     });
-    templates.change();
+    $('#template_filter').change(function() {
+      store.set('options_limit', parseInt($(this).val()));
+      return loadTemplateRows(searchResults != null ? searchResults : ext.templates);
+    });
+    $('#template_search :reset').click(function() {
+      $('#template_search :text').val('');
+      return searchTemplates();
+    });
+    $('#template_controls').submit(function() {
+      return searchTemplates($('#template_search :text').val());
+    });
+    $('#template_delete_btn').click(function() {
+      $(this).hide();
+      return $('#template_confirm_delete').css('display', 'inline-block');
+    });
+    $('#template_undo_delete_btn').click(function() {
+      $('#template_confirm_delete').hide();
+      return $('#template_delete_btn').show();
+    });
+    $('#template_confirm_delete_btn').click(function() {
+      $('#template_confirm_delete').hide();
+      $('#template_delete_btn').show();
+      deleteTemplates([activeTemplate]);
+      return closeWizard();
+    });
+    validationErrors = [];
+    $('#template_wizard').on('hide', function() {
+      var error, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = validationErrors.length; _i < _len; _i++) {
+        error = validationErrors[_i];
+        _results.push(error.hide());
+      }
+      return _results;
+    });
+    $('#template_save_btn').click(function() {
+      var error, template, _i, _j, _len, _len1, _results;
+      template = deriveTemplate();
+      for (_i = 0, _len = validationErrors.length; _i < _len; _i++) {
+        error = validationErrors[_i];
+        error.hide();
+      }
+      validationErrors = validateTemplate(template);
+      if (validationErrors.length) {
+        _results = [];
+        for (_j = 0, _len1 = validationErrors.length; _j < _len1; _j++) {
+          error = validationErrors[_j];
+          _results.push(error.show());
+        }
+        return _results;
+      } else {
+        validationErrors = [];
+        $.extend(activeTemplate, template);
+        saveTemplate(activeTemplate);
+        $('#template_search :reset').hide();
+        $('#template_search :text').val('');
+        return closeWizard();
+      }
+    });
     $('#add_btn').click(function() {
-      var errors, opt;
-      opt = templates.find('option:selected');
-      if (opt.length) {
-        templates.val([]).change();
-        return $('#template_title').focus();
-      } else {
-        opt = loadTemplate({
-          content: $('#template_content').val(),
-          enabled: String($('#template_enabled').is(':checked')),
-          image: $('#template_image option:selected').val(),
-          key: utils.keyGen(),
-          readOnly: false,
-          shortcut: $('#template_shortcut').val().trim().toUpperCase(),
-          title: $('#template_title').val().trim(),
-          usage: 0
+      return openWizard(null);
+    });
+    selectedTemplates = [];
+    $('#delete_wizard').on('hide', function() {
+      selectedTemplates = [];
+      return $('#delete_items li').remove();
+    });
+    warningMsg = null;
+    $('#delete_btn').click(function() {
+      var deleteItems, div, item, predefinedCount, predefinedTemplates, template, _i, _len;
+      deleteItems = $('#delete_items');
+      predefinedTemplates = $('<ul/>');
+      selectedTemplates = getSelectedTemplates();
+      deleteItems.find('li').remove();
+      for (_i = 0, _len = selectedTemplates.length; _i < _len; _i++) {
+        template = selectedTemplates[_i];
+        item = $('<li/>', {
+          text: template.title
         });
-        clearErrors();
-        errors = validateTemplate(opt, true);
-        if (errors.length === 0) {
-          log.debug('Adding the following option...', opt);
-          templates.append(opt);
-          opt.attr('selected', 'selected');
-          updateToolbarTemplates();
-          templates.change().focus();
-          saveTemplates();
-          return analytics.track('Templates', 'Added', opt.text());
+        if (template.readOnly) {
+          predefinedTemplates.append(item);
         } else {
-          return showErrors(errors);
+          deleteItems.append(item);
         }
       }
-    });
-    $('#delete_btn').click(function() {
-      $('.delete_hdr').html(i18n.get('opt_delete_wizard_header', templates.find('option:selected').text()));
-      return $('#delete_con').modal('show');
-    });
-    $('.delete_no_btn').click(function() {
-      return $('#delete_con').modal('hide');
-    });
-    $('.delete_yes_btn').click(function() {
-      var opt, title;
-      opt = templates.find('option:selected');
-      if (opt.data('readOnly') !== 'true') {
-        title = opt.text();
-        opt.remove();
-        templates.scrollTop(0).change().focus();
-        saveTemplates();
-        log.debug("Deleted " + title + " template");
-        analytics.track('Templates', 'Deleted', title);
+      predefinedCount = predefinedTemplates.find('li').length;
+      if (predefinedCount) {
+        if (warningMsg != null) {
+          warningMsg.hide();
+        }
+        div = $('<div/>');
+        div.append($('<p/>', {
+          html: i18n.get(predefinedCount === 1 ? 'opt_template_delete_predefined_error_1' : 'opt_template_delete_multiple_predefined_error_1')
+        }));
+        div.append(predefinedTemplates);
+        div.append($('<p/>', {
+          html: i18n.get(predefinedCount === 1 ? 'opt_template_delete_predefined_error_2' : 'opt_template_delete_multiple_predefined_error_2')
+        }));
+        warningMsg = new WarningMessage(true);
+        warningMsg.message = div.html();
+        return warningMsg.show();
+      } else {
+        return $('#delete_wizard').modal('show');
       }
-      $('#delete_con').modal('hide');
-      return updateToolbarTemplates();
     });
-    $('#moveDown_btn').click(function() {
-      var opt;
-      opt = templates.find('option:selected');
-      opt.insertAfter(opt.next());
-      templates.change().focus();
-      return saveTemplates();
+    $('#delete_cancel_btn, #delete_no_btn').click(function() {
+      return $('#delete_wizard').modal('hide');
     });
-    return $('#moveUp_btn').click(function() {
-      var opt;
-      opt = templates.find('option:selected');
-      opt.insertBefore(opt.prev());
-      templates.change().focus();
-      return saveTemplates();
+    return $('#delete_yes_btn').click(function() {
+      deleteTemplates(selectedTemplates);
+      return $('#delete_wizard').modal('hide');
     });
   };
 
   loadTemplateExportEvents = function() {
-    var templates;
     log.trace();
-    templates = $('#templates');
-    $('.export_error .close').on('click', function() {
-      return $('.export_error').find('span').html('&nbsp').end().hide();
+    $('#export_error .close').click(function() {
+      return $(this).next().html('&nbsp').parent().hide();
     });
-    $('.export_back_btn').click(function() {
-      log.info('Going back to previous export stage');
-      $('.export_con_stage1').show();
-      return $('.export_con_stage2').hide();
+    $('#export_wizard').on('hide', function() {
+      $('#export_content').val('');
+      return $('#export_error').find('span').html('&nbsp;').end().hide();
     });
     $('#export_btn').click(function() {
-      var list;
       log.info('Launching export wizard');
-      list = $('.export_con_list');
-      list.find('option').remove();
-      updateTemplate(templates.find('option:selected'));
-      templates.val([]).change();
-      $('.export_yes_btn').attr('disabled', 'disabled');
-      $('.export_con_stage1').show();
-      $('.export_con_stage2').hide();
-      $('.export_content').val('');
-      $('.export_error').find('span').html('&nbsp;').end().hide();
-      templates.find('option').each(function() {
-        var opt;
-        opt = $(this);
-        return list.append($('<option/>', {
-          text: opt.text(),
-          value: opt.val()
-        }));
-      });
-      return $('#export_con').modal('show');
+      $('#export_content').val(createExport(getSelectedTemplates()));
+      return $('#export_wizard').modal('show');
     });
-    $('.export_con_list').change(function() {
-      if ($(this).find('option:selected').length > 0) {
-        return $('.export_yes_btn').removeAttr('disabled');
-      } else {
-        return $('.export_yes_btn').attr('disabled', 'disabled');
-      }
+    $('#export_close_btn').click(function() {
+      return $('#export_wizard').modal('hide');
     });
-    $('.export_copy_btn').click(function(event) {
+    $('#export_copy_btn').click(function() {
       var $this;
       $this = $(this);
-      ext.copy($('.export_content').val(), true);
+      ext.copy($('#export_content').val(), true);
       $this.text(i18n.get('opt_export_wizard_copy_alt_button'));
-      $this.delay(800);
-      $this.queue(function() {
+      return $this.delay(800).queue(function() {
         $this.text(i18n.get('opt_export_wizard_copy_button'));
         return $this.dequeue();
       });
-      return event.preventDefault();
     });
-    $('.export_deselect_all_btn').click(function() {
-      $('.export_con_list option').removeAttr('selected').parent().focus();
-      return $('.export_yes_btn').attr('disabled', 'disabled');
-    });
-    $('.export_no_btn, .export_close_btn').click(function(event) {
-      $('#export_con').modal('hide');
-      return event.preventDefault();
-    });
-    $('.export_save_btn').click(function() {
-      var $this, exportErrorHandler, str;
-      $this = $(this);
-      str = $this.parents('.export_con_stage2').find('.export_content').val();
+    return $('#export_save_btn').click(function() {
+      var exportErrorHandler, str;
+      str = $('#export_content').val();
       exportErrorHandler = fileErrorHandler(function(message) {
         log.error(message);
-        return $('.export_error').find('span').text(message).end().show();
+        return $('#export_error').find('span').text(message).end().show();
       });
       return window.webkitRequestFileSystem(window.TEMPORARY, 1024 * 1024, function(fs) {
-        return fs.root.getFile('export.json', {
+        return fs.root.getFile('templates.json', {
           create: true
-        }, function(fileEntry) {
-          return fileEntry.createWriter(function(fileWriter) {
+        }, function(fe) {
+          return fe.createWriter(function(fw) {
             var builder, done;
             builder = new WebKitBlobBuilder();
             done = false;
             builder.append(str);
-            fileWriter.onerror = exportErrorHandler;
-            fileWriter.onwriteend = function() {
+            fw.onerror = exportErrorHandler;
+            fw.onwriteend = function() {
               if (done) {
-                $('.export_error').find('span').html('&nbsp;').end().hide();
-                return window.location.href = fileEntry.toURL();
+                $('#export_error').find('span').html('&nbsp;').end().hide();
+                return window.location.href = fe.toURL();
               } else {
                 done = true;
-                return fileWriter.write(builder.getBlob('application/json'));
+                return fw.write(builder.getBlob('application/json'));
               }
             };
-            return fileWriter.truncate(0);
+            return fw.truncate(0);
           });
         }, exportErrorHandler);
       }, exportErrorHandler);
     });
-    $('.export_select_all_btn').click(function() {
-      $('.export_con_list option').attr('selected', 'selected').parent().focus();
-      return $('.export_yes_btn').removeAttr('disabled');
-    });
-    return $('.export_yes_btn').click(function() {
-      var $this, items, keys;
-      $this = $(this);
-      items = $this.parents('.export_con_stage1').find('.export_con_list option');
-      keys = [];
-      items.filter(':selected').each(function() {
-        return keys.push($(this).val());
-      });
-      $('.export_content').val(createExport(keys));
-      $('.export_error').find('span').html('&nbsp;').end().hide();
-      $('.export_con_stage1').hide();
-      return $('.export_con_stage2').show();
-    });
   };
 
   loadTemplateImportEvents = function() {
-    var data, templates;
+    var data;
     log.trace();
     data = null;
-    templates = $('#templates');
-    $('.import_error .close').on('click', function() {
-      return $('.import_error').find('span').html('&nbsp').end().hide();
+    $('#import_error .close').click(function() {
+      return $(this).next().html('&nbsp').parent().hide();
     });
-    $('.import_back_btn').click(function() {
+    $('#import_wizard').on('hide', function() {
+      $('#import_final_btn').prop('disabled', true);
+      $('#import_wizard_stage2, #import_back_btn, #import_final_btn').hide();
+      $('#import_wizard_stage1, #import_continue_btn').show();
+      $('#import_content, #import_file_btn').val('');
+      $('#import_file_btn').val('');
+      return $('#import_error').find('span').html('&nbsp;').end().hide();
+    });
+    $('#import_back_btn').click(function() {
       log.info('Going back to previous import stage');
-      $('.import_con_stage1').show();
-      return $('.import_con_stage2, .import_con_stage3').hide();
+      $('#import_wizard_stage2, #import_back_btn, #import_final_btn').hide();
+      return $('#import_wizard_stage1, #import_continue_btn').show();
     });
     $('#import_btn').click(function() {
       log.info('Launching import wizard');
-      updateTemplate(templates.find('option:selected'));
-      templates.val([]).change();
-      $('.import_con_stage1').show();
-      $('.import_con_stage2, .import_con_stage3').hide();
-      $('.import_content').val('');
-      $('.import_error').find('span').html('&nbsp;').end().hide();
-      $('.import_file_btn').val('');
-      return $('#import_con').modal('show');
+      return $('#import_wizard').modal('show');
     });
-    $('.import_con_list').change(function() {
-      if ($(this).find('option:selected').length > 0) {
-        return $('.import_final_btn').removeAttr('disabled');
-      } else {
-        return $('.import_final_btn').attr('disabled', 'disabled');
-      }
+    $('#import_items').change(function() {
+      return $('#import_final_btn').prop('disabled', !$(this).find(':selected').length);
     });
-    $('.import_deselect_all_btn').click(function() {
-      $('.import_con_list option').removeAttr('selected').parent().focus();
-      return $('.import_final_btn').attr('disabled', 'disabled');
+    $('#import_select_all_btn').click(function() {
+      $('#import_items option').prop('selected', true).parent().focus();
+      return $('#import_final_btn').prop('disabled', false);
     });
-    $('.import_file_btn').change(function(event) {
+    $('#import_deselect_all_btn').click(function() {
+      $('#import_items option').prop('selected', false).parent().focus();
+      return $('#import_final_btn').prop('disabled', true);
+    });
+    $('#import_file_btn').change(function(e) {
       var file, reader;
-      file = event.target.files[0];
+      file = e.target.files[0];
       reader = new FileReader();
       reader.onerror = fileErrorHandler(function(message) {
         log.error(message);
-        return $('.import_error').find('span').text(message).end().show();
+        return $('#import_error').find('span').text(message).end().show();
       });
-      reader.onload = function(evt) {
+      reader.onload = function(e) {
         var result;
-        result = evt.target.result;
+        result = e.target.result;
         log.debug('Following contents were read from the file...', result);
-        $('.import_error').find('span').html('&nbsp;').end().hide();
-        return $('.import_content').val(result);
+        $('#import_error').find('span').html('&nbsp;').end().hide();
+        return $('#import_content').val(result);
       };
       return reader.readAsText(file);
     });
-    $('.import_final_btn').click(function() {
-      var $this, list;
-      $this = $(this);
-      list = $this.parents('.import_con_stage2').find('.import_con_list');
-      list.find('option:selected').each(function() {
-        var existingOpt, opt;
-        opt = $(this);
-        existingOpt = templates.find("option[value='" + (opt.val()) + "']");
-        opt.removeAttr('selected');
-        if (existingOpt.length === 0) {
-          return templates.append(opt);
-        } else {
-          return existingOpt.replaceWith(opt);
-        }
-      });
-      $('#import_con').modal('hide');
-      updateToolbarTemplates();
-      templates.focus();
-      saveTemplates(true);
+    $('#import_final_btn').click(function() {
+      var existing, existingFound, i, template, _i, _j, _len, _len1, _ref, _ref1;
       if (data != null) {
-        return analytics.track('Templates', 'Imported', data.version, data.templates.length);
+        _ref = data.templates;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          template = _ref[_i];
+          if ($("#import_items option[value='" + template.key + "']").is(':selected')) {
+            existingFound = false;
+            _ref1 = ext.templates;
+            for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
+              existing = _ref1[i];
+              if (!(existing.key === template.key)) {
+                continue;
+              }
+              existingFound = true;
+              template.index = i;
+              ext.templates[i] = template;
+            }
+            if (!existingFound) {
+              template.index = ext.templates.length;
+              ext.templates.push(template);
+            }
+          }
+        }
+        store.set('templates', ext.templates);
+        ext.updateTemplates();
+        loadTemplateRows();
+        updateToolbarTemplates();
+        analytics.track('Templates', 'Imported', data.version, data.templates.length);
       }
+      $('#import_wizard').modal('hide');
+      $('#template_search :reset').hide();
+      return $('#template_search :text').val('');
     });
-    $('.import_no_btn, .import_close_btn').click(function() {
-      return $('#import_con').modal('hide');
+    $('#import_close_btn').click(function() {
+      return $('#import_wizard').modal('hide');
     });
-    $('.import_paste_btn').click(function() {
+    $('#import_paste_btn').click(function() {
       var $this;
       $this = $(this);
-      $('.import_file_btn').val('');
-      $('.import_content').val(ext.paste());
+      $('#import_file_btn').val('');
+      $('#import_content').val(ext.paste());
       $this.text(i18n.get('opt_import_wizard_paste_alt_button'));
-      $this.delay(800);
-      return $this.queue(function() {
+      return $this.delay(800).queue(function() {
         $this.text(i18n.get('opt_import_wizard_paste_button'));
         return $this.dequeue();
       });
     });
-    $('.import_select_all_btn').click(function() {
-      $('.import_con_list option').attr('selected', 'selected').parent().focus();
-      return $('.import_final_btn').removeAttr('disabled');
-    });
-    return $('.import_yes_btn').click(function() {
+    return $('#import_continue_btn').click(function() {
       var $this, importData, list, str, template, _i, _len, _ref;
-      $this = $(this).attr('disabled', 'disabled');
-      list = $('.import_con_list');
-      str = $this.parents('.import_con_stage1').find('.import_content').val();
-      $('.import_error').find('span').html('&nbsp;').end().hide();
+      $this = $(this).prop('disabled', true);
+      list = $('#import_items');
+      str = $('#import_content').val();
+      $('#import_error').find('span').html('&nbsp;').end().hide();
+      list.find('option').remove();
       try {
         importData = createImport(str);
       } catch (error) {
         log.error(error);
-        $('.import_error').find('span').text(error).end().show();
+        $('#import_error').find('span').text(error).end().show();
       }
       if (importData) {
         data = readImport(importData);
-        if (data.templates.length === 0) {
-          $('.import_con_stage3').show();
-          $('.import_con_stage1, .import_con_stage2').hide();
-        } else {
-          list.find('option').remove();
-          $('.import_count').text(data.templates.length);
+        if (data.templates.length) {
+          $('#import_count').text(data.templates.length);
           _ref = data.templates;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             template = _ref[_i];
-            list.append(loadTemplate(template));
+            list.append($('<option/>', {
+              text: template.title,
+              value: template.key
+            }));
           }
-          $('.import_final_btn').attr('disabled', 'disabled');
-          $('.import_con_stage2').show();
-          $('.import_con_stage1, .import_con_stage3').hide();
+          $('#import_final_btn').prop('disabled', true);
+          $('#import_wizard_stage1, #import_continue_btn').hide();
+          $('#import_wizard_stage2, #import_back_btn, #import_final_btn').show();
         }
       }
-      return $this.removeAttr('disabled');
+      return $this.prop('disabled', false);
     });
   };
 
-  loadTemplateSaveEvents = function() {
+  loadTemplateRows = function(templates, pagination) {
+    var shortcutModifiers, table, template, _i, _len;
+    if (templates == null) {
+      templates = ext.templates;
+    }
+    if (pagination == null) {
+      pagination = true;
+    }
     log.trace();
-    bindTemplateSaveEvent('#template_enabled, #template_image', 'change', function(opt, key) {
-      var value;
-      value = (function() {
-        switch (key) {
-          case 'enabled':
-            return "" + (this.is(':checked'));
-          case 'image':
-            return this.val();
-        }
-      }).call(this);
-      log.debug("Changing template " + key + " to '" + value + "'");
-      return opt.data(key, value);
-    }, saveTemplates);
-    return bindTemplateSaveEvent("#template_content, #template_shortcut  , #template_title", 'input', function(opt, key) {
-      var value;
-      switch (key) {
-        case 'content':
-          return opt.data(key, this.val());
-        case 'shortcut':
-          value = this.val().toUpperCase().trim();
-          if (value && !isShortcutValid(value)) {
-            return opt.data('error', i18n.get('opt_template_shortcut_invalid'));
-          } else {
-            log.debug("Changing template " + key + " to '" + value + "'");
-            return opt.data(key, value);
-          }
-          break;
-        case 'title':
-          value = this.val().trim();
-          if (value.length === 0) {
-            return opt.data('error', i18n.get('opt_template_title_invalid'));
-          } else {
-            return opt.text(value);
-          }
+    table = $('#templates');
+    table.find('tbody tr').remove();
+    if (templates.length) {
+      shortcutModifiers = ext.isThisPlatform('mac') ? ext.SHORTCUT_MAC_MODIFIERS : ext.SHORTCUT_MODIFIERS;
+      for (_i = 0, _len = templates.length; _i < _len; _i++) {
+        template = templates[_i];
+        table.append(loadTemplate(template, shortcutModifiers));
       }
-    }, function(jel, opt, key) {
-      var selector;
-      clearErrors(selector = "#" + (jel.attr('id')));
-      if (opt.data('error')) {
-        showErrors([
-          {
-            message: opt.data('error'),
-            selector: selector
-          }
-        ]);
-        return opt.removeData('error');
-      } else {
-        return saveTemplates();
+      if (pagination) {
+        paginate(templates);
       }
-    });
+      activateTooltips(table);
+      activateDraggables();
+      activateModifications();
+      return activateSelections();
+    } else {
+      return table.find('tbody').append($('<tr/>').append($('<td/>', {
+        colspan: table.find('thead th').length,
+        html: i18n.get('opt_no_templates_found_text')
+      })));
+    }
   };
 
   loadToolbar = function() {
@@ -818,9 +765,9 @@
   loadUrlShortenerAccounts = function() {
     var shortener, _i, _len, _ref, _results;
     log.trace();
-    _ref = ext.queryUrlShortener((function(shortener) {
+    _ref = ext.queryUrlShorteners(function(shortener) {
       return shortener.oauth != null;
-    }), false);
+    });
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       shortener = _ref[_i];
@@ -906,36 +853,84 @@
     });
   };
 
-  saveTemplates = function(updateUI) {
-    var errors, templates;
+  deleteTemplates = function(templates) {
+    var i, keep, keys, list, template, _i, _j, _len, _len1, _ref, _ref1;
     log.trace();
-    errors = [];
-    templates = [];
-    $('#templates option').each(function() {
-      var $this, template;
-      $this = $(this);
-      template = deriveTemplate($this);
-      errors = validateTemplate(template, false);
-      if (errors.length === 0) {
-        return templates.push(template);
+    keys = [];
+    list = [];
+    for (_i = 0, _len = templates.length; _i < _len; _i++) {
+      template = templates[_i];
+      if (!(!template.readOnly)) {
+        continue;
       }
-      if (updateUI) {
-        $this.attr('selected', 'selected');
-        $('#templates').change().focus();
+      keys.push(template.key);
+      list.push(template);
+    }
+    if (keys.length) {
+      keep = [];
+      _ref = ext.templates;
+      for (i = _j = 0, _len1 = _ref.length; _j < _len1; i = ++_j) {
+        template = _ref[i];
+        if (!(_ref1 = template.key, __indexOf.call(keys, _ref1) < 0)) {
+          continue;
+        }
+        template.index = i;
+        keep.push(template);
       }
-      return false;
-    });
-    if (errors.length === 0) {
-      if (updateUI) {
-        clearErrors();
+      store.set('templates', keep);
+      ext.updateTemplates();
+      if (keys.length > 1) {
+        log.debug("Deleted " + keys.length + " templates");
+        analytics.track('Templates', 'Deleted', "Count[" + keys.length + "]");
+      } else {
+        template = list[0];
+        log.debug("Deleted " + template.title + " template");
+        analytics.track('Templates', 'Deleted', template.title);
       }
-      store.set('templates', templates);
-      return ext.updateTemplates();
+      loadTemplateRows(searchResults != null ? searchResults : ext.templates);
+      return updateToolbarTemplates();
+    }
+  };
+
+  reorderTemplates = function(fromIndex, toIndex) {
+    var templates;
+    log.trace();
+    templates = ext.templates;
+    if ((fromIndex != null) && (toIndex != null)) {
+      templates[fromIndex].index = toIndex;
+      templates[toIndex].index = fromIndex;
+    }
+    store.set('templates', templates);
+    ext.updateTemplates();
+    return updateToolbarTemplates();
+  };
+
+  saveTemplate = function(template) {
+    var action, i, isNew, temp, templates, _i, _len;
+    log.trace();
+    log.debug('Saving the following template...', template);
+    isNew = !(template.key != null);
+    templates = store.get('templates');
+    if (isNew) {
+      template.key = utils.keyGen();
+      templates.push(template);
     } else {
-      if (updateUI) {
-        return showErrors(errors);
+      for (i = _i = 0, _len = templates.length; _i < _len; i = ++_i) {
+        temp = templates[i];
+        if (!(temp.key === template.key)) {
+          continue;
+        }
+        templates[i] = template;
+        break;
       }
     }
+    store.set('templates', templates);
+    ext.updateTemplates();
+    loadTemplateRows();
+    updateToolbarTemplates();
+    action = isNew ? 'Added' : 'Saved';
+    analytics.track('Templates', action, template.title);
+    return template;
   };
 
   updateImportedTemplate = function(template, existing) {
@@ -960,23 +955,9 @@
     return existing;
   };
 
-  updateTemplate = function(option) {
-    log.trace();
-    if (option.length) {
-      option.data('content', $('#template_content').val());
-      option.data('enabled', String($('#template_enabled').is(':checked')));
-      option.data('image', $('#template_image option:selected').val());
-      option.data('shortcut', $('#template_shortcut').val().trim().toUpperCase());
-      option.text($('#template_title').val().trim());
-    }
-    log.debug('Updated the following option with field values...', option);
-    return option;
-  };
-
   updateToolbarTemplates = function() {
-    var lastSelectedTemplate, lastSelectedTemplateKey, option, template, templates, toolbarKey, toolbarTemplates, _i, _len, _results;
+    var lastSelectedTemplate, lastSelectedTemplateKey, opt, template, toolbarKey, toolbarTemplates, _i, _len, _ref, _ref1, _results;
     log.trace();
-    templates = [];
     toolbarKey = store.get('toolbar.key');
     toolbarTemplates = $('#toolbarKey');
     lastSelectedTemplate = toolbarTemplates.find('option:selected');
@@ -985,67 +966,64 @@
       lastSelectedTemplateKey = lastSelectedTemplate.val();
     }
     toolbarTemplates.find('option').remove();
-    $('#templates option').each(function() {
-      var $this, template;
-      $this = $(this);
-      template = {
-        key: $this.val(),
-        selected: false,
-        title: $this.text()
-      };
-      if (lastSelectedTemplateKey) {
-        if (template.key === lastSelectedTemplateKey) {
-          template.selected = true;
-        }
-      } else if (template.key === toolbarKey) {
-        template.selected = true;
-      }
-      return templates.push(template);
-    });
+    _ref = ext.templates;
     _results = [];
-    for (_i = 0, _len = templates.length; _i < _len; _i++) {
-      template = templates[_i];
-      option = $('<option/>', {
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      template = _ref[_i];
+      opt = $('<option/>', {
         text: template.title,
         value: template.key
       });
-      if (template.selected) {
-        option.attr('selected', 'selected');
-      }
-      _results.push(toolbarTemplates.append(option));
+      opt.prop('selected', (_ref1 = template.key) === lastSelectedTemplateKey || _ref1 === toolbarKey);
+      _results.push(toolbarTemplates.append(opt));
     }
     return _results;
   };
 
-  clearErrors = function(selector) {
-    var group;
-    log.trace();
-    if (selector != null) {
-      log.debug("Clearing displayed validation errors for '" + selector + "'");
-      group = $(selector).parents('.control-group').first();
-      return group.removeClass('error').find('.controls .error-message').remove();
-    } else {
-      log.debug('Clearing all displayed validation errors');
-      $('.control-group.error').removeClass('error');
-      return $('.error-message').remove();
-    }
-  };
+  ValidationError = (function(_super) {
 
-  isKeyNew = function(key, additionalKeys) {
-    var available;
-    if (additionalKeys == null) {
-      additionalKeys = [];
+    __extends(ValidationError, _super);
+
+    function ValidationError(id, key) {
+      this.id = id;
+      this.key = key;
+      this.className = 'error';
     }
-    log.trace();
-    log.debug("Checking if template key '" + key + "' is new");
-    available = true;
-    $('#templates option').each(function() {
-      if ($(this).val() === key) {
-        return available = false;
-      }
-    });
-    return available && __indexOf.call(additionalKeys, key) < 0;
-  };
+
+    ValidationError.prototype.hide = function() {
+      var field;
+      field = $("#" + this.id);
+      field.parents('.control-group:first').removeClass(this.className);
+      return field.parents('.controls:first').find('.help-block').remove();
+    };
+
+    ValidationError.prototype.show = function() {
+      var field;
+      field = $("#" + this.id);
+      field.parents('.control-group:first').addClass(this.className);
+      return field.parents('.controls:first').append($('<span/>', {
+        "class": 'help-block',
+        html: i18n.get(this.key)
+      }));
+    };
+
+    return ValidationError;
+
+  })(utils.Class);
+
+  ValidationWarning = (function(_super) {
+
+    __extends(ValidationWarning, _super);
+
+    function ValidationWarning(id, key) {
+      this.id = id;
+      this.key = key;
+      this.className = 'warning';
+    }
+
+    return ValidationWarning;
+
+  })(ValidationError);
 
   isKeyValid = function(key) {
     log.trace();
@@ -1059,56 +1037,120 @@
     return R_VALID_SHORTCUT.test(shortcut);
   };
 
-  showErrors = function(errors) {
-    var error, group, _i, _len, _results;
-    log.trace();
-    log.debug('Creating an alert for the following errors...', errors);
-    _results = [];
-    for (_i = 0, _len = errors.length; _i < _len; _i++) {
-      error = errors[_i];
-      group = $(error.selector).focus().parents('.control-group').first();
-      _results.push(group.addClass('error').find('.controls').append($('<p/>', {
-        "class": 'error-message help-block',
-        html: error.message
-      })));
-    }
-    return _results;
-  };
-
   validateImportedTemplate = function(template) {
     log.trace();
     log.debug('Validating property types of the following template...', template);
     return 'object' === typeof template && 'string' === typeof template.content && 'boolean' === typeof template.enabled && 'string' === typeof template.image && 'string' === typeof template.key && 'string' === typeof template.shortcut && 'string' === typeof template.title && 'number' === typeof template.usage;
   };
 
-  validateTemplate = function(object, isNew) {
-    var errors, template;
+  validateTemplate = function(template) {
+    var errors, isNew;
     log.trace();
+    isNew = !(template.key != null);
     errors = [];
-    template = $.isPlainObject(object) ? object : deriveTemplate(object);
     log.debug('Validating the following template...', template);
     if (!template.readOnly) {
-      if (isNew && !isKeyValid(template.key)) {
-        errors.push({
-          message: i18n.get('opt_template_key_invalid')
-        });
-      }
-      if (template.title.length === 0) {
-        errors.push({
-          message: i18n.get('opt_template_title_invalid'),
-          selector: '#template_title'
-        });
+      if (!template.title) {
+        errors.push(new ValidationError('template_title', 'opt_template_title_invalid'));
       }
     }
     if (template.shortcut && !isShortcutValid(template.shortcut)) {
-      errors.push({
-        message: i18n.get('opt_template_shortcut_invalid'),
-        selector: '#template_shortcut'
-      });
+      errors.push(new ValidationError('template_shortcut', 'opt_template_shortcut_invalid'));
     }
     log.debug('Following validation errors were found...', errors);
     return errors;
   };
+
+  Message = (function(_super) {
+
+    __extends(Message, _super);
+
+    function Message(block) {
+      this.block = block;
+      this.className = 'alert-info';
+      this.headerKey = 'opt_message_header';
+    }
+
+    Message.prototype.hide = function() {
+      var _ref;
+      return (_ref = this.alert) != null ? _ref.alert('close') : void 0;
+    };
+
+    Message.prototype.show = function() {
+      if (this.headerKey && !(this.header != null)) {
+        this.header = i18n.get(this.headerKey);
+      }
+      if (this.messageKey && !(this.message != null)) {
+        this.message = i18n.get(this.messageKey);
+      }
+      this.alert = $('<div/>', {
+        "class": "alert " + this.className
+      });
+      if (this.block) {
+        this.alert.addClass('alert-block');
+      }
+      this.alert.append($('<button/>', {
+        "class": 'close',
+        'data-dismiss': 'alert',
+        html: '&times;',
+        type: 'button'
+      }));
+      if (this.header) {
+        this.alert.append($("<" + (this.block ? 'h4' : 'strong') + "/>", {
+          html: this.header
+        }));
+      }
+      if (this.message) {
+        this.alert.append(this.block ? this.message : " " + this.message);
+      }
+      return this.alert.prependTo($($('#navigation li.active a').attr('tabify')));
+    };
+
+    return Message;
+
+  })(utils.Class);
+
+  ErrorMessage = (function(_super) {
+
+    __extends(ErrorMessage, _super);
+
+    function ErrorMessage(block) {
+      this.block = block;
+      this.className = 'alert-error';
+      this.headerKey = 'opt_message_error_header';
+    }
+
+    return ErrorMessage;
+
+  })(Message);
+
+  SuccessMessage = (function(_super) {
+
+    __extends(SuccessMessage, _super);
+
+    function SuccessMessage(block) {
+      this.block = block;
+      this.className = 'alert-success';
+      this.headerKey = 'opt_message_success_header';
+    }
+
+    return SuccessMessage;
+
+  })(Message);
+
+  WarningMessage = (function(_super) {
+
+    __extends(WarningMessage, _super);
+
+    function WarningMessage(block) {
+      this.block = block;
+      this.className = '';
+      this.headerKey = 'opt_message_warning_header';
+    }
+
+    return WarningMessage;
+
+  })(Message);
 
   addImportedTemplate = function(template) {
     var newTemplate, _ref;
@@ -1139,17 +1181,148 @@
     return newTemplate;
   };
 
-  createExport = function(keys) {
-    var data, key, _i, _len;
+  activateDraggables = function() {
+    var dragSource, draggables, table;
     log.trace();
-    log.debug('Creating an export string for the following keys...', keys);
+    table = $('#templates');
+    dragSource = null;
+    draggables = table.find('[draggable]');
+    draggables.off('dragstart dragend dragenter dragover drop');
+    draggables.on('dragstart', function(e) {
+      var $this;
+      $this = $(this);
+      dragSource = this;
+      table.removeClass('table-hover');
+      $this.addClass('dnd-moving');
+      $this.find('[data-original-title]').tooltip('hide');
+      e.originalEvent.dataTransfer.effectAllowed = 'move';
+      return e.originalEvent.dataTransfer.setData('text/html', $this.html());
+    });
+    draggables.on('dragend', function(e) {
+      draggables.removeClass('dnd-moving dnd-over');
+      table.addClass('table-hover');
+      return dragSource = null;
+    });
+    draggables.on('dragenter', function(e) {
+      var $this;
+      $this = $(this);
+      draggables.not($this).removeClass('dnd-over');
+      return $this.addClass('dnd-over');
+    });
+    draggables.on('dragover', function(e) {
+      e.preventDefault();
+      e.originalEvent.dataTransfer.dropEffect = 'move';
+      return false;
+    });
+    return draggables.on('drop', function(e) {
+      var $dragSource, $this, fromIndex, toIndex;
+      $dragSource = $(dragSource);
+      e.stopPropagation();
+      if (dragSource !== this) {
+        $this = $(this);
+        $dragSource.html($this.html());
+        $this.html(e.originalEvent.dataTransfer.getData('text/html'));
+        activateTooltips(table);
+        activateModifications();
+        activateSelections();
+        fromIndex = $dragSource.index();
+        toIndex = $this.index();
+        if (searchResults != null) {
+          fromIndex = searchResults[fromIndex].index;
+          toIndex = searchResults[toIndex].index;
+        }
+        reorderTemplates(fromIndex, toIndex);
+      }
+      return false;
+    });
+  };
+
+  activateModifications = function() {
+    log.trace();
+    return $('#templates tbody tr td:not(:first-child)').off('click').click(function() {
+      var activeKey;
+      activeKey = $(this).parents('tr:first').find(':checkbox').val();
+      return openWizard(ext.queryTemplate(function(template) {
+        return template.key === activeKey;
+      }));
+    });
+  };
+
+  activateSelections = function() {
+    var selectBoxes, table;
+    log.trace();
+    table = $('#templates');
+    selectBoxes = table.find('tbody :checkbox');
+    selectBoxes.off('change').change(function() {
+      var $this, messageKey;
+      $this = $(this);
+      messageKey = 'opt_select_box';
+      if ($this.is(':checked')) {
+        messageKey += '_checked';
+      }
+      $this.attr('data-original-title', i18n.get(messageKey));
+      return refreshSelectButtons();
+    });
+    return table.find('thead :checkbox').off('change').change(function() {
+      var $this, checked, messageKey;
+      $this = $(this);
+      checked = $this.is(':checked');
+      messageKey = 'opt_select_all_box';
+      if (checked) {
+        messageKey += '_checked';
+      }
+      $this.attr('data-original-title', i18n.get(messageKey));
+      selectBoxes.prop('checked', checked);
+      return refreshSelectButtons();
+    });
+  };
+
+  activateTooltips = function(selector) {
+    var base;
+    log.trace();
+    base = $(selector || document);
+    base.find('[data-original-title]').each(function() {
+      var $this;
+      $this = $(this);
+      $this.tooltip('destroy');
+      $this.attr('title', $this.attr('data-original-title'));
+      return $this.removeAttr('data-original-title');
+    });
+    return base.find('[title]').each(function() {
+      var $this, placement;
+      $this = $(this);
+      placement = $this.attr('data-placement');
+      placement = placement != null ? trimToLower(placement) : 'top';
+      return $this.tooltip({
+        placement: placement
+      });
+    });
+  };
+
+  clearContext = function() {
+    return setContext(null);
+  };
+
+  closeWizard = function() {
+    clearContext();
+    return $('#template_wizard').modal('hide');
+  };
+
+  createExport = function(templates) {
+    var data, template, _i, _len, _ref;
+    if (templates == null) {
+      templates = [];
+    }
+    log.trace();
+    log.debug('Creating an export string for the following templates...', templates);
     data = {
-      templates: [],
+      templates: templates.slice(0),
       version: ext.version
     };
-    for (_i = 0, _len = keys.length; _i < _len; _i++) {
-      key = keys[_i];
-      data.templates.push(deriveTemplate($("#templates option[value='" + key + "']")));
+    _ref = data.templates;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      template = _ref[_i];
+      delete template.menuId;
     }
     if (data.templates.length) {
       analytics.track('Templates', 'Exported', ext.version, data.templates.length);
@@ -1174,29 +1347,28 @@
     return data;
   };
 
-  deriveTemplate = function(option) {
-    var template;
+  deriveTemplate = function() {
+    var readOnly, template, _ref, _ref1, _ref2;
     log.trace();
-    log.debug('Deriving a template from the following option...', option);
-    if (option.length > 0) {
-      template = {
-        content: option.data('content'),
-        enabled: option.data('enabled') === 'true',
-        image: option.data('image'),
-        index: option.parent().find('option').index(option),
-        key: option.val(),
-        readOnly: option.data('readOnly') === 'true',
-        shortcut: option.data('shortcut'),
-        title: option.text(),
-        usage: parseInt(option.data('usage'), 10)
-      };
-    }
-    log.debug('Following template was derived from the option...', template);
+    readOnly = (_ref = activeTemplate.readOnly) != null ? _ref : false;
+    template = {
+      content: readOnly ? activeTemplate.content : $('#template_content').val(),
+      enabled: $('#template_enabled').is(':checked'),
+      image: $('#template_image').val(),
+      index: (_ref1 = activeTemplate.index) != null ? _ref1 : ext.templates.length,
+      key: activeTemplate.key,
+      readOnly: readOnly,
+      shortcut: trimToUpper($('#template_shortcut').val()),
+      title: readOnly ? activeTemplate.title : $('#template_title').val().trim(),
+      usage: (_ref2 = activeTemplate.usage) != null ? _ref2 : 0
+    };
+    log.debug('Following template was derived...', template);
     return template;
   };
 
   feedback = function() {
     var script, uv, uvTabLabel, uvwDialogClose;
+    log.trace();
     if (!feedbackAdded) {
       uvwDialogClose = $('#uvw-dialog-close[onclick]');
       uvwDialogClose.live('hover', function() {
@@ -1237,14 +1409,121 @@
     };
   };
 
+  getSelectedTemplates = function() {
+    var selectedKeys;
+    selectedKeys = [];
+    $('#templates tbody :checkbox:checked').each(function() {
+      return selectedKeys.push($(this).val());
+    });
+    return ext.queryTemplates(function(template) {
+      var _ref;
+      return _ref = template.key, __indexOf.call(selectedKeys, _ref) >= 0;
+    });
+  };
+
+  openWizard = function(template) {
+    if (arguments.length) {
+      setContext(template);
+    }
+    return $('#template_wizard').modal('show');
+  };
+
+  paginate = function(templates) {
+    var children, limit, list, page, pages, pagination, refreshPagination, _i;
+    log.trace();
+    limit = parseInt($('#template_filter').val());
+    pagination = $('#pagination');
+    if ((templates.length > limit && limit > 0)) {
+      children = pagination.find('ul li');
+      pages = Math.ceil(templates.length / limit);
+      refreshPagination = function(page) {
+        var end, start;
+        if (page == null) {
+          page = 1;
+        }
+        start = limit * (page - 1);
+        end = start + limit;
+        loadTemplateRows(templates.slice(start, end), false);
+        pagination.find('ul li:first-child').each(function() {
+          var $this;
+          $this = $(this);
+          if (page === 1) {
+            return $this.addClass('disabled');
+          } else {
+            return $this.removeClass('disabled');
+          }
+        });
+        pagination.find('ul li:not(:first-child, :last-child)').each(function() {
+          var $this;
+          $this = $(this);
+          if (page === parseInt($this.text())) {
+            return $this.addClass('active');
+          } else {
+            return $this.removeClass('active');
+          }
+        });
+        return pagination.find('ul li:last-child').each(function() {
+          var $this;
+          $this = $(this);
+          if (page === pages) {
+            return $this.addClass('disabled');
+          } else {
+            return $this.removeClass('disabled');
+          }
+        });
+      };
+      if (pages !== children.length - 2) {
+        children.remove();
+        list = pagination.find('ul');
+        list.append($('<li/>').append($('<a>&laquo;</a>')));
+        for (page = _i = 1; 1 <= pages ? _i <= pages : _i >= pages; page = 1 <= pages ? ++_i : --_i) {
+          list.append($('<li/>').append($("<a>" + page + "</a>")));
+        }
+        list.append($('<li/>').append($('<a>&raquo;</a>')));
+      }
+      pagination.find('ul li').off('click');
+      pagination.find('ul li:first-child').click(function() {
+        if (!$(this).hasClass('disabled')) {
+          return refreshPagination(pagination.find('ul li.active').index() - 1);
+        }
+      });
+      pagination.find('ul li:not(:first-child, :last-child)').click(function() {
+        var $this;
+        $this = $(this);
+        if (!$this.hasClass('active')) {
+          return refreshPagination($this.index());
+        }
+      });
+      pagination.find('ul li:last-child').click(function() {
+        if (!$(this).hasClass('disabled')) {
+          return refreshPagination(pagination.find('ul li.active').index() + 1);
+        }
+      });
+      refreshPagination();
+      return pagination.show();
+    } else {
+      return pagination.hide().find('ul li').remove();
+    }
+  };
+
   readImport = function(importData) {
-    var data, existing, i, imported, keys, template, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3;
+    var data, existing, i, imported, keys, storedKeys, template, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
     log.trace();
     log.debug('Importing the following data...', importData);
     data = {
       templates: []
     };
     keys = [];
+    storedKeys = (function() {
+      var _i, _len, _ref, _results;
+      _ref = ext.templates;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        template = _ref[_i];
+        _results.push(template.key);
+      }
+      return _results;
+    })();
     _ref = importData.templates;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       template = _ref[_i];
@@ -1257,24 +1536,28 @@
         template.image = ((_ref2 = icons.fromLegacy(template.image)) != null ? _ref2.name : void 0) || '';
       }
       if (validateImportedTemplate(template)) {
-        if (isKeyNew(template.key, keys)) {
+        if ((_ref3 = template.key, __indexOf.call(storedKeys, _ref3) < 0) && (_ref4 = template.key, __indexOf.call(keys, _ref4) < 0)) {
           template = addImportedTemplate(template);
           if (template) {
+            template.index = storedKeys.length + keys.length;
             data.templates.push(template);
             keys.push(template.key);
           }
         } else {
-          _ref3 = data.templates;
-          for (i = _j = 0, _len1 = _ref3.length; _j < _len1; i = ++_j) {
-            imported = _ref3[i];
-            if (imported.key === template.key) {
-              existing = updateImportedTemplate(template, imported);
-              data.templates[i] = existing;
-              break;
+          _ref5 = data.templates;
+          for (i = _j = 0, _len1 = _ref5.length; _j < _len1; i = ++_j) {
+            imported = _ref5[i];
+            if (!(imported.key === template.key)) {
+              continue;
             }
+            existing = updateImportedTemplate(template, imported);
+            data.templates[i] = existing;
+            break;
           }
           if (!existing.key) {
-            existing = deriveTemplate($("#templates            option[value='" + template.key + "']"));
+            existing = utils.clone(ext.queryTemplate(function(temp) {
+              return temp.key === template.key;
+            }), true);
             if (existing) {
               existing = updateImportedTemplate(template, existing);
               data.templates.push(existing);
@@ -1288,11 +1571,110 @@
     return data;
   };
 
+  refreshResetButton = function() {
+    var container, resetBtn;
+    log.trace();
+    container = $('#template_search');
+    resetBtn = container.find(':reset');
+    if (container.find(':text').val()) {
+      container.addClass('input-prepend');
+      return resetBtn.show();
+    } else {
+      resetBtn.hide();
+      return container.removeClass('input-prepend');
+    }
+  };
+
+  refreshSelectButtons = function() {
+    var selections;
+    log.trace();
+    selections = $('#templates tbody :checkbox:checked');
+    return $('#delete_btn, #export_btn').prop('disabled', selections.length === 0);
+  };
+
+  resetWizard = function() {
+    var imgOpt, _ref;
+    log.trace();
+    if (activeTemplate == null) {
+      activeTemplate = {};
+    }
+    $('#template_wizard .modal-header h3').html(activeTemplate.key != null ? i18n.get('opt_template_modify_title', activeTemplate.title) : i18n.get('opt_template_new_header'));
+    $('#template_content').val(activeTemplate.content || '');
+    $('#template_enabled').prop('checked', (_ref = activeTemplate.enabled) != null ? _ref : true);
+    $('#template_shortcut').val(activeTemplate.shortcut || '');
+    $('#template_title').val(activeTemplate.title || '');
+    imgOpt = $("#template_image option[value='" + activeTemplate.image + "']");
+    if (imgOpt.length === 0) {
+      $('#template_image option:first-child').attr('selected', 'selected');
+    } else {
+      imgOpt.attr('selected', 'selected');
+    }
+    $('#template_image').change();
+    $('#template_content, #template_title').prop('disabled', !!activeTemplate.readOnly);
+    return $('#template_delete_btn').each(function() {
+      var $this;
+      $this = $(this);
+      $this.prop('disabled', !!activeTemplate.readOnly);
+      if (activeTemplate.key != null) {
+        return $this.show();
+      } else {
+        return $this.hide();
+      }
+    });
+  };
+
+  searchTemplates = function(query) {
+    var expression, keyword, keywords;
+    if (query == null) {
+      query = '';
+    }
+    log.trace();
+    keywords = query.replace(R_CLEAN_QUERY, '').split(R_WHITESPACE);
+    if (keywords.length) {
+      expression = RegExp("" + (((function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = keywords.length; _i < _len; _i++) {
+          keyword = keywords[_i];
+          if (keyword) {
+            _results.push(keyword);
+          }
+        }
+        return _results;
+      })()).join('|')), "i");
+      searchResults = ext.queryTemplates(function(template) {
+        return expression.test("" + template.content + " " + template.title);
+      });
+    } else {
+      searchResults = null;
+    }
+    loadTemplateRows(searchResults != null ? searchResults : ext.templates);
+    refreshResetButton();
+    return refreshSelectButtons();
+  };
+
+  setContext = function(template) {
+    if (template == null) {
+      template = {};
+    }
+    log.trace();
+    activeTemplate = {};
+    $.extend(activeTemplate, template);
+    return resetWizard();
+  };
+
   trimToLower = function(str) {
     if (str == null) {
       str = '';
     }
     return str.trim().toLowerCase();
+  };
+
+  trimToUpper = function(str) {
+    if (str == null) {
+      str = '';
+    }
+    return str.trim().toUpperCase();
   };
 
   options = window.options = new (Options = (function(_super) {
@@ -1386,15 +1768,7 @@
           });
         }
       });
-      $('[title]').each(function() {
-        var $this, placement;
-        $this = $(this);
-        placement = $this.attr('data-placement');
-        placement = placement != null ? trimToLower(placement) : 'top';
-        return $this.tooltip({
-          placement: placement
-        });
-      });
+      activateTooltips();
       navHeight = $('.navbar').height();
       return $('[data-goto]').click(function() {
         var goto, pos, _ref;

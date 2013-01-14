@@ -19,6 +19,20 @@ class Class
 
 # Mapping of all timers currently being managed.
 timings = {}
+# Map of class names to understable types.
+typeMap = {}
+# Populate the type map for all classes.
+[
+  'Boolean'
+  'Number'
+  'String'
+  'Function'
+  'Array'
+  'Date'
+  'RegExp'
+  'Object'
+].forEach (name) ->
+  typeMap["[object #{name}]"] = name.toLowerCase()
 
 # Utilities setup
 # ---------------
@@ -38,6 +52,21 @@ utils = window.utils = new class Utils extends Class
       result = fn args...
       callback? result
     , 0
+
+  # Create a clone of an object.
+  clone: (obj, deep) ->
+    return obj unless @isObject obj
+    return obj.slice() if @isArray obj
+    copy = {}
+    for own key, value of obj
+      copy[key] = if deep then @clone value, yes else value
+    copy
+
+  # Indicate whether an object is an array.
+  isArray: Array.isArray or (obj) -> 'array' is @type obj
+
+  # Indicate whether an object is an object.
+  isObject: (obj) -> obj is Object obj
 
   # Generate a unique key based on the current time and using a randomly
   # generated hexadecimal number of the specified length.
@@ -128,6 +157,10 @@ utils = window.utils = new class Utils extends Class
       new Date().getTime() - start
     else
       0
+
+  # Retrieve the understable type name for an object.
+  type: (obj) ->
+    if obj? then typeMap[Object::toString.call obj] || 'object' else String obj
 
   # Convenient shorthand for `chrome.extension.getURL`.
   url: -> chrome.extension.getURL arguments...

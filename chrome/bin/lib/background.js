@@ -724,6 +724,10 @@
           result.message = i18n.get('result_bad_empty_description', result.template.title);
           result.success = false;
         }
+        if (result.template != null) {
+          updateTemplateUsage(result.template.key);
+          updateStatistics();
+        }
         if (result.success) {
           ext.notification.title = i18n.get('result_good_title');
           ext.notification.titleStyle = 'color: #468847';
@@ -749,10 +753,6 @@
           if (typeof sendResponse === "function") {
             sendResponse();
           }
-        }
-        if (result.template != null) {
-          updateTemplateUsage(result.template.key);
-          updateStatistics();
         }
       } else {
         updateProgress(null, false);
@@ -2178,12 +2178,20 @@
       return utils.query(this.templates, singular, filter);
     };
 
+    Extension.prototype.queryTemplates = function(filter) {
+      return this.queryTemplate(filter, false);
+    };
+
     Extension.prototype.queryUrlShortener = function(filter, singular) {
       if (singular == null) {
         singular = true;
       }
       log.trace();
       return utils.query(SHORTENERS, singular, filter);
+    };
+
+    Extension.prototype.queryUrlShorteners = function(filter) {
+      return this.queryUrlShortener(filter, false);
     };
 
     Extension.prototype.reset = function() {

@@ -540,6 +540,9 @@ onMessage = (message, sender, sendResponse) ->
         result.message = i18n.get 'result_bad_empty_description',
           result.template.title
         result.success = no
+      if result.template?
+        updateTemplateUsage result.template.key
+        updateStatistics()
       if result.success
         ext.notification.title       = i18n.get 'result_good_title'
         ext.notification.titleStyle  = 'color: #468847'
@@ -559,9 +562,6 @@ onMessage = (message, sender, sendResponse) ->
           i18n.get 'result_bad_description', result.template.title
         showNotification()
         sendResponse?()
-      if result.template?
-        updateTemplateUsage result.template.key
-        updateStatistics()
     else
       updateProgress null, off
     log.debug "Finished handling #{type} request"
@@ -1599,11 +1599,17 @@ ext = window.ext = new class Extension extends utils.Class
     log.trace()
     utils.query @templates, singular, filter
 
+  # Retrieve all templates that pass the specified `filter`.
+  queryTemplates: (filter) -> @queryTemplate filter, no
+
   # Retrieve the first URL shortener service that passes the specified
   # `filter`.
   queryUrlShortener: (filter, singular = yes) ->
     log.trace()
     utils.query SHORTENERS, singular, filter
+
+  # Retrieve all URL shortener services that pass the specified `filter`.
+  queryUrlShorteners: (filter) -> @queryUrlShortener filter, no
 
   # Reset the notification information associated with the current copy
   # request.  
