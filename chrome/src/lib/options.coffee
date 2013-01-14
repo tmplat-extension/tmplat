@@ -15,8 +15,6 @@ R_VALID_KEY      = /^[A-Z0-9]*\.[A-Z0-9]*$/i
 R_VALID_SHORTCUT = /[A-Z0-9]/i
 # Regular expression used to identify whitespace.
 R_WHITESPACE     = /\s+/
-# Source URL of the user feedback widget script.
-WIDGET_SOURCE    = "https://widget.uservoice.com/RSRS5SpMkMxvKOCs27g.js"
 
 # Private variables
 # -----------------
@@ -1155,7 +1153,9 @@ feedback = ->
     window.uvOptions = {}
     uv = document.createElement 'script'
     uv.async = 'async'
-    uv.src   = WIDGET_SOURCE
+    uv.src   = """
+      https://widget.uservoice.com/#{ext.config.options.userVoice}.js
+    """
     script = document.getElementsByTagName('script')[0]
     script.parentNode.insertBefore uv, script
     feedbackAdded = yes
@@ -1428,6 +1428,8 @@ options = window.options = new class Options extends utils.Class
     # Bind analytical tracking events to key footer buttons and links.
     $('footer a[href*="neocotic.com"]').click -> analytics.track 'Footer',
       'Clicked', 'Homepage'
+    # Setup and configure the donation button in the footer.
+    $('#donation input[name="hosted_button_id"]').val ext.config.options.payPal
     $('#donation').submit -> analytics.track 'Footer', 'Clicked', 'Donate'
     # Load the current option values.
     load()
