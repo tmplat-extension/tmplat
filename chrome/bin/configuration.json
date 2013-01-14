@@ -1,11 +1,13 @@
 {
     "options": {
-      "limits": [
-          25
-        , 50
-        , 75
-        , 100
-      ]
+        "limits": [
+            25
+          , 50
+          , 75
+          , 100
+        ]
+      , "payPal": "BGWG9R5LBNECY"
+      , "userVoice": "RSRS5SpMkMxvKOCs27g"
     }
   , "services": {
         "bitly": {
