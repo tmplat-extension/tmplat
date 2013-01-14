@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, addAdditionalData, browser, buildDerivedData, buildPopup, buildStandardData, buildTemplate, callUrlShortener, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isExtensionGallery, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, nullIfEmpty, onMessage, operatingSystem, runSelectors, selectOrCreateTab, services, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage,
+  var BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, addAdditionalData, browser, buildDerivedData, buildPopup, buildStandardData, buildTemplate, callUrlShortener, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isExtensionGallery, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, nullIfEmpty, onMessage, operatingSystem, runSelectors, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage,
     __hasProp = {}.hasOwnProperty,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -134,8 +134,8 @@
         if (this.oauth.hasAccessToken()) {
           params.access_token = this.oauth.getAccessToken();
         } else {
-          params.apiKey = services.bitly.api_key;
-          params.login = services.bitly.login;
+          params.apiKey = ext.config.services.bitly.api_key;
+          params.login = ext.config.services.bitly.login;
         }
         return params;
       },
@@ -152,8 +152,8 @@
       name: 'bitly',
       oauth: function() {
         return new OAuth2('bitly', {
-          client_id: services.bitly.client_id,
-          client_secret: services.bitly.client_secret
+          client_id: ext.config.services.bitly.client_id,
+          client_secret: ext.config.services.bitly.client_secret
         });
       },
       output: function(resp) {
@@ -161,7 +161,7 @@
       },
       title: i18n.get('shortener_bitly'),
       url: function() {
-        return services.bitly.url;
+        return ext.config.services.bitly.url;
       }
     }, {
       getHeaders: function() {
@@ -177,7 +177,7 @@
       getParameters: function() {
         if (!this.oauth.hasAccessToken()) {
           return {
-            key: services.googl.api_key
+            key: ext.config.services.googl.api_key
           };
         }
       },
@@ -196,9 +196,9 @@
       name: 'googl',
       oauth: function() {
         return new OAuth2('google', {
-          api_scope: services.googl.api_scope,
-          client_id: services.googl.client_id,
-          client_secret: services.googl.client_secret
+          api_scope: ext.config.services.googl.api_scope,
+          client_id: ext.config.services.googl.client_id,
+          client_secret: ext.config.services.googl.client_secret
         });
       },
       output: function(resp) {
@@ -206,7 +206,7 @@
       },
       title: i18n.get('shortener_googl'),
       url: function() {
-        return services.googl.url;
+        return ext.config.services.googl.url;
       }
     }, {
       getHeaders: function() {
@@ -327,8 +327,6 @@
   isProductionBuild = EXTENSION_ID === REAL_EXTENSION_ID;
 
   operatingSystem = '';
-
-  services = {};
 
   executeScriptsInExistingWindows = function() {
     var runner;
@@ -1996,6 +1994,8 @@
 
     Extension.prototype.SHORTCUT_MAC_MODIFIERS = '&#8679;&#8997;';
 
+    Extension.prototype.config = {};
+
     Extension.prototype.notification = {
       description: '',
       descriptionStyle: '',
@@ -2067,9 +2067,9 @@
         _this.version = data.version;
         return runner.next();
       });
-      runner.push(jQuery, 'getJSON', utils.url('services.json'), function(data) {
+      runner.push(jQuery, 'getJSON', utils.url('configuration.json'), function(data) {
         var shortener, _i, _len;
-        services = data;
+        _this.config = data;
         for (_i = 0, _len = SHORTENERS.length; _i < _len; _i++) {
           shortener = SHORTENERS[_i];
           shortener.oauth = typeof shortener.oauth === "function" ? shortener.oauth() : void 0;

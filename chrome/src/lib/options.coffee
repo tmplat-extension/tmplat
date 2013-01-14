@@ -267,6 +267,16 @@ loadTemplateControlEvents = ->
   $('#template_cancel_btn').click -> closeWizard()
   $('#template_reset_btn').click -> resetWizard()
   # Support search functionality for templates.
+  filter = $ '#template_filter'
+  filter.find('option').remove()
+  for limit in ext.config.options.limits
+    filter.append $ '<option/>', text: limit
+  filter.append $ '<option/>',
+    disabled: 'disabled'
+    text:     '-----'
+  filter.append $ '<option/>',
+    text:  i18n.get 'opt_show_all_text'
+    value: 0
   store.init 'options_limit', parseInt $('#template_filter').val()
   limit = store.get 'options_limit'
   $('#template_filter option').each ->
@@ -1061,7 +1071,9 @@ activateTooltips = (selector) ->
     $this     = $ this
     placement = $this.attr 'data-placement'
     placement = if placement? then trimToLower placement else 'top'
-    $this.tooltip placement: placement
+    $this.tooltip
+      container: $this.attr('data-container') ? 'body'
+      placement: placement
 
 # Convenient shorthand for setting the current context to `null`.
 clearContext = -> setContext null

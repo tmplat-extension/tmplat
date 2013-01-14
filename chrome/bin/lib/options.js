@@ -318,7 +318,7 @@
   };
 
   loadTemplateControlEvents = function() {
-    var limit, selectedTemplates, validationErrors, warningMsg;
+    var filter, limit, selectedTemplates, validationErrors, warningMsg, _i, _len, _ref;
     log.trace();
     $('#template_wizard [tabify]').click(function() {
       return closeWizard();
@@ -329,6 +329,23 @@
     $('#template_reset_btn').click(function() {
       return resetWizard();
     });
+    filter = $('#template_filter');
+    filter.find('option').remove();
+    _ref = ext.config.options.limits;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      limit = _ref[_i];
+      filter.append($('<option/>', {
+        text: limit
+      }));
+    }
+    filter.append($('<option/>', {
+      disabled: 'disabled',
+      text: '-----'
+    }));
+    filter.append($('<option/>', {
+      text: i18n.get('opt_show_all_text'),
+      value: 0
+    }));
     store.init('options_limit', parseInt($('#template_filter').val()));
     limit = store.get('options_limit');
     $('#template_filter option').each(function() {
@@ -363,26 +380,26 @@
     });
     validationErrors = [];
     $('#template_wizard').on('hide', function() {
-      var error, _i, _len, _results;
+      var error, _j, _len1, _results;
       _results = [];
-      for (_i = 0, _len = validationErrors.length; _i < _len; _i++) {
-        error = validationErrors[_i];
+      for (_j = 0, _len1 = validationErrors.length; _j < _len1; _j++) {
+        error = validationErrors[_j];
         _results.push(error.hide());
       }
       return _results;
     });
     $('#template_save_btn').click(function() {
-      var error, template, _i, _j, _len, _len1, _results;
+      var error, template, _j, _k, _len1, _len2, _results;
       template = deriveTemplate();
-      for (_i = 0, _len = validationErrors.length; _i < _len; _i++) {
-        error = validationErrors[_i];
+      for (_j = 0, _len1 = validationErrors.length; _j < _len1; _j++) {
+        error = validationErrors[_j];
         error.hide();
       }
       validationErrors = validateTemplate(template);
       if (validationErrors.length) {
         _results = [];
-        for (_j = 0, _len1 = validationErrors.length; _j < _len1; _j++) {
-          error = validationErrors[_j];
+        for (_k = 0, _len2 = validationErrors.length; _k < _len2; _k++) {
+          error = validationErrors[_k];
           _results.push(error.show());
         }
         return _results;
@@ -405,13 +422,13 @@
     });
     warningMsg = null;
     $('#delete_btn').click(function() {
-      var deleteItems, div, item, predefinedCount, predefinedTemplates, template, _i, _len;
+      var deleteItems, div, item, predefinedCount, predefinedTemplates, template, _j, _len1;
       deleteItems = $('#delete_items');
       predefinedTemplates = $('<ul/>');
       selectedTemplates = getSelectedTemplates();
       deleteItems.find('li').remove();
-      for (_i = 0, _len = selectedTemplates.length; _i < _len; _i++) {
-        template = selectedTemplates[_i];
+      for (_j = 0, _len1 = selectedTemplates.length; _j < _len1; _j++) {
+        template = selectedTemplates[_j];
         item = $('<li/>', {
           text: template.title
         });
@@ -1289,11 +1306,12 @@
       return $this.removeAttr('data-original-title');
     });
     return base.find('[title]').each(function() {
-      var $this, placement;
+      var $this, placement, _ref;
       $this = $(this);
       placement = $this.attr('data-placement');
       placement = placement != null ? trimToLower(placement) : 'top';
       return $this.tooltip({
+        container: (_ref = $this.attr('data-container')) != null ? _ref : 'body',
         placement: placement
       });
     });
