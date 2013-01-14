@@ -158,6 +158,14 @@ utils = window.utils = new class Utils extends Class
     else
       0
 
+  # Convenient shorthand for safely trimming a string to lower case.
+  trimToLower: (str = '') ->
+    str.trim().toLowerCase()
+
+  # Convenient shorthand for safely trimming a string to upper case.
+  trimToUpper: (str = '') ->
+    str.trim().toUpperCase()
+
   # Retrieve the understable type name for an object.
   type: (obj) ->
     if obj? then typeMap[Object::toString.call obj] || 'object' else String obj

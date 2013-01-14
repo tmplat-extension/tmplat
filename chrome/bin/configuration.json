@@ -1,11 +1,29 @@
 {
     "options": {
-      "limits": [
-          25
-        , 50
-        , 75
-        , 100
-      ]
+        "limits": [
+            25
+          , 50
+          , 75
+          , 100
+        ]
+      , "tabs": [
+            {
+                "id": "general"
+              , "headerKey": "opt_general_header"
+            }
+          , {
+                "id": "templates"
+              , "headerKey": "opt_template_header"
+            }
+          , {
+                "id": "shorteners"
+              , "headerKey": "opt_url_shortener_header"
+            }
+          , {
+                "id": "guide"
+              , "headerKey": "opt_guide_header"
+            }
+        ]
     }
   , "services": {
         "bitly": {

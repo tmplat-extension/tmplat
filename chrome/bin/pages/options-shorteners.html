@@ -1,0 +1,117 @@
+<link rel="stylesheet" href="../css/options-shorteners.css">
+<div class="row">
+  <div class="span12">
+    <form class="form-horizontal">
+      <fieldset>
+        <legend i18n-content="opt_url_shortener_header"></legend>
+        <div class="row gap-top">
+          <div class="span2 center">
+            <strong i18n-content="opt_url_shortener_service_header"></strong>
+          </div>
+          <div class="span10">
+            <strong i18n-content="opt_url_shortener_config_header"></strong>
+          </div>
+        </div>
+        <div class="row control-group">
+          <div class="span2">
+            <div class="control-group">
+              <div class="controls">
+                <label class="radio">
+                  <input type="radio" name="enabled_shortener" id="bitly">
+                  <span i18n-content="shortener_bitly"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="span10">
+            <div class="control-group">
+              <label class="control-label" for="bitlyAccount" i18n-content="opt_url_shortener_account_label"></label>
+              <div class="span5 controls">
+                <button class="btn" id="bitlyAccount" i18n-values="title:opt_url_shortener_account_title"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row control-group">
+          <div class="span2">
+            <div class="control-group">
+              <div class="controls">
+                <label class="radio">
+                  <input type="radio" name="enabled_shortener" id="googl">
+                  <span i18n-content="shortener_googl"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="span10">
+            <div class="control-group">
+              <label class="control-label" for="googlAccount" i18n-content="opt_url_shortener_account_label"></label>
+              <div class="span5 controls">
+                <button class="btn" id="googlAccount" i18n-values="title:opt_url_shortener_account_title"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row control-group">
+          <div class="span2">
+            <div class="control-group">
+              <div class="controls">
+                <label class="radio">
+                  <input type="radio" name="enabled_shortener" id="yourls">
+                  <span i18n-content="shortener_yourls"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="span10">
+            <div class="control-group">
+              <label class="control-label" for="yourlsUrl" i18n-content="opt_url_shortener_url_label"></label>
+              <div class="span5 controls">
+                <input type="url" id="yourlsUrl" class="input-xlarge" />
+                <p class="help-block" i18n-content="opt_url_shortener_url_yourls_sub_text"></p>
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label" i18n-content="opt_url_shortener_authentication_label"></label>
+              <div class="span5 controls">
+                <div id="yourlsAuthentication" class="btn-group" data-toggle="buttons-radio">
+                  <button id="yourlsAuthenticationNone" class="btn" i18n-content="opt_url_shortener_authentication_none_button"></button>
+                  <button id="yourlsAuthenticationBasic" class="btn" i18n-content="opt_url_shortener_authentication_basic_button"></button>
+                  <button id="yourlsAuthenticationAdvanced" class="btn" i18n-content="opt_url_shortener_authentication_advanced_button"></button>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="yourlsAuthenticationAdvanced">
+                <div class="control-group">
+                  <label class="control-label" for="yourlsSignature" i18n-content="opt_url_shortener_signature_label"></label>
+                  <div class="span5 controls">
+                    <input type="password" id="yourlsSignature" class="input-small" />
+                    <p class="help-block" i18n-content="opt_url_shortener_signature_yourls_sub_text"></p>
+                  </div>
+                </div>
+              </div>
+              <div class="yourlsAuthenticationBasic">
+                <div class="control-group">
+                  <label class="control-label" for="yourlsUsername" i18n-content="opt_url_shortener_username_label"></label>
+                  <div class="span5 controls">
+                    <input type="text" id="yourlsUsername" class="input-small" />
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label" for="yourlsPassword" i18n-content="opt_url_shortener_password_label"></label>
+                  <div class="span5 controls">
+                    <input type="password" id="yourlsPassword" class="input-small" />
+                    <p class="help-block" i18n-content="opt_url_shortener_password_yourls_sub_text"></p>
+                  </div>
+                </div>
+              </div>
+              <div class="yourlsAuthenticationNone"></div>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</div>
+<script src="../lib/options-shorteners.js"></script>

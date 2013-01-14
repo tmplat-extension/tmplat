@@ -1,0 +1,914 @@
+# [Template](http://neocotic.com/template)  
+# (c) 2013 Alasdair Mercer  
+# Freely distributable under the MIT license.  
+# For all details and documentation:  
+# <http://neocotic.com/template>
+
+# Private constants
+# -----------------
+
+# Regular expression used to sanitize search queries.
+R_CLEAN_QUERY    = /[^\w\s]/g
+# Regular expression used to validate template keys.
+R_VALID_KEY      = /^[A-Z0-9]*\.[A-Z0-9]*$/i
+# Regular expression used to validate keyboard shortcut inputs.
+R_VALID_SHORTCUT = /[A-Z0-9]/i
+# Regular expression used to identify whitespace.
+R_WHITESPACE     = /\s+/
+
+# Private variables
+# -----------------
+
+# Copy of template being actively modified.
+activeTemplate = null
+# Easily accessible reference to the extension controller.
+{ext}          = chrome.extension.getBackgroundPage()
+# Templates matching the current search query.
+searchResults  = null
+
+# Private functions
+# -----------------
+
+# Activate drag and drop functionality for reordering templates.  
+# The activation is done cleanly, unbinding any associated events that have
+# been previously bound.
+activateDraggables = ->
+  log.trace()
+  table      = $ '#templates'
+  dragSource = null
+  draggables = table.find '[draggable]'
+  draggables.off 'dragstart dragend dragenter dragover drop'
+  draggables.on 'dragstart', (e) ->
+    $this      = $ this
+    dragSource = this
+    table.removeClass 'table-hover'
+    $this.addClass 'dnd-moving'
+    $this.find('[data-original-title]').tooltip 'hide'
+    e.originalEvent.dataTransfer.effectAllowed = 'move'
+    e.originalEvent.dataTransfer.setData 'text/html', $this.html()
+  draggables.on 'dragend', (e) ->
+    draggables.removeClass 'dnd-moving dnd-over'
+    table.addClass 'table-hover'
+    dragSource = null
+  draggables.on 'dragenter', (e) ->
+    $this = $ this
+    draggables.not($this).removeClass 'dnd-over'
+    $this.addClass 'dnd-over'
+  draggables.on 'dragover', (e) ->
+    e.preventDefault()
+    e.originalEvent.dataTransfer.dropEffect = 'move'
+    false
+  draggables.on 'drop', (e) ->
+    $dragSource = $ dragSource
+    e.stopPropagation()
+    if dragSource isnt this
+      $this = $ this
+      $dragSource.html $this.html()
+      $this.html e.originalEvent.dataTransfer.getData 'text/html'
+      options.activateTooltips table
+      activateModifications()
+      activateSelections()
+      fromIndex = $dragSource.index()
+      toIndex   = $this.index()
+      if searchResults?
+        fromIndex = searchResults[fromIndex].index
+        toIndex   = searchResults[toIndex].index
+      reorderTemplates fromIndex, toIndex
+    false
+
+# Activate functionality to open template wizard when a row is clicked.  
+# The activation is done cleanly, unbinding any associated events that have
+# been previously bound.
+activateModifications = ->
+  log.trace()
+  $('#templates tbody tr td:not(:first-child)').off('click').click ->
+    activeKey = $(this).parents('tr:first').find(':checkbox').val()
+    openWizard ext.queryTemplate (template) -> template.key is activeKey
+
+# Activate select all/one functionality on the templates table.  
+# The activation is done cleanly, unbinding any associated events that have
+# been previously bound.
+activateSelections = ->
+  log.trace()
+  table       = $ '#templates'
+  selectBoxes = table.find 'tbody :checkbox'
+  selectBoxes.off('change').change ->
+    $this       = $ this
+    messageKey  = 'opt_select_box'
+    messageKey += '_checked' if $this.is ':checked'
+    $this.attr 'data-original-title', i18n.get messageKey
+    refreshSelectButtons()
+  table.find('thead :checkbox').off('change').change ->
+    $this       = $ this
+    checked     = $this.is ':checked'
+    messageKey  = 'opt_select_all_box'
+    messageKey += '_checked' if checked
+    $this.attr 'data-original-title', i18n.get messageKey
+    selectBoxes.prop 'checked', checked
+    refreshSelectButtons()
+
+# Create a template from the information from the imported `template` provided.  
+# `template` is not altered in any way and the new template is only created if
+# `template` has a valid key.  
+# Other than the key, any invalid fields will not be copied to the new template
+# which will instead use the preferred default value for those fields.
+addImportedTemplate = (template) ->
+  log.trace()
+  log.debug 'Creating a new template with the following details...', template
+  if isKeyValid template.key
+    newTemplate =
+      content:  template.content
+      enabled:  template.enabled
+      image:    ''
+      key:      template.key
+      readOnly: no
+      shortcut: ''
+      title:    i18n.get 'untitled'
+      usage:    template.usage
+    # Only allow existing images.
+    newTemplate.image = template.image if icons.exists template.image
+    # Only allow valid keyboard shortcuts.
+    if isShortcutValid template.shortcut
+      newTemplate.shortcut = template.shortcut
+    # Only allow valid titles.
+    newTemplate.title = template.title if 0 < template.title.length <= 32
+  log.debug 'Following template was created...', newTemplate
+  newTemplate
+
+# Convenient shorthand for setting the current context to `null`.
+clearContext = -> setContext null
+
+# Clear the current context and close the template wizard.
+closeWizard = ->
+  clearContext()
+  $('#template_wizard').modal 'hide'
+
+# Create a JSON string to export the specified `templates`.
+createExport = (templates = []) ->
+  log.trace()
+  log.debug 'Creating an export string for the following templates...',
+    templates
+  data = templates: templates[..], version: ext.version
+  delete template.menuId for template in data.templates
+  if data.templates.length
+    analytics.track 'Templates', 'Exported', ext.version, data.templates.length
+  log.debug 'Following export data has been created...', data
+  JSON.stringify data
+
+# Create a JSON object from the imported string specified.
+createImport = (str) ->
+  log.trace()
+  log.debug 'Parsing the following import string...', str
+  try
+    data = JSON.parse str
+  catch error
+    throw i18n.get 'error_import_data'
+  if not $.isArray(data.templates) or data.templates.length is 0 or
+      typeof data.version isnt 'string'
+    throw i18n.get 'error_import_invalid'
+  log.debug 'Following data was created from the string...', data
+  data
+
+# Delete all of the `templates` provided.  
+# A check is performed to ensure that no predefined templates are removed.
+deleteTemplates = (templates) ->
+  log.trace()
+  keys = []
+  list = []
+  for template in templates when not template.readOnly
+    keys.push template.key
+    list.push template
+  if keys.length
+    keep = []
+    for template, i in ext.templates when template.key not in keys
+      template.index = i
+      keep.push template
+    store.set 'templates', keep
+    ext.updateTemplates()
+    if keys.length > 1
+      log.debug "Deleted #{keys.length} templates"
+      analytics.track 'Templates', 'Deleted', "Count[#{keys.length}]"
+    else
+      template = list[0]
+      log.debug "Deleted #{template.title} template"
+      analytics.track 'Templates', 'Deleted', template.title
+    loadRows searchResults ? ext.templates
+    options.general.updateTemplates()
+
+# Create a template based on the current context and the information derived
+# from the wizard fields.
+deriveTemplate = ->
+  log.trace()
+  readOnly = activeTemplate.readOnly ? no
+  template =
+    content:  if readOnly
+      activeTemplate.content
+    else
+      $('#template_content').val()
+    enabled:  $('#template_enabled').is ':checked'
+    image:    $('#template_image').val()
+    index:    activeTemplate.index ? ext.templates.length
+    key:      activeTemplate.key
+    readOnly: readOnly
+    shortcut: utils.trimToUpper $('#template_shortcut').val()
+    title:    if readOnly
+      activeTemplate.title
+    else
+      $('#template_title').val().trim()
+    usage:    activeTemplate.usage ? 0
+  log.debug 'Following template was derived...', template
+  template
+
+# Error handler to be used when dealing with the FileSystem API that passes a
+# localized error message to `callback`.
+fileErrorHandler = (callback) ->
+  (e) ->
+    callback i18n.get switch e.code
+      when FileError.NOT_FOUND_ERR then 'error_file_not_found'
+      when FileError.ABORT_ERR then 'error_file_aborted'
+      else 'error_file_default'
+
+# Retrieve all currently selected templates.
+getSelectedTemplates = ->
+  selectedKeys      = []
+  $('#templates tbody :checkbox:checked').each ->
+    selectedKeys.push $(this).val()
+  ext.queryTemplates (template) -> template.key in selectedKeys
+
+# Indicate whether or not the specified `key` is valid.
+isKeyValid = (key) ->
+  log.trace()
+  log.debug "Validating template key '#{key}'"
+  R_VALID_KEY.test key
+
+# Indicate whether or not the specified keyboard `shortcut` is valid for use by
+# a template.
+isShortcutValid = (shortcut) ->
+  log.trace()
+  log.debug "Validating keyboard shortcut '#{shortcut}'"
+  R_VALID_SHORTCUT.test shortcut
+
+# Update the templates tab with the values from the current settings.
+load = ->
+  log.trace()
+  loadImages()
+  # Load all of the event handlers required for managing the templates.
+  loadControlEvents()
+  loadImportEvents()
+  loadExportEvents()
+  # Load the template rows into the table.
+  loadRows()
+
+# Bind the event handlers required for controlling the templates.
+loadControlEvents = ->
+  log.trace()
+  # Ensure template wizard is closed if/when tabify links are clicked within
+  # it.
+  $('#template_wizard [tabify]').click -> closeWizard()
+  $('#template_cancel_btn').click -> closeWizard()
+  $('#template_reset_btn').click -> resetWizard()
+  # Support search functionality for templates.
+  filter = $ '#template_filter'
+  filter.find('option').remove()
+  for limit in ext.config.options.limits
+    filter.append $ '<option/>', text: limit
+  filter.append $ '<option/>',
+    disabled: 'disabled'
+    text:     '-----'
+  filter.append $ '<option/>',
+    text:  i18n.get 'opt_show_all_text'
+    value: 0
+  store.init 'options_limit', parseInt $('#template_filter').val()
+  limit = store.get 'options_limit'
+  $('#template_filter option').each ->
+    $this = $ this
+    $this.prop 'selected', limit is parseInt $this.val()
+  $('#template_filter').change ->
+    store.set 'options_limit', parseInt $(this).val()
+    loadRows searchResults ? ext.templates
+  $('#template_search :reset').click ->
+    $('#template_search :text').val ''
+    searchTemplates()
+  $('#template_controls').submit ->
+    searchTemplates $('#template_search :text').val()
+  # Ensure user confirms deletion of template.
+  $('#template_delete_btn').click ->
+    $(this).hide()
+    $('#template_confirm_delete').css 'display', 'inline-block'
+  $('#template_undo_delete_btn').click ->
+    $('#template_confirm_delete').hide()
+    $('#template_delete_btn').show()
+  $('#template_confirm_delete_btn').click ->
+    $('#template_confirm_delete').hide()
+    $('#template_delete_btn').show()
+    deleteTemplates [activeTemplate]
+    closeWizard()
+  validationErrors = []
+  $('#template_wizard').on 'hide', ->
+    error.hide() for error in validationErrors
+  $('#template_save_btn').click ->
+    template = deriveTemplate()
+    # Clear all existing validation errors.
+    error.hide() for error in validationErrors
+    validationErrors = validateTemplate template
+    if validationErrors.length
+      error.show() for error in validationErrors
+    else
+      validationErrors = []
+      $.extend activeTemplate, template
+      saveTemplate activeTemplate
+      $('#template_search :reset').hide()
+      $('#template_search :text').val ''
+      closeWizard()
+  # Open the template wizard without any context.
+  $('#add_btn').click -> openWizard null
+  selectedTemplates = []
+  $('#delete_wizard').on 'hide', ->
+      selectedTemplates = []
+      $('#delete_items li').remove()
+  # Prompt the user to confirm removal of the selected template(s).
+  warningMsg = null
+  $('#delete_btn').click ->
+    deleteItems         = $ '#delete_items'
+    predefinedTemplates = $ '<ul/>'
+    selectedTemplates   = getSelectedTemplates()
+    deleteItems.find('li').remove()
+    # Create list items for each template and allocate them accordingly.
+    for template in selectedTemplates
+      item = $ '<li/>', text: template.title
+      if template.readOnly
+        predefinedTemplates.append item
+      else
+        deleteItems.append item
+    # Show warning message if user attempted to delete predefined template(s);
+    # otherwise begin the removal process by showing the dialog.
+    predefinedCount = predefinedTemplates.find('li').length
+    if predefinedCount
+      warningMsg?.hide()
+      div = $ '<div/>'
+      div.append $ '<p/>', html: i18n.get if predefinedCount is 1
+        'opt_template_delete_predefined_error_1'
+      else
+        'opt_template_delete_multiple_predefined_error_1'
+      div.append predefinedTemplates
+      div.append $ '<p/>', html: i18n.get if predefinedCount is 1
+        'opt_template_delete_predefined_error_2'
+      else
+        'opt_template_delete_multiple_predefined_error_2'
+      warningMsg = new WarningMessage yes
+      warningMsg.message = div.html()
+      warningMsg.show()
+    else
+      $('#delete_wizard').modal 'show'
+  # Cancel the template removal process.
+  $('#delete_cancel_btn, #delete_no_btn').click ->
+    $('#delete_wizard').modal 'hide'
+  # Finalize the template removal process.
+  $('#delete_yes_btn').click ->
+    deleteTemplates selectedTemplates
+    $('#delete_wizard').modal 'hide'
+
+# Bind the event handlers required for exporting templates.
+loadExportEvents = ->
+  log.trace()
+  # Simulate alert closing without removing alert from the DOM.
+  $('#export_error .close').click ->
+    $(this).next().html('&nbsp').parent().hide()
+  $('#export_wizard').on 'hide', ->
+    $('#export_content').val ''
+    $('#export_error').find('span').html('&nbsp;').end().hide()
+  # Show the wizard and create the exported data based on the selected
+  # templates.
+  $('#export_btn').click ->
+    log.info 'Launching export wizard'
+    $('#export_content').val createExport getSelectedTemplates()
+    $('#export_wizard').modal 'show'
+  # Cancel the export process and hide the export wizard.
+  $('#export_close_btn').click -> $('#export_wizard').modal 'hide'
+  # Copy the JSON string into the system clipboard.
+  $('#export_copy_btn').click ->
+    $this = $ this
+    ext.copy $('#export_content').val(), yes
+    $this.text i18n.get 'opt_export_wizard_copy_alt_button'
+    $this.delay(800).queue ->
+      $this.text i18n.get 'opt_export_wizard_copy_button'
+      $this.dequeue()
+  # Prompt the user to select a file location to save the exported data.
+  $('#export_save_btn').click ->
+    str = $('#export_content').val()
+    # Export-specific error handler for dealing with the FileSystem API.
+    exportErrorHandler = fileErrorHandler (message) ->
+      log.error message
+      $('#export_error').find('span').text(message).end().show()
+    # Write the contents of the textarea in to a temporary file and then prompt
+    # the user to download it.
+    # TODO: Fix as this method no longer initiates download
+    window.webkitRequestFileSystem window.TEMPORARY, 1024 * 1024, (fs) ->
+      fs.root.getFile 'templates.json', create: yes, (fe) ->
+        fe.createWriter (fw) ->
+          builder = new WebKitBlobBuilder()
+          done    = no
+          builder.append str
+          fw.onerror    = exportErrorHandler
+          fw.onwriteend = ->
+            if done
+              $('#export_error').find('span').html('&nbsp;').end().hide()
+              window.location.href = fe.toURL()
+            else
+              done = yes
+              fw.write builder.getBlob 'application/json'
+          fw.truncate 0
+      , exportErrorHandler
+    , exportErrorHandler
+
+# Create an `option` element for each available template image.  
+# Each element is inserted in to the `select` element containing template
+# images on the templates tab.
+loadImages = ->
+  log.trace()
+  imagePreview = $ '#template_image_preview'
+  images       = $ '#template_image'
+  images.append $ '<option/>',
+    text:  icons.getMessage()
+    value: ''
+  images.append $ '<option/>',
+    disabled: 'disabled'
+    text:     '---------------'
+  for image in icons.ICONS
+    images.append $ '<option/>',
+      text:  image.getMessage()
+      value: image.name
+  images.change ->
+    opt = images.find 'option:selected'
+    imagePreview.attr 'class', icons.getClass opt.val()
+  images.change()
+
+# Bind the event handlers required for importing templates.
+loadImportEvents = ->
+  log.trace()
+  data = null
+  # Simulate alert closing without removing alert from the DOM.
+  $('#import_error .close').click ->
+    $(this).next().html('&nbsp').parent().hide()
+  $('#import_wizard').on 'hide', ->
+    $('#import_final_btn').prop 'disabled', yes
+    $('#import_wizard_stage2, #import_back_btn, #import_final_btn').hide()
+    $('#import_wizard_stage1, #import_continue_btn').show()
+    $('#import_content, #import_file_btn').val ''
+    $('#import_file_btn').val ''
+    $('#import_error').find('span').html('&nbsp;').end().hide()
+  # Restore the previous view in the import process.
+  $('#import_back_btn').click ->
+    log.info 'Going back to previous import stage'
+    $('#import_wizard_stage2, #import_back_btn, #import_final_btn').hide()
+    $('#import_wizard_stage1, #import_continue_btn').show()
+  # Prompt the user to input/load the data to be imported.
+  $('#import_btn').click ->
+    log.info 'Launching import wizard'
+    $('#import_wizard').modal 'show'
+  # Enable/disable the finalize button depending on whether or not any
+  # templates are currently selected.
+  $('#import_items').change ->
+    $('#import_final_btn').prop 'disabled',
+      not $(this).find(':selected').length
+  # Select all of the templates in the list.
+  $('#import_select_all_btn').click ->
+    $('#import_items option').prop('selected', yes).parent().focus()
+    $('#import_final_btn').prop 'disabled', no
+  # Deselect all of the templates in the list.
+  $('#import_deselect_all_btn').click ->
+    $('#import_items option').prop('selected', no).parent().focus()
+    $('#import_final_btn').prop 'disabled', yes
+  # Read the contents of the loaded file in to the text area and perform simple
+  # error handling.
+  $('#import_file_btn').change (e) ->
+    file   = e.target.files[0]
+    reader = new FileReader()
+    reader.onerror = fileErrorHandler (message) ->
+      log.error message
+      $('#import_error').find('span').text(message).end().show()
+    reader.onload = (e) ->
+      result = e.target.result
+      log.debug 'Following contents were read from the file...', result
+      $('#import_error').find('span').html('&nbsp;').end().hide()
+      $('#import_content').val result
+    reader.readAsText file
+  # Finalize the import process.
+  $('#import_final_btn').click ->
+    if data?
+      for template in data.templates
+        if $("#import_items option[value='#{template.key}']").is ':selected'
+          existingFound = no
+          for existing, i in ext.templates when existing.key is template.key
+            existingFound    = yes
+            template.index   = i
+            ext.templates[i] = template
+          unless existingFound
+            template.index = ext.templates.length
+            ext.templates.push template
+      store.set 'templates', ext.templates
+      ext.updateTemplates()
+      loadRows()
+      options.general.updateTemplates()
+      analytics.track 'Templates', 'Imported', data.version,
+        data.templates.length
+    $('#import_wizard').modal 'hide'
+    $('#template_search :reset').hide()
+    $('#template_search :text').val ''
+  # Cancel the import process.
+  $('#import_close_btn').click -> $('#import_wizard').modal 'hide'
+  # Paste the contents of the system clipboard in to the textarea.
+  $('#import_paste_btn').click ->
+    $this = $ this
+    $('#import_file_btn').val ''
+    $('#import_content').val ext.paste()
+    $this.text i18n.get 'opt_import_wizard_paste_alt_button'
+    $this.delay(800).queue ->
+      $this.text i18n.get 'opt_import_wizard_paste_button'
+      $this.dequeue()
+  # Read the imported data and attempt to extract any valid templates and list
+  # the changes to user for them to check and finalize.
+  $('#import_continue_btn').click ->
+    $this = $(this).prop 'disabled', yes
+    list  = $ '#import_items'
+    str   = $('#import_content').val()
+    $('#import_error').find('span').html('&nbsp;').end().hide()
+    list.find('option').remove()
+    try
+      importData = createImport str
+    catch error
+      log.error error
+      $('#import_error').find('span').text(error).end().show()
+    if importData
+      data = readImport importData
+      if data.templates.length
+        $('#import_count').text data.templates.length
+        for template in data.templates
+          list.append $ '<option/>',
+            text:  template.title
+            value: template.key
+        $('#import_final_btn').prop 'disabled', yes
+        $('#import_wizard_stage1, #import_continue_btn').hide()
+        $('#import_wizard_stage2, #import_back_btn, #import_final_btn').show()
+    $this.prop 'disabled', no
+
+# Create a `tr` element representing the `template` provided.  
+# The element returned should then be inserted in to the table that is
+# displaying the templates.
+loadRow = (template, shortcutModifiers) ->
+  log.trace()
+  log.debug 'Creating a row for the following template...', template
+  shortcutModifiers ?= if ext.isThisPlatform 'mac'
+      ext.SHORTCUT_MAC_MODIFIERS
+    else
+      ext.SHORTCUT_MODIFIERS
+  row = $ '<tr/>', draggable: yes
+  alignCenter = css: 'text-align': 'center'
+  row.append $('<td/>', alignCenter).append $ '<input/>',
+    title: i18n.get 'opt_select_box'
+    type:  'checkbox'
+    value: template.key
+  row.append $('<td/>').append $ '<span/>',
+    html:  """
+      <i class="#{icons.getClass template.image}"></i> #{template.title}
+    """
+    title: i18n.get 'opt_template_modify_title', template.title
+  row.append $ '<td/>', html: "#{shortcutModifiers}#{template.shortcut}"
+  enabledIcon = if template.enabled then 'ok' else 'remove'
+  row.append $('<td/>', alignCenter).append $ '<i/>',
+    class: "icon-#{enabledIcon}"
+  row.append $('<td/>').append $ '<span/>',
+    text:  template.content
+    title: template.content
+  row.append $('<td/>').append $ '<span/>',
+    class: 'muted'
+    text:  '::::'
+    title: i18n.get 'opt_template_move_title', template.title
+  row
+
+# Load the `templates` into the table to be displayed to the user.  
+# Optionally, pagination can be disabled but this should only really be used
+# internally by the pagination process.
+loadRows = (templates = ext.templates, pagination = yes) ->
+  log.trace()
+  table = $ '#templates'
+  # Start from a clean slate.
+  table.find('tbody tr').remove()
+  if templates.length
+    # Determine keyboard shortcut modifier for current system.
+    shortcutModifiers = if ext.isThisPlatform 'mac'
+      ext.SHORTCUT_MAC_MODIFIERS
+    else
+      ext.SHORTCUT_MODIFIERS
+    # Create and insert rows representing each template.
+    for template in templates
+      table.append loadRow template, shortcutModifiers
+    paginate templates if pagination
+    options.activateTooltips table
+    activateDraggables()
+    activateModifications()
+    activateSelections()
+  else
+    # Show single row to indicate no templates were found.
+    table.find('tbody').append $('<tr/>').append $ '<td/>',
+      colspan: table.find('thead th').length
+      html:    i18n.get 'opt_no_templates_found_text'
+
+# Open the template wizard after optionally setting the current context.
+openWizard = (template) ->
+  setContext template if arguments.length
+  $('#template_wizard').modal 'show'
+
+# Update the pagination UI for the specified `templates`.
+paginate = (templates) ->
+  log.trace()
+  limit      = parseInt $('#template_filter').val()
+  pagination = $ '#pagination'
+  if templates.length > limit > 0
+    children = pagination.find 'ul li'
+    pages    = Math.ceil templates.length / limit
+    # Refresh the pagination link states based on the new `page`.
+    refreshPagination = (page = 1) ->
+      # Select and display the desired templates subset.
+      start = limit * (page - 1)
+      end   = start + limit
+      loadRows templates[start...end], no
+      # Ensure the *previous* link is only enabled when a previous page exists.
+      pagination.find('ul li:first-child').each ->
+        $this = $ this
+        if page is 1
+          $this.addClass 'disabled'
+        else
+          $this.removeClass 'disabled'
+      # Ensure only the active page is highlighted.
+      pagination.find('ul li:not(:first-child, :last-child)').each ->
+        $this = $ this
+        if page is parseInt $this.text()
+          $this.addClass 'active'
+        else
+          $this.removeClass 'active'
+      # Ensure the *next* link is only enabled when a next page exists.
+      pagination.find('ul li:last-child').each ->
+        $this = $ this
+        if page is pages
+          $this.addClass 'disabled'
+        else
+          $this.removeClass 'disabled'
+    # Create and insert pagination links.
+    if pages isnt children.length - 2
+      children.remove()
+      list = pagination.find 'ul'
+      list.append $('<li/>').append $ '<a>&laquo;</a>'
+      for page in [1..pages]
+        list.append $('<li/>').append $ "<a>#{page}</a>"
+      list.append $('<li/>').append $ '<a>&raquo;</a>'
+    # Bind event handlers to manage navigating pages.
+    pagination.find('ul li').off 'click'
+    pagination.find('ul li:first-child').click ->
+      unless $(this).hasClass 'disabled'
+        refreshPagination pagination.find('ul li.active').index() - 1
+    pagination.find('ul li:not(:first-child, :last-child)').click ->
+      $this = $ this
+      unless $this.hasClass 'active'
+        refreshPagination $this.index()
+    pagination.find('ul li:last-child').click ->
+      unless $(this).hasClass 'disabled'
+        refreshPagination pagination.find('ul li.active').index() + 1
+    refreshPagination()
+    pagination.show()
+  else
+    # Hide the pagination and remove all links as the results fit on a single
+    # page.
+    pagination.hide().find('ul li').remove()
+
+# Read the imported data created by `createImport` and extract all of the
+# imported templates that appear to be valid.  
+# When overwriting an existing template, only the properties with valid values
+# will be transferred with the exception of protected properties (i.e. on
+# read-only templates).  
+# When creating a new template, any invalid properties will be replaced with
+# their default values.
+readImport = (importData) ->
+  log.trace()
+  log.debug 'Importing the following data...', importData
+  data       = templates: []
+  keys       = []
+  storedKeys = (template.key for template in ext.templates)
+  for template in importData.templates
+    existing = {}
+    # Ensure templates imported from previous versions are valid for 1.0.0+.
+    if importData.version < '1.0.0'
+      template.image = if template.image > 0
+        icons.fromLegacy(template.image - 1)?.name or ''
+      else
+        ''
+      template.key   = ext.getKeyForName template.name
+      template.usage = 0
+    else if importData.version < '1.1.0'
+      template.image = icons.fromLegacy(template.image)?.name or ''
+    if validateImportedTemplate template
+      if template.key not in storedKeys and template.key not in keys
+        # Attempt to create and add the new template.
+        template = addImportedTemplate template
+        if template
+          template.index = storedKeys.length + keys.length
+          data.templates.push template
+          keys.push template.key
+      else
+        # Attempt to update the previously imported template.
+        for imported, i in data.templates when imported.key is template.key
+          existing          = updateImportedTemplate template, imported
+          data.templates[i] = existing
+          break
+        unless existing.key
+          # Attempt to locate the existing template and clone it.
+          existing = utils.clone (ext.queryTemplate (temp) ->
+            temp.key is template.key
+          ), yes
+          # Attempt to update the derived template.
+          if existing
+            existing = updateImportedTemplate template, existing
+            data.templates.push existing
+            keys.push existing.key
+  log.debug 'Following data was derived from that imported...', data
+  data
+
+# Update the state of the reset button depending on the current search input.
+refreshResetButton = ->
+  log.trace()
+  container = $ '#template_search'
+  resetBtn  = container.find ':reset'
+  if container.find(':text').val()
+    container.addClass 'input-prepend'
+    resetBtn.show()
+  else
+    resetBtn.hide()
+    container.removeClass 'input-prepend'
+
+# Update the state of certain buttons depending on whether any select boxes
+# have been checked.
+refreshSelectButtons = ->
+  log.trace()
+  selections = $ '#templates tbody :checkbox:checked'
+  $('#delete_btn, #export_btn').prop 'disabled', selections.length is 0
+
+# Reorder the templates after a drag and drop *swap* by updating their indices
+# and sorting them accordingly.  
+# These changes are then persisted and should be reflected throughout the
+# extension.
+reorderTemplates = (fromIndex, toIndex) ->
+  log.trace()
+  templates = ext.templates
+  if fromIndex? and toIndex?
+    templates[fromIndex].index = toIndex
+    templates[toIndex].index   = fromIndex
+  store.set 'templates', templates
+  ext.updateTemplates()
+  options.general.updateTemplates()
+
+# Reset the wizard field values based on the current context.
+resetWizard = ->
+  log.trace()
+  activeTemplate ?= {}
+  $('#template_wizard .modal-header h3').html if activeTemplate.key?
+    i18n.get 'opt_template_modify_title', activeTemplate.title
+  else
+    i18n.get 'opt_template_new_header'
+  # Assign values to their respective fields.
+  $('#template_content').val activeTemplate.content or ''
+  $('#template_enabled').prop 'checked', activeTemplate.enabled ? yes
+  $('#template_shortcut').val activeTemplate.shortcut or ''
+  $('#template_title').val activeTemplate.title or ''
+  # Update the fields and controls to reflect selected option.
+  imgOpt = $ "#template_image option[value='#{activeTemplate.image}']"
+  if imgOpt.length is 0
+    $('#template_image option:first-child').attr 'selected', 'selected'
+  else
+    imgOpt.attr 'selected', 'selected'
+  $('#template_image').change()
+  # Disable appropriate fields for predefined templates.
+  $('#template_content, #template_title').prop 'disabled',
+    !!activeTemplate.readOnly
+  $('#template_delete_btn').each ->
+    $this = $ this
+    $this.prop 'disabled', !!activeTemplate.readOnly
+    if activeTemplate.key? then $this.show() else $this.hide()
+
+# Update and persist the `template` provided.  
+# Any required validation should be performed perior to calling this method.
+saveTemplate = (template) ->
+  log.trace()
+  log.debug 'Saving the following template...', template
+  isNew     = not template.key?
+  templates = store.get 'templates'
+  if isNew
+    template.key = utils.keyGen()
+    templates.push template
+  else
+    for temp, i in templates when temp.key is template.key
+      templates[i] = template
+      break
+  store.set 'templates', templates
+  ext.updateTemplates()
+  loadRows()
+  options.general.updateTemplates()
+  action = if isNew then 'Added' else 'Saved'
+  analytics.track 'Templates', action, template.title
+  template
+
+# Search the templates for the specified `query` and filter those displayed.
+searchTemplates = (query = '') ->
+  log.trace()
+  keywords = query.replace(R_CLEAN_QUERY, '').split R_WHITESPACE
+  if keywords.length
+    expression    = ///
+      #{(keyword for keyword in keywords when keyword).join '|'}
+    ///i
+    searchResults = ext.queryTemplates (template) ->
+      expression.test "#{template.content} #{template.title}"
+  else
+    searchResults = null
+  loadRows searchResults ? ext.templates
+  refreshResetButton()
+  refreshSelectButtons()
+
+# Set the current context of the template wizard.
+setContext = (template = {}) ->
+  log.trace()
+  activeTemplate = {}
+  $.extend activeTemplate, template
+  resetWizard()
+
+# Update the existing template with information extracted from the imported
+# template provided.  
+# `template` should not be altered in any way and the properties of `existing`
+# should only be changed if the replacement values are valid.  
+# Protected properties will only be updated if `existing` is not read-only and
+# the replacement value is valid.
+updateImportedTemplate = (template, existing) ->
+  log.trace()
+  log.debug 'Updating existing template with the following imported data...',
+    template
+  # Ensure that read-only templates are protected.
+  unless existing.readOnly
+    existing.content = template.content
+    # Only allow valid titles.
+    existing.title = template.title if 0 < template.title.length <= 32
+  existing.enabled = template.enabled
+  # Only allow existing images or *None*.
+  if template.image is '' or icons.exists template.image
+    existing.image = template.image
+  # Only allow valid keyboard shortcuts or *empty*.
+  if template.shortcut is '' or isShortcutValid template.shortcut
+    existing.shortcut = template.shortcut
+  existing.usage = template.usage
+  log.debug 'Updated the following template...', existing
+  existing
+
+# Indicate whether or not `template` contains the required fields of the
+# correct types.
+# Perform a *soft* validation without validating the values themselves, instead
+# only their existence.
+validateImportedTemplate = (template) ->
+  log.trace()
+  log.debug 'Validating property types of the following template...', template
+  'object'  is typeof template          and
+  'string'  is typeof template.content  and
+  'boolean' is typeof template.enabled  and
+  'string'  is typeof template.image    and
+  'string'  is typeof template.key      and
+  'string'  is typeof template.shortcut and
+  'string'  is typeof template.title    and
+  'number'  is typeof template.usage
+
+# Validate the `template` and return any validation errors/warnings that were
+# encountered.
+validateTemplate = (template) ->
+  log.trace()
+  isNew  = not template.key?
+  errors = []
+  log.debug 'Validating the following template...', template
+  unless template.readOnly
+    # Title is missing but is required.
+    unless template.title
+      errors.push new options.ValidationError 'template_title',
+        'opt_template_title_invalid'
+  # Validate whether or not the shortcut is valid.
+  if template.shortcut and not isShortcutValid template.shortcut
+    errors.push new options.ValidationError 'template_shortcut',
+      'opt_template_shortcut_invalid'
+  # Indicate whether or not any validation errors were encountered.
+  log.debug 'Following validation errors were found...', errors
+  errors
+
+# Templates tab setup
+# -------------------
+
+options.tab 'templates', ->
+  log.trace()
+  log.info 'Initializing the templates tab'
+  $('#template_shortcut_modifier').html if ext.isThisPlatform 'mac'
+    ext.SHORTCUT_MAC_MODIFIERS
+  else
+    ext.SHORTCUT_MODIFIERS
+  load()

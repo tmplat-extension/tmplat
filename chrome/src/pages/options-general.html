@@ -1,0 +1,171 @@
+<div class="row">
+  <div class="span12">
+    <form class="form-horizontal">
+      <fieldset>
+        <legend i18n-content="opt_anchor_header"></legend>
+        <p i18n-content="opt_anchor_text"></p>
+        <div class="control-group">
+          <label class="control-label" for="anchorTitle" i18n-content="opt_anchor_title_label"></label>
+          <div class="controls">
+            <label class="checkbox span5 tight-left">
+              <input type="checkbox" id="anchorTitle">
+              <span i18n-content="opt_anchor_title_text"></span>
+              <p class="help-block" i18n-content="opt_anchor_title_sub_text"></p>
+            </label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="anchorTarget" i18n-content="opt_anchor_target_label"></label>
+          <div class="controls">
+            <label class="checkbox span5 tight-left">
+              <input type="checkbox" id="anchorTarget">
+              <span i18n-content="opt_anchor_target_text"></span>
+              <p class="help-block" i18n-content="opt_anchor_target_sub_text"></p>
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend i18n-content="opt_notification_header"></legend>
+        <div class="control-group">
+          <label class="control-label" for="notifications" i18n-content="opt_notification_label"></label>
+          <div class="controls">
+            <label class="checkbox span5 tight-left">
+              <input type="checkbox" id="notifications">
+              <span i18n-content="opt_notification_text"></span>
+              <p class="help-block" i18n-content="opt_notification_sub_text"></p>
+            </label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="notificationDuration" i18n-content="opt_notification_duration_label"></label>
+          <div class="controls">
+            <div class="span5 tight-left">
+              <label class="input-append gap-bottom">
+                <input class="input-mini" id="notificationDuration" max="60" min="0" size="1" step="1" type="number"><span class="add-on" i18n-content="opt_notification_duration_add_on_text"></span>
+              </label>
+              <label for="notificationDuration">
+                <span i18n-content="opt_notification_duration_text"></span>
+                <p class="help-block" i18n-content="opt_notification_duration_sub_text"></p>
+              </label>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend i18n-content="opt_toolbar_behaviour_header"></legend>
+        <div class="control-group">
+          <label class="control-label" i18n-content="opt_toolbar_behaviour_label"></label>
+          <div class="controls">
+            <div id="toolbarPopup" class="btn-group" data-toggle="buttons-radio">
+              <button id="toolbarPopupYes" class="btn" i18n-values=".innerHTML:opt_toolbar_popup_yes_button;title:opt_toolbar_popup_yes_title"></button>
+              <button id="toolbarPopupNo" class="btn" i18n-values=".innerHTML:opt_toolbar_popup_no_button;title:opt_toolbar_popup_no_title"></button>
+            </div>
+            <p class="help-block" i18n-content="opt_toolbar_behaviour_sub_text"></p>
+          </div>
+        </div>
+        <div>
+          <div class="toolbarPopupNo">
+            <div class="control-group">
+              <label class="control-label" for="toolbarKey" i18n-content="opt_toolbar_key_label"></label>
+              <div class="controls">
+                <label class="span5 tight-bottom tight-left">
+                  <select id="toolbarKey" class="input-large" size="1"></select>
+                  <p class="tight-bottom" i18n-content="opt_toolbar_key_text"></p>
+                </label>
+              </div>
+            </div>
+          </div>
+          <div class="toolbarPopupYes">
+            <div class="control-group">
+              <label class="control-label" for="toolbarClose" i18n-content="opt_toolbar_close_label"></label>
+              <div class="controls">
+                <label class="checkbox span5 tight-left">
+                  <input type="checkbox" id="toolbarClose">
+                  <span i18n-content="opt_toolbar_close_text"></span>
+                  <p class="help-block" i18n-content="opt_toolbar_close_sub_text"></p>
+                </label>
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label" for="toolbarOptions" i18n-content="opt_toolbar_options_label"></label>
+              <div class="controls">
+                <label class="checkbox span5 tight-left">
+                  <input type="checkbox" id="toolbarOptions">
+                  <span i18n-content="opt_toolbar_options_text"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend i18n-content="opt_menu_header"></legend>
+        <div class="control-group">
+          <label class="control-label" for="menuEnabled" i18n-content="opt_menu_enabled_label"></label>
+          <div class="controls">
+            <label class="checkbox span5 tight-left">
+              <input type="checkbox" id="menuEnabled">
+              <span i18n-content="opt_menu_enabled_text"></span>
+            </label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="menuOptions" i18n-content="opt_menu_options_label"></label>
+          <div class="controls">
+            <label class="checkbox span5 tight-left">
+              <input type="checkbox" id="menuOptions">
+              <span i18n-content="opt_menu_options_text"></span>
+            </label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="menuPaste" i18n-content="opt_menu_paste_label"></label>
+          <div class="controls">
+            <label class="checkbox span5 tight-left">
+              <input type="checkbox" id="menuPaste">
+              <span i18n-content="opt_menu_paste_text"></span>
+              <p class="help-block" i18n-content="opt_protected_sub_text"></p>
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend i18n-content="opt_shortcuts_header"></legend>
+        <div class="control-group">
+          <label class="control-label" for="shortcutsEnabled" i18n-content="opt_shortcuts_enabled_label"></label>
+          <div class="controls">
+            <label class="checkbox span5 tight-left">
+              <input type="checkbox" id="shortcutsEnabled">
+              <span i18n-content="opt_shortcuts_enabled_text"></span>
+            </label>
+          </div>
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="shortcutsPaste" i18n-content="opt_shortcuts_paste_label"></label>
+          <div class="controls">
+            <label class="checkbox span5 tight-left">
+              <input type="checkbox" id="shortcutsPaste">
+              <span i18n-content="opt_shortcuts_paste_text"></span>
+              <p class="help-block" i18n-content="opt_protected_sub_text"></p>
+            </label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend i18n-content="opt_misc_header"></legend>
+        <div class="control-group">
+          <label class="control-label" for="analytics" i18n-content="opt_analytics_label"></label>
+          <div class="controls">
+            <label class="checkbox span5 tight-left">
+              <input type="checkbox" id="analytics">
+              <span i18n-content="opt_analytics_text"></span>
+              <p class="help-block" i18n-content="opt_analytics_sub_text"></p>
+            </label>
+          </div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</div>
+<script src="../lib/options-general.js"></script>

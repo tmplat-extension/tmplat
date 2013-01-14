@@ -1,0 +1,18 @@
+#templates {table-layout: fixed;}
+#templates tbody td:not(:only-child) {cursor: pointer;}
+#templates tbody td:nth-child(2) span, #templates tbody td:nth-child(5) span {display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+#templates tbody td:last-child span {cursor: move; display: block; font-weight: bold; margin: -3px 0 0 0; transform: rotate(90deg); -webkit-transform: rotate(90deg);}
+#templates input[type="checkbox"] {margin: 0;}
+#templates thead th:first-child {text-align: center; width: 13px;}
+#templates thead th:nth-child(2) {width: 30%;}
+#templates thead th:nth-child(3) {width: 10%;}
+#templates thead th:nth-child(4) {text-align: center; width: 10%;}
+#templates thead th:nth-child(5) {width: 50%;}
+#templates thead th:last-child {padding-left: 4px; width: 10px;}
+#import_error, #export_error {margin-bottom: 8px;}
+#import_content, #export_content {max-height: 284px;}
+#template_content {resize: both;}
+#template_shortcut {text-transform: uppercase;}
+a[popover="opt_template_shortcut_help"] {position: relative; top: -25px; left: 145px; float: left; height: 0;}
+#template_image_preview {margin: -4px 0 0 6px;}
+#template_wizard .modal-body {position: static;}

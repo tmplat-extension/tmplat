@@ -3075,6 +3075,24 @@
     "message": "Select those to be imported;",
     "description": "2nd paragraph for the final successful step of the Import dialog."
   },
+  "opt_loading_completed_text": {
+    "message": "Completed!",
+    "description": "Completion text for the contents of the Loading dialog that first appears on the Options page."
+  },
+  "opt_loading_header": {
+    "message": "Loading...",
+    "description": "Header for the Loading dialog that first appears on the Options page."
+  },
+  "opt_loading_text": {
+    "message": "Loading $TAB$...",
+    "description": "Text for the contents of the Loading dialog that first appears on the Options page.",
+    "placeholders": {
+      "tab": {
+        "content": "$1",
+        "example": "Guide"
+      }
+    }
+  },
   "opt_logger_enabled_label": {
     "message": "Enabled",
     "description": "Label for the Enabled field in the Developer Tools dialog on the Options page under the Logging section."
