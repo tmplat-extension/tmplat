@@ -1,3 +1,16 @@
+2013.01.15, Version 1.2.0
+
+* [#110](https://github.com/neocotic/template/issues/110): Replace calls to deprecated chrome API methods
+* [#111](https://github.com/neocotic/template/issues/111): Update [Bootstrap][] to v2.2.2
+* [#115](https://github.com/neocotic/template/issues/115): Add new operations for query selectors
+* [#116](https://github.com/neocotic/template/issues/116): Redesign Templates tab on Options page
+* [#117](https://github.com/neocotic/template/issues/117): Improve build process and restructure code to simplify support for other browsers
+* [#120](https://github.com/neocotic/template/issues/120): Update [jQuery][] to v1.8.3
+* [#120](https://github.com/neocotic/template/issues/120): Update [jQuery URL Parser][] to v2.2.1
+* [#120](https://github.com/neocotic/template/issues/120): Update [html.md][] to v2.0.1
+* [#130](https://github.com/neocotic/template/issues/130): Add new configuration file to simplify future changes
+* Plenty of bug fixes and UI tweaks
+
 2012.05.31, Version 1.1.4
 
 * [#108](https://github.com/neocotic/template/issues/108): Improve inline installation compatibility
@@ -302,11 +315,13 @@
 [date-ext]: http://neocotic.com/date-ext
 [glyphicons]: http://glyphicons.com
 [goo.gl]: http://goo.gl
+[html.md]: http://neocotic.com/html.md
 [ie tab]: https://chrome.google.com/webstore/detail/hehijbfgiekmjfkfjpbkbammjbdenadd
 [ie tab classic]: https://chrome.google.com/webstore/detail/miedgcmlgpmdagojnnbemlkgidepfjfi
 [ie tab multi (enhance)]: https://chrome.google.com/webstore/detail/fnfnbeppfinmnjnjhedifcfllpcfgeea
 [inline installation]: http://code.google.com/chrome/webstore/docs/inline_installation.html
 [jquery]: http://jquery.com
+[jquery url parser]: https://github.com/allmarkedup/jQuery-URL-Parser
 [manifest version]: http://code.google.com/chrome/extensions/manifestVersion.html
 [markdown]: http://en.wikipedia.org/wiki/Markdown
 [mit license]: http://www.opensource.org/licenses/mit-license.php
