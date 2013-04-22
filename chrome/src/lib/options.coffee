@@ -375,12 +375,18 @@ loadTemplateExportEvents = ->
     $(this).next().html('&nbsp').parent().hide()
   $('#export_wizard').on 'hide', ->
     $('#export_content').val ''
+    $('#export_save_btn').attr 'href', '#'
     $('#export_error').find('span').html('&nbsp;').end().hide()
   # Show the wizard and create the exported data based on the selected
   # templates.
   $('#export_btn').click ->
     log.info 'Launching export wizard'
-    $('#export_content').val createExport getSelectedTemplates()
+    str  = createExport getSelectedTemplates()
+    $('#export_content').val str
+    # TODO: Try and determine why suggested file name is `templates.bin`
+    blob = new Blob [str], type: 'application/json'
+    URL  = window.URL or window.webkitURL
+    $('#export_save_btn').attr 'href', URL.createObjectURL blob
     $('#export_wizard').modal 'show'
   # Cancel the export process and hide the export wizard.
   $('#export_close_btn').click -> $('#export_wizard').modal 'hide'
@@ -392,33 +398,6 @@ loadTemplateExportEvents = ->
     $this.delay(800).queue ->
       $this.text i18n.get 'opt_export_wizard_copy_button'
       $this.dequeue()
-  # Prompt the user to select a file location to save the exported data.
-  $('#export_save_btn').click ->
-    str = $('#export_content').val()
-    # Export-specific error handler for dealing with the FileSystem API.
-    exportErrorHandler = fileErrorHandler (message) ->
-      log.error message
-      $('#export_error').find('span').text(message).end().show()
-    # Write the contents of the textarea in to a temporary file and then prompt
-    # the user to download it.
-    # TODO: Fix as this method no longer initiates download
-    window.webkitRequestFileSystem window.TEMPORARY, 1024 * 1024, (fs) ->
-      fs.root.getFile 'templates.json', create: yes, (fe) ->
-        fe.createWriter (fw) ->
-          builder = new WebKitBlobBuilder()
-          done    = no
-          builder.append str
-          fw.onerror    = exportErrorHandler
-          fw.onwriteend = ->
-            if done
-              $('#export_error').find('span').html('&nbsp;').end().hide()
-              window.location.href = fe.toURL()
-            else
-              done = yes
-              fw.write builder.getBlob 'application/json'
-          fw.truncate 0
-      , exportErrorHandler
-    , exportErrorHandler
 
 # Bind the event handlers required for importing templates.
 loadTemplateImportEvents = ->
