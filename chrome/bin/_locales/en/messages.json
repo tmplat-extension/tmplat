@@ -1124,7 +1124,7 @@
     }
   },
   "opt_guide_introduction_simple_tag_text_2": {
-    "message": "Values are not escaped by default and, in order to do so, you must use double braces like this $SYNTAX$. This will escape $CHARACTERS$ characters so that the final output can be safely copied in to $O_ABBR_1$Extensible Markup Language$O_ABBR_2$XML$C_ABBR$ and $O_ABBR_1$Hyper Text Markup Language$O_ABBR_2$HTML$C_ABBR$.",
+    "message": "Values are not escaped by default and, in order to do so, you must either use double braces like $SYNTAX_DOUBLE$ or a leading ampersand like $SYNTAX_AMP$. This will escape $CHARACTERS$ characters so that the final output can be safely copied in to $O_ABBR_1$Extensible Markup Language$O_ABBR_2$XML$C_ABBR$ and $O_ABBR_1$Hyper Text Markup Language$O_ABBR_2$HTML$C_ABBR$.",
     "description": "2nd paragraph for the Simple Tag area on the Guide tab of the Options page under the Introduction section.",
     "placeholders": {
       "c_abbr": {
@@ -1143,7 +1143,11 @@
         "content": "\">",
         "example": "\">"
       },
-      "syntax": {
+      "syntax_amp": {
+        "content": "<code>{&amp;name}</code>",
+        "example": "{&name}"
+      },
+      "syntax_double": {
         "content": "<code>{{name}}</code>",
         "example": "{{name}}"
       }
