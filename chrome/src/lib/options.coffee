@@ -383,7 +383,6 @@ loadTemplateExportEvents = ->
     log.info 'Launching export wizard'
     str  = createExport getSelectedTemplates()
     $('#export_content').val str
-    # TODO: Try and determine why suggested file name is `templates.bin`
     blob = new Blob [str], type: 'application/json'
     URL  = window.URL or window.webkitURL
     $('#export_save_btn').attr 'href', URL.createObjectURL blob
