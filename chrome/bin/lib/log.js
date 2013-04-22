@@ -171,7 +171,7 @@
         caller = this.trace;
       }
       if (loggable(this.TRACE)) {
-        return console.log(new this.StackTrace(caller).stack);
+        return console.log(new this.Trace(caller).stack);
       }
     };
 
@@ -192,18 +192,19 @@
 
   })(utils.Class));
 
-  log.StackTrace = (function(_super) {
+  log.Trace = (function(_super) {
 
-    __extends(StackTrace, _super);
+    __extends(Trace, _super);
 
-    function StackTrace(caller) {
+    function Trace(caller) {
       if (caller == null) {
-        caller = log.StackTrace;
+        caller = log.Trace;
       }
       Error.captureStackTrace(this, caller);
+      this.stack = this.stack.replace(/^Error/, 'Trace');
     }
 
-    return StackTrace;
+    return Trace;
 
   })(utils.Class);
 
