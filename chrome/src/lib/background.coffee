@@ -871,6 +871,8 @@ buildStandardData = (tab, getCallback) ->
       encodeURIComponent(render text) ? ''
     # Deprecated since 0.1.0.2, use `encode` instead.
     encoded:               -> encodeURIComponent @url
+    escape:                -> (text, render) ->
+      _.escape render text
     favicon:               ctab.favIconUrl
     fparam:                -> (text, render) ->
       url.fparam(render text) ? ''
@@ -951,6 +953,8 @@ buildStandardData = (tab, getCallback) ->
       render(text).trimLeft()
     trimright:             -> (text, render) ->
       render(text).trimRight()
+    unescape:              -> (text, render) ->
+      _.unescape render text
     uppercase:             -> (text, render) ->
       render(text).toUpperCase()
     url:                   url.attr 'source'
