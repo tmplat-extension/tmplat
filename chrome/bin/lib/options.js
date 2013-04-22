@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var ErrorMessage, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, closeWizard, createExport, createImport, deleteTemplates, deriveTemplate, ext, feedback, feedbackAdded, fileErrorHandler, getSelectedTemplates, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, searchResults, searchTemplates, setContext, trimToLower, trimToUpper, updateImportedTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate,
+  var ErrorMessage, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, closeWizard, createExport, createImport, deleteTemplates, deriveTemplate, enableTemplates, ext, feedback, feedbackAdded, fileErrorHandler, getSelectedTemplates, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, searchResults, searchTemplates, setContext, trimToLower, trimToUpper, updateImportedTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -410,6 +410,9 @@
         return closeWizard();
       }
     });
+    $('#disable_btn, #enable_btn').click(function() {
+      return enableTemplates(getSelectedTemplates(), $(this).is('#enable_btn'));
+    });
     $('#add_btn').click(function() {
       return openWizard(null);
     });
@@ -682,13 +685,13 @@
       activateTooltips(table);
       activateDraggables();
       activateModifications();
-      return activateSelections();
     } else {
-      return table.find('tbody').append($('<tr/>').append($('<td/>', {
+      table.find('tbody').append($('<tr/>').append($('<td/>', {
         colspan: table.find('thead th').length,
         html: i18n.get('opt_no_templates_found_text')
       })));
     }
+    return activateSelections();
   };
 
   loadToolbar = function() {
@@ -904,6 +907,44 @@
       }
       loadTemplateRows(searchResults != null ? searchResults : ext.templates);
       return updateToolbarTemplates();
+    }
+  };
+
+  enableTemplates = function(templates, enable) {
+    var action, keys, stored, template, _i, _len, _ref;
+    if (enable == null) {
+      enable = true;
+    }
+    log.trace();
+    keys = (function() {
+      var _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = templates.length; _i < _len; _i++) {
+        template = templates[_i];
+        _results.push(template.key);
+      }
+      return _results;
+    })();
+    if (keys.length) {
+      stored = store.get('templates');
+      for (_i = 0, _len = stored.length; _i < _len; _i++) {
+        template = stored[_i];
+        if (_ref = template.key, __indexOf.call(keys, _ref) >= 0) {
+          template.enabled = enable;
+        }
+      }
+      store.set('templates', stored);
+      ext.updateTemplates();
+      action = enable ? 'Enabled' : 'Disabled';
+      if (keys.length > 1) {
+        log.debug("" + action + " " + keys.length + " templates");
+        analytics.track('Templates', action, "Count[" + keys.length + "]");
+      } else {
+        template = templates[0];
+        log.debug("" + action + " " + template.title + " template");
+        analytics.track('Templates', action, template.title);
+      }
+      return loadTemplateRows(searchResults != null ? searchResults : ext.templates);
     }
   };
 
@@ -1278,7 +1319,7 @@
       $this.attr('data-original-title', i18n.get(messageKey));
       return refreshSelectButtons();
     });
-    return table.find('thead :checkbox').off('change').change(function() {
+    table.find('thead :checkbox').off('change').change(function() {
       var $this, checked, messageKey;
       $this = $(this);
       checked = $this.is(':checked');
@@ -1290,6 +1331,7 @@
       selectBoxes.prop('checked', checked);
       return refreshSelectButtons();
     });
+    return refreshSelectButtons();
   };
 
   activateTooltips = function(selector) {
@@ -1601,10 +1643,11 @@
   };
 
   refreshSelectButtons = function() {
-    var selections;
+    var buttons, selections;
     log.trace();
+    buttons = $('#delete_btn, #disable_btn, #enable_btn, #export_btn');
     selections = $('#templates tbody :checkbox:checked');
-    return $('#delete_btn, #export_btn').prop('disabled', selections.length === 0);
+    return buttons.prop('disabled', selections.length === 0);
   };
 
   resetWizard = function() {
@@ -1664,8 +1707,7 @@
       searchResults = null;
     }
     loadTemplateRows(searchResults != null ? searchResults : ext.templates);
-    refreshResetButton();
-    return refreshSelectButtons();
+    return refreshResetButton();
   };
 
   setContext = function(template) {

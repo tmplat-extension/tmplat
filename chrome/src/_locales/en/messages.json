@@ -735,6 +735,16 @@
     "message": "Do you want to continue anyway?",
     "description": "2nd paragraph for the confirmation dialog displayed when deleting a template."
   },
+  "opt_disable_button": {
+    "message": "$ICON$ Disable",
+    "description": "Text of button used to disable templates.",
+    "placeholders": {
+      "icon": {
+        "content": "<i class=\"icon-remove\"></i>",
+        "example": "<i class=\"icon-remove\"></i>"
+      }
+    }
+  },
   "opt_donate_button": {
     "message": "$ICON$ Donate",
     "description": "Text for the Donate button.",
@@ -748,6 +758,16 @@
   "opt_donate_button_title": {
     "message": "Share the love!",
     "description": "Hover text for the Donate button."
+  },
+  "opt_enable_button": {
+    "message": "$ICON$ Enable",
+    "description": "Text of button used to enable templates.",
+    "placeholders": {
+      "icon": {
+        "content": "<i class=\"icon-ok\"></i>",
+        "example": "<i class=\"icon-ok\"></i>"
+      }
+    }
   },
   "opt_errors_header": {
     "message": "The following problem(s) need to be corrected;",

@@ -317,12 +317,14 @@ loadTemplateControlEvents = ->
       $('#template_search :reset').hide()
       $('#template_search :text').val ''
       closeWizard()
+  $('#disable_btn, #enable_btn').click ->
+    enableTemplates getSelectedTemplates(), $(this).is '#enable_btn'
   # Open the template wizard without any context.
   $('#add_btn').click -> openWizard null
   selectedTemplates = []
   $('#delete_wizard').on 'hide', ->
-      selectedTemplates = []
-      $('#delete_items li').remove()
+    selectedTemplates = []
+    $('#delete_items li').remove()
   # Prompt the user to confirm removal of the selected template(s).
   warningMsg = null
   $('#delete_btn').click ->
@@ -548,12 +550,12 @@ loadTemplateRows = (templates = ext.templates, pagination = yes) ->
     activateTooltips table
     activateDraggables()
     activateModifications()
-    activateSelections()
   else
     # Show single row to indicate no templates were found.
     table.find('tbody').append $('<tr/>').append $ '<td/>',
       colspan: table.find('thead th').length
       html:    i18n.get 'opt_no_templates_found_text'
+  activateSelections()
 
 # Update the toolbar behaviour section of the options page with the current
 # settings.
@@ -724,6 +726,26 @@ deleteTemplates = (templates) ->
       analytics.track 'Templates', 'Deleted', template.title
     loadTemplateRows searchResults ? ext.templates
     updateToolbarTemplates()
+
+# Enable/disable all of the `templates` provided.
+enableTemplates = (templates, enable = yes) ->
+  log.trace()
+  keys = (template.key for template in templates)
+  if keys.length
+    stored = store.get 'templates'
+    for template in stored when template.key in keys
+      template.enabled = enable
+    store.set 'templates', stored
+    ext.updateTemplates()
+    action = if enable then 'Enabled' else 'Disabled'
+    if keys.length > 1
+      log.debug "#{action} #{keys.length} templates"
+      analytics.track 'Templates', action, "Count[#{keys.length}]"
+    else
+      template = templates[0]
+      log.debug "#{action} #{template.title} template"
+      analytics.track 'Templates', action, template.title
+    loadTemplateRows searchResults ? ext.templates
 
 # Reorder the templates after a drag and drop *swap* by updating their indices
 # and sorting them accordingly.  
@@ -1053,6 +1075,7 @@ activateSelections = ->
     $this.attr 'data-original-title', i18n.get messageKey
     selectBoxes.prop 'checked', checked
     refreshSelectButtons()
+  refreshSelectButtons()
 
 # Activate tooltip effects, optionally only within a specific context.  
 # The activation is done cleanly, unbinding any associated events that have
@@ -1313,8 +1336,9 @@ refreshResetButton = ->
 # have been checked.
 refreshSelectButtons = ->
   log.trace()
+  buttons    = $ '#delete_btn, #disable_btn, #enable_btn, #export_btn'
   selections = $ '#templates tbody :checkbox:checked'
-  $('#delete_btn, #export_btn').prop 'disabled', selections.length is 0
+  buttons.prop 'disabled', selections.length is 0
 
 # Reset the wizard field values based on the current context.
 resetWizard = ->
@@ -1358,7 +1382,6 @@ searchTemplates = (query = '') ->
     searchResults = null
   loadTemplateRows searchResults ? ext.templates
   refreshResetButton()
-  refreshSelectButtons()
 
 # Set the current context of the template wizard.
 setContext = (template = {}) ->
