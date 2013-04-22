@@ -1435,6 +1435,10 @@ options = window.options = new class Options extends utils.Class
     $('#donation').submit -> analytics.track 'Footer', 'Clicked', 'Donate'
     # Load the current option values.
     load()
+    # Ensure first enabled input field in modals get focus when opened.
+    $('.modal').on 'shown', ->
+      $(this).find(':input:enabled:first').focus()
+    # Apply OS-specific keyboard shortcut modifiers.
     $('#template_shortcut_modifier').html if ext.isThisPlatform 'mac'
       ext.SHORTCUT_MAC_MODIFIERS
     else
