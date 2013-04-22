@@ -1762,6 +1762,9 @@
         return analytics.track('Footer', 'Clicked', 'Donate');
       });
       load();
+      $('.modal').on('shown', function() {
+        return $(this).find(':input:enabled:first').focus();
+      });
       $('#template_shortcut_modifier').html(ext.isThisPlatform('mac') ? ext.SHORTCUT_MAC_MODIFIERS : ext.SHORTCUT_MODIFIERS);
       $('[popover]').each(function() {
         var $this, placement, trigger;
