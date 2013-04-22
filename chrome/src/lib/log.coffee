@@ -94,7 +94,7 @@ log = window.log = new class Log extends utils.Class
 
   # Output a stack trace.
   trace: (caller = @trace) ->
-    console.log new @StackTrace(caller).stack if loggable @TRACE
+    console.log new @Trace(caller).stack if loggable @TRACE
 
   # Output all warning `entries`.
   warn: (entries...) ->
@@ -103,14 +103,15 @@ log = window.log = new class Log extends utils.Class
 # Public classes
 # --------------
 
-# `StackTrace` allows the current stack trace to be retrieved in the easiest
-# way possible.
-class log.StackTrace extends utils.Class
+# `Trace` allows the current stack trace to be retrieved in the easiest way
+# possible.
+class log.Trace extends utils.Class
 
-  # Create a new instance of `StackTrace` for the `caller`.
-  constructor: (caller = log.StackTrace) ->
+  # Create a new instance of `Trace` for the `caller`.
+  constructor: (caller = log.Trace) ->
     # Create the stack trace and assign it to a new `stack` property.
     Error.captureStackTrace this, caller
+    @stack = @stack.replace /^Error/, 'Trace'
 
 # Configuration
 # -------------
