@@ -475,17 +475,25 @@
     });
     $('#export_wizard').on('hide', function() {
       $('#export_content').val('');
+      $('#export_save_btn').attr('href', '#');
       return $('#export_error').find('span').html('&nbsp;').end().hide();
     });
     $('#export_btn').click(function() {
+      var URL, blob, str;
       log.info('Launching export wizard');
-      $('#export_content').val(createExport(getSelectedTemplates()));
+      str = createExport(getSelectedTemplates());
+      $('#export_content').val(str);
+      blob = new Blob([str], {
+        type: 'application/json'
+      });
+      URL = window.URL || window.webkitURL;
+      $('#export_save_btn').attr('href', URL.createObjectURL(blob));
       return $('#export_wizard').modal('show');
     });
     $('#export_close_btn').click(function() {
       return $('#export_wizard').modal('hide');
     });
-    $('#export_copy_btn').click(function() {
+    return $('#export_copy_btn').click(function() {
       var $this;
       $this = $(this);
       ext.copy($('#export_content').val(), true);
@@ -494,37 +502,6 @@
         $this.text(i18n.get('opt_export_wizard_copy_button'));
         return $this.dequeue();
       });
-    });
-    return $('#export_save_btn').click(function() {
-      var exportErrorHandler, str;
-      str = $('#export_content').val();
-      exportErrorHandler = fileErrorHandler(function(message) {
-        log.error(message);
-        return $('#export_error').find('span').text(message).end().show();
-      });
-      return window.webkitRequestFileSystem(window.TEMPORARY, 1024 * 1024, function(fs) {
-        return fs.root.getFile('templates.json', {
-          create: true
-        }, function(fe) {
-          return fe.createWriter(function(fw) {
-            var builder, done;
-            builder = new WebKitBlobBuilder();
-            done = false;
-            builder.append(str);
-            fw.onerror = exportErrorHandler;
-            fw.onwriteend = function() {
-              if (done) {
-                $('#export_error').find('span').html('&nbsp;').end().hide();
-                return window.location.href = fe.toURL();
-              } else {
-                done = true;
-                return fw.write(builder.getBlob('application/json'));
-              }
-            };
-            return fw.truncate(0);
-          });
-        }, exportErrorHandler);
-      }, exportErrorHandler);
     });
   };
 
