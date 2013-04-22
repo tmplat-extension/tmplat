@@ -1135,29 +1135,31 @@ deriveTemplate = ->
 feedback = ->
   log.trace()
   unless feedbackAdded
-    # Temporary workaround for Content Security Policy issues with UserVoice's
-    # use of inline JavaScript.  
-    # This should be removed if/when it's no longer required.
-    uvwDialogClose = $ '#uvw-dialog-close[onclick]'
-    uvwDialogClose.live 'hover', ->
-      $(this).removeAttr 'onclick'
-      uvwDialogClose.die 'hover'
-    $(uvwDialogClose.selector.replace('[onclick]', '')).live 'click', (e) ->
-      UserVoice.hidePopupWidget()
-      e.preventDefault()
-    uvTabLabel = $ '#uvTabLabel[href^="javascript:"]'
-    uvTabLabel.live 'hover', ->
-      $(this).removeAttr 'href'
-      uvTabLabel.die 'hover'
-    # Continue with normal process of loading Widget.
-    window.uvOptions = {}
-    uv = document.createElement 'script'
+    # Load the UserVoice widget.
+    uv       = document.createElement 'script'
     uv.async = 'async'
     uv.src   = """
-      https://widget.uservoice.com/#{ext.config.options.userVoice}.js
+      https://widget.uservoice.com/#{ext.config.options.userVoice.id}.js
     """
     script = document.getElementsByTagName('script')[0]
     script.parentNode.insertBefore uv, script
+    # Configure the widget as it's loading.
+    UserVoice = window.UserVoice or= []
+    UserVoice.push [
+      'showTab'
+      'classic_widget'
+      {
+        mode:          'full'
+        primary_color: '#333'
+        link_color:    '#08c'
+        default_mode:  'feedback'
+        forum_id:      ext.config.options.userVoice.forum
+        tab_label:     i18n.get 'opt_feedback_button'
+        tab_color:     '#333'
+        tab_position:  'middle-left'
+        tab_inverted:  yes
+      }
+    ]
     feedbackAdded = yes
 
 # Error handler to be used when dealing with the FileSystem API that passes a

@@ -1383,29 +1383,28 @@
   };
 
   feedback = function() {
-    var script, uv, uvTabLabel, uvwDialogClose;
+    var UserVoice, script, uv;
     log.trace();
     if (!feedbackAdded) {
-      uvwDialogClose = $('#uvw-dialog-close[onclick]');
-      uvwDialogClose.live('hover', function() {
-        $(this).removeAttr('onclick');
-        return uvwDialogClose.die('hover');
-      });
-      $(uvwDialogClose.selector.replace('[onclick]', '')).live('click', function(e) {
-        UserVoice.hidePopupWidget();
-        return e.preventDefault();
-      });
-      uvTabLabel = $('#uvTabLabel[href^="javascript:"]');
-      uvTabLabel.live('hover', function() {
-        $(this).removeAttr('href');
-        return uvTabLabel.die('hover');
-      });
-      window.uvOptions = {};
       uv = document.createElement('script');
       uv.async = 'async';
-      uv.src = "https://widget.uservoice.com/" + ext.config.options.userVoice + ".js";
+      uv.src = "https://widget.uservoice.com/" + ext.config.options.userVoice.id + ".js";
       script = document.getElementsByTagName('script')[0];
       script.parentNode.insertBefore(uv, script);
+      UserVoice = window.UserVoice || (window.UserVoice = []);
+      UserVoice.push([
+        'showTab', 'classic_widget', {
+          mode: 'full',
+          primary_color: '#333',
+          link_color: '#08c',
+          default_mode: 'feedback',
+          forum_id: ext.config.options.userVoice.forum,
+          tab_label: i18n.get('opt_feedback_button'),
+          tab_color: '#333',
+          tab_position: 'middle-left',
+          tab_inverted: true
+        }
+      ]);
       return feedbackAdded = true;
     }
   };
