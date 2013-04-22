@@ -783,6 +783,10 @@
     "message": "Copy or download the exported template data.",
     "description": "Text for the Export dialog."
   },
+  "opt_feedback_button": {
+    "message": "feedback",
+    "description": "Text of Feedback button on the Options page."
+  },
   "opt_general_header": {
     "message": "General",
     "description": "Header of the General tab."
