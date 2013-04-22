@@ -1705,6 +1705,24 @@
     "message": "Encode the text provided so that it can be safely used in a query string",
     "description": "Description of the encode variable on the Guide tab of the Options page under the Operations section."
   },
+  "opt_guide_operations_escape_text": {
+    "message": "Escape the text provided so that it can be safely inserted into $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$",
+    "description": "Description of the escape variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>",
+        "example": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\"",
+        "example": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">",
+        "example": "\">"
+      }
+    }
+  },
   "opt_guide_operations_examples_code_1": {
     "message": "$URL$",
     "description": "Text for the 1st code block in the Examples area on the Guide tab of the Options page under the Operations section.",
@@ -2114,6 +2132,16 @@
   "opt_guide_operations_trim_right_text": {
     "message": "Remove all trailing whitespace from the text provided",
     "description": "Description of the trimRight variable on the Guide tab of the Options page under the Operations section."
+  },
+  "opt_guide_operations_unescape_text": {
+    "message": "The opposite of $ESCAPE_LABEL$; Replace escaped characters in text provided with their unescaped counterparts",
+    "description": "Description of the unescape variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "escape_label": {
+        "content": "<span class=\"label\">escape</span>",
+        "example": "escape"
+      }
+    }
   },
   "opt_guide_operations_upper_case_text": {
     "message": "Transform the text provided into upper case",

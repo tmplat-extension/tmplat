@@ -1180,6 +1180,11 @@
       encoded: function() {
         return encodeURIComponent(this.url);
       },
+      escape: function() {
+        return function(text, render) {
+          return _.escape(render(text));
+        };
+      },
       favicon: ctab.favIconUrl,
       fparam: function() {
         return function(text, render) {
@@ -1323,6 +1328,11 @@
       trimright: function() {
         return function(text, render) {
           return render(text).trimRight();
+        };
+      },
+      unescape: function() {
+        return function(text, render) {
+          return _.unescape(render(text));
         };
       },
       uppercase: function() {
