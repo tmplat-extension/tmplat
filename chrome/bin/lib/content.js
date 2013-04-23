@@ -173,7 +173,10 @@
 
       if (message.hotkeys != null) {
         hotkeys = message.hotkeys;
-        return sendResponse();
+        if (typeof sendResponse === "function") {
+          sendResponse();
+        }
+        return true;
       }
       if (message.selectors != null) {
         _ref = message.selectors;
@@ -199,19 +202,28 @@
           }
           info.result = result;
         }
-        return sendResponse({
-          selectors: message.selectors
-        });
+        if (typeof sendResponse === "function") {
+          sendResponse({
+            selectors: message.selectors
+          });
+        }
+        return true;
       }
       if (message.id == null) {
-        return sendResponse();
+        if (typeof sendResponse === "function") {
+          sendResponse();
+        }
+        return true;
       }
       if (message.type === 'paste') {
         if ((message.contents != null) && isEditable((_ref1 = elementBackups[message.id]) != null ? _ref1.field : void 0)) {
           paste(elementBackups[message.id].field, message.contents);
         }
         delete elementBackups[message.id];
-        return sendResponse();
+        if (typeof sendResponse === "function") {
+          sendResponse();
+        }
+        return true;
       }
       elementBackups[message.id] = {
         field: message.editable || message.shortcut ? elements.field : void 0,
@@ -238,26 +250,29 @@
         }
       }
       link = getLink(message.id, message.url);
-      return sendResponse({
-        author: getMeta('author'),
-        characterSet: document.characterSet,
-        description: getMeta('description'),
-        images: extractAll(document.images, 'src'),
-        keywords: getMeta('keywords', true),
-        lastModified: document.lastModified,
-        linkHTML: link != null ? link.innerHTML : void 0,
-        linkText: link != null ? link.textContent : void 0,
-        links: extractAll(document.links, 'href'),
-        pageHeight: window.innerHeight,
-        pageWidth: window.innerWidth,
-        referrer: document.referrer,
-        scripts: extractAll(document.scripts, 'src'),
-        selectedImages: images,
-        selectedLinks: links,
-        selection: selection.toString(),
-        selectionHTML: container != null ? container.innerHTML : void 0,
-        styleSheets: extractAll(document.styleSheets, 'href')
-      });
+      if (typeof sendResponse === "function") {
+        sendResponse({
+          author: getMeta('author'),
+          characterSet: document.characterSet,
+          description: getMeta('description'),
+          images: extractAll(document.images, 'src'),
+          keywords: getMeta('keywords', true),
+          lastModified: document.lastModified,
+          linkHTML: link != null ? link.innerHTML : void 0,
+          linkText: link != null ? link.textContent : void 0,
+          links: extractAll(document.links, 'href'),
+          pageHeight: window.innerHeight,
+          pageWidth: window.innerWidth,
+          referrer: document.referrer,
+          scripts: extractAll(document.scripts, 'src'),
+          selectedImages: images,
+          selectedLinks: links,
+          selection: selection.toString(),
+          selectionHTML: container != null ? container.innerHTML : void 0,
+          styleSheets: extractAll(document.styleSheets, 'href')
+        });
+      }
+      return true;
     });
   });
 

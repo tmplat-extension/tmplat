@@ -7,7 +7,6 @@
   var BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, addAdditionalData, browser, buildDerivedData, buildPopup, buildStandardData, buildTemplate, callUrlShortener, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isExtensionGallery, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, nullIfEmpty, onMessage, operatingSystem, runSelectors, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
-    __slice = [].slice,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   String.prototype.capitalize = function() {
@@ -975,22 +974,22 @@
           return chrome.cookies.getAll({
             url: data.url
           }, function(cookies) {
-            var cookie, names;
+            var cookie, entry, names;
 
             if (cookies == null) {
               cookies = [];
             }
             log.debug('Retrieved the following cookies...', cookies);
             cookie = function(text, render) {
-              var name, result, _i, _len;
+              var entry, name, result, _i, _len;
 
               name = render(text);
               for (_i = 0, _len = cookies.length; _i < _len; _i++) {
-                cookie = cookies[_i];
-                if (!(cookie.name === name)) {
+                entry = cookies[_i];
+                if (!(entry.name === name)) {
                   continue;
                 }
-                result = cookie.value;
+                result = entry.value;
                 break;
               }
               return result != null ? result : '';
@@ -1000,9 +999,9 @@
 
               names = [];
               for (_i = 0, _len = cookies.length; _i < _len; _i++) {
-                cookie = cookies[_i];
-                if (_ref = cookie.name, __indexOf.call(names, _ref) < 0) {
-                  names.push(cookie.name);
+                entry = cookies[_i];
+                if (_ref = entry.name, __indexOf.call(names, _ref) < 0) {
+                  names.push(entry.name);
                 }
               }
               return names;
@@ -1060,11 +1059,17 @@
           }
         }
       ], function(err, results) {
+        var result, _i, _len;
+
+        if (results == null) {
+          results = [];
+        }
         if (err) {
           log.error(err);
         }
-        if (results) {
-          $.extend.apply($, [data].concat(__slice.call(results)));
+        for (_i = 0, _len = results.length; _i < _len; _i++) {
+          result = results[_i];
+          $.extend(data, result);
         }
         return callback();
       });

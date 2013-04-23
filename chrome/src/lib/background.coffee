@@ -680,14 +680,14 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
           cookie  = (text, render) ->
             # Attempt to find the value for the cookie name.
             name = render text
-            for cookie in cookies when cookie.name is name
-              result = cookie.value
+            for entry in cookies when entry.name is name
+              result = entry.value
               break
             result ? ''
           cookies = (
             names = []
-            for cookie in cookies when cookie.name not in names
-              names.push cookie.name
+            for entry in cookies when entry.name not in names
+              names.push entry.name
             names
           )
           done null, {cookie, cookies}
@@ -727,9 +727,9 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
               stylesheets:    response.styleSheets    ? []
         else
           done null, {}
-    ], (err, results) ->
+    ], (err, results = []) ->
       log.error err if err
-      $.extend data, results... if results
+      $.extend data, result for result in results
       callback()
 
 # Creates an object containing data based on information derived from the

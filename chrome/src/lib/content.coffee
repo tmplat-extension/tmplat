@@ -133,7 +133,8 @@ sendMessage type: 'info', (data) ->
     # Ensure local hotkeys are up-to-date.
     if message.hotkeys?
       hotkeys = message.hotkeys
-      return sendResponse()
+      sendResponse?()
+      return true
     if message.selectors?
       for own key, info of message.selectors
         if info.all
@@ -145,15 +146,19 @@ sendMessage type: 'info', (data) ->
           node   = document.querySelector info.selector
           result = getContent info, node if node
         info.result = result
-      return sendResponse selectors: message.selectors
-    return sendResponse() unless message.id?
+      sendResponse? selectors: message.selectors
+      return true
+    unless message.id?
+      sendResponse?()
+      return true
     if message.type is 'paste'
       if message.contents? and
          isEditable elementBackups[message.id]?.field
         paste elementBackups[message.id].field, message.contents
       # Backups no longer required so might as well clean up a bit.
       delete elementBackups[message.id]
-      return sendResponse()
+      sendResponse?()
+      return true
     # Create a backup of the relevant elements for this request.
     elementBackups[message.id] =
       field: if message.editable or message.shortcut then elements.field
@@ -172,7 +177,7 @@ sendMessage type: 'info', (data) ->
         links  = extractAll container.querySelectorAll('a[href]'),  'href'
     link = getLink message.id, message.url
     # Build response with values derived from the DOM.
-    sendResponse
+    sendResponse? {
       author:         getMeta 'author'
       characterSet:   document.characterSet
       description:    getMeta 'description'
@@ -191,3 +196,5 @@ sendMessage type: 'info', (data) ->
       selection:      selection.toString()
       selectionHTML:  container?.innerHTML
       styleSheets:    extractAll document.styleSheets, 'href'
+    }
+    true
