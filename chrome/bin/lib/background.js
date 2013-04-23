@@ -950,11 +950,13 @@
       });
       return async.parallel([
         function(done) {
+          var coords;
+
+          coords = {};
           return navigator.geolocation.getCurrentPosition(function(position) {
-            var coords, prop, value, _ref;
+            var prop, value, _ref;
 
             log.debug('Retrieved the following geolocation information...', position);
-            coords = {};
             _ref = position.coords;
             for (prop in _ref) {
               if (!__hasProp.call(_ref, prop)) continue;
@@ -965,50 +967,48 @@
               coords: coords
             });
           }, function(err) {
-            log.error(err.message);
+            log.warn(err.message);
             return done(null, {
-              coords: {}
+              coords: coords
             });
           });
         }, function(done) {
           return chrome.cookies.getAll({
             url: data.url
           }, function(cookies) {
-            var cookie, entry, names;
+            var cookie, names;
 
             if (cookies == null) {
               cookies = [];
             }
             log.debug('Retrieved the following cookies...', cookies);
-            cookie = function(text, render) {
-              var entry, name, result, _i, _len;
-
-              name = render(text);
-              for (_i = 0, _len = cookies.length; _i < _len; _i++) {
-                entry = cookies[_i];
-                if (!(entry.name === name)) {
-                  continue;
-                }
-                result = entry.value;
-                break;
-              }
-              return result != null ? result : '';
-            };
-            cookies = ((function() {
-              var _i, _len, _ref;
-
-              names = [];
-              for (_i = 0, _len = cookies.length; _i < _len; _i++) {
-                entry = cookies[_i];
-                if (_ref = entry.name, __indexOf.call(names, _ref) < 0) {
-                  names.push(entry.name);
-                }
-              }
-              return names;
-            })());
             return done(null, {
-              cookie: cookie,
-              cookies: cookies
+              cookie: function(text, render) {
+                var cookie, name, result, _i, _len;
+
+                name = render(text);
+                for (_i = 0, _len = cookies.length; _i < _len; _i++) {
+                  cookie = cookies[_i];
+                  if (!(cookie.name === name)) {
+                    continue;
+                  }
+                  result = cookie.value;
+                  break;
+                }
+                return result != null ? result : '';
+              },
+              cookies: ((function() {
+                var _i, _len, _ref;
+
+                names = [];
+                for (_i = 0, _len = cookies.length; _i < _len; _i++) {
+                  cookie = cookies[_i];
+                  if (_ref = cookie.name, __indexOf.call(names, _ref) < 0) {
+                    names.push(cookie.name);
+                  }
+                }
+                return names;
+              })())
             });
           });
         }, function(done) {
