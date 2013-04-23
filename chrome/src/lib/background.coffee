@@ -346,31 +346,36 @@ nullIfEmpty = (object) ->
 onMessage = (message, sender, sendResponse) ->
   log.trace()
   # Message type is required. Informal rejection.
-  return sendResponse?() unless message.type
+  unless message.type
+    sendResponse?()
+    return true
   # Don't allow shortcut requests when shortcuts are disabled.
   if message.type is 'shortcut' and not store.get 'shortcuts.enabled'
-    return sendResponse?()
+    sendResponse?()
+    return true
   # Select or create a tab for the Options page.
   if message.type is 'options'
     selectOrCreateTab utils.url 'pages/options.html'
     # Close the popup if it's currently open. This should happen naturally but
     # is being forced to ensure consistency.
     chrome.extension.getViews(type: 'popup')[0]?.close()
-    return sendResponse?()
+    sendResponse?()
+    return true
   # Info requests are simple, just send some useful information back. Done!
   if message.type in ['info', 'version']
-    return sendResponse? {
+    sendResponse? {
       hotkeys: getHotkeys()
       id:      EXTENSION_ID
       version: ext.version
     }
+    return true
   active       = data   = output   = template = null
   editable     = link   = shortcut = no
   id           = utils.keyGen '', null, 't', no
   placeholders = {}
   async.series [
     (done) ->
-      chrome.windows.getCurrent populate: yes, (win) ->
+      chrome.windows.getLastFocused populate: yes, (win) ->
         log.info 'Retrieved the following window...', win
         log.info 'Retrieved the following tabs...',   win.tabs
         # Determine which of the tabs is currently active.
@@ -476,7 +481,7 @@ onMessage = (message, sender, sendResponse) ->
             selector:  info.data
       async.series [
         (done) ->
-          done() if _.isEmpty selectMap
+          return done() if _.isEmpty selectMap
           runSelectors active, selectMap, ->
             log.info 'One or more selectors were executed'
             updateProgress 85
@@ -484,19 +489,15 @@ onMessage = (message, sender, sendResponse) ->
               placeholders[placeholder] = value
             done()
         (done) ->
-          done() if _.isEmpty shortenMap
+          return done() if _.isEmpty shortenMap
           callUrlShortener shortenMap, (err, response) ->
             log.info 'URL shortener service was called one or more times'
             updateProgress 90
-            if err
-              # Aw man, something went wrong. Let the user down gently.
-              err.message ?= i18n.get 'shortener_error', response.service.title
-              done err
-            else
+            unless err
               updateUrlShortenerUsage response.service.name, response.oauth
               for own placeholder, value of shortenMap
                 placeholders[placeholder] = value
-              done()
+            done err
       ], (err) ->
         unless err
           # Request(s) were successful so re-render the output.
@@ -519,7 +520,6 @@ onMessage = (message, sender, sendResponse) ->
       ext.notification.description = err.message ?
         i18n.get 'result_bad_description', template.title
       showNotification()
-      sendResponse?()
     else
       updateTemplateUsage template.key
       updateStatistics()
@@ -533,7 +533,6 @@ onMessage = (message, sender, sendResponse) ->
          (shortcut and store.get 'shortcuts.paste')
         utils.sendMessage 'tabs', active.id,
           {contents: output, id, type: 'paste'}
-      sendResponse? contents: output
     log.debug "Finished handling #{type} request"
 
 # Attempt to select a tab in the current window displaying a page whose
@@ -541,7 +540,7 @@ onMessage = (message, sender, sendResponse) ->
 # If no existing tab exists a new one is simply created.
 selectOrCreateTab = (url, callback) ->
   log.trace()
-  chrome.windows.getCurrent populate: yes, (win) ->
+  chrome.windows.getLastFocused populate: yes, (win) ->
     log.debug 'Retrieved the following window...', win
     log.debug 'Retrieved the following tabs...',   win.tabs
     # Try to find an existing tab that begins with `url`.
@@ -551,11 +550,11 @@ selectOrCreateTab = (url, callback) ->
     if existing?
       # Found one! Now to select it.
       chrome.tabs.update existing.id, active: yes
-      callback? no
+      callback? existing
     else
       # Ach well, let's just create a new one.
-      chrome.tabs.create windowId: win.id, url: url, active: yes
-      callback? yes
+      chrome.tabs.create {windowId: win.id, url, active: yes}, (tab) ->
+        callback? tab
 
 # Display a desktop notification informing the user on whether or not the copy
 # request was successful.  
@@ -659,7 +658,7 @@ updateUrlShortenerUsage = (name, oauth) ->
 # Extract additional information from `tab` and add it to `data`.
 addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
   log.trace()
-  chrome.windows.getCurrent populate: yes, (win) ->
+  chrome.windows.getLastFocused populate: yes, (win) ->
     log.info 'Retrieved the following window...', win
     log.info 'Retrieved the following tabs...',   win.tabs
     $.extend data, tabs: (tab.url for tab in win.tabs)
@@ -670,7 +669,7 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
             position
           coords = {}
           for own prop, value of position.coords
-            cords[prop.toLowerCase()] = if value? then "#{value}" else ''
+            coords[prop.toLowerCase()] = if value? then "#{value}" else ''
           done null, {coords}
         , (err) ->
           log.error err.message
@@ -695,37 +694,37 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
       (done) ->
         # Try to prevent pages hanging because content script should not have
         # been executed.
-        if isProtectedPage tab
+        unless isProtectedPage tab
           utils.sendMessage 'tabs', tab.id,
             {editable, id, link, shortcut, url: data.url}
           , (response) ->
             log.debug 'Retrieved the following data from content script...',
               response
-            lastModified = if result.lastModified?
-              time = Date.parse result.lastModified
+            lastModified = if response.lastModified?
+              time = Date.parse response.lastModified
               new Date time unless isNaN time
             done null,
-              author:         result.author         ? ''
-              characterset:   result.characterSet   ? ''
-              description:    result.description    ? ''
-              images:         result.images         ? []
-              keywords:       result.keywords       ? []
+              author:         response.author         ? ''
+              characterset:   response.characterSet   ? ''
+              description:    response.description    ? ''
+              images:         response.images         ? []
+              keywords:       response.keywords       ? []
               lastmodified:   -> (text, render) ->
                 lastModified?.format(render(text) or undefined) ? ''
-              linkhtml:       result.linkHTML       ? ''
-              links:          result.links          ? []
-              linktext:       result.linkText       ? ''
-              pageheight:     result.pageHeight     ? ''
-              pagewidth:      result.pageWidth      ? ''
-              referrer:       result.referrer       ? ''
-              scripts:        result.scripts        ? []
-              selectedimages: result.selectedImages ? []
-              selectedlinks:  result.selectedLinks  ? []
-              selection:      result.selection      ? ''
-              selectionhtml:  result.selectionHTML  ? ''
+              linkhtml:       response.linkHTML       ? ''
+              links:          response.links          ? []
+              linktext:       response.linkText       ? ''
+              pageheight:     response.pageHeight     ? ''
+              pagewidth:      response.pageWidth      ? ''
+              referrer:       response.referrer       ? ''
+              scripts:        response.scripts        ? []
+              selectedimages: response.selectedImages ? []
+              selectedlinks:  response.selectedLinks  ? []
+              selection:      response.selection      ? ''
+              selectionhtml:  response.selectionHTML  ? ''
               # Deprecated since 1.0.0, use `selectedLinks` instead.
               selectionlinks: -> @selectedlinks
-              stylesheets:    result.styleSheets    ? []
+              stylesheets:    response.styleSheets    ? []
         else
           done null, {}
     ], (err, results) ->
@@ -1332,16 +1331,15 @@ callUrlShortener = (map, callback) ->
   log.trace()
   service  = getActiveUrlShortener()
   endpoint = service.url()
+  oauth    = no
   title    = service.title
   # Ensure the service URL exists in case it is user-defined (e.g. YOURLS).
   unless endpoint
-    return callback
-      message: i18n.get 'shortener_config_error', title
-      service: service
-      success: no
-  tasks = _.each map, (url, placeholder) ->
+    return callback new Error i18n.get 'shortener_config_error', title
+  tasks = []
+  _.each map, (url, placeholder) ->
     oauth = !!service.oauth?.hasAccessToken()
-    (done) ->
+    tasks.push (done) ->
       async.series [
         (done) ->
           if oauth then service.oauth.authorize -> done()
@@ -1361,7 +1359,7 @@ callUrlShortener = (map, callback) ->
             if xhr.readyState is 4
               if xhr.status is 200
                 map[placeholder] = service.output xhr.responseText
-                done null, {oauth}
+                done()
               else
                 # Something went wrong so let's tell the user.
                 message = i18n.get 'shortener_detailed_error', [title, url]
@@ -1369,8 +1367,12 @@ callUrlShortener = (map, callback) ->
           # Finally, send the HTTP request.
           xhr.send service.input url
       ], done
-  async.parallel tasks, (err, results) ->
-    callback err, {oauth: _.last(results)?.oauth, service}
+  async.series tasks, (err) ->
+    if err
+      err.message or= i18n.get 'shortener_error', service.title
+      callback err
+    else
+      callback null, {oauth, service}
 
 # Retrieve the active URL shortener service.
 getActiveUrlShortener = ->
@@ -1469,21 +1471,13 @@ ext = window.ext = new class Extension extends utils.Class
     log.info 'Initializing extension controller'
     # Add support for analytics if the user hasn't opted out.
     analytics.add() if store.get 'analytics'
-    async.series [
-      (done) =>
-        # It's nice knowing what version is running.
-        $.getJSON utils.url('manifest.json'), (data) =>
-          {@version} = data
-          done()
-      (done) =>
-        # Load and store the configuration data before initiating OAuth for
-        # each URL shortener service.
-        $.getJSON utils.url('configuration.json'), (data) =>
-          @config = data
-          shortener.oauth = shortener.oauth?() for shortener in SHORTENERS
-          done()
-    ], (err) =>
-      throw err if err
+    $.getJSON utils.url('configuration.json'), (data) =>
+      # It's nice knowing what version is running.
+      {@version} = chrome.runtime.getManifest()
+      # Store the configuration data before initiating OAuth for each URL
+      # shortener service.
+      @config    = data
+      shortener.oauth = shortener.oauth?() for shortener in SHORTENERS
       # Begin initialization.
       store.init
         anchor:        {}

@@ -83,9 +83,8 @@ utils = window.utils = new class Utils extends Class
   # available in the chrome API.  
   # This also supports the old `onRequest` variations for backwards
   # compatibility.
-  onMessage: (type = 'extension', external, args...) ->
+  onMessage: (type = 'runtime', external, args...) ->
     base = chrome[type]
-    base = chrome.extension if not base and type is 'runtime'
     if external
       base = base.onMessageExternal or base.onRequestExternal
     else
@@ -126,9 +125,8 @@ utils = window.utils = new class Utils extends Class
   # available in the chrome API.  
   # This also supports the old `sendRequest` variations for backwards
   # compatibility.
-  sendMessage: (type = 'extension', args...) ->
+  sendMessage: (type = 'runtime', args...) ->
     base = chrome[type]
-    base = chrome.extension if not base and type is 'runtime'
     (base.sendMessage or base.sendRequest).apply base, args
 
   # Start a new timer for the specified `key`.  
@@ -156,8 +154,8 @@ utils = window.utils = new class Utils extends Class
   type: (obj) ->
     if obj? then typeMap[Object::toString.call obj] || 'object' else String obj
 
-  # Convenient shorthand for `chrome.extension.getURL`.
-  url: -> chrome.extension.getURL arguments...
+  # Convenient shorthand for `chrome.runtime.getURL`.
+  url: -> chrome.runtime.getURL arguments...
 
 # Public classes
 # --------------

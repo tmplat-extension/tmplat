@@ -103,12 +103,9 @@
 
       type = arguments[0], external = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
       if (type == null) {
-        type = 'extension';
+        type = 'runtime';
       }
       base = chrome[type];
-      if (!base && type === 'runtime') {
-        base = chrome.extension;
-      }
       if (external) {
         base = base.onMessageExternal || base.onRequestExternal;
       } else {
@@ -187,12 +184,9 @@
 
       type = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
       if (type == null) {
-        type = 'extension';
+        type = 'runtime';
       }
       base = chrome[type];
-      if (!base && type === 'runtime') {
-        base = chrome.extension;
-      }
       return (base.sendMessage || base.sendRequest).apply(base, args);
     };
 
@@ -227,7 +221,7 @@
     Utils.prototype.url = function() {
       var _ref1;
 
-      return (_ref1 = chrome.extension).getURL.apply(_ref1, arguments);
+      return (_ref1 = chrome.runtime).getURL.apply(_ref1, arguments);
     };
 
     return Utils;

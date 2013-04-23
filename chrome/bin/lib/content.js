@@ -89,7 +89,7 @@
     var args, base;
 
     args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    base = chrome.extension;
+    base = chrome.runtime;
     base = base.onMessage || base.onRequest;
     return base.addListener.apply(base, args);
   };
@@ -121,7 +121,7 @@
     var args, base;
 
     args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    base = chrome.extension;
+    base = chrome.runtime;
     return (base.sendMessage || base.sendRequest).apply(base, args);
   };
 

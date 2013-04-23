@@ -493,10 +493,16 @@
 
     log.trace();
     if (!message.type) {
-      return typeof sendResponse === "function" ? sendResponse() : void 0;
+      if (typeof sendResponse === "function") {
+        sendResponse();
+      }
+      return true;
     }
     if (message.type === 'shortcut' && !store.get('shortcuts.enabled')) {
-      return typeof sendResponse === "function" ? sendResponse() : void 0;
+      if (typeof sendResponse === "function") {
+        sendResponse();
+      }
+      return true;
     }
     if (message.type === 'options') {
       selectOrCreateTab(utils.url('pages/options.html'));
@@ -505,14 +511,20 @@
       })[0]) != null) {
         _ref.close();
       }
-      return typeof sendResponse === "function" ? sendResponse() : void 0;
+      if (typeof sendResponse === "function") {
+        sendResponse();
+      }
+      return true;
     }
     if ((_ref1 = message.type) === 'info' || _ref1 === 'version') {
-      return typeof sendResponse === "function" ? sendResponse({
-        hotkeys: getHotkeys(),
-        id: EXTENSION_ID,
-        version: ext.version
-      }) : void 0;
+      if (typeof sendResponse === "function") {
+        sendResponse({
+          hotkeys: getHotkeys(),
+          id: EXTENSION_ID,
+          version: ext.version
+        });
+      }
+      return true;
     }
     active = data = output = template = null;
     editable = link = shortcut = false;
@@ -520,7 +532,7 @@
     placeholders = {};
     return async.series([
       function(done) {
-        return chrome.windows.getCurrent({
+        return chrome.windows.getLastFocused({
           populate: true
         }, function(win) {
           var tab, _i, _len, _ref2;
@@ -660,7 +672,7 @@
         return async.series([
           function(done) {
             if (_.isEmpty(selectMap)) {
-              done();
+              return done();
             }
             return runSelectors(active, selectMap, function() {
               var value;
@@ -676,27 +688,22 @@
             });
           }, function(done) {
             if (_.isEmpty(shortenMap)) {
-              done();
+              return done();
             }
             return callUrlShortener(shortenMap, function(err, response) {
-              var value, _ref2;
+              var value;
 
               log.info('URL shortener service was called one or more times');
               updateProgress(90);
-              if (err) {
-                if ((_ref2 = err.message) == null) {
-                  err.message = i18n.get('shortener_error', response.service.title);
-                }
-                return done(err);
-              } else {
+              if (!err) {
                 updateUrlShortenerUsage(response.service.name, response.oauth);
                 for (placeholder in shortenMap) {
                   if (!__hasProp.call(shortenMap, placeholder)) continue;
                   value = shortenMap[placeholder];
                   placeholders[placeholder] = value;
                 }
-                return done();
               }
+              return done(err);
             });
           }
         ], function(err) {
@@ -725,9 +732,6 @@
         ext.notification.titleStyle = 'color: #B94A48';
         ext.notification.description = (_ref2 = err.message) != null ? _ref2 : i18n.get('result_bad_description', template.title);
         showNotification();
-        if (typeof sendResponse === "function") {
-          sendResponse();
-        }
       } else {
         updateTemplateUsage(template.key);
         updateStatistics();
@@ -742,11 +746,6 @@
             type: 'paste'
           });
         }
-        if (typeof sendResponse === "function") {
-          sendResponse({
-            contents: output
-          });
-        }
       }
       return log.debug("Finished handling " + type + " request");
     });
@@ -754,7 +753,7 @@
 
   selectOrCreateTab = function(url, callback) {
     log.trace();
-    return chrome.windows.getCurrent({
+    return chrome.windows.getLastFocused({
       populate: true
     }, function(win) {
       var existing, tab, _i, _len, _ref;
@@ -774,14 +773,15 @@
         chrome.tabs.update(existing.id, {
           active: true
         });
-        return typeof callback === "function" ? callback(false) : void 0;
+        return typeof callback === "function" ? callback(existing) : void 0;
       } else {
-        chrome.tabs.create({
+        return chrome.tabs.create({
           windowId: win.id,
           url: url,
           active: true
+        }, function(tab) {
+          return typeof callback === "function" ? callback(tab) : void 0;
         });
-        return typeof callback === "function" ? callback(true) : void 0;
       }
     });
   };
@@ -931,7 +931,7 @@
 
   addAdditionalData = function(tab, data, id, editable, shortcut, link, callback) {
     log.trace();
-    return chrome.windows.getCurrent({
+    return chrome.windows.getLastFocused({
       populate: true
     }, function(win) {
       log.info('Retrieved the following window...', win);
@@ -960,7 +960,7 @@
             for (prop in _ref) {
               if (!__hasProp.call(_ref, prop)) continue;
               value = _ref[prop];
-              cords[prop.toLowerCase()] = value != null ? "" + value : '';
+              coords[prop.toLowerCase()] = value != null ? "" + value : '';
             }
             return done(null, {
               coords: coords
@@ -1013,7 +1013,7 @@
             });
           });
         }, function(done) {
-          if (isProtectedPage(tab)) {
+          if (!isProtectedPage(tab)) {
             return utils.sendMessage('tabs', tab.id, {
               editable: editable,
               id: id,
@@ -1024,13 +1024,13 @@
               var lastModified, time, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
 
               log.debug('Retrieved the following data from content script...', response);
-              lastModified = result.lastModified != null ? (time = Date.parse(result.lastModified), !isNaN(time) ? new Date(time) : void 0) : void 0;
+              lastModified = response.lastModified != null ? (time = Date.parse(response.lastModified), !isNaN(time) ? new Date(time) : void 0) : void 0;
               return done(null, {
-                author: (_ref = result.author) != null ? _ref : '',
-                characterset: (_ref1 = result.characterSet) != null ? _ref1 : '',
-                description: (_ref2 = result.description) != null ? _ref2 : '',
-                images: (_ref3 = result.images) != null ? _ref3 : [],
-                keywords: (_ref4 = result.keywords) != null ? _ref4 : [],
+                author: (_ref = response.author) != null ? _ref : '',
+                characterset: (_ref1 = response.characterSet) != null ? _ref1 : '',
+                description: (_ref2 = response.description) != null ? _ref2 : '',
+                images: (_ref3 = response.images) != null ? _ref3 : [],
+                keywords: (_ref4 = response.keywords) != null ? _ref4 : [],
                 lastmodified: function() {
                   return function(text, render) {
                     var _ref5;
@@ -1038,21 +1038,21 @@
                     return (_ref5 = lastModified != null ? lastModified.format(render(text) || void 0) : void 0) != null ? _ref5 : '';
                   };
                 },
-                linkhtml: (_ref5 = result.linkHTML) != null ? _ref5 : '',
-                links: (_ref6 = result.links) != null ? _ref6 : [],
-                linktext: (_ref7 = result.linkText) != null ? _ref7 : '',
-                pageheight: (_ref8 = result.pageHeight) != null ? _ref8 : '',
-                pagewidth: (_ref9 = result.pageWidth) != null ? _ref9 : '',
-                referrer: (_ref10 = result.referrer) != null ? _ref10 : '',
-                scripts: (_ref11 = result.scripts) != null ? _ref11 : [],
-                selectedimages: (_ref12 = result.selectedImages) != null ? _ref12 : [],
-                selectedlinks: (_ref13 = result.selectedLinks) != null ? _ref13 : [],
-                selection: (_ref14 = result.selection) != null ? _ref14 : '',
-                selectionhtml: (_ref15 = result.selectionHTML) != null ? _ref15 : '',
+                linkhtml: (_ref5 = response.linkHTML) != null ? _ref5 : '',
+                links: (_ref6 = response.links) != null ? _ref6 : [],
+                linktext: (_ref7 = response.linkText) != null ? _ref7 : '',
+                pageheight: (_ref8 = response.pageHeight) != null ? _ref8 : '',
+                pagewidth: (_ref9 = response.pageWidth) != null ? _ref9 : '',
+                referrer: (_ref10 = response.referrer) != null ? _ref10 : '',
+                scripts: (_ref11 = response.scripts) != null ? _ref11 : [],
+                selectedimages: (_ref12 = response.selectedImages) != null ? _ref12 : [],
+                selectedlinks: (_ref13 = response.selectedLinks) != null ? _ref13 : [],
+                selection: (_ref14 = response.selection) != null ? _ref14 : '',
+                selectionhtml: (_ref15 = response.selectionHTML) != null ? _ref15 : '',
                 selectionlinks: function() {
                   return this.selectedlinks;
                 },
-                stylesheets: (_ref16 = result.styleSheets) != null ? _ref16 : []
+                stylesheets: (_ref16 = response.styleSheets) != null ? _ref16 : []
               });
             });
           } else {
@@ -1931,24 +1931,22 @@
   };
 
   callUrlShortener = function(map, callback) {
-    var endpoint, service, tasks, title;
+    var endpoint, oauth, service, tasks, title;
 
     log.trace();
     service = getActiveUrlShortener();
     endpoint = service.url();
+    oauth = false;
     title = service.title;
     if (!endpoint) {
-      return callback({
-        message: i18n.get('shortener_config_error', title),
-        service: service,
-        success: false
-      });
+      return callback(new Error(i18n.get('shortener_config_error', title)));
     }
-    tasks = _.each(map, function(url, placeholder) {
-      var oauth, _ref;
+    tasks = [];
+    _.each(map, function(url, placeholder) {
+      var _ref;
 
       oauth = !!((_ref = service.oauth) != null ? _ref.hasAccessToken() : void 0);
-      return function(done) {
+      return tasks.push(function(done) {
         return async.series([
           function(done) {
             if (oauth) {
@@ -1979,9 +1977,7 @@
               if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
                   map[placeholder] = service.output(xhr.responseText);
-                  return done(null, {
-                    oauth: oauth
-                  });
+                  return done();
                 } else {
                   message = i18n.get('shortener_detailed_error', [title, url]);
                   return done(new Error(message));
@@ -1991,15 +1987,18 @@
             return xhr.send(service.input(url));
           }
         ], done);
-      };
-    });
-    return async.parallel(tasks, function(err, results) {
-      var _ref;
-
-      return callback(err, {
-        oauth: (_ref = _.last(results)) != null ? _ref.oauth : void 0,
-        service: service
       });
+    });
+    return async.series(tasks, function(err) {
+      if (err) {
+        err.message || (err.message = i18n.get('shortener_error', service.title));
+        return callback(err);
+      } else {
+        return callback(null, {
+          oauth: oauth,
+          service: service
+        });
+      }
     });
   };
 
@@ -2102,27 +2101,14 @@
       if (store.get('analytics')) {
         analytics.add();
       }
-      return async.series([
-        function(done) {
-          return $.getJSON(utils.url('manifest.json'), function(data) {
-            _this.version = data.version;
-            return done();
-          });
-        }, function(done) {
-          return $.getJSON(utils.url('configuration.json'), function(data) {
-            var shortener, _i, _len;
+      return $.getJSON(utils.url('configuration.json'), function(data) {
+        var shortener, _i, _len;
 
-            _this.config = data;
-            for (_i = 0, _len = SHORTENERS.length; _i < _len; _i++) {
-              shortener = SHORTENERS[_i];
-              shortener.oauth = typeof shortener.oauth === "function" ? shortener.oauth() : void 0;
-            }
-            return done();
-          });
-        }
-      ], function(err) {
-        if (err) {
-          throw err;
+        _this.version = chrome.runtime.getManifest().version;
+        _this.config = data;
+        for (_i = 0, _len = SHORTENERS.length; _i < _len; _i++) {
+          shortener = SHORTENERS[_i];
+          shortener.oauth = typeof shortener.oauth === "function" ? shortener.oauth() : void 0;
         }
         store.init({
           anchor: {},

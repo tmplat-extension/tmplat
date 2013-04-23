@@ -70,7 +70,7 @@ isEditable = (node) ->
 # Convenient shorthand for the `onMessage` method in the chrome API which
 # supports the old `onRequest` variation for backwards compatibility.
 onMessage = (args...) ->
-  base = chrome.extension
+  base = chrome.runtime
   base = base.onMessage or base.onRequest
   base.addListener args...
 
@@ -92,7 +92,7 @@ paste = (node, value) ->
 # Convenient shorthand for the `sendMessage` method in the chrome API which
 # supports the old `sendRequest` variation for backwards compatibility.
 sendMessage = (args...) ->
-  base = chrome.extension
+  base = chrome.runtime
   (base.sendMessage or base.sendRequest).apply base, args
 
 # Functionality
