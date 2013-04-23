@@ -4,18 +4,20 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var Internationalization, attributes, handlers, i18n, key, process, selector, subst,
+  var Internationalization, attributes, handlers, i18n, key, process, selector, subst, _ref,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   handlers = {
     'i18n-content': function(element, name, map) {
       var subs;
+
       subs = subst(element, name, map);
       return element.innerHTML = i18n.get(name, subs);
     },
     'i18n-options': function(element, name, map) {
       var option, subs, value, values, _i, _len, _results;
+
       subs = subst(element, name, map);
       values = i18n.get(name, subs);
       _results = [];
@@ -34,6 +36,7 @@
     },
     'i18n-values': function(element, value, map) {
       var obj, part, parts, path, prop, propExpr, propName, propSubs, _i, _len, _results;
+
       parts = value.replace(/\s/g, '').split(';');
       _results = [];
       for (_i = 0, _len = parts.length; _i < _len; _i++) {
@@ -73,6 +76,7 @@
 
   attributes = (function() {
     var _results;
+
     _results = [];
     for (key in handlers) {
       if (!__hasProp.call(handlers, key)) continue;
@@ -85,12 +89,14 @@
 
   process = function(node, map) {
     var attribute, element, name, _i, _len, _ref, _results;
+
     _ref = node.querySelectorAll(selector);
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       element = _ref[_i];
       _results.push((function() {
         var _j, _len1, _results1;
+
         _results1 = [];
         for (_j = 0, _len1 = attributes.length; _j < _len1; _j++) {
           name = attributes[_j];
@@ -109,6 +115,7 @@
 
   subst = function(element, value, map) {
     var map2, prop, prop2, subs, target;
+
     if (map) {
       for (prop in map) {
         if (!__hasProp.call(map, prop)) continue;
@@ -132,16 +139,17 @@
   };
 
   i18n = window.i18n = new (Internationalization = (function(_super) {
-
     __extends(Internationalization, _super);
 
     function Internationalization() {
-      return Internationalization.__super__.constructor.apply(this, arguments);
+      _ref = Internationalization.__super__.constructor.apply(this, arguments);
+      return _ref;
     }
 
     Internationalization.prototype.manager = {
       get: function(name, substitutions) {
         var i, message, sub, _i, _len;
+
         if (substitutions == null) {
           substitutions = [];
         }
@@ -167,6 +175,7 @@
 
     Internationalization.prototype.attribute = function(selector, attribute, name, subs) {
       var element, elements, _i, _len, _results;
+
       elements = this.manager.node.querySelectorAll(selector);
       _results = [];
       for (_i = 0, _len = elements.length; _i < _len; _i++) {
@@ -178,6 +187,7 @@
 
     Internationalization.prototype.content = function(selector, name, subs) {
       var element, elements, _i, _len, _results;
+
       elements = this.manager.node.querySelectorAll(selector);
       _results = [];
       for (_i = 0, _len = elements.length; _i < _len; _i++) {
@@ -189,6 +199,7 @@
 
     Internationalization.prototype.options = function(selector, name, subs) {
       var element, elements, option, value, values, _i, _len, _results;
+
       elements = this.manager.node.querySelectorAll(selector);
       _results = [];
       for (_i = 0, _len = elements.length; _i < _len; _i++) {
@@ -196,6 +207,7 @@
         values = this.get(name, subs);
         _results.push((function() {
           var _j, _len1, _results1;
+
           _results1 = [];
           for (_j = 0, _len1 = values.length; _j < _len1; _j++) {
             value = values[_j];
@@ -215,8 +227,9 @@
     };
 
     Internationalization.prototype.get = function() {
-      var _ref;
-      return (_ref = this.manager).get.apply(_ref, arguments);
+      var _ref1;
+
+      return (_ref1 = this.manager).get.apply(_ref1, arguments);
     };
 
     Internationalization.prototype.init = function(map) {
@@ -224,13 +237,15 @@
     };
 
     Internationalization.prototype.langs = function() {
-      var _ref;
-      return (_ref = this.manager).langs.apply(_ref, arguments);
+      var _ref1;
+
+      return (_ref1 = this.manager).langs.apply(_ref1, arguments);
     };
 
     Internationalization.prototype.locale = function() {
-      var _ref;
-      return (_ref = this.manager).locale.apply(_ref, arguments);
+      var _ref1;
+
+      return (_ref1 = this.manager).locale.apply(_ref1, arguments);
     };
 
     return Internationalization;
@@ -238,13 +253,15 @@
   })(utils.Class));
 
   i18n.manager.get = function() {
-    var _ref;
-    return (_ref = chrome.i18n).getMessage.apply(_ref, arguments);
+    var _ref1;
+
+    return (_ref1 = chrome.i18n).getMessage.apply(_ref1, arguments);
   };
 
   i18n.manager.langs = function() {
-    var _ref;
-    return (_ref = chrome.i18n).getAcceptLanguages.apply(_ref, arguments);
+    var _ref1;
+
+    return (_ref1 = chrome.i18n).getAcceptLanguages.apply(_ref1, arguments);
   };
 
   i18n.manager.locale = function() {

@@ -21,6 +21,7 @@
 
   extractAll = function(array, property) {
     var element, results, _i, _len, _ref;
+
     results = [];
     for (_i = 0, _len = array.length; _i < _len; _i++) {
       element = array[_i];
@@ -35,6 +36,7 @@
 
   getContent = function(info, node) {
     var _ref;
+
     if (!node) {
       return '';
     }
@@ -47,6 +49,7 @@
 
   getLink = function(id, url) {
     var _ref;
+
     if (elementBackups[id] == null) {
       return;
     }
@@ -59,6 +62,7 @@
 
   getMeta = function(name, csv) {
     var content, results, value, _i, _len, _ref, _ref1, _ref2;
+
     content = (_ref = document.querySelector("meta[name='" + name + "']")) != null ? (_ref1 = _ref.content) != null ? _ref1.trim() : void 0 : void 0;
     if (csv && (content != null)) {
       results = [];
@@ -83,8 +87,9 @@
 
   onMessage = function() {
     var args, base;
+
     args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    base = chrome.extension;
+    base = chrome.runtime;
     base = base.onMessage || base.onRequest;
     return base.addListener.apply(base, args);
   };
@@ -102,6 +107,7 @@
 
   paste = function(node, value) {
     var str;
+
     if (!((node != null) || value)) {
       return;
     }
@@ -113,8 +119,9 @@
 
   sendMessage = function() {
     var args, base;
+
     args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    base = chrome.extension;
+    base = chrome.runtime;
     return (base.sendMessage || base.sendRequest).apply(base, args);
   };
 
@@ -122,6 +129,7 @@
     type: 'info'
   }, function(data) {
     var isMac;
+
     hotkeys = data.hotkeys;
     isMac = navigator.userAgent.toLowerCase().indexOf('mac') !== -1;
     if (document.body.getAttribute(data.id) === data.version) {
@@ -141,6 +149,7 @@
     });
     window.addEventListener('keydown', function(e) {
       var key, _ref;
+
       if ((!isMac && e.ctrlKey && e.altKey) || (isMac && e.shiftKey && e.altKey)) {
         key = String.fromCharCode(e.keyCode).toUpperCase();
         if (__indexOf.call(hotkeys, key) >= 0) {
@@ -161,6 +170,7 @@
     });
     return onMessage(function(message, sender, sendResponse) {
       var container, contents, href, images, info, key, link, links, node, nodes, result, selection, src, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
+
       if (message.hotkeys != null) {
         hotkeys = message.hotkeys;
         return sendResponse();
