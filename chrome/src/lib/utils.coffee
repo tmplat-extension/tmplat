@@ -19,20 +19,6 @@ class Class
 
 # Mapping of all timers currently being managed.
 timings = {}
-# Map of class names to understable types.
-typeMap = {}
-# Populate the type map for all classes.
-[
-  'Boolean'
-  'Number'
-  'String'
-  'Function'
-  'Array'
-  'Date'
-  'RegExp'
-  'Object'
-].forEach (name) ->
-  typeMap["[object #{name}]"] = name.toLowerCase()
 
 # Utilities setup
 # ---------------
@@ -41,24 +27,6 @@ utils = window.utils = new class Utils extends Class
 
   # Public functions
   # ----------------
-
-  # Create a clone of an object.
-  # TODO: Replace with Underscore?
-  clone: (obj, deep) ->
-    return obj unless @isObject obj
-    return obj.slice() if @isArray obj
-    copy = {}
-    for own key, value of obj
-      copy[key] = if deep then @clone value, yes else value
-    copy
-
-  # Indicate whether an object is an array.
-  # TODO: Replace with jQuery and/or Underscore?
-  isArray: Array.isArray or (obj) -> 'array' is @type obj
-
-  # Indicate whether an object is an object.
-  # TODO: Replace with jQuery and/or Underscore?
-  isObject: (obj) -> obj is Object obj
 
   # Generate a unique key based on the current time and using a randomly
   # generated hexadecimal number of the specified length.
@@ -71,7 +39,7 @@ utils = window.utils = new class Utils extends Class
       max = @repeat 'f', 'f', if length is 1 then 1 else length - 1
       min = parseInt min, 16
       max = parseInt max, 16
-      parts.push @random min, max
+      parts.push _.random min, max
     # Convert segments to their hexadecimal (base 16) forms.
     parts[i] = part.toString 16 for part, i in parts
     # Join all segments using `separator` and append to the `prefix` before
@@ -97,10 +65,6 @@ utils = window.utils = new class Utils extends Class
       return entity for entity in entities when filter entity
     else
       entity for entity in entities when filter entity
-
-  # Generate a random number between the `min` and `max` values provided.
-  # TODO: Replace with Underscore?
-  random: (min, max) -> Math.floor(Math.random() * (max - min + 1)) + min
 
   # Bind `handler` to event indicating that the DOM is ready.
   ready: (context, handler) ->
@@ -148,11 +112,6 @@ utils = window.utils = new class Utils extends Class
       new Date().getTime() - start
     else
       0
-
-  # Retrieve the understable type name for an object.
-  # TODO: Can this be replaced by jQuery and/or Underscore?
-  type: (obj) ->
-    if obj? then typeMap[Object::toString.call obj] || 'object' else String obj
 
   # Convenient shorthand for `chrome.runtime.getURL`.
   url: -> chrome.runtime.getURL arguments...

@@ -1666,10 +1666,10 @@
             break;
           }
           if (!existing.key) {
-            existing = utils.clone(ext.queryTemplate(function(temp) {
+            existing = $.extend(true, {}, ext.queryTemplate(function(temp) {
               return temp.key === template.key;
-            }), true);
-            if (existing) {
+            }));
+            if (existing && !$.isEmptyObject(existing)) {
               existing = updateImportedTemplate(template, existing);
               data.templates.push(existing);
               keys.push(existing.key);
