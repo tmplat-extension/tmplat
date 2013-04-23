@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var Notification, analytics, buildContents, ext, log, notification, store, utils, _ref,
+  var Notification, analytics, buildContents, ext, log, notification, store, utils, _ref, _ref1,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -12,6 +12,7 @@
 
   buildContents = function() {
     var data, description, icon, image, title, _ref1;
+
     log.trace();
     data = (_ref1 = ext.notification) != null ? _ref1 : {};
     log.debug(data);
@@ -53,15 +54,16 @@
   };
 
   notification = window.notification = new (Notification = (function(_super) {
-
     __extends(Notification, _super);
 
     function Notification() {
-      return Notification.__super__.constructor.apply(this, arguments);
+      _ref1 = Notification.__super__.constructor.apply(this, arguments);
+      return _ref1;
     }
 
     Notification.prototype.init = function() {
       var duration;
+
       log.trace();
       log.info('Initializing a notification');
       analytics.track('Frames', 'Displayed', 'Notification');

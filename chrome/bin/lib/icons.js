@@ -4,12 +4,11 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var Icon, Icons, icons,
+  var Icon, Icons, icons, _ref,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   Icon = (function(_super) {
-
     __extends(Icon, _super);
 
     function Icon(name) {
@@ -29,11 +28,11 @@
   })(utils.Class);
 
   icons = window.icons = new (Icons = (function(_super) {
-
     __extends(Icons, _super);
 
     function Icons() {
-      return Icons.__super__.constructor.apply(this, arguments);
+      _ref = Icons.__super__.constructor.apply(this, arguments);
+      return _ref;
     }
 
     Icons.prototype.ICONS = [new Icon('adjust'), new Icon('align-center'), new Icon('align-justify'), new Icon('align-left'), new Icon('align-right'), new Icon('arrow-down'), new Icon('arrow-left'), new Icon('arrow-right'), new Icon('arrow-up'), new Icon('asterisk'), new Icon('backward'), new Icon('ban-circle'), new Icon('barcode'), new Icon('bell'), new Icon('bold'), new Icon('book'), new Icon('bookmark'), new Icon('briefcase'), new Icon('bullhorn'), new Icon('calendar'), new Icon('camera'), new Icon('certificate'), new Icon('check'), new Icon('chevron-down'), new Icon('chevron-left'), new Icon('chevron-right'), new Icon('chevron-up'), new Icon('circle-arrow-down'), new Icon('circle-arrow-left'), new Icon('circle-arrow-right'), new Icon('circle-arrow-up'), new Icon('cog'), new Icon('comment'), new Icon('download'), new Icon('download-alt'), new Icon('edit'), new Icon('eject'), new Icon('envelope'), new Icon('exclamation-sign'), new Icon('eye-close'), new Icon('eye-open'), new Icon('facetime-video'), new Icon('fast-backward'), new Icon('fast-forward'), new Icon('file'), new Icon('film'), new Icon('filter'), new Icon('fire'), new Icon('flag'), new Icon('folder-close'), new Icon('folder-open'), new Icon('font'), new Icon('forward'), new Icon('fullscreen'), new Icon('gift'), new Icon('glass'), new Icon('globe'), new Icon('hand-down'), new Icon('hand-left'), new Icon('hand-right'), new Icon('hand-up'), new Icon('hdd'), new Icon('headphones'), new Icon('heart'), new Icon('home'), new Icon('inbox'), new Icon('indent-left'), new Icon('indent-right'), new Icon('info-sign'), new Icon('italic'), new Icon('leaf'), new Icon('list'), new Icon('list-alt'), new Icon('lock'), new Icon('magnet'), new Icon('map-marker'), new Icon('minus'), new Icon('minus-sign'), new Icon('move'), new Icon('music'), new Icon('off'), new Icon('ok'), new Icon('ok-circle'), new Icon('ok-sign'), new Icon('pause'), new Icon('pencil'), new Icon('picture'), new Icon('plane'), new Icon('play'), new Icon('play-circle'), new Icon('plus'), new Icon('plus-sign'), new Icon('print'), new Icon('qrcode'), new Icon('question-sign'), new Icon('random'), new Icon('refresh'), new Icon('remove'), new Icon('remove-circle'), new Icon('remove-sign'), new Icon('repeat'), new Icon('resize-full'), new Icon('resize-horizontal'), new Icon('resize-small'), new Icon('resize-vertical'), new Icon('retweet'), new Icon('road'), new Icon('screenshot'), new Icon('search'), new Icon('share'), new Icon('share-alt'), new Icon('shopping-cart'), new Icon('signal'), new Icon('star'), new Icon('star-empty'), new Icon('step-backward'), new Icon('step-forward'), new Icon('stop'), new Icon('tag'), new Icon('tags'), new Icon('tasks'), new Icon('text-height'), new Icon('text-width'), new Icon('th'), new Icon('th-large'), new Icon('th-list'), new Icon('thumbs-down'), new Icon('thumbs-up'), new Icon('time'), new Icon('tint'), new Icon('trash'), new Icon('upload'), new Icon('user'), new Icon('volume-down'), new Icon('volume-off'), new Icon('volume-up'), new Icon('warning-sign'), new Icon('wrench'), new Icon('zoom-in'), new Icon('zoom-out')];
@@ -145,10 +144,11 @@
     ];
 
     Icons.prototype.exists = function(name) {
-      var icon, _i, _len, _ref;
-      _ref = this.ICONS;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        icon = _ref[_i];
+      var icon, _i, _len, _ref1;
+
+      _ref1 = this.ICONS;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        icon = _ref1[_i];
         if (icon.name === name) {
           return true;
         }
@@ -157,16 +157,18 @@
     };
 
     Icons.prototype.fromLegacy = function(value) {
-      var legacy, old, _ref;
-      return this.getIcon((_ref = ((function() {
-        var _i, _len, _ref1;
+      var legacy, old, _ref1;
+
+      return this.getIcon((_ref1 = ((function() {
+        var _i, _len, _ref2;
+
         switch (typeof value) {
           case 'number':
             return this.LEGACY[value];
           case 'string':
-            _ref1 = this.LEGACY;
-            for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-              old = _ref1[_i];
+            _ref2 = this.LEGACY;
+            for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+              old = _ref2[_i];
               if (!(old.image === value)) {
                 continue;
               }
@@ -175,7 +177,7 @@
             }
             return legacy;
         }
-      }).call(this))) != null ? _ref.icon : void 0);
+      }).call(this))) != null ? _ref1.icon : void 0);
     };
 
     Icons.prototype.getClass = function(icon) {
@@ -186,10 +188,11 @@
     };
 
     Icons.prototype.getIcon = function(name) {
-      var icon, _i, _len, _ref;
-      _ref = this.ICONS;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        icon = _ref[_i];
+      var icon, _i, _len, _ref1;
+
+      _ref1 = this.ICONS;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        icon = _ref1[_i];
         if (icon.name === name) {
           return icon;
         }

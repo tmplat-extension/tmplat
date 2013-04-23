@@ -3819,6 +3819,14 @@
     "message": "An error occurred while collecting information",
     "description": "Notification for when something went wrong while collecting contextual data before processing a template."
   },
+  "result_bad_template_description": {
+    "message": "An error occurred while deriving the activated template",
+    "description": "Notification for when no active template can be derived from the current context."
+  },
+  "result_bad_type_description": {
+    "message": "An error occurred while requesting information",
+    "description": "Notification for when an invalid type was used by the requesting message."
+  },
   "result_bad_uri_description": {
     "message": "The URL is not properly encoded",
     "description": "Notification for when collecting data for an invalid URL before processing a template."

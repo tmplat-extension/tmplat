@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var ErrorMessage, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, closeWizard, createExport, createImport, deleteTemplates, deriveTemplate, enableTemplates, ext, feedback, feedbackAdded, fileErrorHandler, getSelectedTemplates, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, searchResults, searchTemplates, setContext, trimToLower, trimToUpper, updateImportedTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate,
+  var ErrorMessage, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, closeWizard, createExport, createImport, deleteTemplates, deriveTemplate, enableTemplates, ext, feedback, feedbackAdded, fileErrorHandler, getSelectedTemplates, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, searchResults, searchTemplates, setContext, trimToLower, trimToUpper, updateImportedTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -29,6 +29,7 @@
     log.trace();
     return $(selector).on(type, function() {
       var $this, key, value;
+
       $this = $(this);
       key = '';
       value = null;
@@ -43,6 +44,7 @@
 
   load = function() {
     var anchor, menu, shortcuts;
+
     log.trace();
     anchor = store.get('anchor');
     menu = store.get('menu');
@@ -85,6 +87,7 @@
     log.trace();
     $('#menuEnabled').change(function() {
       var groups;
+
       groups = $('#menuOptions').parents('.control-group').first();
       groups = groups.add($('#menuPaste').parents('.control-group').first());
       if ($(this).is(':checked')) {
@@ -95,6 +98,7 @@
     }).change();
     return $('#shortcutsEnabled').change(function() {
       var groups;
+
       groups = $('#shortcutsPaste').parents('.control-group').first();
       if ($(this).is(':checked')) {
         return groups.slideDown();
@@ -111,6 +115,7 @@
 
   loadImages = function() {
     var image, imagePreview, images, _i, _len, _ref;
+
     log.trace();
     imagePreview = $('#template_image_preview');
     images = $('#template_image');
@@ -132,6 +137,7 @@
     }
     images.change(function() {
       var opt;
+
       opt = images.find('option:selected');
       return imagePreview.attr('class', icons.getClass(opt.val()));
     });
@@ -140,6 +146,7 @@
 
   loadLogger = function() {
     var level, logger, loggerLevel, option, _i, _len, _ref;
+
     log.trace();
     logger = store.get('logger');
     if (logger.enabled) {
@@ -169,11 +176,13 @@
     log.trace();
     return bindSaveEvent('#loggerEnabled, #loggerLevel', 'change', 'logger', function(key) {
       var value;
+
       value = key === 'level' ? this.val() : this.is(':checked');
       log.debug("Changing logging " + key + " to '" + value + "'");
       return value;
     }, function(jel, key, value) {
       var logger;
+
       logger = store.get('logger');
       chrome.extension.getBackgroundPage().log.config = log.config = logger;
       return analytics.track('Logging', 'Changed', key[0].toUpperCase() + key.substr(1), Number(value));
@@ -182,6 +191,7 @@
 
   loadNotifications = function() {
     var notifications;
+
     log.trace();
     notifications = store.get('notifications');
     if (notifications.enabled) {
@@ -195,8 +205,10 @@
     log.trace();
     $('#notificationDuration').on('input', function() {
       var _this = this;
+
       return store.modify('notifications', function(notifications) {
         var ms;
+
         ms = $(_this).val();
         ms = ms != null ? parseInt(ms, 10) * 1000 : 0;
         log.debug("Changing notification duration to " + ms + " milliseconds");
@@ -206,8 +218,10 @@
     });
     return $('#notifications').change(function() {
       var _this = this;
+
       return store.modify('notifications', function(notifications) {
         var enabled;
+
         enabled = $(_this).is(':checked');
         log.debug("Changing notifications to '" + enabled + "'");
         notifications.enabled = enabled;
@@ -220,6 +234,7 @@
     log.trace();
     $('#analytics').change(function() {
       var enabled;
+
       enabled = $(this).is(':checked');
       log.debug("Changing analytics to '" + enabled + "'");
       if (enabled) {
@@ -236,6 +251,7 @@
     });
     bindSaveEvent('#anchorTarget, #anchorTitle', 'change', 'anchor', function(key) {
       var value;
+
       value = this.is(':checked');
       log.debug("Changing anchor " + key + " to '" + value + "'");
       return value;
@@ -245,6 +261,7 @@
     });
     bindSaveEvent('#menuEnabled, #menuOptions, #menuPaste', 'change', 'menu', function(key) {
       var value;
+
       value = this.is(':checked');
       log.debug("Changing context menu " + key + " to '" + value + "'");
       return value;
@@ -255,6 +272,7 @@
     });
     return bindSaveEvent('#shortcutsEnabled, #shortcutsPaste', 'change', 'shortcuts', function(key) {
       var value;
+
       value = this.is(':checked');
       log.debug("Changing keyboard shortcuts " + key + " to '" + value + "'");
       return value;
@@ -274,6 +292,7 @@
 
   loadTemplate = function(template, shortcutModifiers) {
     var alignCenter, enabledIcon, row;
+
     log.trace();
     log.debug('Creating a row for the following template...', template);
     if (shortcutModifiers == null) {
@@ -317,6 +336,7 @@
 
   loadTemplateControlEvents = function() {
     var filter, limit, selectedTemplates, validationErrors, warningMsg, _i, _len, _ref;
+
     log.trace();
     $('#template_wizard [tabify]').click(function() {
       return closeWizard();
@@ -348,6 +368,7 @@
     limit = store.get('options_limit');
     $('#template_filter option').each(function() {
       var $this;
+
       $this = $(this);
       return $this.prop('selected', limit === parseInt($this.val()));
     });
@@ -379,6 +400,7 @@
     validationErrors = [];
     $('#template_wizard').on('hide', function() {
       var error, _j, _len1, _results;
+
       _results = [];
       for (_j = 0, _len1 = validationErrors.length; _j < _len1; _j++) {
         error = validationErrors[_j];
@@ -388,6 +410,7 @@
     });
     $('#template_save_btn').click(function() {
       var error, template, _j, _k, _len1, _len2, _results;
+
       template = deriveTemplate();
       for (_j = 0, _len1 = validationErrors.length; _j < _len1; _j++) {
         error = validationErrors[_j];
@@ -424,6 +447,7 @@
     warningMsg = null;
     $('#delete_btn').click(function() {
       var deleteItems, div, item, predefinedCount, predefinedTemplates, template, _j, _len1;
+
       deleteItems = $('#delete_items');
       predefinedTemplates = $('<ul/>');
       selectedTemplates = getSelectedTemplates();
@@ -480,6 +504,7 @@
     });
     $('#export_btn').click(function() {
       var URL, blob, str;
+
       log.info('Launching export wizard');
       str = createExport(getSelectedTemplates());
       $('#export_content').val(str);
@@ -495,6 +520,7 @@
     });
     return $('#export_copy_btn').click(function() {
       var $this;
+
       $this = $(this);
       ext.copy($('#export_content').val(), true);
       $this.text(i18n.get('opt_export_wizard_copy_alt_button'));
@@ -507,6 +533,7 @@
 
   loadTemplateImportEvents = function() {
     var data;
+
     log.trace();
     data = null;
     $('#import_error .close').click(function() {
@@ -542,6 +569,7 @@
     });
     $('#import_file_btn').change(function(e) {
       var file, reader;
+
       file = e.target.files[0];
       reader = new FileReader();
       reader.onerror = fileErrorHandler(function(message) {
@@ -550,6 +578,7 @@
       });
       reader.onload = function(e) {
         var result;
+
         result = e.target.result;
         log.debug('Following contents were read from the file...', result);
         $('#import_error').find('span').html('&nbsp;').end().hide();
@@ -559,6 +588,7 @@
     });
     $('#import_final_btn').click(function() {
       var existing, existingFound, i, template, _i, _j, _len, _len1, _ref, _ref1;
+
       if (data != null) {
         _ref = data.templates;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -596,6 +626,7 @@
     });
     $('#import_paste_btn').click(function() {
       var $this;
+
       $this = $(this);
       $('#import_file_btn').val('');
       $('#import_content').val(ext.paste());
@@ -606,7 +637,8 @@
       });
     });
     return $('#import_continue_btn').click(function() {
-      var $this, importData, list, str, template, _i, _len, _ref;
+      var $this, error, importData, list, str, template, _i, _len, _ref;
+
       $this = $(this).prop('disabled', true);
       list = $('#import_items');
       str = $('#import_content').val();
@@ -614,7 +646,8 @@
       list.find('option').remove();
       try {
         importData = createImport(str);
-      } catch (error) {
+      } catch (_error) {
+        error = _error;
         log.error(error);
         $('#import_error').find('span').text(error).end().show();
       }
@@ -641,6 +674,7 @@
 
   loadTemplateRows = function(templates, pagination) {
     var shortcutModifiers, table, template, _i, _len;
+
     if (templates == null) {
       templates = ext.templates;
     }
@@ -673,6 +707,7 @@
 
   loadToolbar = function() {
     var toolbar;
+
     log.trace();
     toolbar = store.get('toolbar');
     if (toolbar.popup) {
@@ -702,6 +737,7 @@
     log.trace();
     $('#toolbarPopup .btn').click(function() {
       var popup;
+
       popup = !$('#toolbarPopupYes').hasClass('active');
       store.modify('toolbar', function(toolbar) {
         return toolbar.popup = popup;
@@ -712,6 +748,7 @@
     });
     return bindSaveEvent('#toolbarClose, #toolbarKey, #toolbarOptions', 'change', 'toolbar', function(key) {
       var value;
+
       value = key === 'key' ? this.val() : this.is(':checked');
       log.debug("Changing toolbar " + key + " to '" + value + "'");
       return value;
@@ -728,9 +765,11 @@
 
   loadUrlShorteners = function() {
     var yourls;
+
     log.trace();
     $('input[name="enabled_shortener"]').each(function() {
       var $this;
+
       $this = $(this);
       if (store.get("" + ($this.attr('id')) + ".enabled")) {
         $this.attr('checked', 'checked');
@@ -759,6 +798,7 @@
 
   loadUrlShortenerAccounts = function() {
     var shortener, _i, _len, _ref, _results;
+
     log.trace();
     _ref = ext.queryUrlShorteners(function(shortener) {
       return shortener.oauth != null;
@@ -768,15 +808,18 @@
       shortener = _ref[_i];
       _results.push((function(shortener) {
         var button;
+
         button = $("#" + shortener.name + "Account");
         button.click(function() {
           var $this;
+
           $this = $(this).blur();
           if ($this.data('oauth') !== 'true') {
             $this.tooltip('hide');
             log.debug("Attempting to authorize " + shortener.name);
             return shortener.oauth.authorize(function() {
               var success;
+
               log.debug("Authorization response for " + shortener.name + "...", arguments);
               if (success = shortener.oauth.hasAccessToken()) {
                 $this.addClass('btn-danger').removeClass('btn-success');
@@ -824,6 +867,7 @@
     $('input[name="enabled_shortener"]').change(function() {
       return store.modify('bitly', 'googl', 'yourls', function(data, key) {
         var shortener;
+
         if (data.enabled = $("#" + key).is(':checked')) {
           shortener = ext.queryUrlShortener(function(shortener) {
             return shortener.name === key;
@@ -835,6 +879,7 @@
     });
     $('#yourlsAuthentication button').click(function() {
       var $this, auth;
+
       $this = $(this);
       auth = $this.attr('id').match(/yourlsAuthentication(.*)/)[1];
       store.modify('yourls', function(yourls) {
@@ -850,6 +895,7 @@
 
   deleteTemplates = function(templates) {
     var i, keep, keys, list, template, _i, _j, _len, _len1, _ref, _ref1;
+
     log.trace();
     keys = [];
     list = [];
@@ -889,12 +935,14 @@
 
   enableTemplates = function(templates, enable) {
     var action, keys, stored, template, _i, _len, _ref;
+
     if (enable == null) {
       enable = true;
     }
     log.trace();
     keys = (function() {
       var _i, _len, _results;
+
       _results = [];
       for (_i = 0, _len = templates.length; _i < _len; _i++) {
         template = templates[_i];
@@ -927,6 +975,7 @@
 
   reorderTemplates = function(fromIndex, toIndex) {
     var templates;
+
     log.trace();
     templates = ext.templates;
     if ((fromIndex != null) && (toIndex != null)) {
@@ -940,9 +989,10 @@
 
   saveTemplate = function(template) {
     var action, i, isNew, temp, templates, _i, _len;
+
     log.trace();
     log.debug('Saving the following template...', template);
-    isNew = !(template.key != null);
+    isNew = template.key == null;
     templates = store.get('templates');
     if (isNew) {
       template.key = utils.keyGen();
@@ -968,6 +1018,7 @@
 
   updateImportedTemplate = function(template, existing) {
     var _ref;
+
     log.trace();
     log.debug('Updating existing template with the following imported data...', template);
     if (!existing.readOnly) {
@@ -990,6 +1041,7 @@
 
   updateToolbarTemplates = function() {
     var lastSelectedTemplate, lastSelectedTemplateKey, opt, template, toolbarKey, toolbarTemplates, _i, _len, _ref, _ref1, _results;
+
     log.trace();
     toolbarKey = store.get('toolbar.key');
     toolbarTemplates = $('#toolbarKey');
@@ -1014,7 +1066,6 @@
   };
 
   ValidationError = (function(_super) {
-
     __extends(ValidationError, _super);
 
     function ValidationError(id, key) {
@@ -1025,6 +1076,7 @@
 
     ValidationError.prototype.hide = function() {
       var field;
+
       field = $("#" + this.id);
       field.parents('.control-group:first').removeClass(this.className);
       return field.parents('.controls:first').find('.help-block').remove();
@@ -1032,6 +1084,7 @@
 
     ValidationError.prototype.show = function() {
       var field;
+
       field = $("#" + this.id);
       field.parents('.control-group:first').addClass(this.className);
       return field.parents('.controls:first').append($('<span/>', {
@@ -1045,7 +1098,6 @@
   })(utils.Class);
 
   ValidationWarning = (function(_super) {
-
     __extends(ValidationWarning, _super);
 
     function ValidationWarning(id, key) {
@@ -1078,8 +1130,9 @@
 
   validateTemplate = function(template) {
     var errors, isNew;
+
     log.trace();
-    isNew = !(template.key != null);
+    isNew = template.key == null;
     errors = [];
     log.debug('Validating the following template...', template);
     if (!template.readOnly) {
@@ -1095,7 +1148,6 @@
   };
 
   Message = (function(_super) {
-
     __extends(Message, _super);
 
     function Message(block) {
@@ -1106,14 +1158,15 @@
 
     Message.prototype.hide = function() {
       var _ref;
+
       return (_ref = this.alert) != null ? _ref.alert('close') : void 0;
     };
 
     Message.prototype.show = function() {
-      if (this.headerKey && !(this.header != null)) {
+      if (this.headerKey && (this.header == null)) {
         this.header = i18n.get(this.headerKey);
       }
-      if (this.messageKey && !(this.message != null)) {
+      if (this.messageKey && (this.message == null)) {
         this.message = i18n.get(this.messageKey);
       }
       this.alert = $('<div/>', {
@@ -1144,7 +1197,6 @@
   })(utils.Class);
 
   ErrorMessage = (function(_super) {
-
     __extends(ErrorMessage, _super);
 
     function ErrorMessage(block) {
@@ -1158,7 +1210,6 @@
   })(Message);
 
   SuccessMessage = (function(_super) {
-
     __extends(SuccessMessage, _super);
 
     function SuccessMessage(block) {
@@ -1172,7 +1223,6 @@
   })(Message);
 
   WarningMessage = (function(_super) {
-
     __extends(WarningMessage, _super);
 
     function WarningMessage(block) {
@@ -1187,6 +1237,7 @@
 
   addImportedTemplate = function(template) {
     var newTemplate, _ref;
+
     log.trace();
     log.debug('Creating a new template with the following details...', template);
     if (isKeyValid(template.key)) {
@@ -1216,6 +1267,7 @@
 
   activateDraggables = function() {
     var dragSource, draggables, table;
+
     log.trace();
     table = $('#templates');
     dragSource = null;
@@ -1223,6 +1275,7 @@
     draggables.off('dragstart dragend dragenter dragover drop');
     draggables.on('dragstart', function(e) {
       var $this;
+
       $this = $(this);
       dragSource = this;
       table.removeClass('table-hover');
@@ -1238,6 +1291,7 @@
     });
     draggables.on('dragenter', function(e) {
       var $this;
+
       $this = $(this);
       draggables.not($this).removeClass('dnd-over');
       return $this.addClass('dnd-over');
@@ -1249,6 +1303,7 @@
     });
     return draggables.on('drop', function(e) {
       var $dragSource, $this, fromIndex, toIndex;
+
       $dragSource = $(dragSource);
       e.stopPropagation();
       if (dragSource !== this) {
@@ -1274,6 +1329,7 @@
     log.trace();
     return $('#templates tbody tr td:not(:first-child)').off('click').click(function() {
       var activeKey;
+
       activeKey = $(this).parents('tr:first').find(':checkbox').val();
       return openWizard(ext.queryTemplate(function(template) {
         return template.key === activeKey;
@@ -1283,11 +1339,13 @@
 
   activateSelections = function() {
     var selectBoxes, table;
+
     log.trace();
     table = $('#templates');
     selectBoxes = table.find('tbody :checkbox');
     selectBoxes.off('change').change(function() {
       var $this, messageKey;
+
       $this = $(this);
       messageKey = 'opt_select_box';
       if ($this.is(':checked')) {
@@ -1298,6 +1356,7 @@
     });
     table.find('thead :checkbox').off('change').change(function() {
       var $this, checked, messageKey;
+
       $this = $(this);
       checked = $this.is(':checked');
       messageKey = 'opt_select_all_box';
@@ -1313,10 +1372,12 @@
 
   activateTooltips = function(selector) {
     var base;
+
     log.trace();
     base = $(selector || document);
     base.find('[data-original-title]').each(function() {
       var $this;
+
       $this = $(this);
       $this.tooltip('destroy');
       $this.attr('title', $this.attr('data-original-title'));
@@ -1324,6 +1385,7 @@
     });
     return base.find('[title]').each(function() {
       var $this, placement, _ref;
+
       $this = $(this);
       placement = $this.attr('data-placement');
       placement = placement != null ? trimToLower(placement) : 'top';
@@ -1345,6 +1407,7 @@
 
   createExport = function(templates) {
     var data, template, _i, _len, _ref;
+
     if (templates == null) {
       templates = [];
     }
@@ -1367,12 +1430,14 @@
   };
 
   createImport = function(str) {
-    var data;
+    var data, error;
+
     log.trace();
     log.debug('Parsing the following import string...', str);
     try {
       data = JSON.parse(str);
-    } catch (error) {
+    } catch (_error) {
+      error = _error;
       throw i18n.get('error_import_data');
     }
     if (!$.isArray(data.templates) || data.templates.length === 0 || typeof data.version !== 'string') {
@@ -1384,6 +1449,7 @@
 
   deriveTemplate = function() {
     var readOnly, template, _ref, _ref1, _ref2;
+
     log.trace();
     readOnly = (_ref = activeTemplate.readOnly) != null ? _ref : false;
     template = {
@@ -1403,6 +1469,7 @@
 
   feedback = function() {
     var UserVoice, script, uv;
+
     log.trace();
     if (!feedbackAdded) {
       uv = document.createElement('script');
@@ -1445,12 +1512,14 @@
 
   getSelectedTemplates = function() {
     var selectedKeys;
+
     selectedKeys = [];
     $('#templates tbody :checkbox:checked').each(function() {
       return selectedKeys.push($(this).val());
     });
     return ext.queryTemplates(function(template) {
       var _ref;
+
       return _ref = template.key, __indexOf.call(selectedKeys, _ref) >= 0;
     });
   };
@@ -1464,6 +1533,7 @@
 
   paginate = function(templates) {
     var children, limit, list, page, pages, pagination, refreshPagination, _i;
+
     log.trace();
     limit = parseInt($('#template_filter').val());
     pagination = $('#pagination');
@@ -1472,6 +1542,7 @@
       pages = Math.ceil(templates.length / limit);
       refreshPagination = function(page) {
         var end, start;
+
         if (page == null) {
           page = 1;
         }
@@ -1480,6 +1551,7 @@
         loadTemplateRows(templates.slice(start, end), false);
         pagination.find('ul li:first-child').each(function() {
           var $this;
+
           $this = $(this);
           if (page === 1) {
             return $this.addClass('disabled');
@@ -1489,6 +1561,7 @@
         });
         pagination.find('ul li:not(:first-child, :last-child)').each(function() {
           var $this;
+
           $this = $(this);
           if (page === parseInt($this.text())) {
             return $this.addClass('active');
@@ -1498,6 +1571,7 @@
         });
         return pagination.find('ul li:last-child').each(function() {
           var $this;
+
           $this = $(this);
           if (page === pages) {
             return $this.addClass('disabled');
@@ -1523,6 +1597,7 @@
       });
       pagination.find('ul li:not(:first-child, :last-child)').click(function() {
         var $this;
+
         $this = $(this);
         if (!$this.hasClass('active')) {
           return refreshPagination($this.index());
@@ -1542,6 +1617,7 @@
 
   readImport = function(importData) {
     var data, existing, i, imported, keys, storedKeys, template, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+
     log.trace();
     log.debug('Importing the following data...', importData);
     data = {
@@ -1550,6 +1626,7 @@
     keys = [];
     storedKeys = (function() {
       var _i, _len, _ref, _results;
+
       _ref = ext.templates;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -1589,10 +1666,10 @@
             break;
           }
           if (!existing.key) {
-            existing = utils.clone(ext.queryTemplate(function(temp) {
+            existing = $.extend(true, {}, ext.queryTemplate(function(temp) {
               return temp.key === template.key;
-            }), true);
-            if (existing) {
+            }));
+            if (existing && !$.isEmptyObject(existing)) {
               existing = updateImportedTemplate(template, existing);
               data.templates.push(existing);
               keys.push(existing.key);
@@ -1607,6 +1684,7 @@
 
   refreshResetButton = function() {
     var container, resetBtn;
+
     log.trace();
     container = $('#template_search');
     resetBtn = container.find(':reset');
@@ -1621,6 +1699,7 @@
 
   refreshSelectButtons = function() {
     var buttons, selections;
+
     log.trace();
     buttons = $('#delete_btn, #disable_btn, #enable_btn, #export_btn');
     selections = $('#templates tbody :checkbox:checked');
@@ -1629,6 +1708,7 @@
 
   resetWizard = function() {
     var imgOpt, _ref;
+
     log.trace();
     if (activeTemplate == null) {
       activeTemplate = {};
@@ -1648,6 +1728,7 @@
     $('#template_content, #template_title').prop('disabled', !!activeTemplate.readOnly);
     return $('#template_delete_btn').each(function() {
       var $this;
+
       $this = $(this);
       $this.prop('disabled', !!activeTemplate.readOnly);
       if (activeTemplate.key != null) {
@@ -1660,6 +1741,7 @@
 
   searchTemplates = function(query) {
     var expression, keyword, keywords;
+
     if (query == null) {
       query = '';
     }
@@ -1668,6 +1750,7 @@
     if (keywords.length) {
       expression = RegExp("" + (((function() {
         var _i, _len, _results;
+
         _results = [];
         for (_i = 0, _len = keywords.length; _i < _len; _i++) {
           keyword = keywords[_i];
@@ -1712,15 +1795,16 @@
   };
 
   options = window.options = new (Options = (function(_super) {
-
     __extends(Options, _super);
 
     function Options() {
-      return Options.__super__.constructor.apply(this, arguments);
+      _ref = Options.__super__.constructor.apply(this, arguments);
+      return _ref;
     }
 
     Options.prototype.init = function() {
       var initialTabChange, navHeight, optionsActiveTab;
+
       log.trace();
       log.info('Initializing the options page');
       if (store.get('analytics')) {
@@ -1742,6 +1826,7 @@
       initialTabChange = true;
       $('a[tabify]').click(function() {
         var id, nav, parent, target;
+
         target = $(this).attr('tabify');
         nav = $("#navigation a[tabify='" + target + "']");
         parent = nav.parent('li');
@@ -1787,6 +1872,7 @@
       $('#template_shortcut_modifier').html(ext.isThisPlatform('mac') ? ext.SHORTCUT_MAC_MODIFIERS : ext.SHORTCUT_MODIFIERS);
       $('[popover]').each(function() {
         var $this, placement, trigger;
+
         $this = $(this);
         placement = $this.attr('data-placement');
         placement = placement != null ? trimToLower(placement) : 'right';
@@ -1809,9 +1895,10 @@
       activateTooltips();
       navHeight = $('.navbar').height();
       return $('[data-goto]').click(function() {
-        var goto, pos, _ref;
+        var goto, pos, _ref1;
+
         goto = $($(this).attr('data-goto'));
-        pos = ((_ref = goto.position()) != null ? _ref.top : void 0) || 0;
+        pos = ((_ref1 = goto.position()) != null ? _ref1.top : void 0) || 0;
         if (pos && pos >= navHeight) {
           pos -= navHeight;
         }

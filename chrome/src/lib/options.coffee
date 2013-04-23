@@ -1287,11 +1287,10 @@ readImport = (importData) ->
           break
         unless existing.key
           # Attempt to locate the existing template and clone it.
-          existing = utils.clone (ext.queryTemplate (temp) ->
+          existing = $.extend yes, {}, ext.queryTemplate (temp) ->
             temp.key is template.key
-          ), yes
           # Attempt to update the derived template.
-          if existing
+          if existing and not $.isEmptyObject existing
             existing = updateImportedTemplate template, existing
             data.templates.push existing
             keys.push existing.key

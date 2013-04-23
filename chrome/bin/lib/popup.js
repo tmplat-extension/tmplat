@@ -4,22 +4,23 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var Popup, analytics, ext, log, popup, utils, _ref,
+  var Popup, analytics, ext, log, popup, utils, _ref, _ref1,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   _ref = chrome.extension.getBackgroundPage(), analytics = _ref.analytics, ext = _ref.ext, log = _ref.log, utils = _ref.utils;
 
   popup = window.popup = new (Popup = (function(_super) {
-
     __extends(Popup, _super);
 
     function Popup() {
-      return Popup.__super__.constructor.apply(this, arguments);
+      _ref1 = Popup.__super__.constructor.apply(this, arguments);
+      return _ref1;
     }
 
     Popup.prototype.init = function() {
       var item, items, width, _i, _j, _k, _len, _len1, _len2;
+
       log.trace();
       log.info('Initializing the popup');
       analytics.track('Frames', 'Displayed', 'Popup');
@@ -31,7 +32,7 @@
       }
       for (_j = 0, _len1 = items.length; _j < _len1; _j++) {
         item = items[_j];
-        if (!(typeof width !== "undefined" && width !== null) || item.scrollWidth > width) {
+        if ((typeof width === "undefined" || width === null) || item.scrollWidth > width) {
           width = item.scrollWidth;
         }
       }
@@ -46,6 +47,7 @@
 
     Popup.prototype.sendMessage = function() {
       var message;
+
       log.trace();
       message = {
         data: {

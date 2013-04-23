@@ -4,13 +4,14 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var Store, dig, store, tryParse, tryStringify,
+  var Store, dig, store, tryParse, tryStringify, _ref,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __slice = [].slice;
 
   dig = function(root, path, force, parseFirst) {
     var base, basePath, object, result;
+
     if (parseFirst == null) {
       parseFirst = true;
     }
@@ -23,7 +24,7 @@
       }
       while (object && path.length > 1) {
         object = object[path.shift()];
-        if (!(object != null) && force) {
+        if ((object == null) && force) {
           object = {};
         }
       }
@@ -51,15 +52,16 @@
   };
 
   store = window.store = new (Store = (function(_super) {
-
     __extends(Store, _super);
 
     function Store() {
-      return Store.__super__.constructor.apply(this, arguments);
+      _ref = Store.__super__.constructor.apply(this, arguments);
+      return _ref;
     }
 
     Store.prototype.backup = function() {
       var data, key, value;
+
       data = {};
       for (key in localStorage) {
         if (!__hasProp.call(localStorage, key)) continue;
@@ -71,6 +73,7 @@
 
     Store.prototype.clear = function() {
       var key, _results;
+
       _results = [];
       for (key in localStorage) {
         if (!__hasProp.call(localStorage, key)) continue;
@@ -81,6 +84,7 @@
 
     Store.prototype.exists = function() {
       var key, keys, _i, _len;
+
       keys = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       for (_i = 0, _len = keys.length; _i < _len; _i++) {
         key = keys[_i];
@@ -93,6 +97,7 @@
 
     Store.prototype.get = function(key) {
       var parts, value;
+
       parts = dig(localStorage, key);
       if (parts[3]) {
         value = parts[3][parts[4]];
@@ -104,7 +109,8 @@
     };
 
     Store.prototype.init = function(keys, defaultValue) {
-      var key, _ref, _results;
+      var key, _ref1, _results;
+
       switch (typeof keys) {
         case 'object':
           _results = [];
@@ -116,12 +122,13 @@
           return _results;
           break;
         case 'string':
-          return this.set(keys, (_ref = this.get(keys)) != null ? _ref : defaultValue);
+          return this.set(keys, (_ref1 = this.get(keys)) != null ? _ref1 : defaultValue);
       }
     };
 
     Store.prototype.modify = function() {
       var callback, key, keys, value, _i, _j, _len, _results;
+
       keys = 2 <= arguments.length ? __slice.call(arguments, 0, _i = arguments.length - 1) : (_i = 0, []), callback = arguments[_i++];
       _results = [];
       for (_j = 0, _len = keys.length; _j < _len; _j++) {
@@ -137,6 +144,7 @@
 
     Store.prototype.remove = function() {
       var key, keys, value, _i, _len, _results;
+
       keys = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (keys.length === 1) {
         value = this.get(keys[0]);
@@ -162,6 +170,7 @@
 
     Store.prototype.restore = function(str) {
       var data, key, value, _results;
+
       data = JSON.parse(decodeURIComponent(str));
       _results = [];
       for (key in data) {
@@ -174,6 +183,7 @@
 
     Store.prototype.search = function(regex) {
       var key, _results;
+
       _results = [];
       for (key in localStorage) {
         if (!__hasProp.call(localStorage, key)) continue;
@@ -186,6 +196,7 @@
 
     Store.prototype.set = function(keys, value) {
       var key, oldValue, _results;
+
       switch (typeof keys) {
         case 'object':
           _results = [];
@@ -208,7 +219,6 @@
   })(utils.Class));
 
   store.Updater = (function(_super) {
-
     __extends(Updater, _super);
 
     function Updater(namespace) {
@@ -222,6 +232,7 @@
 
     Updater.prototype.remove = function() {
       var _this = this;
+
       return store.modify('updates', function(updates) {
         return delete updates[_this.namespace];
       });
@@ -229,6 +240,7 @@
 
     Updater.prototype.rename = function(namespace) {
       var _this = this;
+
       return store.modify('updates', function(updates) {
         if (updates[_this.namespace] != null) {
           updates[namespace] = updates[_this.namespace];
@@ -240,9 +252,11 @@
 
     Updater.prototype.update = function(version, processor) {
       var _this = this;
+
       return store.modify('updates', function(updates) {
-        var _name, _ref;
-        if ((_ref = updates[_name = _this.namespace]) == null) {
+        var _name, _ref1;
+
+        if ((_ref1 = updates[_name = _this.namespace]) == null) {
           updates[_name] = '';
         }
         if (updates[_this.namespace] < version) {

@@ -10,7 +10,7 @@
 # Convenient shorthand the `sendMessage` method in the chrome API which
 # supports the old `sendRequest` variation for backwards compatibility.
 sendMessage = (args...) ->
-  base = chrome.extension
+  base = chrome.runtime
   (base.sendMessage or base.sendRequest).apply base, args
 
 # Functionality
