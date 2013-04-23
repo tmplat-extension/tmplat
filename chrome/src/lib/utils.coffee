@@ -42,18 +42,8 @@ utils = window.utils = new class Utils extends Class
   # Public functions
   # ----------------
 
-  # Call a function asynchronously with the arguments provided and then pass
-  # the returned value to `callback` if it was specified.
-  async: (fn, args..., callback) ->
-    if callback? and typeof callback isnt 'function'
-      args.push callback
-      callback = null
-    setTimeout ->
-      result = fn args...
-      callback? result
-    , 0
-
   # Create a clone of an object.
+  # TODO: Replace with Underscore?
   clone: (obj, deep) ->
     return obj unless @isObject obj
     return obj.slice() if @isArray obj
@@ -63,9 +53,11 @@ utils = window.utils = new class Utils extends Class
     copy
 
   # Indicate whether an object is an array.
+  # TODO: Replace with jQuery and/or Underscore?
   isArray: Array.isArray or (obj) -> 'array' is @type obj
 
   # Indicate whether an object is an object.
+  # TODO: Replace with jQuery and/or Underscore?
   isObject: (obj) -> obj is Object obj
 
   # Generate a unique key based on the current time and using a randomly
@@ -108,6 +100,7 @@ utils = window.utils = new class Utils extends Class
       entity for entity in entities when filter entity
 
   # Generate a random number between the `min` and `max` values provided.
+  # TODO: Replace with Underscore?
   random: (min, max) -> Math.floor(Math.random() * (max - min + 1)) + min
 
   # Bind `handler` to event indicating that the DOM is ready.
@@ -159,6 +152,7 @@ utils = window.utils = new class Utils extends Class
       0
 
   # Retrieve the understable type name for an object.
+  # TODO: Can this be replaced by jQuery and/or Underscore?
   type: (obj) ->
     if obj? then typeMap[Object::toString.call obj] || 'object' else String obj
 
@@ -170,71 +164,3 @@ utils = window.utils = new class Utils extends Class
 
 # Objects within the extension should extend this class wherever possible.
 utils.Class = Class
-
-# `Runner` allows asynchronous code to be executed dependently in an
-# organized manner.
-class utils.Runner extends utils.Class
-
-  # Create a new instance of `Runner`.
-  constructor: -> @queue = []
-
-  # Finalize the process by resetting this `Runner` an then calling `onfinish`,
-  # if it was specified when `run` was called.  
-  # Any arguments passed in should also be passed to the registered `onfinish`
-  # handler.
-  finish: (args...) ->
-    @queue = []
-    @started = no
-    @onfinish? args...
-
-  # Remove the next task from the queue and call it.  
-  # Finish up if there are no more tasks in the queue, ensuring any `args` are
-  # passed along to `onfinish`.
-  next: (args...) ->
-    if @started
-      if @queue.length
-        ctx = fn = null
-        task = @queue.shift()
-        # Determine what context the function should be executed in.
-        switch typeof task.reference
-          when 'function' then fn = task.reference
-          when 'string'
-            ctx = task.context
-            fn  = ctx[task.reference]
-        # Unpack the arguments where required.
-        if typeof task.args is 'function'
-          task.args = task.args.apply null
-        fn?.apply ctx, task.args
-        return yes
-      else
-        @finish args...
-    no
-
-  # Add a new task to the queue using the values provided.  
-  # `reference` can either be the name of the property on the `context` object
-  # which references the target function or the function itself. When the
-  # latter, `context` is ignored and should be `null` (not omitted). All of the
-  # remaining `args` are passed to the function when it is called during the
-  # process.
-  push: (context, reference, args...) -> @queue.push
-    args:      args
-    context:   context
-    reference: reference
-
-  # Add a new task to the queue using the *packed* values provided.  
-  # This method varies from `push` since the arguments are provided in the form
-  # of a function which is called immediately before the function, which allows
-  # any dependent arguments to be correctly referenced.
-  pushPacked: (context, reference, packedArgs) -> @queue.push
-    args:      packedArgs
-    context:   context
-    reference: reference
-
-  # Start the process by calling the first task in the queue and register the
-  # `onfinish` function provided.
-  run: (@onfinish) ->
-    @started = yes
-    @next()
-
-  # Remove the specified number of tasks from the front of the queue.
-  skip: (count = 1) -> @queue.splice 0, count

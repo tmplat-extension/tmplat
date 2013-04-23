@@ -4,9 +4,10 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, addAdditionalData, browser, buildDerivedData, buildPopup, buildStandardData, buildTemplate, callUrlShortener, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isExtensionGallery, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, nullIfEmpty, onMessage, operatingSystem, runSelectors, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage,
-    __hasProp = {}.hasOwnProperty,
+  var BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, addAdditionalData, browser, buildDerivedData, buildPopup, buildStandardData, buildTemplate, callUrlShortener, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isExtensionGallery, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, nullIfEmpty, onMessage, operatingSystem, runSelectors, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
+    __hasProp = {}.hasOwnProperty,
+    __slice = [].slice,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   String.prototype.capitalize = function() {
@@ -127,6 +128,7 @@
       },
       getParameters: function(url) {
         var params;
+
         params = {
           format: 'json',
           longUrl: url
@@ -166,6 +168,7 @@
     }, {
       getHeaders: function() {
         var headers;
+
         headers = {
           'Content-Type': 'application/json'
         };
@@ -216,6 +219,7 @@
       },
       getParameters: function(url) {
         var params, yourls;
+
         params = {
           action: 'shorturl',
           format: 'json',
@@ -262,6 +266,7 @@
   SUPPORT = {
     hehijbfgiekmjfkfjpbkbammjbdenadd: function(tab) {
       var idx, str;
+
       if (tab.title) {
         str = 'IE: ';
         idx = tab.title.indexOf(str);
@@ -279,6 +284,7 @@
     },
     miedgcmlgpmdagojnnbemlkgidepfjfi: function(tab) {
       var idx, str;
+
       if (tab.url) {
         str = 'ie.html#';
         idx = tab.url.indexOf(str);
@@ -289,6 +295,7 @@
     },
     fnfnbeppfinmnjnjhedifcfllpcfgeea: function(tab) {
       var idx, str;
+
       if (tab.url) {
         str = 'navigate.html?chromeurl=';
         idx = tab.url.indexOf(str);
@@ -303,6 +310,7 @@
     },
     icoloanbecehinobmflpeglknkplbfbm: function(tab) {
       var idx, str;
+
       if (tab.url) {
         str = 'navigate.html?chromeurl=';
         idx = tab.url.indexOf(str);
@@ -329,46 +337,48 @@
   operatingSystem = '';
 
   executeScriptsInExistingWindows = function() {
-    var runner;
     log.trace();
-    runner = new utils.Runner();
-    runner.push(chrome.windows, 'getAll', null, function(windows) {
-      var win, _fn, _i, _len;
+    return chrome.windows.getAll({
+      populate: true
+    }, function(windows) {
+      var tab, win, _i, _len, _results;
+
       log.info('Retrieved the following windows...', windows);
-      _fn = function(win) {
-        return runner.push(chrome.tabs, 'query', {
-          windowId: win.id
-        }, function(tabs) {
-          var tab, _j, _len1;
-          log.info('Retrieved the following tabs...', tabs);
-          for (_j = 0, _len1 = tabs.length; _j < _len1; _j++) {
-            tab = tabs[_j];
+      _results = [];
+      for (_i = 0, _len = windows.length; _i < _len; _i++) {
+        win = windows[_i];
+        log.info('Retrieved the following tabs...', win.tabs);
+        _results.push((function() {
+          var _j, _len1, _ref, _results1;
+
+          _ref = win.tabs;
+          _results1 = [];
+          for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+            tab = _ref[_j];
             if (!(!isProtectedPage(tab))) {
               continue;
             }
             chrome.tabs.executeScript(tab.id, {
               file: 'lib/content.js'
             });
-            if (tab.url.indexOf(HOMEPAGE_DOMAIN) !== -1) {
-              chrome.tabs.executeScript(tab.id, {
+            if (__indexOf.call(tab.url, HOMEPAGE_DOMAIN) >= 0) {
+              _results1.push(chrome.tabs.executeScript(tab.id, {
                 file: 'lib/install.js'
-              });
+              }));
+            } else {
+              _results1.push(void 0);
             }
           }
-          return runner.next();
-        });
-      };
-      for (_i = 0, _len = windows.length; _i < _len; _i++) {
-        win = windows[_i];
-        _fn(win);
+          return _results1;
+        })());
       }
-      return runner.next();
+      return _results;
     });
-    return runner.run();
   };
 
   getBrowserVersion = function() {
     var idx, str;
+
     log.trace();
     str = navigator.userAgent;
     idx = str.indexOf(browser.title);
@@ -385,6 +395,7 @@
 
   getHotkeys = function() {
     var template, _i, _len, _ref, _results;
+
     log.trace();
     _ref = ext.templates;
     _results = [];
@@ -399,6 +410,7 @@
 
   getOperatingSystem = function() {
     var os, str, _i, _len;
+
     log.trace();
     str = navigator.platform;
     for (_i = 0, _len = OPERATING_SYSTEMS.length; _i < _len; _i++) {
@@ -435,6 +447,7 @@
 
   isBlacklisted = function(extensionId) {
     var extension, _i, _len;
+
     log.trace();
     for (_i = 0, _len = BLACKLIST.length; _i < _len; _i++) {
       extension = BLACKLIST[_i];
@@ -463,7 +476,7 @@
 
   isSpecialPage = function(tab) {
     log.trace();
-    return tab.url.indexOf('chrome') === 0;
+    return !tab.url.indexOf('chrome');
   };
 
   nullIfEmpty = function(object) {
@@ -476,8 +489,12 @@
   };
 
   onMessage = function(message, sender, sendResponse) {
-    var data, editable, id, link, output, placeholders, runner, shortcut, tab, template, windowId, _ref, _ref1;
+    var active, data, editable, id, link, output, placeholders, shortcut, template, _ref, _ref1;
+
     log.trace();
+    if (!message.type) {
+      return typeof sendResponse === "function" ? sendResponse() : void 0;
+    }
     if (message.type === 'shortcut' && !store.get('shortcuts.enabled')) {
       return typeof sendResponse === "function" ? sendResponse() : void 0;
     }
@@ -497,113 +514,110 @@
         version: ext.version
       }) : void 0;
     }
-    data = null;
-    editable = false;
+    active = data = output = template = null;
+    editable = link = shortcut = false;
     id = utils.keyGen('', null, 't', false);
-    link = false;
-    output = null;
     placeholders = {};
-    shortcut = false;
-    tab = null;
-    template = null;
-    windowId = chrome.windows.WINDOW_ID_CURRENT;
-    runner = new utils.Runner();
-    if (windowId == null) {
-      runner.push(chrome.windows, 'getCurrent', function(win) {
-        log.info('Retrieved the following window...', win);
-        windowId = win.id;
-        return runner.next();
-      });
-    }
-    runner.pushPacked(chrome.tabs, 'query', function() {
-      return [
-        {
-          active: true,
-          windowId: windowId
-        }, function(tabs) {
-          log.info('Retrieved the following tabs...', tabs);
-          tab = tabs[0];
-          return runner.next();
-        }
-      ];
-    });
-    runner.push(null, function() {
-      var getCallback, _ref2;
-      getCallback = function(tag) {
-        return function(text, render) {
-          var key, placeholder, trim, val;
-          if (text) {
-            text = render(text);
-          }
-          if (tag === 'shorten' && !text) {
-            text = this.url;
-          }
-          trim = text.trim();
-          log.debug("Following is the contents of a " + tag + " tag...", text);
-          if (!trim || tag === 'shorten' && !R_VALID_URL.test(trim)) {
-            return text;
-          }
-          for (key in placeholders) {
-            if (!__hasProp.call(placeholders, key)) continue;
-            val = placeholders[key];
-            if (!(val.data === trim && val.tag === tag)) {
+    return async.series([
+      function(done) {
+        return chrome.windows.getCurrent({
+          populate: true
+        }, function(win) {
+          var tab, _i, _len, _ref2;
+
+          log.info('Retrieved the following window...', win);
+          log.info('Retrieved the following tabs...', win.tabs);
+          _ref2 = win.tabs;
+          for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+            tab = _ref2[_i];
+            if (!tab.active) {
               continue;
             }
-            placeholder = key;
+            active = tab;
             break;
           }
-          if (placeholder == null) {
-            placeholder = utils.keyGen('', null, 'c', false);
-            placeholders[placeholder] = {
-              data: trim,
-              tag: tag
-            };
-            this[placeholder] = "{" + placeholder + "}";
+          if (active == null) {
+            active = _.first(win.tabs);
           }
-          log.debug("Replacing " + tag + " tag with " + placeholder + " placeholder");
-          return "{" + placeholder + "}";
-        };
-      };
-      updateProgress(null, true);
-      try {
-        switch (message.type) {
-          case 'menu':
-            template = getTemplateWithMenuId(message.data.menuItemId);
-            if (template != null) {
-              _ref2 = buildDerivedData(tab, message.data, getCallback), data = _ref2.data, editable = _ref2.editable, link = _ref2.link;
-            }
-            break;
-          case 'popup':
-          case 'toolbar':
-            template = getTemplateWithKey(message.data.key);
-            if (template != null) {
-              data = buildStandardData(tab, getCallback);
-            }
-            break;
-          case 'shortcut':
-            shortcut = true;
-            template = getTemplateWithShortcut(message.data.key);
-            if (template != null) {
-              data = buildStandardData(tab, getCallback);
-            }
-        }
-        updateProgress(20);
-        if (data != null) {
-          return runner.next();
-        } else {
-          return runner.finish();
-        }
-      } catch (error) {
-        log.error(error);
-        return runner.finish({
-          message: i18n.get(error instanceof URIError ? 'result_bad_uri_description' : 'result_bad_error_description'),
-          success: false
+          return done();
         });
-      }
-    });
-    runner.pushPacked(null, addAdditionalData, function() {
-      return [
-        tab, data, id, editable, shortcut, link, function() {
+      }, function(done) {
+        var error, getCallback, msg, _ref2;
+
+        getCallback = function(tag) {
+          return function(text, render) {
+            var key, placeholder, trim, val;
+
+            if (text) {
+              text = render(text);
+            }
+            if (tag === 'shorten' && !text) {
+              text = this.url;
+            }
+            trim = text.trim();
+            log.debug("Following is the contents of a " + tag + " tag...", text);
+            if (!trim || tag === 'shorten' && !R_VALID_URL.test(trim)) {
+              return text;
+            }
+            for (key in placeholders) {
+              if (!__hasProp.call(placeholders, key)) continue;
+              val = placeholders[key];
+              if (val.data === trim && val.tag === tag) {
+                placeholder = key;
+                break;
+              }
+            }
+            if (placeholder == null) {
+              placeholder = utils.keyGen('', null, 'c', false);
+              placeholders[placeholder] = {
+                data: trim,
+                tag: tag
+              };
+              this[placeholder] = "{" + placeholder + "}";
+            }
+            log.debug("Replacing " + tag + " tag with " + placeholder + " placeholder");
+            return "{" + placeholder + "}";
+          };
+        };
+        updateProgress(null, true);
+        try {
+          switch (message.type) {
+            case 'menu':
+              template = getTemplateWithMenuId(message.data.menuItemId);
+              if (template != null) {
+                _ref2 = buildDerivedData(active, message.data, getCallback), data = _ref2.data, editable = _ref2.editable, link = _ref2.link;
+              }
+              break;
+            case 'popup':
+            case 'toolbar':
+              template = getTemplateWithKey(message.data.key);
+              if (template != null) {
+                data = buildStandardData(active, getCallback);
+              }
+              break;
+            case 'shortcut':
+              shortcut = true;
+              template = getTemplateWithShortcut(message.data.key);
+              if (template != null) {
+                data = buildStandardData(active, getCallback);
+              }
+              break;
+            default:
+              return done(new Error(i18n.get('result_bad_type_description')));
+          }
+          if (template != null) {
+            updateProgress(20);
+            return done();
+          } else {
+            return done(new Error(i18n.get('result_bad_template_description')));
+          }
+        } catch (_error) {
+          error = _error;
+          msg = i18n.get(error instanceof URIError ? 'result_bad_uri_description' : 'result_bad_error_description');
+          return done(new Error(msg));
+        }
+      }, function(done) {
+        return addAdditionalData(active, data, id, editable, shortcut, link, function() {
           updateProgress(40);
           transformData(data);
           $.extend(data, {
@@ -612,197 +626,164 @@
           log.debug("Using the following data to render " + template.title + "...", data);
           if (template.content) {
             output = Mustache.to_html(template.content, data);
-            updateProgress(60);
             log.debug('Following string is the rendered result...', output);
-            if ($.isEmptyObject(placeholders)) {
-              return runner.finish({
-                contents: output,
-                success: true,
-                template: template
-              });
-            } else {
-              return runner.next();
-            }
+            updateProgress(60);
+          }
+          if (output == null) {
+            output = '';
+          }
+          return done();
+        });
+      }, function(done) {
+        var info, match, placeholder, selectMap, shortenMap;
+
+        updateProgress(80);
+        if (_.isEmpty(placeholders)) {
+          return done();
+        }
+        selectMap = {};
+        shortenMap = {};
+        for (placeholder in placeholders) {
+          if (!__hasProp.call(placeholders, placeholder)) continue;
+          info = placeholders[placeholder];
+          if (info.tag === 'shorten') {
+            shortenMap[placeholder] = info.data;
           } else {
-            return runner.finish({
-              contents: '',
-              success: true,
-              template: template
-            });
+            match = info.tag.match(R_SELECT_TAG);
+            selectMap[placeholder] = {
+              all: match[1] != null,
+              convertTo: match[2],
+              selector: info.data
+            };
           }
         }
-      ];
-    });
-    runner.push(null, function() {
-      var info, match, placeholder, selectMap, shortenMap, subRunner;
-      updateProgress(80);
-      selectMap = {};
-      shortenMap = {};
-      for (placeholder in placeholders) {
-        if (!__hasProp.call(placeholders, placeholder)) continue;
-        info = placeholders[placeholder];
-        if (info.tag === 'shorten') {
-          shortenMap[placeholder] = info.data;
-        } else {
-          match = info.tag.match(R_SELECT_TAG);
-          selectMap[placeholder] = {
-            all: match[1] != null,
-            convertTo: match[2],
-            selector: info.data
-          };
-        }
-      }
-      subRunner = new utils.Runner();
-      if (!$.isEmptyObject(selectMap)) {
-        subRunner.push(null, runSelectors, tab, selectMap, function() {
-          var value;
-          log.info('One or more selectors were executed');
-          updateProgress(85);
-          for (placeholder in selectMap) {
-            if (!__hasProp.call(selectMap, placeholder)) continue;
-            value = selectMap[placeholder];
-            placeholders[placeholder] = value;
-          }
-          return subRunner.next({
-            success: true
-          });
-        });
-      }
-      if (!$.isEmptyObject(shortenMap)) {
-        subRunner.push(null, callUrlShortener, shortenMap, function(response) {
-          var value, _ref2;
-          log.info('URL shortener service was called one or more times');
-          updateProgress(90);
-          if (response.success) {
-            updateUrlShortenerUsage(response.service.name, response.oauth);
-            for (placeholder in shortenMap) {
-              if (!__hasProp.call(shortenMap, placeholder)) continue;
-              value = shortenMap[placeholder];
-              placeholders[placeholder] = value;
+        return async.series([
+          function(done) {
+            if (_.isEmpty(selectMap)) {
+              done();
             }
-            return subRunner.finish({
-              success: true
+            return runSelectors(active, selectMap, function() {
+              var value;
+
+              log.info('One or more selectors were executed');
+              updateProgress(85);
+              for (placeholder in selectMap) {
+                if (!__hasProp.call(selectMap, placeholder)) continue;
+                value = selectMap[placeholder];
+                placeholders[placeholder] = value;
+              }
+              return done();
             });
-          } else {
-            if ((_ref2 = response.message) == null) {
-              response.message = i18n.get('shortener_error', response.service.title);
+          }, function(done) {
+            if (_.isEmpty(shortenMap)) {
+              done();
             }
-            log.warn(response.message);
-            return subRunner.finish({
-              message: response.message,
-              success: false
+            return callUrlShortener(shortenMap, function(err, response) {
+              var value, _ref2;
+
+              log.info('URL shortener service was called one or more times');
+              updateProgress(90);
+              if (err) {
+                if ((_ref2 = err.message) == null) {
+                  err.message = i18n.get('shortener_error', response.service.title);
+                }
+                return done(err);
+              } else {
+                updateUrlShortenerUsage(response.service.name, response.oauth);
+                for (placeholder in shortenMap) {
+                  if (!__hasProp.call(shortenMap, placeholder)) continue;
+                  value = shortenMap[placeholder];
+                  placeholders[placeholder] = value;
+                }
+                return done();
+              }
             });
           }
+        ], function(err) {
+          if (!err) {
+            output = Mustache.to_html(output, placeholders);
+            log.debug('Following string is the re-rendered result...', output);
+          }
+          return done(err);
         });
       }
-      return subRunner.run(function(result) {
-        var newOutput;
-        if (result.success) {
-          newOutput = Mustache.to_html(output, placeholders);
-          log.debug('Following string is the re-rendered result...', newOutput);
-        }
-        return runner.finish({
-          contents: newOutput,
-          message: result.message,
-          success: result.success,
-          template: template
-        });
-      });
-    });
-    return runner.run(function(result) {
-      var type, value, _ref2, _ref3;
+    ], function(err) {
+      var type, value, _ref2;
+
       type = message.type[0].toUpperCase() + message.type.substr(1);
       if (shortcut) {
         value = message.data.key.charCodeAt(0);
       }
       analytics.track('Requests', 'Processed', type, value);
       updateProgress(100);
-      if (result != null) {
-        if (result.success && !result.contents) {
-          result.message = i18n.get('result_bad_empty_description', result.template.title);
-          result.success = false;
-        }
-        if (result.template != null) {
-          updateTemplateUsage(result.template.key);
-          updateStatistics();
-        }
-        if (result.success) {
-          ext.notification.title = i18n.get('result_good_title');
-          ext.notification.titleStyle = 'color: #468847';
-          ext.notification.description = (_ref2 = result.message) != null ? _ref2 : i18n.get('result_good_description', result.template.title);
-          ext.copy(result.contents);
-          if (!isProtectedPage(tab) && (editable && store.get('menu.paste')) || (shortcut && store.get('shortcuts.paste'))) {
-            utils.sendMessage('tabs', tab.id, {
-              contents: result.contents,
-              id: id,
-              type: 'paste'
-            });
-          }
-          if (typeof sendResponse === "function") {
-            sendResponse({
-              contents: result.contents
-            });
-          }
-        } else {
-          ext.notification.title = i18n.get('result_bad_title');
-          ext.notification.titleStyle = 'color: #B94A48';
-          ext.notification.description = (_ref3 = result.message) != null ? _ref3 : i18n.get('result_bad_description', result.template.title);
-          showNotification();
-          if (typeof sendResponse === "function") {
-            sendResponse();
-          }
+      if (!err && !output) {
+        err = new Error(i18n.get('result_bad_empty_description', template.title));
+      }
+      if (err) {
+        log.warn(err.message);
+        ext.notification.title = i18n.get('result_bad_title');
+        ext.notification.titleStyle = 'color: #B94A48';
+        ext.notification.description = (_ref2 = err.message) != null ? _ref2 : i18n.get('result_bad_description', template.title);
+        showNotification();
+        if (typeof sendResponse === "function") {
+          sendResponse();
         }
       } else {
-        updateProgress(null, false);
+        updateTemplateUsage(template.key);
+        updateStatistics();
+        ext.notification.title = i18n.get('result_good_title');
+        ext.notification.titleStyle = 'color: #468847';
+        ext.notification.description = i18n.get('result_good_description', template.title);
+        ext.copy(output);
+        if (!isProtectedPage(active) && (editable && store.get('menu.paste')) || (shortcut && store.get('shortcuts.paste'))) {
+          utils.sendMessage('tabs', active.id, {
+            contents: output,
+            id: id,
+            type: 'paste'
+          });
+        }
+        if (typeof sendResponse === "function") {
+          sendResponse({
+            contents: output
+          });
+        }
       }
       return log.debug("Finished handling " + type + " request");
     });
   };
 
   selectOrCreateTab = function(url, callback) {
-    var runner, tab, windowId;
     log.trace();
-    tab = null;
-    windowId = chrome.windows.WINDOW_ID_CURRENT;
-    runner = new utils.Runner();
-    if (windowId == null) {
-      runner.push(chrome.windows, 'getCurrent', function(win) {
-        log.debug('Retrieved the following window...', win);
-        windowId = win.id;
-        return runner.next();
-      });
-    }
-    runner.pushPacked(chrome.tabs, 'query', function() {
-      return [
-        {
-          windowId: windowId
-        }, function(tabs) {
-          var existingTab, result, _i, _len;
-          log.debug('Retrieved the following tabs...', tabs);
-          result = true;
-          for (_i = 0, _len = tabs.length; _i < _len; _i++) {
-            tab = tabs[_i];
-            if (tab.url.indexOf(url) === 0) {
-              existingTab = tab;
-              break;
-            }
-          }
-          if (existingTab != null) {
-            chrome.tabs.update(existingTab.id, {
-              active: true
-            });
-            result = false;
-          } else {
-            chrome.tabs.create({
-              url: url,
-              active: true
-            });
-          }
-          return runner.finish(result);
+    return chrome.windows.getCurrent({
+      populate: true
+    }, function(win) {
+      var existing, tab, _i, _len, _ref;
+
+      log.debug('Retrieved the following window...', win);
+      log.debug('Retrieved the following tabs...', win.tabs);
+      _ref = win.tabs;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        tab = _ref[_i];
+        if (!(!tab.url.indexOf(url))) {
+          continue;
         }
-      ];
+        existing = tab;
+        break;
+      }
+      if (existing != null) {
+        chrome.tabs.update(existing.id, {
+          active: true
+        });
+        return typeof callback === "function" ? callback(false) : void 0;
+      } else {
+        chrome.tabs.create({
+          windowId: win.id,
+          url: url,
+          active: true
+        });
+        return typeof callback === "function" ? callback(true) : void 0;
+      }
     });
-    return runner.run(callback);
   };
 
   showNotification = function() {
@@ -816,41 +797,43 @@
   };
 
   updateHotkeys = function() {
-    var hotkeys, runner;
+    var hotkeys;
+
     log.trace();
     hotkeys = getHotkeys();
-    runner = new utils.Runner();
-    runner.push(chrome.windows, 'getAll', null, function(windows) {
-      var win, _fn, _i, _len;
+    return chrome.windows.getAll({
+      populate: true
+    }, function(windows) {
+      var tab, win, _i, _len, _results;
+
       log.info('Retrieved the following windows...', windows);
-      _fn = function(win) {
-        return runner.push(chrome.tabs, 'query', {
-          windowId: win.id
-        }, function(tabs) {
-          var tab, _j, _len1;
-          log.info('Retrieved the following tabs...', tabs);
-          for (_j = 0, _len1 = tabs.length; _j < _len1; _j++) {
-            tab = tabs[_j];
-            if (!isProtectedPage(tab)) {
-              utils.sendMessage('tabs', tab.id, {
-                hotkeys: hotkeys
-              });
-            }
-          }
-          return runner.next();
-        });
-      };
+      _results = [];
       for (_i = 0, _len = windows.length; _i < _len; _i++) {
         win = windows[_i];
-        _fn(win);
+        log.info('Retrieved the following tabs...', win.tabs);
+        _results.push((function() {
+          var _j, _len1, _ref, _results1;
+
+          _ref = win.tabs;
+          _results1 = [];
+          for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+            tab = _ref[_j];
+            if (!isProtectedPage(tab)) {
+              _results1.push(utils.sendMessage('tabs', tab.id, {
+                hotkeys: hotkeys
+              }));
+            }
+          }
+          return _results1;
+        })());
       }
-      return runner.next();
+      return _results;
     });
-    return runner.run();
   };
 
   updateProgress = function(percent, toggle) {
     var loading, popup, progressBar, templates;
+
     log.trace();
     popup = $(chrome.extension.getViews({
       type: 'popup'
@@ -868,6 +851,7 @@
         if (store.get('toolbar.close')) {
           return popup.queue(function() {
             var _ref;
+
             return (_ref = popup.dequeue()[0]) != null ? _ref.close() : void 0;
           });
         } else {
@@ -890,11 +874,13 @@
 
   updateStatistics = function() {
     var _this = this;
+
     log.trace();
     log.info('Updating statistics');
     store.init('stats', {});
     return store.modify('stats', function(stats) {
       var maxUsage, popular;
+
       maxUsage = 0;
       utils.query(ext.templates, false, function(template) {
         if (template.usage > maxUsage) {
@@ -913,6 +899,7 @@
 
   updateTemplateUsage = function(key) {
     var template, _i, _len, _ref;
+
     log.trace();
     _ref = ext.templates;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -930,6 +917,7 @@
 
   updateUrlShortenerUsage = function(name, oauth) {
     var shortener;
+
     log.trace();
     store.modify(name, function(shortener) {
       return shortener.usage++;
@@ -942,146 +930,150 @@
   };
 
   addAdditionalData = function(tab, data, id, editable, shortcut, link, callback) {
-    var runner, windowId;
     log.trace();
-    windowId = chrome.windows.WINDOW_ID_CURRENT;
-    runner = new utils.Runner();
-    if (windowId == null) {
-      runner.push(chrome.windows, 'getCurrent', function(win) {
-        log.info('Retrieved the following window...', win);
-        windowId = win.id;
-        return runner.next();
-      });
-    }
-    runner.pushPacked(chrome.tabs, 'query', function() {
-      return [
-        {
-          windowId: windowId
-        }, function(tabs) {
-          var urls, _i, _len, _ref;
-          log.info('Retrieved the following tabs...', tabs);
-          urls = [];
-          for (_i = 0, _len = tabs.length; _i < _len; _i++) {
-            tab = tabs[_i];
-            if (_ref = tab.url, __indexOf.call(urls, _ref) < 0) {
-              urls.push(tab.url);
-            }
+    return chrome.windows.getCurrent({
+      populate: true
+    }, function(win) {
+      log.info('Retrieved the following window...', win);
+      log.info('Retrieved the following tabs...', win.tabs);
+      $.extend(data, {
+        tabs: (function() {
+          var _i, _len, _ref, _results;
+
+          _ref = win.tabs;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            tab = _ref[_i];
+            _results.push(tab.url);
           }
-          $.extend(data, {
-            tabs: urls
+          return _results;
+        })()
+      });
+      return async.parallel([
+        function(done) {
+          return navigator.geolocation.getCurrentPosition(function(position) {
+            var coords, prop, value, _ref;
+
+            log.debug('Retrieved the following geolocation information...', position);
+            coords = {};
+            _ref = position.coords;
+            for (prop in _ref) {
+              if (!__hasProp.call(_ref, prop)) continue;
+              value = _ref[prop];
+              cords[prop.toLowerCase()] = value != null ? "" + value : '';
+            }
+            return done(null, {
+              coords: coords
+            });
+          }, function(err) {
+            log.error(err.message);
+            return done(null, {
+              coords: {}
+            });
           });
-          return runner.next();
-        }
-      ];
-    });
-    runner.push(navigator.geolocation, 'getCurrentPosition', function(position) {
-      var coords, prop, value, _ref;
-      log.debug('Retrieved the following geolocation information...', position);
-      coords = {};
-      _ref = position.coords;
-      for (prop in _ref) {
-        if (!__hasProp.call(_ref, prop)) continue;
-        value = _ref[prop];
-        coords[prop.toLowerCase()] = value != null ? "" + value : '';
-      }
-      $.extend(data, {
-        coords: coords
-      });
-      return runner.next();
-    }, function(error) {
-      log.error(error.message);
-      return runner.next();
-    });
-    runner.push(chrome.cookies, 'getAll', {
-      url: data.url
-    }, function(cookies) {
-      var cookie, names;
-      if (cookies == null) {
-        cookies = [];
-      }
-      log.debug('Retrieved the following cookies...', cookies);
-      $.extend(data, {
-        cookie: function() {
-          return function(text, render) {
-            var cookie, name, _i, _len;
-            name = render(text);
-            for (_i = 0, _len = cookies.length; _i < _len; _i++) {
-              cookie = cookies[_i];
-              if (cookie.name === name) {
-                return cookie.value;
+        }, function(done) {
+          return chrome.cookies.getAll({
+            url: data.url
+          }, function(cookies) {
+            var cookie, names;
+
+            if (cookies == null) {
+              cookies = [];
+            }
+            log.debug('Retrieved the following cookies...', cookies);
+            cookie = function(text, render) {
+              var name, result, _i, _len;
+
+              name = render(text);
+              for (_i = 0, _len = cookies.length; _i < _len; _i++) {
+                cookie = cookies[_i];
+                if (!(cookie.name === name)) {
+                  continue;
+                }
+                result = cookie.value;
+                break;
               }
-            }
-            return '';
-          };
-        },
-        cookies: ((function() {
-          var _i, _len, _ref;
-          names = [];
-          for (_i = 0, _len = cookies.length; _i < _len; _i++) {
-            cookie = cookies[_i];
-            if (_ref = cookie.name, __indexOf.call(names, _ref) < 0) {
-              names.push(cookie.name);
-            }
+              return result != null ? result : '';
+            };
+            cookies = ((function() {
+              var _i, _len, _ref;
+
+              names = [];
+              for (_i = 0, _len = cookies.length; _i < _len; _i++) {
+                cookie = cookies[_i];
+                if (_ref = cookie.name, __indexOf.call(names, _ref) < 0) {
+                  names.push(cookie.name);
+                }
+              }
+              return names;
+            })());
+            return done(null, {
+              cookie: cookie,
+              cookies: cookies
+            });
+          });
+        }, function(done) {
+          if (isProtectedPage(tab)) {
+            return utils.sendMessage('tabs', tab.id, {
+              editable: editable,
+              id: id,
+              link: link,
+              shortcut: shortcut,
+              url: data.url
+            }, function(response) {
+              var lastModified, time, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+
+              log.debug('Retrieved the following data from content script...', response);
+              lastModified = result.lastModified != null ? (time = Date.parse(result.lastModified), !isNaN(time) ? new Date(time) : void 0) : void 0;
+              return done(null, {
+                author: (_ref = result.author) != null ? _ref : '',
+                characterset: (_ref1 = result.characterSet) != null ? _ref1 : '',
+                description: (_ref2 = result.description) != null ? _ref2 : '',
+                images: (_ref3 = result.images) != null ? _ref3 : [],
+                keywords: (_ref4 = result.keywords) != null ? _ref4 : [],
+                lastmodified: function() {
+                  return function(text, render) {
+                    var _ref5;
+
+                    return (_ref5 = lastModified != null ? lastModified.format(render(text) || void 0) : void 0) != null ? _ref5 : '';
+                  };
+                },
+                linkhtml: (_ref5 = result.linkHTML) != null ? _ref5 : '',
+                links: (_ref6 = result.links) != null ? _ref6 : [],
+                linktext: (_ref7 = result.linkText) != null ? _ref7 : '',
+                pageheight: (_ref8 = result.pageHeight) != null ? _ref8 : '',
+                pagewidth: (_ref9 = result.pageWidth) != null ? _ref9 : '',
+                referrer: (_ref10 = result.referrer) != null ? _ref10 : '',
+                scripts: (_ref11 = result.scripts) != null ? _ref11 : [],
+                selectedimages: (_ref12 = result.selectedImages) != null ? _ref12 : [],
+                selectedlinks: (_ref13 = result.selectedLinks) != null ? _ref13 : [],
+                selection: (_ref14 = result.selection) != null ? _ref14 : '',
+                selectionhtml: (_ref15 = result.selectionHTML) != null ? _ref15 : '',
+                selectionlinks: function() {
+                  return this.selectedlinks;
+                },
+                stylesheets: (_ref16 = result.styleSheets) != null ? _ref16 : []
+              });
+            });
+          } else {
+            return done(null, {});
           }
-          return names;
-        })())
+        }
+      ], function(err, results) {
+        if (err) {
+          log.error(err);
+        }
+        if (results) {
+          $.extend.apply($, [data].concat(__slice.call(results)));
+        }
+        return callback();
       });
-      if (isProtectedPage(tab)) {
-        return runner.finish();
-      } else {
-        return runner.next();
-      }
-    });
-    runner.push(utils, 'sendMessage', 'tabs', tab.id, {
-      editable: editable,
-      id: id,
-      link: link,
-      shortcut: shortcut,
-      url: data.url
-    }, function(response) {
-      log.debug('Retrieved the following data from the content script...', response);
-      return runner.finish(response);
-    });
-    return runner.run(function(result) {
-      var lastModified, time, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
-      if (result == null) {
-        result = {};
-      }
-      lastModified = result.lastModified != null ? (time = Date.parse(result.lastModified), !isNaN(time) ? new Date(time) : void 0) : void 0;
-      $.extend(data, {
-        author: (_ref = result.author) != null ? _ref : '',
-        characterset: (_ref1 = result.characterSet) != null ? _ref1 : '',
-        description: (_ref2 = result.description) != null ? _ref2 : '',
-        images: (_ref3 = result.images) != null ? _ref3 : [],
-        keywords: (_ref4 = result.keywords) != null ? _ref4 : [],
-        lastmodified: function() {
-          return function(text, render) {
-            var _ref5;
-            return (_ref5 = lastModified != null ? lastModified.format(render(text) || void 0) : void 0) != null ? _ref5 : '';
-          };
-        },
-        linkhtml: (_ref5 = result.linkHTML) != null ? _ref5 : '',
-        links: (_ref6 = result.links) != null ? _ref6 : [],
-        linktext: (_ref7 = result.linkText) != null ? _ref7 : '',
-        pageheight: (_ref8 = result.pageHeight) != null ? _ref8 : '',
-        pagewidth: (_ref9 = result.pageWidth) != null ? _ref9 : '',
-        referrer: (_ref10 = result.referrer) != null ? _ref10 : '',
-        scripts: (_ref11 = result.scripts) != null ? _ref11 : [],
-        selectedimages: (_ref12 = result.selectedImages) != null ? _ref12 : [],
-        selectedlinks: (_ref13 = result.selectedLinks) != null ? _ref13 : [],
-        selection: (_ref14 = result.selection) != null ? _ref14 : '',
-        selectionhtml: (_ref15 = result.selectionHTML) != null ? _ref15 : '',
-        selectionlinks: function() {
-          return this.selectedlinks;
-        },
-        stylesheets: (_ref16 = result.styleSheets) != null ? _ref16 : []
-      });
-      return callback();
     });
   };
 
   buildDerivedData = function(tab, onClickData, getCallback) {
     var data, obj;
+
     log.trace();
     obj = {
       editable: onClickData.editable,
@@ -1097,6 +1089,7 @@
 
   buildStandardData = function(tab, getCallback) {
     var anchor, bitly, ctab, data, extension, googl, handler, menu, notifications, plugin, prop, results, shortcuts, stats, toolbar, url, value, yourls;
+
     log.trace();
     ctab = {};
     for (prop in tab) {
@@ -1155,12 +1148,14 @@
       datetime: function() {
         return function(text, render) {
           var _ref;
+
           return (_ref = new Date().format(render(text) || void 0)) != null ? _ref : '';
         };
       },
       decode: function() {
         return function(text, render) {
           var _ref;
+
           return (_ref = decodeURIComponent(render(text))) != null ? _ref : '';
         };
       },
@@ -1174,6 +1169,7 @@
       encode: function() {
         return function(text, render) {
           var _ref;
+
           return (_ref = encodeURIComponent(render(text))) != null ? _ref : '';
         };
       },
@@ -1189,6 +1185,7 @@
       fparam: function() {
         return function(text, render) {
           var _ref;
+
           return (_ref = url.fparam(render(text))) != null ? _ref : '';
         };
       },
@@ -1196,6 +1193,7 @@
       fsegment: function() {
         return function(text, render) {
           var _ref;
+
           return (_ref = url.fsegment(parseInt(render(text), 10))) != null ? _ref : '';
         };
       },
@@ -1238,12 +1236,14 @@
       param: function() {
         return function(text, render) {
           var _ref;
+
           return (_ref = url.param(render(text))) != null ? _ref : '';
         };
       },
       params: nullIfEmpty(url.param()),
       plugins: ((function() {
         var _i, _len, _ref, _ref1;
+
         results = [];
         _ref = navigator.plugins;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -1262,6 +1262,7 @@
       segment: function() {
         return function(text, render) {
           var _ref;
+
           return (_ref = url.segment(parseInt(render(text), 10))) != null ? _ref : '';
         };
       },
@@ -1354,6 +1355,7 @@
 
   runSelectors = function(tab, map, callback) {
     var placeholder;
+
     log.trace();
     if (isProtectedPage(tab)) {
       for (placeholder in map) {
@@ -1366,6 +1368,7 @@
         selectors: map
       }, function(response) {
         var result, value, _ref;
+
         log.debug('Retrieved the following data from the content script...', response);
         _ref = response.selectors;
         for (placeholder in _ref) {
@@ -1387,6 +1390,7 @@
 
   transformData = function(data, deleteOld) {
     var prop, value, _results;
+
     log.trace();
     _results = [];
     for (prop in data) {
@@ -1407,6 +1411,7 @@
 
   buildPopup = function() {
     var anchor, items, template, _i, _len, _ref;
+
     log.trace();
     items = $();
     _ref = ext.templates;
@@ -1442,6 +1447,7 @@
 
   buildTemplate = function(template) {
     var anchor, modifiers;
+
     log.trace();
     log.debug("Creating popup list item for " + template.title);
     anchor = $('<a/>', {
@@ -1468,10 +1474,12 @@
 
   init_update = function() {
     var updater;
+
     log.trace();
     if (store.exists('update_progress')) {
       store.modify('updates', function(updates) {
         var namespace, progress, versions, _results;
+
         progress = store.remove('update_progress');
         _results = [];
         for (namespace in progress) {
@@ -1495,6 +1503,7 @@
     });
     updater.update('1.0.0', function() {
       var optionsActiveTab, _ref, _ref1;
+
       log.info('Updating general settings for 1.0.0');
       if (store.exists('options_active_tab')) {
         optionsActiveTab = store.get('options_active_tab');
@@ -1511,12 +1520,14 @@
       }
       store.modify('anchor', function(anchor) {
         var _ref, _ref1;
+
         anchor.target = (_ref = store.get('doAnchorTarget')) != null ? _ref : false;
         return anchor.title = (_ref1 = store.get('doAnchorTitle')) != null ? _ref1 : false;
       });
       store.remove('doAnchorTarget', 'doAnchorTitle');
       store.modify('menu', function(menu) {
         var _ref;
+
         return menu.enabled = (_ref = store.get('contextMenu')) != null ? _ref : true;
       });
       store.remove('contextMenu');
@@ -1528,6 +1539,7 @@
     });
     return updater.update('1.1.0', function() {
       var _ref;
+
       log.info('Updating general settings for 1.1.0');
       return store.set('shortcuts', {
         enabled: (_ref = store.get('shortcuts')) != null ? _ref : true
@@ -1542,6 +1554,7 @@
 
   initTemplate = function(template, templates) {
     var idx, _base, _base1, _base10, _base11, _base12, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _ref, _ref1, _ref10, _ref11, _ref12, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+
     log.trace();
     idx = templates.indexOf(utils.query(templates, true, function(tmpl) {
       return tmpl.key === template.key;
@@ -1608,6 +1621,7 @@
     initTemplates_update();
     store.modify('templates', function(templates) {
       var template, _i, _j, _len, _len1, _results;
+
       for (_i = 0, _len = DEFAULT_TEMPLATES.length; _i < _len; _i++) {
         template = DEFAULT_TEMPLATES[_i];
         initTemplate(template, templates);
@@ -1624,6 +1638,7 @@
 
   initTemplates_update = function() {
     var updater;
+
     log.trace();
     updater = new store.Updater('features');
     updater.rename('templates');
@@ -1642,6 +1657,7 @@
     });
     updater.update('0.2.0.0', function() {
       var i, image, legacy, name, names, oldImg, _i, _len, _ref, _results;
+
       log.info('Updating template settings for 0.2.0.0');
       names = (_ref = store.get('features')) != null ? _ref : [];
       _results = [];
@@ -1658,6 +1674,7 @@
           } else {
             _results.push((function() {
               var _j, _len1, _ref1, _results1;
+
               _ref1 = icons.LEGACY;
               _results1 = [];
               for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
@@ -1681,6 +1698,7 @@
     });
     updater.update('1.0.0', function() {
       var image, key, name, names, templates, toolbarFeatureName, _i, _len, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
+
       log.info('Updating template settings for 1.0.0');
       names = (_ref = store.remove('features')) != null ? _ref : [];
       templates = [];
@@ -1724,6 +1742,7 @@
       log.info('Updating template settings for 1.1.0');
       return store.modify('templates', function(templates) {
         var base, template, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _results;
+
         _results = [];
         for (_i = 0, _len = templates.length; _i < _len; _i++) {
           template = templates[_i];
@@ -1773,6 +1792,7 @@
     initToolbar_update();
     store.modify('toolbar', function(toolbar) {
       var _ref, _ref1, _ref2, _ref3;
+
       if ((_ref = toolbar.close) == null) {
         toolbar.close = true;
       }
@@ -1789,12 +1809,14 @@
 
   initToolbar_update = function() {
     var updater;
+
     log.trace();
     updater = new store.Updater('toolbar');
     updater.update('1.0.0', function() {
       log.info('Updating toolbar settings for 1.0.0');
       store.modify('toolbar', function(toolbar) {
         var _ref, _ref1;
+
         toolbar.popup = (_ref = store.get('toolbarPopup')) != null ? _ref : true;
         return toolbar.style = (_ref1 = store.get('toolbarFeatureDetails')) != null ? _ref1 : false;
       });
@@ -1818,6 +1840,7 @@
     initUrlShorteners_update();
     store.modify('bitly', function(bitly) {
       var _ref, _ref1;
+
       if ((_ref = bitly.enabled) == null) {
         bitly.enabled = true;
       }
@@ -1825,6 +1848,7 @@
     });
     store.modify('googl', function(googl) {
       var _ref, _ref1;
+
       if ((_ref = googl.enabled) == null) {
         googl.enabled = false;
       }
@@ -1832,6 +1856,7 @@
     });
     return store.modify('yourls', function(yourls) {
       var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+
       if ((_ref = yourls.authentication) == null) {
         yourls.authentication = '';
       }
@@ -1856,6 +1881,7 @@
 
   initUrlShorteners_update = function() {
     var updater;
+
     log.trace();
     updater = new store.Updater('shorteners');
     updater.update('0.1.0.0', function() {
@@ -1868,6 +1894,7 @@
     });
     updater.update('1.0.0', function() {
       var bitly, googl, yourls, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+
       log.info('Updating URL shortener settings for 1.0.0');
       bitly = store.get('bitly');
       store.set('bitly', {
@@ -1904,7 +1931,8 @@
   };
 
   callUrlShortener = function(map, callback) {
-    var endpoint, placeholder, runner, service, title, url, _fn;
+    var endpoint, service, tasks, title;
+
     log.trace();
     service = getActiveUrlShortener();
     endpoint = service.url();
@@ -1916,68 +1944,68 @@
         success: false
       });
     }
-    runner = new utils.Runner();
-    _fn = function(placeholder, url) {
+    tasks = _.each(map, function(url, placeholder) {
       var oauth, _ref;
+
       oauth = !!((_ref = service.oauth) != null ? _ref.hasAccessToken() : void 0);
-      if (oauth) {
-        runner.push(service.oauth, 'authorize', function() {
-          return runner.next();
-        });
-      }
-      return runner.push(null, function() {
-        var header, params, value, xhr, _ref1, _ref2;
-        params = service.getParameters(url);
-        if (params != null) {
-          endpoint += "?" + ($.param(params));
-        }
-        xhr = new XMLHttpRequest();
-        xhr.open(service.method, endpoint, true);
-        _ref2 = (_ref1 = service.getHeaders()) != null ? _ref1 : {};
-        for (header in _ref2) {
-          if (!__hasProp.call(_ref2, header)) continue;
-          value = _ref2[header];
-          xhr.setRequestHeader(header, value);
-        }
-        xhr.onreadystatechange = function() {
-          if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-              map[placeholder] = service.output(xhr.responseText);
-              return runner.next({
-                oauth: oauth,
-                success: true
+      return function(done) {
+        return async.series([
+          function(done) {
+            if (oauth) {
+              return service.oauth.authorize(function() {
+                return done();
               });
             } else {
-              return runner.finish({
-                message: i18n.get('shortener_detailed_error', [title, url]),
-                success: false
-              });
+              return done();
             }
+          }, function(done) {
+            var header, params, value, xhr, _ref1, _ref2;
+
+            params = service.getParameters(url);
+            if (params != null) {
+              endpoint += "?" + ($.param(params));
+            }
+            xhr = new XMLHttpRequest();
+            xhr.open(service.method, endpoint, true);
+            _ref2 = (_ref1 = service.getHeaders()) != null ? _ref1 : {};
+            for (header in _ref2) {
+              if (!__hasProp.call(_ref2, header)) continue;
+              value = _ref2[header];
+              xhr.setRequestHeader(header, value);
+            }
+            xhr.onreadystatechange = function() {
+              var message;
+
+              if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                  map[placeholder] = service.output(xhr.responseText);
+                  return done(null, {
+                    oauth: oauth
+                  });
+                } else {
+                  message = i18n.get('shortener_detailed_error', [title, url]);
+                  return done(new Error(message));
+                }
+              }
+            };
+            return xhr.send(service.input(url));
           }
-        };
-        return xhr.send(service.input(url));
-      });
-    };
-    for (placeholder in map) {
-      if (!__hasProp.call(map, placeholder)) continue;
-      url = map[placeholder];
-      _fn(placeholder, url);
-    }
-    return runner.run(function(result) {
-      if (result == null) {
-        result = {};
-      }
-      return callback({
-        message: result.message,
-        oauth: result.oauth,
-        service: service,
-        success: result.success
+        ], done);
+      };
+    });
+    return async.parallel(tasks, function(err, results) {
+      var _ref;
+
+      return callback(err, {
+        oauth: (_ref = _.last(results)) != null ? _ref.oauth : void 0,
+        service: service
       });
     });
   };
 
   getActiveUrlShortener = function() {
     var shortener;
+
     log.trace();
     shortener = ext.queryUrlShortener(function(shortener) {
       return shortener.isEnabled();
@@ -1993,11 +2021,11 @@
   };
 
   ext = window.ext = new (Extension = (function(_super) {
-
     __extends(Extension, _super);
 
     function Extension() {
-      return Extension.__super__.constructor.apply(this, arguments);
+      _ref = Extension.__super__.constructor.apply(this, arguments);
+      return _ref;
     }
 
     Extension.prototype.SHORTCUT_MODIFIERS = 'Ctrl+Alt+';
@@ -2024,6 +2052,7 @@
 
     Extension.prototype.copy = function(str, hidden) {
       var sandbox;
+
       log.trace();
       sandbox = $('#sandbox').val(str).select();
       document.execCommand('copy');
@@ -2036,6 +2065,7 @@
 
     Extension.prototype.getKeyForName = function(name, generate) {
       var key;
+
       if (generate == null) {
         generate = true;
       }
@@ -2065,28 +2095,35 @@
     };
 
     Extension.prototype.init = function() {
-      var runner,
-        _this = this;
+      var _this = this;
+
       log.trace();
       log.info('Initializing extension controller');
       if (store.get('analytics')) {
         analytics.add();
       }
-      runner = new utils.Runner();
-      runner.push(jQuery, 'getJSON', utils.url('manifest.json'), function(data) {
-        _this.version = data.version;
-        return runner.next();
-      });
-      runner.push(jQuery, 'getJSON', utils.url('configuration.json'), function(data) {
-        var shortener, _i, _len;
-        _this.config = data;
-        for (_i = 0, _len = SHORTENERS.length; _i < _len; _i++) {
-          shortener = SHORTENERS[_i];
-          shortener.oauth = typeof shortener.oauth === "function" ? shortener.oauth() : void 0;
+      return async.series([
+        function(done) {
+          return $.getJSON(utils.url('manifest.json'), function(data) {
+            _this.version = data.version;
+            return done();
+          });
+        }, function(done) {
+          return $.getJSON(utils.url('configuration.json'), function(data) {
+            var shortener, _i, _len;
+
+            _this.config = data;
+            for (_i = 0, _len = SHORTENERS.length; _i < _len; _i++) {
+              shortener = SHORTENERS[_i];
+              shortener.oauth = typeof shortener.oauth === "function" ? shortener.oauth() : void 0;
+            }
+            return done();
+          });
         }
-        return runner.next();
-      });
-      return runner.run(function() {
+      ], function(err) {
+        if (err) {
+          throw err;
+        }
         store.init({
           anchor: {},
           menu: {},
@@ -2098,35 +2135,39 @@
         });
         init_update();
         store.modify('anchor', function(anchor) {
-          var _ref, _ref1;
-          if ((_ref = anchor.target) == null) {
+          var _ref1, _ref2;
+
+          if ((_ref1 = anchor.target) == null) {
             anchor.target = false;
           }
-          return (_ref1 = anchor.title) != null ? _ref1 : anchor.title = false;
+          return (_ref2 = anchor.title) != null ? _ref2 : anchor.title = false;
         });
         store.modify('menu', function(menu) {
-          var _ref, _ref1, _ref2;
-          if ((_ref = menu.enabled) == null) {
+          var _ref1, _ref2, _ref3;
+
+          if ((_ref1 = menu.enabled) == null) {
             menu.enabled = true;
           }
-          if ((_ref1 = menu.options) == null) {
+          if ((_ref2 = menu.options) == null) {
             menu.options = true;
           }
-          return (_ref2 = menu.paste) != null ? _ref2 : menu.paste = false;
+          return (_ref3 = menu.paste) != null ? _ref3 : menu.paste = false;
         });
         store.modify('notifications', function(notifications) {
-          var _ref, _ref1;
-          if ((_ref = notifications.duration) == null) {
+          var _ref1, _ref2;
+
+          if ((_ref1 = notifications.duration) == null) {
             notifications.duration = 3000;
           }
-          return (_ref1 = notifications.enabled) != null ? _ref1 : notifications.enabled = true;
+          return (_ref2 = notifications.enabled) != null ? _ref2 : notifications.enabled = true;
         });
         store.modify('shortcuts', function(shortcuts) {
-          var _ref, _ref1;
-          if ((_ref = shortcuts.enabled) == null) {
+          var _ref1, _ref2;
+
+          if ((_ref1 = shortcuts.enabled) == null) {
             shortcuts.enabled = true;
           }
-          return (_ref1 = shortcuts.paste) != null ? _ref1 : shortcuts.paste = false;
+          return (_ref2 = shortcuts.paste) != null ? _ref2 : shortcuts.paste = false;
         });
         initTemplates();
         initToolbar();
@@ -2143,6 +2184,7 @@
         utils.onMessage('extension', false, onMessage);
         utils.onMessage('extension', true, function(msg, sender, cb) {
           var block;
+
           block = isBlacklisted(sender.id);
           analytics.track('External Requests', 'Started', sender.id, Number(!block));
           if (block) {
@@ -2169,6 +2211,7 @@
 
     Extension.prototype.paste = function() {
       var result, sandbox;
+
       log.trace();
       result = '';
       sandbox = $('#sandbox').val('').select();
@@ -2219,9 +2262,11 @@
 
     Extension.prototype.updateContextMenu = function() {
       var _this = this;
+
       log.trace();
       return chrome.contextMenus.removeAll(function() {
-        var menu, menuId, notEmpty, onMenuClick, parentId, template, _i, _len, _ref;
+        var menu, menuId, notEmpty, onMenuClick, parentId, template, _i, _len, _ref1;
+
         onMenuClick = function(info, tab) {
           return onMessage({
             data: info,
@@ -2234,9 +2279,9 @@
             contexts: ['all'],
             title: i18n.get('name')
           });
-          _ref = _this.templates;
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            template = _ref[_i];
+          _ref1 = _this.templates;
+          for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+            template = _ref1[_i];
             if (!template.enabled) {
               continue;
             }
@@ -2291,6 +2336,7 @@
 
     Extension.prototype.updateToolbar = function() {
       var key, template;
+
       log.trace();
       key = store.get('toolbar.key');
       if (key) {

@@ -35,16 +35,14 @@
         "type": "git"
       , "url": "git://github.com/neocotic/template.git"
     }
-  , "dependencies": {
-        "async": "0.1.x"
-      , "coffee-script": "1.4.x"
-      , "wrench": "1.4.x"
-    }
   , "devDependencies": {
-        "docco": "0.4.x"
-	    , "uglify-js": "2.2.x"
+        "async": "~0.2.7"
+      , "coffee-script": "~1.6.2"
+      , "docco": "~0.4.0"
+	    , "uglify-js": "~2.2.5"
+      , "wrench": "~1.4.4"
 	  }
   , "engines": {
-      "node": "*"
+      "node": "~0.8.0"
     }
 }

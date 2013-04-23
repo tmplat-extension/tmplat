@@ -138,7 +138,7 @@ SHORTENERS        = [
   isEnabled:     -> store.get 'bitly.enabled'
   method:        'GET'
   name:          'bitly'
-  oauth:         -> new OAuth2 'bitly'
+  oauth:         -> new OAuth2 'bitly',
     client_id:     ext.config.services.bitly.client_id
     client_secret: ext.config.services.bitly.client_secret
   output:        (resp) -> JSON.parse(resp).data.url
@@ -158,7 +158,7 @@ SHORTENERS        = [
   isEnabled:     -> store.get 'googl.enabled'
   method:        'POST'
   name:          'googl'
-  oauth:         -> new OAuth2 'google'
+  oauth:         -> new OAuth2 'google',
     api_scope:     ext.config.services.googl.api_scope
     client_id:     ext.config.services.googl.client_id
     client_secret: ext.config.services.googl.client_secret
@@ -251,25 +251,18 @@ operatingSystem   = ''
 # all of the tabs (where valid) of each Chrome window.
 executeScriptsInExistingWindows = ->
   log.trace()
-  # Create a runner to help manage the asynchronous aspect.
-  runner = new utils.Runner()
-  runner.push chrome.windows, 'getAll', null, (windows) ->
+  chrome.windows.getAll populate: yes, (windows) ->
     log.info 'Retrieved the following windows...', windows
     for win in windows
-      do (win) -> runner.push chrome.tabs, 'query', windowId: win.id, (tabs) ->
-        log.info 'Retrieved the following tabs...', tabs
-        # Check tabs are not displaying a *protected* page (i.e. one that
-        # will cause an error if an attempt is made to execute content
-        # scripts).
-        for tab in tabs when not isProtectedPage tab
-          chrome.tabs.executeScript tab.id, file: 'lib/content.js'
-          # Only execute inline installation content script for tabs
-          # displaying a page on Template's homepage domain.
-          if tab.url.indexOf(HOMEPAGE_DOMAIN) isnt -1
-            chrome.tabs.executeScript tab.id, file: 'lib/install.js'
-        runner.next()
-    runner.next()
-  runner.run()
+      log.info 'Retrieved the following tabs...', win.tabs
+      # Check tabs are not displaying a *protected* page (i.e. one that will
+      # cause an error if an attempt is made to execute content scripts).
+      for tab in win.tabs when not isProtectedPage tab
+        chrome.tabs.executeScript tab.id, file: 'lib/content.js'
+        # Only execute inline installation content script for tabs displaying
+        # a page on Template's homepage domain.
+        if HOMEPAGE_DOMAIN in tab.url
+          chrome.tabs.executeScript tab.id, file: 'lib/install.js'
 
 # Attempt to derive the current version of the user's browser.
 getBrowserVersion = ->
@@ -340,7 +333,7 @@ isProtectedPage = (tab) ->
 # a page that is internal to the browser).
 isSpecialPage = (tab) ->
   log.trace()
-  tab.url.indexOf('chrome') is 0
+  not tab.url.indexOf 'chrome'
 
 # Ensure `null` is returned instead of `object` if it is *empty*.
 nullIfEmpty = (object) ->
@@ -352,6 +345,8 @@ nullIfEmpty = (object) ->
 # that they do not originate from a blacklisted extension.
 onMessage = (message, sender, sendResponse) ->
   log.trace()
+  # Message type is required. Informal rejection.
+  return sendResponse?() unless message.type
   # Don't allow shortcut requests when shortcuts are disabled.
   if message.type is 'shortcut' and not store.get 'shortcuts.enabled'
     return sendResponse?()
@@ -364,204 +359,181 @@ onMessage = (message, sender, sendResponse) ->
     return sendResponse?()
   # Info requests are simple, just send some useful information back. Done!
   if message.type in ['info', 'version']
-    return sendResponse?(
+    return sendResponse? {
       hotkeys: getHotkeys()
       id:      EXTENSION_ID
       version: ext.version
-    )
-  data         = null
-  editable     = no
+    }
+  active       = data   = output   = template = null
+  editable     = link   = shortcut = no
   id           = utils.keyGen '', null, 't', no
-  link         = no
-  output       = null
   placeholders = {}
-  shortcut     = no
-  tab          = null
-  template     = null
-  windowId     = chrome.windows.WINDOW_ID_CURRENT
-  # Create a runner to manage this asynchronous mess.
-  runner = new utils.Runner()
-  unless windowId?
-    runner.push chrome.windows, 'getCurrent', (win) ->
-      log.info 'Retrieved the following window...', win
-      windowId = win.id
-      runner.next()
-  runner.pushPacked chrome.tabs, 'query', ->
-    [active: yes, windowId: windowId, (tabs) ->
-      log.info 'Retrieved the following tabs...', tabs
-      tab = tabs[0]
-      runner.next()
-    ]
-  runner.push null, ->
-    # Return a callback function to be used by a tag to indicate that it
-    # requires further action.  
-    # Replace the tag with the unique placeholder so that it can be rendered
-    # again later with the final value.
-    getCallback = (tag) -> (text, render) ->
-      text = render text if text
-      text = @url if tag is 'shorten' and not text
-      trim = text.trim()
-      log.debug "Following is the contents of a #{tag} tag...", text
-      # If `trim` doesn't appear to be a valid so just return the rendered
-      # `text`.
-      return text if not trim or tag is 'shorten' and not R_VALID_URL.test trim
-      for own key, val of placeholders when val.data is trim and val.tag is tag
-        placeholder = key
-        break
-      unless placeholder?
-        placeholder = utils.keyGen '', null, 'c', no
-        placeholders[placeholder] =
-          data: trim
-          tag:  tag
-        # Sections are re-rendered so the context must have a property for the
-        # placeholder the replaces itself with itself so that it still when it
-        # comes to replacing with the final value.
-        this[placeholder] = "{#{placeholder}}"
-      log.debug "Replacing #{tag} tag with #{placeholder} placeholder"
-      "{#{placeholder}}"
-    # If the popup is currently displayed, hide the template list and show a
-    # loading animation.
-    updateProgress null, on
-    # Attempt to derive the contextual template data.
-    try
-      switch message.type
-        when 'menu'
-          template = getTemplateWithMenuId message.data.menuItemId
-          if template?
-            {data, editable, link} = buildDerivedData tab, message.data,
-              getCallback
-        when 'popup', 'toolbar'
-          template = getTemplateWithKey message.data.key
-          data     = buildStandardData tab, getCallback if template?
-        when 'shortcut'
-          shortcut = yes
-          template = getTemplateWithShortcut message.data.key
-          data     = buildStandardData tab, getCallback if template?
-      updateProgress 20
-      if data? then runner.next() else runner.finish()
-    catch error
-      log.error error
-      # Oops! Something went wrong so we should probably let the user know.
-      runner.finish
-        message: i18n.get if error instanceof URIError
+  async.series [
+    (done) ->
+      chrome.windows.getCurrent populate: yes, (win) ->
+        log.info 'Retrieved the following window...', win
+        log.info 'Retrieved the following tabs...',   win.tabs
+        # Determine which of the tabs is currently active.
+        for tab in win.tabs when tab.active
+          active = tab
+          break
+        active ?= _.first win.tabs
+        done()
+    (done) ->
+      # Return a callback function to be used by a tag to indicate that it
+      # requires further action.  
+      # Replace the tag with the unique placeholder so that it can be rendered
+      # again later with the final value.
+      getCallback = (tag) ->
+        (text, render) ->
+          text = render text if text
+          text = @url if tag is 'shorten' and not text
+          trim = text.trim()
+          log.debug "Following is the contents of a #{tag} tag...", text
+          # If `trim` doesn't appear to be a valid so just return the rendered
+          # `text`.
+          if not trim or tag is 'shorten' and not R_VALID_URL.test trim
+            return text
+          for own key, val of placeholders
+            if val.data is trim and val.tag is tag
+              placeholder = key
+              break
+          unless placeholder?
+            placeholder = utils.keyGen '', null, 'c', no
+            placeholders[placeholder] =
+              data: trim
+              tag:  tag
+            # Sections are re-rendered so the context must have a property for
+            # the placeholder the replaces itself with itself so that it still
+            # when it comes to replacing with the final value.
+            this[placeholder] = "{#{placeholder}}"
+          log.debug "Replacing #{tag} tag with #{placeholder} placeholder"
+          "{#{placeholder}}"
+      # If the popup is currently displayed, hide the template list and show a
+      # loading animation.
+      updateProgress null, on
+      # Attempt to derive the contextual template data.
+      try
+        switch message.type
+          when 'menu'
+            template = getTemplateWithMenuId message.data.menuItemId
+            if template?
+              {data, editable, link} = buildDerivedData active, message.data,
+                getCallback
+          when 'popup', 'toolbar'
+            template = getTemplateWithKey message.data.key
+            data     = buildStandardData active, getCallback if template?
+          when 'shortcut'
+            shortcut = yes
+            template = getTemplateWithShortcut message.data.key
+            data     = buildStandardData active, getCallback if template?
+          else
+            return done new Error i18n.get 'result_bad_type_description'
+        if template?
+          updateProgress 20
+          done()
+        else
+          done new Error i18n.get 'result_bad_template_description'
+      catch error
+        # Oops! Something went wrong so we should probably let the user know.
+        msg = i18n.get if error instanceof URIError
           'result_bad_uri_description'
         else
           'result_bad_error_description'
-        success: no
-  runner.pushPacked null, addAdditionalData, ->
-    [tab, data, id, editable, shortcut, link, ->
-      updateProgress 40
-      # Ensure all properties of `data` are lower case.
-      transformData data
-      # To complete the data, simply extend it using `template`.
-      $.extend data, template: template
-      log.debug "Using the following data to render #{template.title}...", data
-      if template.content
-        output = Mustache.to_html template.content, data
-        updateProgress 60
-        log.debug 'Following string is the rendered result...', output
-        # If any placeholders were inserted and replaced, they need to be
-        # handled now in order to replace any placeholders with their final
-        # values.
-        if $.isEmptyObject placeholders
-          runner.finish
-            contents: output
-            success:  yes
-            template: template
+        done new Error msg
+    (done) ->
+      # Extract additional data from the environment.
+      addAdditionalData active, data, id, editable, shortcut, link, ->
+        updateProgress 40
+        # Ensure all properties of `data` are lower case.
+        transformData data
+        # To complete the data, simply extend it using `template`.
+        $.extend data, {template}
+        log.debug "Using the following data to render #{template.title}...",
+          data
+        if template.content
+          output = Mustache.to_html template.content, data
+          log.debug 'Following string is the rendered result...', output
+          updateProgress 60
+        output ?= ''
+        done()
+    (done) ->
+      updateProgress 80
+      # Only proceed if any placeholders were inserted and replaced, as they
+      # need to be handled now in order to replace any placeholders with their
+      # final values.
+      return done() if _.isEmpty placeholders
+      selectMap  = {}
+      shortenMap = {}
+      for own placeholder, info of placeholders
+        if info.tag is 'shorten'
+          shortenMap[placeholder] = info.data
         else
-          runner.next()
-      else
-        # Display the *empty contents* error message if the contents of the
-        # template itself is empty.
-        runner.finish
-          contents: ''
-          success:  yes
-          template: template
-    ]
-  runner.push null, ->
-    updateProgress 80
-    selectMap  = {}
-    shortenMap = {}
-    for own placeholder, info of placeholders
-      if info.tag is 'shorten'
-        shortenMap[placeholder] = info.data
-      else
-        match = info.tag.match R_SELECT_TAG
-        selectMap[placeholder] =
-          all:       match[1]?
-          convertTo: match[2]
-          selector:  info.data
-    # Create another runner to manage these new asynchronous needs.
-    subRunner = new utils.Runner()
-    unless $.isEmptyObject selectMap
-      subRunner.push null, runSelectors, tab, selectMap, ->
-        log.info 'One or more selectors were executed'
-        updateProgress 85
-        for own placeholder, value of selectMap
-          placeholders[placeholder] = value
-        subRunner.next success: yes
-    unless $.isEmptyObject shortenMap
-      subRunner.push null, callUrlShortener, shortenMap, (response) ->
-        log.info 'URL shortener service was called one or more times'
-        updateProgress 90
-        if response.success
-          updateUrlShortenerUsage response.service.name, response.oauth
-          for own placeholder, value of shortenMap
-            placeholders[placeholder] = value
-          subRunner.finish success:  yes
-        else
-          # Aw man, something went wrong. Let the user down gently.
-          response.message ?= i18n.get 'shortener_error', response.service.title
-          log.warn response.message
-          subRunner.finish
-            message: response.message
-            success: no
-    subRunner.run (result) ->
-      if result.success
-        # Request(s) were successful so re-render the output.
-        newOutput = Mustache.to_html output, placeholders
-        log.debug 'Following string is the re-rendered result...', newOutput
-      runner.finish
-        contents: newOutput
-        message:  result.message
-        success:  result.success
-        template: template
-  runner.run (result) ->
+          match = info.tag.match R_SELECT_TAG
+          selectMap[placeholder] =
+            all:       match[1]?
+            convertTo: match[2]
+            selector:  info.data
+      async.series [
+        (done) ->
+          done() if _.isEmpty selectMap
+          runSelectors active, selectMap, ->
+            log.info 'One or more selectors were executed'
+            updateProgress 85
+            for own placeholder, value of selectMap
+              placeholders[placeholder] = value
+            done()
+        (done) ->
+          done() if _.isEmpty shortenMap
+          callUrlShortener shortenMap, (err, response) ->
+            log.info 'URL shortener service was called one or more times'
+            updateProgress 90
+            if err
+              # Aw man, something went wrong. Let the user down gently.
+              err.message ?= i18n.get 'shortener_error', response.service.title
+              done err
+            else
+              updateUrlShortenerUsage response.service.name, response.oauth
+              for own placeholder, value of shortenMap
+                placeholders[placeholder] = value
+              done()
+      ], (err) ->
+        unless err
+          # Request(s) were successful so re-render the output.
+          output = Mustache.to_html output, placeholders
+          log.debug 'Following string is the re-rendered result...', output
+        done err
+  ], (err) ->
     type  = message.type[0].toUpperCase() + message.type.substr 1
     value = message.data.key.charCodeAt 0 if shortcut
     analytics.track 'Requests', 'Processed', type, value
     updateProgress 100
-    if result?
-      # Ensure that the user is notified if they have attempted to copy an
-      # empty string to the system clipboard.
-      if result.success and not result.contents
-        result.message = i18n.get 'result_bad_empty_description',
-          result.template.title
-        result.success = no
-      if result.template?
-        updateTemplateUsage result.template.key
-        updateStatistics()
-      if result.success
-        ext.notification.title       = i18n.get 'result_good_title'
-        ext.notification.titleStyle  = 'color: #468847'
-        ext.notification.description = result.message ?
-          i18n.get 'result_good_description', result.template.title
-        ext.copy result.contents
-        if not isProtectedPage(tab) and
-           (editable and store.get 'menu.paste') or
-           (shortcut and store.get 'shortcuts.paste')
-          utils.sendMessage 'tabs', tab.id,
-            contents: result.contents, id: id, type: 'paste'
-        sendResponse? contents: result.contents
-      else
-        ext.notification.title       = i18n.get 'result_bad_title'
-        ext.notification.titleStyle  = 'color: #B94A48'
-        ext.notification.description = result.message ?
-          i18n.get 'result_bad_description', result.template.title
-        showNotification()
-        sendResponse?()
+    # Ensure that the user is notified if they have attempted to copy an empty
+    # string to the system clipboard.
+    if not err and not output
+      err = new Error i18n.get 'result_bad_empty_description', template.title
+    if err
+      log.warn err.message
+      ext.notification.title       = i18n.get 'result_bad_title'
+      ext.notification.titleStyle  = 'color: #B94A48'
+      ext.notification.description = err.message ?
+        i18n.get 'result_bad_description', template.title
+      showNotification()
+      sendResponse?()
     else
-      updateProgress null, off
+      updateTemplateUsage template.key
+      updateStatistics()
+      ext.notification.title       = i18n.get 'result_good_title'
+      ext.notification.titleStyle  = 'color: #468847'
+      ext.notification.description = i18n.get 'result_good_description',
+        template.title
+      ext.copy output
+      if not isProtectedPage(active) and
+         (editable and store.get 'menu.paste') or
+         (shortcut and store.get 'shortcuts.paste')
+        utils.sendMessage 'tabs', active.id,
+          {contents: output, id, type: 'paste'}
+      sendResponse? contents: output
     log.debug "Finished handling #{type} request"
 
 # Attempt to select a tab in the current window displaying a page whose
@@ -569,34 +541,21 @@ onMessage = (message, sender, sendResponse) ->
 # If no existing tab exists a new one is simply created.
 selectOrCreateTab = (url, callback) ->
   log.trace()
-  tab      = null
-  windowId = chrome.windows.WINDOW_ID_CURRENT
-  # Create a runner to mange the asynchronous pattern.
-  runner = new utils.Runner()
-  unless windowId?
-    runner.push chrome.windows, 'getCurrent', (win) ->
-      log.debug 'Retrieved the following window...', win
-      windowId = win.id
-      runner.next()
-  runner.pushPacked chrome.tabs, 'query', ->
-    [windowId: windowId, (tabs) ->
-      log.debug 'Retrieved the following tabs...', tabs
-      result = yes
-      # Try to find an existing tab.
-      for tab in tabs
-        if tab.url.indexOf(url) is 0
-          existingTab = tab
-          break
-      if existingTab?
-        # Found one! Now to select it.
-        chrome.tabs.update existingTab.id, active: yes
-        result = no
-      else
-        # Ach well, let's just create a new one.
-        chrome.tabs.create url: url, active: yes
-      runner.finish result
-    ]
-  runner.run callback
+  chrome.windows.getCurrent populate: yes, (win) ->
+    log.debug 'Retrieved the following window...', win
+    log.debug 'Retrieved the following tabs...',   win.tabs
+    # Try to find an existing tab that begins with `url`.
+    for tab in win.tabs when not tab.url.indexOf url
+      existing = tab
+      break
+    if existing?
+      # Found one! Now to select it.
+      chrome.tabs.update existing.id, active: yes
+      callback? no
+    else
+      # Ach well, let's just create a new one.
+      chrome.tabs.create windowId: win.id, url: url, active: yes
+      callback? yes
 
 # Display a desktop notification informing the user on whether or not the copy
 # request was successful.  
@@ -617,20 +576,14 @@ showNotification = ->
 updateHotkeys = ->
   log.trace()
   hotkeys = getHotkeys()
-  # Create a runner to help manage the asynchronous aspect.
-  runner = new utils.Runner()
-  runner.push chrome.windows, 'getAll', null, (windows) ->
+  chrome.windows.getAll populate: yes, (windows) ->
     log.info 'Retrieved the following windows...', windows
     for win in windows
-      do (win) -> runner.push chrome.tabs, 'query', windowId: win.id, (tabs) ->
-        log.info 'Retrieved the following tabs...', tabs
-        # Check tabs are not displaying a *protected* page (i.e. one that
-        # will cause an error if an attempt is made to send a message to it).
-        for tab in tabs when not isProtectedPage tab
-          utils.sendMessage 'tabs', tab.id, hotkeys: hotkeys
-        runner.next()
-    runner.next()
-  runner.run()
+      log.info 'Retrieved the following tabs...', win.tabs
+      # Check tabs are not displaying a *protected* page (i.e. one that will
+      # cause an error if an attempt is made to send a message to it).
+      for tab in win.tabs when not isProtectedPage tab
+        utils.sendMessage 'tabs', tab.id, {hotkeys}
 
 # Update the popup UI state to reflect the progress of the current request.  
 # Ignore `percent` if `toggle` is specified; otherwise update the percentage on
@@ -706,81 +659,79 @@ updateUrlShortenerUsage = (name, oauth) ->
 # Extract additional information from `tab` and add it to `data`.
 addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
   log.trace()
-  windowId = chrome.windows.WINDOW_ID_CURRENT
-  # Create a runner to simplify this process.
-  runner = new utils.Runner()
-  unless windowId?
-    runner.push chrome.windows, 'getCurrent', (win) ->
-      log.info 'Retrieved the following window...', win
-      windowId = win.id
-      runner.next()
-  runner.pushPacked chrome.tabs, 'query', -> [windowId: windowId, (tabs) ->
-    log.info 'Retrieved the following tabs...', tabs
-    urls = []
-    urls.push tab.url for tab in tabs when tab.url not in urls
-    $.extend data, tabs: urls
-    runner.next()
-  ]
-  runner.push navigator.geolocation, 'getCurrentPosition', (position) ->
-    log.debug 'Retrieved the following geolocation information...', position
-    coords = {}
-    for own prop, value of position.coords
-      coords[prop.toLowerCase()] = if value? then "#{value}" else ''
-    $.extend data, coords: coords
-    runner.next()
-  , (error) ->
-    log.error error.message
-    runner.next()
-  runner.push chrome.cookies, 'getAll', url: data.url, (cookies = []) ->
-    log.debug 'Retrieved the following cookies...', cookies
-    $.extend data,
-      cookie:  -> (text, render) ->
-        # Attempt to find the value for the cookie name.
-        name = render text
-        return cookie.value for cookie in cookies when cookie.name is name
-        ''
-      cookies: (
-        names = []
-        for cookie in cookies when cookie.name not in names
-          names.push cookie.name
-        names
-      )
-    # Try to prevent pages hanging because content script should not have been
-    # executed.
-    if isProtectedPage tab then runner.finish() else runner.next()
-  runner.push utils, 'sendMessage', 'tabs', tab.id,
-    editable: editable, id: id, link: link, shortcut: shortcut, url: data.url,
-      (response) ->
-        log.debug 'Retrieved the following data from the content script...',
-          response
-        runner.finish response
-  runner.run (result = {}) ->
-    lastModified = if result.lastModified?
-      time = Date.parse result.lastModified
-      new Date time unless isNaN time
-    $.extend data,
-      author:         result.author         ? ''
-      characterset:   result.characterSet   ? ''
-      description:    result.description    ? ''
-      images:         result.images         ? []
-      keywords:       result.keywords       ? []
-      lastmodified:   -> (text, render) ->
-        lastModified?.format(render(text) or undefined) ? ''
-      linkhtml:       result.linkHTML       ? ''
-      links:          result.links          ? []
-      linktext:       result.linkText       ? ''
-      pageheight:     result.pageHeight     ? ''
-      pagewidth:      result.pageWidth      ? ''
-      referrer:       result.referrer       ? ''
-      scripts:        result.scripts        ? []
-      selectedimages: result.selectedImages ? []
-      selectedlinks:  result.selectedLinks  ? []
-      selection:      result.selection      ? ''
-      selectionhtml:  result.selectionHTML  ? ''
-      # Deprecated since 1.0.0, use `selectedLinks` instead.
-      selectionlinks: -> @selectedlinks
-      stylesheets:    result.styleSheets    ? []
-    callback()
+  chrome.windows.getCurrent populate: yes, (win) ->
+    log.info 'Retrieved the following window...', win
+    log.info 'Retrieved the following tabs...',   win.tabs
+    $.extend data, tabs: (tab.url for tab in win.tabs)
+    async.parallel [
+      (done) ->
+        navigator.geolocation.getCurrentPosition (position) ->
+          log.debug 'Retrieved the following geolocation information...',
+            position
+          coords = {}
+          for own prop, value of position.coords
+            cords[prop.toLowerCase()] = if value? then "#{value}" else ''
+          done null, {coords}
+        , (err) ->
+          log.error err.message
+          done null, coords: {}
+      (done) ->
+        chrome.cookies.getAll url: data.url, (cookies = []) ->
+          log.debug 'Retrieved the following cookies...', cookies
+          cookie  = (text, render) ->
+            # Attempt to find the value for the cookie name.
+            name = render text
+            for cookie in cookies when cookie.name is name
+              result = cookie.value
+              break
+            result ? ''
+          cookies = (
+            names = []
+            for cookie in cookies when cookie.name not in names
+              names.push cookie.name
+            names
+          )
+          done null, {cookie, cookies}
+      (done) ->
+        # Try to prevent pages hanging because content script should not have
+        # been executed.
+        if isProtectedPage tab
+          utils.sendMessage 'tabs', tab.id,
+            {editable, id, link, shortcut, url: data.url}
+          , (response) ->
+            log.debug 'Retrieved the following data from content script...',
+              response
+            lastModified = if result.lastModified?
+              time = Date.parse result.lastModified
+              new Date time unless isNaN time
+            done null,
+              author:         result.author         ? ''
+              characterset:   result.characterSet   ? ''
+              description:    result.description    ? ''
+              images:         result.images         ? []
+              keywords:       result.keywords       ? []
+              lastmodified:   -> (text, render) ->
+                lastModified?.format(render(text) or undefined) ? ''
+              linkhtml:       result.linkHTML       ? ''
+              links:          result.links          ? []
+              linktext:       result.linkText       ? ''
+              pageheight:     result.pageHeight     ? ''
+              pagewidth:      result.pageWidth      ? ''
+              referrer:       result.referrer       ? ''
+              scripts:        result.scripts        ? []
+              selectedimages: result.selectedImages ? []
+              selectedlinks:  result.selectedLinks  ? []
+              selection:      result.selection      ? ''
+              selectionhtml:  result.selectionHTML  ? ''
+              # Deprecated since 1.0.0, use `selectedLinks` instead.
+              selectionlinks: -> @selectedlinks
+              stylesheets:    result.styleSheets    ? []
+        else
+          done null, {}
+    ], (err, results) ->
+      log.error err if err
+      $.extend data, results... if results
+      callback()
 
 # Creates an object containing data based on information derived from the
 # specified tab and menu item data.
@@ -1388,41 +1339,38 @@ callUrlShortener = (map, callback) ->
       message: i18n.get 'shortener_config_error', title
       service: service
       success: no
-  # Create a runner to control the dependencies in the asynchronous processes.
-  runner = new utils.Runner()
-  for own placeholder, url of map
-    do (placeholder, url) ->
-      oauth = !!service.oauth?.hasAccessToken()
-      if oauth
-        runner.push service.oauth, 'authorize', -> runner.next()
-      runner.push null, ->
-        params    = service.getParameters url
-        endpoint += "?#{$.param params}" if params?
-        # Build the HTTP request for the URL shortener service.
-        xhr = new XMLHttpRequest()
-        xhr.open service.method, endpoint, yes
-        # Allow service to populate request headers.
-        for own header, value of service.getHeaders() ? {}
-          xhr.setRequestHeader header, value
-        xhr.onreadystatechange = ->
-          # Wait for the response and let the service handle it before passing
-          # the result to `callback` via the runner.
-          if xhr.readyState is 4
-            if xhr.status is 200
-              map[placeholder] = service.output xhr.responseText
-              runner.next oauth: oauth, success: yes
-            else
-              # Something went wrong so let's tell the user.
-              runner.finish
-                message: i18n.get('shortener_detailed_error', [title, url])
-                success: no
-        # Finally, send the HTTP request.
-        xhr.send service.input url
-  runner.run (result = {}) -> callback
-    message: result.message
-    oauth:   result.oauth
-    service: service
-    success: result.success
+  tasks = _.each map, (url, placeholder) ->
+    oauth = !!service.oauth?.hasAccessToken()
+    (done) ->
+      async.series [
+        (done) ->
+          if oauth then service.oauth.authorize -> done()
+          else done()
+        (done) ->
+          params    = service.getParameters url
+          endpoint += "?#{$.param params}" if params?
+          # Build the HTTP asynchronous request for the URL shortener service.
+          xhr = new XMLHttpRequest()
+          xhr.open service.method, endpoint, yes
+          # Allow service to populate request headers.
+          for own header, value of service.getHeaders() ? {}
+            xhr.setRequestHeader header, value
+          xhr.onreadystatechange = ->
+            # Wait for the response and let the service handle it before
+            # passing the result back.
+            if xhr.readyState is 4
+              if xhr.status is 200
+                map[placeholder] = service.output xhr.responseText
+                done null, {oauth}
+              else
+                # Something went wrong so let's tell the user.
+                message = i18n.get 'shortener_detailed_error', [title, url]
+                done new Error message
+          # Finally, send the HTTP request.
+          xhr.send service.input url
+      ], done
+  async.parallel tasks, (err, results) ->
+    callback err, {oauth: _.last(results)?.oauth, service}
 
 # Retrieve the active URL shortener service.
 getActiveUrlShortener = ->
@@ -1521,18 +1469,21 @@ ext = window.ext = new class Extension extends utils.Class
     log.info 'Initializing extension controller'
     # Add support for analytics if the user hasn't opted out.
     analytics.add() if store.get 'analytics'
-    # Create a runner to ensure asynchronous dependencies are met.
-    runner = new utils.Runner()
-    # It's nice knowing what version is running.
-    runner.push jQuery, 'getJSON', utils.url('manifest.json'), (data) =>
-      @version = data.version
-      runner.next()
-    # Load and store the configuration data.
-    runner.push jQuery, 'getJSON', utils.url('configuration.json'), (data) =>
-      @config = data
-      shortener.oauth = shortener.oauth?() for shortener in SHORTENERS
-      runner.next()
-    runner.run =>
+    async.series [
+      (done) =>
+        # It's nice knowing what version is running.
+        $.getJSON utils.url('manifest.json'), (data) =>
+          {@version} = data
+          done()
+      (done) =>
+        # Load and store the configuration data before initiating OAuth for
+        # each URL shortener service.
+        $.getJSON utils.url('configuration.json'), (data) =>
+          @config = data
+          shortener.oauth = shortener.oauth?() for shortener in SHORTENERS
+          done()
+    ], (err) =>
+      throw err if err
       # Begin initialization.
       store.init
         anchor:        {}
