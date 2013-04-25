@@ -46,6 +46,10 @@
     return Object.prototype.toString.call(obj) === "[object Array]";
   };
 
+  function isObject(obj) {
+    return obj && Object.prototype.toString.call(obj) === "[object Object]";
+  }
+
   function escapeRe(string) {
     return string.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
   }
@@ -286,10 +290,28 @@
   };
 
   Writer.prototype._name = function (name, context) {
-    var value = context.lookup(name);
+    var value = context.lookup(name && name.toLowerCase());
 
     if (typeof value === "function") {
       value = value.call(context.view);
+    } else if (isArray(value)) {
+      value = value.length ? value.join(",") : "";
+    } else if (isObject(value)) {
+      value = (function (obj) {
+        var values = [];
+        var key, value;
+
+        for (key in obj) {
+          if (!obj.hasOwnProperty(key)) continue;
+
+          value = obj[key];
+          if (value != null) {
+            values.push(String(value));
+          }
+        }
+
+        return values;
+      }(value)).join(",");
     }
 
     return (value == null) ? "" : String(value);
