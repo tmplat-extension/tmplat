@@ -470,7 +470,7 @@
 
   nullIfEmpty = function(object) {
     log.trace();
-    if ($.isEmptyObject(object)) {
+    if (_.isEmpty(object)) {
       return null;
     } else {
       return object;
@@ -1409,7 +1409,7 @@
           if (!__hasProp.call(_ref, placeholder)) continue;
           value = _ref[placeholder];
           result = value.result || '';
-          if ($.isArray(result)) {
+          if (_.isArray(result)) {
             result = result.join('\n');
           }
           if (value.convertTo === 'markdown') {
@@ -1455,7 +1455,7 @@
         items = items.add(buildTemplate(template));
       }
     }
-    if (items.length === 0) {
+    if (!items.length) {
       items = items.add($('<li/>', {
         "class": 'empty'
       }).append($('<i/>', {
@@ -2087,7 +2087,7 @@
       var sandbox;
 
       log.trace();
-      sandbox = $('#sandbox').val(str).select();
+      sandbox = $('#sandbox').val(str).trigger('select');
       document.execCommand('copy');
       log.debug('Copied the following string...', str);
       sandbox.val('');
@@ -2222,7 +2222,7 @@
 
       log.trace();
       result = '';
-      sandbox = $('#sandbox').val('').select();
+      sandbox = $('#sandbox').val('').trigger('select');
       if (document.execCommand('paste')) {
         result = sandbox.val();
       }
