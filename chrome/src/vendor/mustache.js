@@ -48,7 +48,7 @@
 
   function isObject(obj) {
     return obj && Object.prototype.toString.call(obj) === "[object Object]";
-  };
+  }
 
   function escapeRe(string) {
     return string.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
@@ -297,14 +297,14 @@
     } else if (isArray(value)) {
       value = value.length ? value.join(",") : "";
     } else if (isObject(value)) {
-      value = (function (object) {
+      value = (function (obj) {
         var values = [];
         var key, value;
 
-        for (key in object) {
-          if (object.hasOwnProperty(key)) continue;
+        for (key in obj) {
+          if (!obj.hasOwnProperty(key)) continue;
 
-          value = object[key];
+          value = obj[key];
           if (value != null) {
             values.push(String(value));
           }
