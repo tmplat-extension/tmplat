@@ -4,11 +4,11 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, addAdditionalData, browser, buildDerivedData, buildPopup, buildStandardData, buildTemplate, callUrlShortener, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isExtensionGallery, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, nullIfEmpty, onMessage, operatingSystem, runSelectors, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
+  var AppError, BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, addAdditionalData, browser, buildDerivedData, buildPopup, buildStandardData, buildTemplate, callUrlShortener, deriveMessageInfo, deriveMessageTempate, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isExtensionGallery, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, nullIfEmpty, onMessage, onMessageExternal, operatingSystem, runSelectors, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
-    __slice = [].slice,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __slice = [].slice;
 
   String.prototype.capitalize = function() {
     return this.replace(/\w+/g, function(word) {
@@ -40,7 +40,7 @@
       title: i18n.get('default_template_short'),
       usage: 0
     }, {
-      content: "<a href=\"{{url}}\"{#anchorTarget} target=\"_blank\"{/anchorTarget}{#anchorTitle} title=\"{{title}}\"{/anchorTitle}>{{title}}</a>",
+      content: "<a href=\"{url}\"{#anchorTarget} target=\"_blank\"{/anchorTarget}{#anchorTitle} title=\"{{title}}\"{/anchorTitle}>{{title}}</a>",
       enabled: true,
       image: 'font',
       index: 2,
@@ -338,39 +338,26 @@
 
   executeScriptsInExistingWindows = function() {
     log.trace();
-    return chrome.windows.getAll({
-      populate: true
-    }, function(windows) {
-      var tab, win, _i, _len, _results;
+    return chrome.tabs.query({}, function(tabs) {
+      var tab, _i, _len, _results;
 
-      log.info('Retrieved the following windows...', windows);
+      log.info('Retrieved the following tabs...', tabs);
       _results = [];
-      for (_i = 0, _len = windows.length; _i < _len; _i++) {
-        win = windows[_i];
-        log.info('Retrieved the following tabs...', win.tabs);
-        _results.push((function() {
-          var _j, _len1, _ref, _results1;
-
-          _ref = win.tabs;
-          _results1 = [];
-          for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-            tab = _ref[_j];
-            if (!(!isProtectedPage(tab))) {
-              continue;
-            }
-            chrome.tabs.executeScript(tab.id, {
-              file: 'lib/content.js'
-            });
-            if (__indexOf.call(tab.url, HOMEPAGE_DOMAIN) >= 0) {
-              _results1.push(chrome.tabs.executeScript(tab.id, {
-                file: 'lib/install.js'
-              }));
-            } else {
-              _results1.push(void 0);
-            }
-          }
-          return _results1;
-        })());
+      for (_i = 0, _len = tabs.length; _i < _len; _i++) {
+        tab = tabs[_i];
+        if (!(!isProtectedPage(tab))) {
+          continue;
+        }
+        chrome.tabs.executeScript(tab.id, {
+          file: 'lib/content.js'
+        });
+        if (__indexOf.call(tab.url, HOMEPAGE_DOMAIN) >= 0) {
+          _results.push(chrome.tabs.executeScript(tab.id, {
+            file: 'lib/install.js'
+          }));
+        } else {
+          _results.push(void 0);
+        }
       }
       return _results;
     });
@@ -461,7 +448,7 @@
   isExtensionActive = function(tab, extensionId) {
     log.trace();
     log.debug("Checking activity of " + extensionId);
-    return isSpecialPage(tab) && tab.url.indexOf(extensionId) !== -1;
+    return isSpecialPage(tab) && __indexOf.call(tab.url, extensionId) >= 0;
   };
 
   isExtensionGallery = function(tab) {
@@ -489,20 +476,15 @@
   };
 
   onMessage = function(message, sender, sendResponse) {
-    var active, data, editable, id, link, output, placeholders, shortcut, template, _ref, _ref1;
+    var active, callback, data, editable, id, link, output, placeholders, shortcut, template, _ref, _ref1;
 
     log.trace();
+    callback = utils.callback(sendResponse);
     if (!message.type) {
-      if (typeof sendResponse === "function") {
-        sendResponse();
-      }
-      return true;
+      return callback();
     }
     if (message.type === 'shortcut' && !store.get('shortcuts.enabled')) {
-      if (typeof sendResponse === "function") {
-        sendResponse();
-      }
-      return true;
+      return callback();
     }
     if (message.type === 'options') {
       selectOrCreateTab(utils.url('pages/options.html'));
@@ -511,20 +493,14 @@
       })[0]) != null) {
         _ref.close();
       }
-      if (typeof sendResponse === "function") {
-        sendResponse();
-      }
-      return true;
+      return callback();
     }
     if ((_ref1 = message.type) === 'info' || _ref1 === 'version') {
-      if (typeof sendResponse === "function") {
-        sendResponse({
-          hotkeys: getHotkeys(),
-          id: EXTENSION_ID,
-          version: ext.version
-        });
-      }
-      return true;
+      return callback({
+        hotkeys: getHotkeys(),
+        id: EXTENSION_ID,
+        version: ext.version
+      });
     }
     active = data = output = template = null;
     editable = link = shortcut = false;
@@ -532,29 +508,16 @@
     placeholders = {};
     return async.series([
       function(done) {
-        return chrome.windows.getLastFocused({
-          populate: true
-        }, function(win) {
-          var tab, _i, _len, _ref2;
-
-          log.info('Retrieved the following window...', win);
-          log.info('Retrieved the following tabs...', win.tabs);
-          _ref2 = win.tabs;
-          for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-            tab = _ref2[_i];
-            if (!tab.active) {
-              continue;
-            }
-            active = tab;
-            break;
-          }
-          if (active == null) {
-            active = _.first(win.tabs);
-          }
+        return chrome.tabs.query({
+          active: true,
+          currentWindow: true
+        }, function(tabs) {
+          log.debug('Retrieved the following tabs...', tabs);
+          active = _.first(tabs);
           return done();
         });
       }, function(done) {
-        var error, getCallback, msg, _ref2;
+        var err, getCallback, msg, _ref2;
 
         getCallback = function(tag) {
           return function(text, render) {
@@ -593,40 +556,20 @@
         };
         updateProgress(null, true);
         try {
-          switch (message.type) {
-            case 'menu':
-              template = getTemplateWithMenuId(message.data.menuItemId);
-              if (template != null) {
-                _ref2 = buildDerivedData(active, message.data, getCallback), data = _ref2.data, editable = _ref2.editable, link = _ref2.link;
-              }
-              break;
-            case 'popup':
-            case 'toolbar':
-              template = getTemplateWithKey(message.data.key);
-              if (template != null) {
-                data = buildStandardData(active, getCallback);
-              }
-              break;
-            case 'shortcut':
-              shortcut = true;
-              template = getTemplateWithShortcut(message.data.key);
-              if (template != null) {
-                data = buildStandardData(active, getCallback);
-              }
-              break;
-            default:
-              return done(new Error(i18n.get('result_bad_type_description')));
-          }
-          if (template != null) {
-            updateProgress(20);
-            return done();
-          } else {
-            return done(new Error(i18n.get('result_bad_template_description')));
-          }
+          template = deriveMessageTempate(message);
+          updateProgress(10);
+          _ref2 = deriveMessageInfo(message, active, getCallback), data = _ref2.data, editable = _ref2.editable, link = _ref2.link, shortcut = _ref2.shortcut;
+          updateProgress(20);
+          return done();
         } catch (_error) {
-          error = _error;
-          msg = i18n.get(error instanceof URIError ? 'result_bad_uri_description' : 'result_bad_error_description');
-          return done(new Error(msg));
+          err = _error;
+          log.error(err);
+          if (err instanceof AppError) {
+            return done(err);
+          } else {
+            msg = err instanceof URIError ? 'result_bad_uri_description' : 'result_bad_error_description';
+            return done(new AppError(msg));
+          }
         }
       }, function(done) {
         return addAdditionalData(active, data, id, editable, shortcut, link, function() {
@@ -637,7 +580,7 @@
           });
           log.debug("Using the following data to render " + template.title + "...", data);
           if (template.content) {
-            output = Mustache.to_html(template.content, data);
+            output = Mustache.render(template.content, data);
             log.debug('Following string is the rendered result...', output);
             updateProgress(60);
           }
@@ -708,7 +651,7 @@
           }
         ], function(err) {
           if (!err) {
-            output = Mustache.to_html(output, placeholders);
+            output = Mustache.render(output, placeholders);
             log.debug('Following string is the re-rendered result...', output);
           }
           return done(err);
@@ -740,7 +683,7 @@
         ext.notification.description = i18n.get('result_good_description', template.title);
         ext.copy(output);
         if (!isProtectedPage(active) && (editable && store.get('menu.paste')) || (shortcut && store.get('shortcuts.paste'))) {
-          utils.sendMessage('tabs', active.id, {
+          chrome.tabs.sendMessage(active.id, {
             contents: output,
             id: id,
             type: 'paste'
@@ -749,6 +692,21 @@
       }
       return log.debug("Finished handling " + type + " request");
     });
+  };
+
+  onMessageExternal = function(message, sender, sendResponse) {
+    var blocked, callback;
+
+    log.trace();
+    callback = utils.callback(sendResponse);
+    blocked = isBlacklisted(sender.id);
+    analytics.track('External Requests', 'Started', sender.id, Number(!blocked));
+    if (blocked) {
+      log.debug("Blocking external request from " + sender.id);
+      return callback();
+    }
+    log.debug("Accepting external request from " + sender.id);
+    return onMessage(message, sender, sendResponse);
   };
 
   selectOrCreateTab = function(url, callback) {
@@ -801,31 +759,18 @@
 
     log.trace();
     hotkeys = getHotkeys();
-    return chrome.windows.getAll({
-      populate: true
-    }, function(windows) {
-      var tab, win, _i, _len, _results;
+    return chrome.tabs.query({}, function(tabs) {
+      var tab, _i, _len, _results;
 
-      log.info('Retrieved the following windows...', windows);
+      log.info('Retrieved the following tabs...', tabs);
       _results = [];
-      for (_i = 0, _len = windows.length; _i < _len; _i++) {
-        win = windows[_i];
-        log.info('Retrieved the following tabs...', win.tabs);
-        _results.push((function() {
-          var _j, _len1, _ref, _results1;
-
-          _ref = win.tabs;
-          _results1 = [];
-          for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-            tab = _ref[_j];
-            if (!isProtectedPage(tab)) {
-              _results1.push(utils.sendMessage('tabs', tab.id, {
-                hotkeys: hotkeys
-              }));
-            }
-          }
-          return _results1;
-        })());
+      for (_i = 0, _len = tabs.length; _i < _len; _i++) {
+        tab = tabs[_i];
+        if (!isProtectedPage(tab)) {
+          _results.push(chrome.tabs.sendMessage(tab.id, {
+            hotkeys: hotkeys
+          }));
+        }
       }
       return _results;
     });
@@ -929,11 +874,29 @@
     return analytics.track('Shorteners', 'Used', shortener.title, Number(oauth));
   };
 
+  AppError = (function(_super) {
+    __extends(AppError, _super);
+
+    function AppError() {
+      var messageKey, substitutions;
+
+      messageKey = arguments[0], substitutions = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      if (messageKey) {
+        this.message = i18n.get(messageKey, substitutions);
+      }
+    }
+
+    return AppError;
+
+  })(Error);
+
   addAdditionalData = function(tab, data, id, editable, shortcut, link, callback) {
     log.trace();
-    return chrome.windows.getLastFocused({
+    return chrome.windows.get(tab.windowId, {
       populate: true
     }, function(win) {
+      var winTab;
+
       log.info('Retrieved the following window...', win);
       log.info('Retrieved the following tabs...', win.tabs);
       $.extend(data, {
@@ -943,19 +906,21 @@
           _ref = win.tabs;
           _results = [];
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            tab = _ref[_i];
-            _results.push(tab.url);
+            winTab = _ref[_i];
+            _results.push(winTab.url);
           }
           return _results;
         })()
       });
       return async.parallel([
         function(done) {
+          var coords;
+
+          coords = {};
           return navigator.geolocation.getCurrentPosition(function(position) {
-            var coords, prop, value, _ref;
+            var prop, value, _ref;
 
             log.debug('Retrieved the following geolocation information...', position);
-            coords = {};
             _ref = position.coords;
             for (prop in _ref) {
               if (!__hasProp.call(_ref, prop)) continue;
@@ -966,9 +931,9 @@
               coords: coords
             });
           }, function(err) {
-            log.error(err.message);
+            log.warn(err.message);
             return done(null, {
-              coords: {}
+              coords: coords
             });
           });
         }, function(done) {
@@ -981,90 +946,97 @@
               cookies = [];
             }
             log.debug('Retrieved the following cookies...', cookies);
-            cookie = function(text, render) {
-              var name, result, _i, _len;
-
-              name = render(text);
-              for (_i = 0, _len = cookies.length; _i < _len; _i++) {
-                cookie = cookies[_i];
-                if (!(cookie.name === name)) {
-                  continue;
-                }
-                result = cookie.value;
-                break;
-              }
-              return result != null ? result : '';
-            };
-            cookies = ((function() {
-              var _i, _len, _ref;
-
-              names = [];
-              for (_i = 0, _len = cookies.length; _i < _len; _i++) {
-                cookie = cookies[_i];
-                if (_ref = cookie.name, __indexOf.call(names, _ref) < 0) {
-                  names.push(cookie.name);
-                }
-              }
-              return names;
-            })());
             return done(null, {
-              cookie: cookie,
-              cookies: cookies
+              cookie: function() {
+                return function(text, render) {
+                  var cookie, name, result, _i, _len;
+
+                  name = render(text);
+                  for (_i = 0, _len = cookies.length; _i < _len; _i++) {
+                    cookie = cookies[_i];
+                    if (!(cookie.name === name)) {
+                      continue;
+                    }
+                    result = cookie.value;
+                    break;
+                  }
+                  return result != null ? result : '';
+                };
+              },
+              cookies: ((function() {
+                var _i, _len, _ref;
+
+                names = [];
+                for (_i = 0, _len = cookies.length; _i < _len; _i++) {
+                  cookie = cookies[_i];
+                  if (_ref = cookie.name, __indexOf.call(names, _ref) < 0) {
+                    names.push(cookie.name);
+                  }
+                }
+                return names;
+              })())
             });
           });
         }, function(done) {
-          if (!isProtectedPage(tab)) {
-            return utils.sendMessage('tabs', tab.id, {
-              editable: editable,
-              id: id,
-              link: link,
-              shortcut: shortcut,
-              url: data.url
-            }, function(response) {
-              var lastModified, time, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
-
-              log.debug('Retrieved the following data from content script...', response);
-              lastModified = response.lastModified != null ? (time = Date.parse(response.lastModified), !isNaN(time) ? new Date(time) : void 0) : void 0;
-              return done(null, {
-                author: (_ref = response.author) != null ? _ref : '',
-                characterset: (_ref1 = response.characterSet) != null ? _ref1 : '',
-                description: (_ref2 = response.description) != null ? _ref2 : '',
-                images: (_ref3 = response.images) != null ? _ref3 : [],
-                keywords: (_ref4 = response.keywords) != null ? _ref4 : [],
-                lastmodified: function() {
-                  return function(text, render) {
-                    var _ref5;
-
-                    return (_ref5 = lastModified != null ? lastModified.format(render(text) || void 0) : void 0) != null ? _ref5 : '';
-                  };
-                },
-                linkhtml: (_ref5 = response.linkHTML) != null ? _ref5 : '',
-                links: (_ref6 = response.links) != null ? _ref6 : [],
-                linktext: (_ref7 = response.linkText) != null ? _ref7 : '',
-                pageheight: (_ref8 = response.pageHeight) != null ? _ref8 : '',
-                pagewidth: (_ref9 = response.pageWidth) != null ? _ref9 : '',
-                referrer: (_ref10 = response.referrer) != null ? _ref10 : '',
-                scripts: (_ref11 = response.scripts) != null ? _ref11 : [],
-                selectedimages: (_ref12 = response.selectedImages) != null ? _ref12 : [],
-                selectedlinks: (_ref13 = response.selectedLinks) != null ? _ref13 : [],
-                selection: (_ref14 = response.selection) != null ? _ref14 : '',
-                selectionhtml: (_ref15 = response.selectionHTML) != null ? _ref15 : '',
-                selectionlinks: function() {
-                  return this.selectedlinks;
-                },
-                stylesheets: (_ref16 = response.styleSheets) != null ? _ref16 : []
-              });
-            });
-          } else {
-            return done(null, {});
+          if (isProtectedPage(tab)) {
+            return done();
           }
+          return chrome.tabs.sendMessage(tab.id, {
+            editable: editable,
+            id: id,
+            link: link,
+            shortcut: shortcut,
+            url: data.url
+          }, function(response) {
+            var lastModified, time, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+
+            log.debug('Retrieved the following data from content script...', response);
+            lastModified = response.lastModified != null ? (time = Date.parse(response.lastModified), !isNaN(time) ? new Date(time) : void 0) : void 0;
+            return done(null, {
+              author: (_ref = response.author) != null ? _ref : '',
+              characterset: (_ref1 = response.characterSet) != null ? _ref1 : '',
+              description: (_ref2 = response.description) != null ? _ref2 : '',
+              images: (_ref3 = response.images) != null ? _ref3 : [],
+              keywords: (_ref4 = response.keywords) != null ? _ref4 : [],
+              lastmodified: function() {
+                return function(text, render) {
+                  var _ref5;
+
+                  return (_ref5 = lastModified != null ? lastModified.format(render(text) || void 0) : void 0) != null ? _ref5 : '';
+                };
+              },
+              linkhtml: (_ref5 = response.linkHTML) != null ? _ref5 : '',
+              links: (_ref6 = response.links) != null ? _ref6 : [],
+              linktext: (_ref7 = response.linkText) != null ? _ref7 : '',
+              pageheight: (_ref8 = response.pageHeight) != null ? _ref8 : '',
+              pagewidth: (_ref9 = response.pageWidth) != null ? _ref9 : '',
+              referrer: (_ref10 = response.referrer) != null ? _ref10 : '',
+              scripts: (_ref11 = response.scripts) != null ? _ref11 : [],
+              selectedimages: (_ref12 = response.selectedImages) != null ? _ref12 : [],
+              selectedlinks: (_ref13 = response.selectedLinks) != null ? _ref13 : [],
+              selection: (_ref14 = response.selection) != null ? _ref14 : '',
+              selectionhtml: (_ref15 = response.selectionHTML) != null ? _ref15 : '',
+              selectionlinks: function() {
+                return this.selectedlinks;
+              },
+              stylesheets: (_ref16 = response.styleSheets) != null ? _ref16 : []
+            });
+          });
         }
       ], function(err, results) {
+        var result, _i, _len;
+
+        if (results == null) {
+          results = [];
+        }
         if (err) {
           log.error(err);
         }
-        if (results) {
-          $.extend.apply($, [data].concat(__slice.call(results)));
+        for (_i = 0, _len = results.length; _i < _len; _i++) {
+          result = results[_i];
+          if (result != null) {
+            $.extend(data, result);
+          }
         }
         return callback();
       });
@@ -1088,15 +1060,11 @@
   };
 
   buildStandardData = function(tab, getCallback) {
-    var anchor, bitly, ctab, data, extension, googl, handler, menu, notifications, plugin, prop, results, shortcuts, stats, toolbar, url, value, yourls;
+    var anchor, bitly, ctab, data, extension, googl, handler, menu, notifications, plugin, results, shortcuts, stats, toolbar, url, yourls;
 
     log.trace();
     ctab = {};
-    for (prop in tab) {
-      if (!__hasProp.call(tab, prop)) continue;
-      value = tab[prop];
-      ctab[prop] = value;
-    }
+    $.extend(ctab, tab);
     for (extension in SUPPORT) {
       if (!__hasProp.call(SUPPORT, extension)) continue;
       handler = SUPPORT[extension];
@@ -1353,6 +1321,60 @@
     return data;
   };
 
+  deriveMessageInfo = function(message, tab, getCallback) {
+    var info;
+
+    log.trace();
+    info = {
+      data: null,
+      editable: false,
+      link: false,
+      shortcut: false
+    };
+    $.extend(info, (function() {
+      switch (message.type) {
+        case 'menu':
+          return buildDerivedData(tab, message.data, getCallback);
+        case 'popup':
+        case 'toolbar':
+          return {
+            data: buildStandardData(tab, getCallback)
+          };
+        case 'shortcut':
+          return {
+            data: buildStandardData(tab, getCallback),
+            shortcut: true
+          };
+        default:
+          throw new AppError('result_bad_type_description');
+      }
+    })());
+    return info;
+  };
+
+  deriveMessageTempate = function(message) {
+    var template;
+
+    log.trace();
+    template = (function() {
+      switch (message.type) {
+        case 'menu':
+          return getTemplateWithMenuId(message.data.menuItemId);
+        case 'popup':
+        case 'toolbar':
+          return getTemplateWithKey(message.data.key);
+        case 'shortcut':
+          return getTemplateWithShortcut(message.data.key);
+        default:
+          throw new AppError('result_bad_type_description');
+      }
+    })();
+    if (template == null) {
+      throw new AppError('result_bad_template_description');
+    }
+    return template;
+  };
+
   runSelectors = function(tab, map, callback) {
     var placeholder;
 
@@ -1364,7 +1386,7 @@
       }
       return callback();
     } else {
-      return utils.sendMessage('tabs', tab.id, {
+      return chrome.tabs.sendMessage(tab.id, {
         selectors: map
       }, function(response) {
         var result, value, _ref;
@@ -2167,20 +2189,8 @@
             type: 'toolbar'
           });
         });
-        utils.onMessage('extension', false, onMessage);
-        utils.onMessage('extension', true, function(msg, sender, cb) {
-          var block;
-
-          block = isBlacklisted(sender.id);
-          analytics.track('External Requests', 'Started', sender.id, Number(!block));
-          if (block) {
-            log.debug("Blocking external request from " + sender.id);
-            return typeof cb === "function" ? cb() : void 0;
-          } else {
-            log.debug("Accepting external request from " + sender.id);
-            return onMessage(msg, sender, cb);
-          }
-        });
+        chrome.runtime.onMessage.addListener(onMessage);
+        chrome.runtime.onMessageExternal.addListener(onMessageExternal);
         browser.version = getBrowserVersion();
         operatingSystem = getOperatingSystem();
         if (isNewInstall) {

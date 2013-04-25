@@ -28,6 +28,13 @@ utils = window.utils = new class Utils extends Class
   # Public functions
   # ----------------
 
+  # Create a safe wrapper for the callback specified function.
+  callback: (fn) ->
+    (args...) ->
+      if _.isFunction fn
+        fn args...
+        true
+
   # Generate a unique key based on the current time and using a randomly
   # generated hexadecimal number of the specified length.
   keyGen: (separator = '.', length = 5, prefix = '', upperCase = yes) ->
@@ -46,18 +53,6 @@ utils = window.utils = new class Utils extends Class
     # potentially transforming it to upper case.
     key = prefix + parts.join separator
     if upperCase then key.toUpperCase() else key.toLowerCase()
-
-  # Convenient shorthand for the different types of `onMessage` methods
-  # available in the chrome API.  
-  # This also supports the old `onRequest` variations for backwards
-  # compatibility.
-  onMessage: (type = 'runtime', external, args...) ->
-    base = chrome[type]
-    if external
-      base = base.onMessageExternal or base.onRequestExternal
-    else
-      base = base.onMessage or base.onRequest
-    base.addListener args...
 
   # Retrieve the first entity/all entities that pass the specified `filter`.
   query: (entities, singular, filter) ->
@@ -84,14 +79,6 @@ utils = window.utils = new class Utils extends Class
       # Repeat to the left if `count` is negative.
       str = repeatStr + str for i in [1..count*-1] if count < 0
     str
-
-  # Convenient shorthand for the different types of `sendMessage` methods
-  # available in the chrome API.  
-  # This also supports the old `sendRequest` variations for backwards
-  # compatibility.
-  sendMessage: (type = 'runtime', args...) ->
-    base = chrome[type]
-    (base.sendMessage or base.sendRequest).apply base, args
 
   # Start a new timer for the specified `key`.  
   # If a timer already exists for `key`, return the time difference in

@@ -2226,8 +2226,8 @@
     "description": "Text for the 2nd code block in the Examples area on the Guide tab of the Options page under the Options section.",
     "placeholders": {
       "syntax_1": {
-        "content": "&lt;a href=&quot;{{url}}&quot;{#anchorTitle} title=&quot;{{title}}&quot;{/anchorTitle}&gt;",
-        "example": "<a href=\"{{url}}\"{#anchorTitle} title=\"{{title}}\"{/anchorTitle}>"
+        "content": "&lt;a href=&quot;{url}&quot;{#anchorTitle} title=&quot;{{title}}&quot;{/anchorTitle}&gt;",
+        "example": "<a href=\"{url}\"{#anchorTitle} title=\"{{title}}\"{/anchorTitle}>"
       },
       "syntax_2": {
         "content": "&lt;/a&gt;",

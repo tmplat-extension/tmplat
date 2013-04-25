@@ -11,6 +11,19 @@
 # extension controller.
 {analytics, ext, log, utils} = chrome.extension.getBackgroundPage()
 
+# Private functions
+# -----------------
+
+# Send a message to the background page using the information provided.
+sendMessage = ->
+  log.trace()
+  message =
+    data: key: @getAttribute 'data-key'
+    type: @getAttribute 'data-type'
+  log.debug 'Sending the following message to the extension controller',
+    message
+  chrome.runtime.sendMessage message
+
 # Popup page setup
 # ----------------
 
@@ -27,7 +40,7 @@ popup = window.popup = new class Popup extends utils.Class
     # Insert the prepared HTML in to the popup's body and bind click events.
     document.getElementById('templates').innerHTML = ext.templatesHtml
     items = document.querySelectorAll '#templates li > a'
-    item.addEventListener 'click', popup.sendMessage for item in items
+    item.addEventListener 'click', sendMessage for item in items
     # Calculate the widest text used by the elements in the popup and assign it
     # to all of the others.
     for item in items when not width? or item.scrollWidth > width
@@ -36,16 +49,6 @@ popup = window.popup = new class Popup extends utils.Class
     log.debug "Widest textual item in popup is #{width}px"
     width = document.querySelector('#templates li').scrollWidth
     document.getElementById('loading').style.width = "#{width + 2}px"
-
-  # Send a message to the background page using the information provided.
-  sendMessage: ->
-    log.trace()
-    message =
-      data: key: @getAttribute 'data-key'
-      type: @getAttribute 'data-type'
-    log.debug 'Sending the following message to the extension controller',
-      message
-    utils.sendMessage 'extension', message
 
 # Initialize `popup` when the DOM is ready.
 utils.ready this, -> popup.init()
