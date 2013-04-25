@@ -251,18 +251,16 @@ operatingSystem   = ''
 # all of the tabs (where valid) of each Chrome window.
 executeScriptsInExistingWindows = ->
   log.trace()
-  chrome.windows.getAll populate: yes, (windows) ->
-    log.info 'Retrieved the following windows...', windows
-    for win in windows
-      log.info 'Retrieved the following tabs...', win.tabs
-      # Check tabs are not displaying a *protected* page (i.e. one that will
-      # cause an error if an attempt is made to execute content scripts).
-      for tab in win.tabs when not isProtectedPage tab
-        chrome.tabs.executeScript tab.id, file: 'lib/content.js'
-        # Only execute inline installation content script for tabs displaying
-        # a page on Template's homepage domain.
-        if HOMEPAGE_DOMAIN in tab.url
-          chrome.tabs.executeScript tab.id, file: 'lib/install.js'
+  chrome.tabs.query {}, (tabs) ->
+    log.info 'Retrieved the following tabs...', tabs
+    # Check tabs are not displaying a *protected* page (i.e. one that will
+    # cause an error if an attempt is made to execute content scripts).
+    for tab in tabs when not isProtectedPage tab
+      chrome.tabs.executeScript tab.id, file: 'lib/content.js'
+      # Only execute inline installation content script for tabs displaying a
+      # page on Template's homepage domain.
+      if HOMEPAGE_DOMAIN in tab.url
+        chrome.tabs.executeScript tab.id, file: 'lib/install.js'
 
 # Attempt to derive the current version of the user's browser.
 getBrowserVersion = ->
@@ -315,7 +313,7 @@ isBlacklisted = (extensionId) ->
 isExtensionActive = (tab, extensionId) ->
   log.trace()
   log.debug "Checking activity of #{extensionId}"
-  isSpecialPage(tab) and tab.url.indexOf(extensionId) isnt -1
+  isSpecialPage(tab) and extensionId in tab.url
 
 # Determine whether or not `tab` is currently displaying a page on the Chrome
 # Extension Gallery (i.e. Web Store).
@@ -375,14 +373,9 @@ onMessage = (message, sender, sendResponse) ->
   placeholders = {}
   async.series [
     (done) ->
-      chrome.windows.getLastFocused populate: yes, (win) ->
-        log.info 'Retrieved the following window...', win
-        log.info 'Retrieved the following tabs...',   win.tabs
-        # Determine which of the tabs is currently active.
-        for tab in win.tabs when tab.active
-          active = tab
-          break
-        active ?= _.first win.tabs
+      chrome.tabs.query active: yes, currentWindow: yes, (tabs) ->
+        log.debug 'Retrieved the following tabs...', tabs
+        active = _.first tabs
         done()
     (done) ->
       # Return a callback function to be used by a tag to indicate that it
@@ -419,33 +412,23 @@ onMessage = (message, sender, sendResponse) ->
       updateProgress null, on
       # Attempt to derive the contextual template data.
       try
-        switch message.type
-          when 'menu'
-            template = getTemplateWithMenuId message.data.menuItemId
-            if template?
-              {data, editable, link} = buildDerivedData active, message.data,
-                getCallback
-          when 'popup', 'toolbar'
-            template = getTemplateWithKey message.data.key
-            data     = buildStandardData active, getCallback if template?
-          when 'shortcut'
-            shortcut = yes
-            template = getTemplateWithShortcut message.data.key
-            data     = buildStandardData active, getCallback if template?
-          else
-            return done new Error i18n.get 'result_bad_type_description'
-        if template?
-          updateProgress 20
-          done()
-        else
-          done new Error i18n.get 'result_bad_template_description'
-      catch error
+        template                         = deriveMessageTempate message
+        updateProgress 10
+        {data, editable, link, shortcut} = deriveMessageInfo message, active,
+          getCallback
+        updateProgress 20
+        done()
+      catch err
+        log.error err
         # Oops! Something went wrong so we should probably let the user know.
-        msg = i18n.get if error instanceof URIError
-          'result_bad_uri_description'
+        if err instanceof AppError
+          done err
         else
-          'result_bad_error_description'
-        done new Error msg
+          msg = if err instanceof URIError
+            'result_bad_uri_description'
+          else
+            'result_bad_error_description'
+          done new AppError msg
     (done) ->
       # Extract additional data from the environment.
       addAdditionalData active, data, id, editable, shortcut, link, ->
@@ -575,14 +558,12 @@ showNotification = ->
 updateHotkeys = ->
   log.trace()
   hotkeys = getHotkeys()
-  chrome.windows.getAll populate: yes, (windows) ->
-    log.info 'Retrieved the following windows...', windows
-    for win in windows
-      log.info 'Retrieved the following tabs...', win.tabs
-      # Check tabs are not displaying a *protected* page (i.e. one that will
-      # cause an error if an attempt is made to send a message to it).
-      for tab in win.tabs when not isProtectedPage tab
-        utils.sendMessage 'tabs', tab.id, {hotkeys}
+  chrome.tabs.query {}, (tabs) ->
+    log.info 'Retrieved the following tabs...', tabs
+    # Check tabs are not displaying a *protected* page (i.e. one that will
+    # cause an error if an attempt is made to send a message to it).
+    for tab in tabs when not isProtectedPage tab
+      utils.sendMessage 'tabs', tab.id, {hotkeys}
 
 # Update the popup UI state to reflect the progress of the current request.  
 # Ignore `percent` if `toggle` is specified; otherwise update the percentage on
@@ -652,13 +633,24 @@ updateUrlShortenerUsage = (name, oauth) ->
   log.info "Used #{shortener.title} URL shortener"
   analytics.track 'Shorteners', 'Used', shortener.title, Number oauth
 
+# Errors
+# ------
+
+# `AppError` allows easy identification of internal errors.
+class AppError extends Error
+
+  # Create a new instance of `AppError` with a localized message.
+  constructor: (messageKey, substitutions...) ->
+    if messageKey
+      @message = i18n.get messageKey, substitutions
+
 # Data functions
 # --------------
 
 # Extract additional information from `tab` and add it to `data`.
 addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
   log.trace()
-  chrome.windows.getLastFocused populate: yes, (win) ->
+  chrome.windows.get tab.windowId, populate: yes, (win) ->
     log.info 'Retrieved the following window...', win
     log.info 'Retrieved the following tabs...',   win.tabs
     $.extend data, tabs: (tab.url for tab in win.tabs)
@@ -694,42 +686,40 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
       (done) ->
         # Try to prevent pages hanging because content script should not have
         # been executed.
-        unless isProtectedPage tab
-          utils.sendMessage 'tabs', tab.id,
-            {editable, id, link, shortcut, url: data.url}
-          , (response) ->
-            log.debug 'Retrieved the following data from content script...',
-              response
-            lastModified = if response.lastModified?
-              time = Date.parse response.lastModified
-              new Date time unless isNaN time
-            done null,
-              author:         response.author         ? ''
-              characterset:   response.characterSet   ? ''
-              description:    response.description    ? ''
-              images:         response.images         ? []
-              keywords:       response.keywords       ? []
-              lastmodified:   -> (text, render) ->
-                lastModified?.format(render(text) or undefined) ? ''
-              linkhtml:       response.linkHTML       ? ''
-              links:          response.links          ? []
-              linktext:       response.linkText       ? ''
-              pageheight:     response.pageHeight     ? ''
-              pagewidth:      response.pageWidth      ? ''
-              referrer:       response.referrer       ? ''
-              scripts:        response.scripts        ? []
-              selectedimages: response.selectedImages ? []
-              selectedlinks:  response.selectedLinks  ? []
-              selection:      response.selection      ? ''
-              selectionhtml:  response.selectionHTML  ? ''
-              # Deprecated since 1.0.0, use `selectedLinks` instead.
-              selectionlinks: -> @selectedlinks
-              stylesheets:    response.styleSheets    ? []
-        else
-          done null, {}
+        return done() if isProtectedPage tab
+        utils.sendMessage 'tabs', tab.id,
+          {editable, id, link, shortcut, url: data.url}
+        , (response) ->
+          log.debug 'Retrieved the following data from content script...',
+            response
+          lastModified = if response.lastModified?
+            time = Date.parse response.lastModified
+            new Date time unless isNaN time
+          done null,
+            author:         response.author         ? ''
+            characterset:   response.characterSet   ? ''
+            description:    response.description    ? ''
+            images:         response.images         ? []
+            keywords:       response.keywords       ? []
+            lastmodified:   -> (text, render) ->
+              lastModified?.format(render(text) or undefined) ? ''
+            linkhtml:       response.linkHTML       ? ''
+            links:          response.links          ? []
+            linktext:       response.linkText       ? ''
+            pageheight:     response.pageHeight     ? ''
+            pagewidth:      response.pageWidth      ? ''
+            referrer:       response.referrer       ? ''
+            scripts:        response.scripts        ? []
+            selectedimages: response.selectedImages ? []
+            selectedlinks:  response.selectedLinks  ? []
+            selection:      response.selection      ? ''
+            selectionhtml:  response.selectionHTML  ? ''
+            # Deprecated since 1.0.0, use `selectedLinks` instead.
+            selectionlinks: -> @selectedlinks
+            stylesheets:    response.styleSheets    ? []
     ], (err, results = []) ->
       log.error err if err
-      $.extend data, result for result in results
+      $.extend data, result for result in results when result?
       callback()
 
 # Creates an object containing data based on information derived from the
@@ -763,7 +753,7 @@ buildStandardData = (tab, getCallback) ->
   # Create a copy of the original tab of the tab to run the compatibility
   # scripts on.
   ctab = {}
-  ctab[prop] = value for own prop, value of tab
+  $.extend ctab, tab
   # Check for any support extensions running on the current tab by simply
   # checking the tabs URL.
   for own extension, handler of SUPPORT when isExtensionActive tab, extension
@@ -916,6 +906,42 @@ buildStandardData = (tab, getCallback) ->
     yourlsurl:             yourls.url
     yourlsusername:        yourls.username
   data
+
+# Derive the relevant information, including the template data, based on both
+# `message` and `tab`.
+deriveMessageInfo = (message, tab, getCallback) ->
+  log.trace()
+  info =
+    data:     null
+    editable: no
+    link:     no
+    shortcut: no
+  $.extend info, switch message.type
+    when 'menu'
+      buildDerivedData tab, message.data, getCallback
+    when 'popup', 'toolbar'
+      data: buildStandardData tab, getCallback
+    when 'shortcut'
+      data:     buildStandardData tab, getCallback
+      shortcut: yes
+    else
+      throw new AppError 'result_bad_type_description'
+  info
+
+# Derive the relevant template based on the context of `message`.
+deriveMessageTempate = (message) ->
+  log.trace()
+  template = switch message.type
+    when 'menu'
+      getTemplateWithMenuId message.data.menuItemId
+    when 'popup', 'toolbar'
+      getTemplateWithKey message.data.key
+    when 'shortcut'
+      getTemplateWithShortcut message.data.key
+    else
+      throw new AppError 'result_bad_type_description'
+  throw new AppError 'result_bad_template_description' unless template?
+  template
 
 # Run the selectors in `map` within the content scripts in `tab` in order to
 # obtain their corresponding values.  
