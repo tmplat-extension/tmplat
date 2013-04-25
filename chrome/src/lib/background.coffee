@@ -682,13 +682,14 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
         chrome.cookies.getAll url: data.url, (cookies = []) ->
           log.debug 'Retrieved the following cookies...', cookies
           done null,
-            cookie: (text, render) ->
-              # Attempt to find the value for the cookie name.
-              name = render text
-              for cookie in cookies when cookie.name is name
-                result = cookie.value
-                break
-              result ? ''
+            cookie: ->
+              (text, render) ->
+                # Attempt to find the value for the cookie name.
+                name = render text
+                for cookie in cookies when cookie.name is name
+                  result = cookie.value
+                  break
+                result ? ''
             cookies: (
               names = []
               for cookie in cookies when cookie.name not in names

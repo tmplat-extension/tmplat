@@ -947,19 +947,21 @@
             }
             log.debug('Retrieved the following cookies...', cookies);
             return done(null, {
-              cookie: function(text, render) {
-                var cookie, name, result, _i, _len;
+              cookie: function() {
+                return function(text, render) {
+                  var cookie, name, result, _i, _len;
 
-                name = render(text);
-                for (_i = 0, _len = cookies.length; _i < _len; _i++) {
-                  cookie = cookies[_i];
-                  if (!(cookie.name === name)) {
-                    continue;
+                  name = render(text);
+                  for (_i = 0, _len = cookies.length; _i < _len; _i++) {
+                    cookie = cookies[_i];
+                    if (!(cookie.name === name)) {
+                      continue;
+                    }
+                    result = cookie.value;
+                    break;
                   }
-                  result = cookie.value;
-                  break;
-                }
-                return result != null ? result : '';
+                  return result != null ? result : '';
+                };
               },
               cookies: ((function() {
                 var _i, _len, _ref;
