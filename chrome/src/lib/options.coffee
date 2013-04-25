@@ -52,14 +52,14 @@ load = ->
   anchor    = store.get 'anchor'
   menu      = store.get 'menu'
   shortcuts = store.get 'shortcuts'
-  $('#analytics').attr        'checked', 'checked' if store.get 'analytics'
-  $('#anchorTarget').attr     'checked', 'checked' if anchor.target
-  $('#anchorTitle').attr      'checked', 'checked' if anchor.title
-  $('#menuEnabled').attr      'checked', 'checked' if menu.enabled
-  $('#menuOptions').attr      'checked', 'checked' if menu.options
-  $('#menuPaste').attr        'checked', 'checked' if menu.paste
-  $('#shortcutsEnabled').attr 'checked', 'checked' if shortcuts.enabled
-  $('#shortcutsPaste').attr   'checked', 'checked' if shortcuts.paste
+  $('#analytics').prop        'checked', store.get 'analytics'
+  $('#anchorTarget').prop     'checked', anchor.target
+  $('#anchorTitle').prop      'checked', anchor.title
+  $('#menuEnabled').prop      'checked', menu.enabled
+  $('#menuOptions').prop      'checked', menu.options
+  $('#menuPaste').prop        'checked', menu.paste
+  $('#shortcutsEnabled').prop 'checked', shortcuts.enabled
+  $('#shortcutsPaste').prop   'checked', shortcuts.paste
   loadControlEvents()
   loadSaveEvents()
   loadImages()
@@ -72,15 +72,15 @@ load = ->
 # Bind the event handlers required for controlling general changes.
 loadControlEvents = ->
   log.trace()
-  $('#menuEnabled').change( ->
+  $('#menuEnabled').on('change', ->
     groups = $('#menuOptions').parents('.control-group').first()
     groups = groups.add $('#menuPaste').parents('.control-group').first()
     if $(this).is ':checked' then groups.slideDown() else groups.slideUp()
-  ).change()
-  $('#shortcutsEnabled').change( ->
+  ).trigger 'change'
+  $('#shortcutsEnabled').on('change', ->
     groups = $('#shortcutsPaste').parents('.control-group').first()
     if $(this).is ':checked' then groups.slideDown() else groups.slideUp()
-  ).change()
+  ).trigger 'change'
 
 # Update the developer tools section of the options page with the current
 # settings.
@@ -105,16 +105,16 @@ loadImages = ->
     images.append $ '<option/>',
       text:  image.getMessage()
       value: image.name
-  images.change ->
+  images.on('change', ->
     opt = images.find 'option:selected'
     imagePreview.attr 'class', icons.getClass opt.val()
-  images.change()
+  ).trigger 'change'
 
 # Update the logging section of the options page with the current settings.
 loadLogger = ->
   log.trace()
   logger = store.get 'logger'
-  $('#loggerEnabled').attr 'checked', 'checked' if logger.enabled
+  $('#loggerEnabled').prop 'checked', logger.enabled
   loggerLevel = $ '#loggerLevel'
   loggerLevel.find('option').remove()
   for level in log.LEVELS
@@ -125,8 +125,7 @@ loadLogger = ->
     loggerLevel.append option
   # Ensure debug level is selected if configuration currently matches none.
   unless loggerLevel.find('option[selected]').length
-    loggerLevel.find("option[value='#{log.DEBUG}']").attr 'selected',
-      'selected'
+    loggerLevel.find("option[value='#{log.DEBUG}']").prop 'selected', yes
   loadLoggerSaveEvents()
 
 # Bind the event handlers required for persisting logging changes.
@@ -146,12 +145,9 @@ loadLoggerSaveEvents = ->
 # settings.
 loadNotifications = ->
   log.trace()
-  notifications = store.get 'notifications'
-  $('#notifications').attr 'checked', 'checked' if notifications.enabled
-  $('#notificationDuration').val if notifications.duration > 0
-    notifications.duration * .001
-  else
-    0
+  {duration, enabled} = store.get 'notifications'
+  $('#notifications').prop 'checked', enabled
+  $('#notificationDuration').val if duration > 0 then duration * .001 else 0
   loadNotificationSaveEvents()
 
 # Bind the event handlers required for persisting notification changes.
@@ -164,7 +160,7 @@ loadNotificationSaveEvents = ->
       log.debug "Changing notification duration to #{ms} milliseconds"
       notifications.duration = ms
       analytics.track 'Notifications', 'Changed', 'Duration', ms
-  $('#notifications').change ->
+  $('#notifications').on 'change', ->
     store.modify 'notifications', (notifications) =>
       enabled = $(this).is ':checked'
       log.debug "Changing notifications to '#{enabled}'"
@@ -174,7 +170,7 @@ loadNotificationSaveEvents = ->
 # Bind the event handlers required for persisting general changes.
 loadSaveEvents = ->
   log.trace()
-  $('#analytics').change ->
+  $('#analytics').on 'change', ->
     enabled = $(this).is ':checked'
     log.debug "Changing analytics to '#{enabled}'"
     if enabled
@@ -261,9 +257,12 @@ loadTemplateControlEvents = ->
   log.trace()
   # Ensure template wizard is closed if/when tabify links are clicked within
   # it.
-  $('#template_wizard [tabify]').click -> closeWizard()
-  $('#template_cancel_btn').click -> closeWizard()
-  $('#template_reset_btn').click -> resetWizard()
+  $('#template_wizard [tabify]').on 'click', ->
+    closeWizard()
+  $('#template_cancel_btn').on 'click', ->
+    closeWizard()
+  $('#template_reset_btn').on 'click', ->
+    resetWizard()
   # Support search functionality for templates.
   filter = $ '#template_filter'
   filter.find('option').remove()
@@ -280,22 +279,22 @@ loadTemplateControlEvents = ->
   $('#template_filter option').each ->
     $this = $ this
     $this.prop 'selected', limit is parseInt $this.val()
-  $('#template_filter').change ->
+  $('#template_filter').on 'change', ->
     store.set 'options_limit', parseInt $(this).val()
     loadTemplateRows searchResults ? ext.templates
-  $('#template_search :reset').click ->
+  $('#template_search :reset').on 'click', ->
     $('#template_search :text').val ''
     searchTemplates()
-  $('#template_controls').submit ->
+  $('#template_controls').on 'submit', ->
     searchTemplates $('#template_search :text').val()
   # Ensure user confirms deletion of template.
-  $('#template_delete_btn').click ->
+  $('#template_delete_btn').on 'click', ->
     $(this).hide()
     $('#template_confirm_delete').css 'display', 'inline-block'
-  $('#template_undo_delete_btn').click ->
+  $('#template_undo_delete_btn').on 'click', ->
     $('#template_confirm_delete').hide()
     $('#template_delete_btn').show()
-  $('#template_confirm_delete_btn').click ->
+  $('#template_confirm_delete_btn').on 'click', ->
     $('#template_confirm_delete').hide()
     $('#template_delete_btn').show()
     deleteTemplates [activeTemplate]
@@ -303,7 +302,7 @@ loadTemplateControlEvents = ->
   validationErrors = []
   $('#template_wizard').on 'hide', ->
     error.hide() for error in validationErrors
-  $('#template_save_btn').click ->
+  $('#template_save_btn').on 'click', ->
     template = deriveTemplate()
     # Clear all existing validation errors.
     error.hide() for error in validationErrors
@@ -317,17 +316,18 @@ loadTemplateControlEvents = ->
       $('#template_search :reset').hide()
       $('#template_search :text').val ''
       closeWizard()
-  $('#disable_btn, #enable_btn').click ->
+  $('#disable_btn, #enable_btn').on 'click', ->
     enableTemplates getSelectedTemplates(), $(this).is '#enable_btn'
   # Open the template wizard without any context.
-  $('#add_btn').click -> openWizard null
+  $('#add_btn').on 'click', ->
+    openWizard null
   selectedTemplates = []
   $('#delete_wizard').on 'hide', ->
     selectedTemplates = []
     $('#delete_items li').remove()
   # Prompt the user to confirm removal of the selected template(s).
   warningMsg = null
-  $('#delete_btn').click ->
+  $('#delete_btn').on 'click', ->
     deleteItems         = $ '#delete_items'
     predefinedTemplates = $ '<ul/>'
     selectedTemplates   = getSelectedTemplates()
@@ -360,10 +360,10 @@ loadTemplateControlEvents = ->
     else
       $('#delete_wizard').modal 'show'
   # Cancel the template removal process.
-  $('#delete_cancel_btn, #delete_no_btn').click ->
+  $('#delete_cancel_btn, #delete_no_btn').on 'click', ->
     $('#delete_wizard').modal 'hide'
   # Finalize the template removal process.
-  $('#delete_yes_btn').click ->
+  $('#delete_yes_btn').on 'click', ->
     deleteTemplates selectedTemplates
     $('#delete_wizard').modal 'hide'
 
@@ -371,7 +371,7 @@ loadTemplateControlEvents = ->
 loadTemplateExportEvents = ->
   log.trace()
   # Simulate alert closing without removing alert from the DOM.
-  $('#export_error .close').click ->
+  $('#export_error .close').on 'click', ->
     $(this).next().html('&nbsp').parent().hide()
   $('#export_wizard').on 'hide', ->
     $('#export_content').val ''
@@ -379,7 +379,7 @@ loadTemplateExportEvents = ->
     $('#export_error').find('span').html('&nbsp;').end().hide()
   # Show the wizard and create the exported data based on the selected
   # templates.
-  $('#export_btn').click ->
+  $('#export_btn').on 'click', ->
     log.info 'Launching export wizard'
     str  = createExport getSelectedTemplates()
     $('#export_content').val str
@@ -388,9 +388,10 @@ loadTemplateExportEvents = ->
     $('#export_save_btn').attr 'href', URL.createObjectURL blob
     $('#export_wizard').modal 'show'
   # Cancel the export process and hide the export wizard.
-  $('#export_close_btn').click -> $('#export_wizard').modal 'hide'
+  $('#export_close_btn').on 'click', ->
+    $('#export_wizard').modal 'hide'
   # Copy the JSON string into the system clipboard.
-  $('#export_copy_btn').click ->
+  $('#export_copy_btn').on 'click', ->
     $this = $ this
     ext.copy $('#export_content').val(), yes
     $this.text i18n.get 'opt_export_wizard_copy_alt_button'
@@ -403,7 +404,7 @@ loadTemplateImportEvents = ->
   log.trace()
   data = null
   # Simulate alert closing without removing alert from the DOM.
-  $('#import_error .close').click ->
+  $('#import_error .close').on 'click', ->
     $(this).next().html('&nbsp').parent().hide()
   $('#import_wizard').on 'hide', ->
     $('#import_final_btn').prop 'disabled', yes
@@ -413,30 +414,30 @@ loadTemplateImportEvents = ->
     $('#import_file_btn').val ''
     $('#import_error').find('span').html('&nbsp;').end().hide()
   # Restore the previous view in the import process.
-  $('#import_back_btn').click ->
+  $('#import_back_btn').on 'click', ->
     log.info 'Going back to previous import stage'
     $('#import_wizard_stage2, #import_back_btn, #import_final_btn').hide()
     $('#import_wizard_stage1, #import_continue_btn').show()
   # Prompt the user to input/load the data to be imported.
-  $('#import_btn').click ->
+  $('#import_btn').on 'click', ->
     log.info 'Launching import wizard'
     $('#import_wizard').modal 'show'
   # Enable/disable the finalize button depending on whether or not any
   # templates are currently selected.
-  $('#import_items').change ->
+  $('#import_items').on 'change', ->
     $('#import_final_btn').prop 'disabled',
       not $(this).find(':selected').length
   # Select all of the templates in the list.
-  $('#import_select_all_btn').click ->
+  $('#import_select_all_btn').on 'click', ->
     $('#import_items option').prop('selected', yes).parent().focus()
     $('#import_final_btn').prop 'disabled', no
   # Deselect all of the templates in the list.
-  $('#import_deselect_all_btn').click ->
+  $('#import_deselect_all_btn').on 'click', ->
     $('#import_items option').prop('selected', no).parent().focus()
     $('#import_final_btn').prop 'disabled', yes
   # Read the contents of the loaded file in to the text area and perform simple
   # error handling.
-  $('#import_file_btn').change (e) ->
+  $('#import_file_btn').on 'change', (e) ->
     file   = e.target.files[0]
     reader = new FileReader()
     reader.onerror = fileErrorHandler (message) ->
@@ -449,7 +450,7 @@ loadTemplateImportEvents = ->
       $('#import_content').val result
     reader.readAsText file
   # Finalize the import process.
-  $('#import_final_btn').click ->
+  $('#import_final_btn').on 'click', ->
     if data?
       for template in data.templates
         if $("#import_items option[value='#{template.key}']").is ':selected'
@@ -471,9 +472,10 @@ loadTemplateImportEvents = ->
     $('#template_search :reset').hide()
     $('#template_search :text').val ''
   # Cancel the import process.
-  $('#import_close_btn').click -> $('#import_wizard').modal 'hide'
+  $('#import_close_btn').on 'click', ->
+    $('#import_wizard').modal 'hide'
   # Paste the contents of the system clipboard in to the textarea.
-  $('#import_paste_btn').click ->
+  $('#import_paste_btn').on 'click', ->
     $this = $ this
     $('#import_file_btn').val ''
     $('#import_content').val ext.paste()
@@ -483,7 +485,7 @@ loadTemplateImportEvents = ->
       $this.dequeue()
   # Read the imported data and attempt to extract any valid templates and list
   # the changes to user for them to check and finalize.
-  $('#import_continue_btn').click ->
+  $('#import_continue_btn').on 'click', ->
     $this = $(this).prop 'disabled', yes
     list  = $ '#import_items'
     str   = $('#import_content').val()
@@ -539,13 +541,13 @@ loadTemplateRows = (templates = ext.templates, pagination = yes) ->
 # settings.
 loadToolbar = ->
   log.trace()
-  toolbar = store.get 'toolbar'
-  if toolbar.popup
+  {close, popup, options} = store.get 'toolbar'
+  if popup
     $('#toolbarPopupYes').addClass 'active'
   else
     $('#toolbarPopupNo').addClass 'active'
-  $('#toolbarClose').attr   'checked', 'checked' if toolbar.close
-  $('#toolbarOptions').attr 'checked', 'checked' if toolbar.options
+  $('#toolbarClose').prop   'checked', close
+  $('#toolbarOptions').prop 'checked', options
   updateToolbarTemplates()
   loadToolbarControlEvents()
   loadToolbarSaveEvents()
@@ -554,14 +556,14 @@ loadToolbar = ->
 loadToolbarControlEvents = ->
   log.trace()
   # Bind a click event to listen for changes to the button selection.
-  $('#toolbarPopup .btn').click( ->
+  $('#toolbarPopup .btn').on('click', ->
     $(".#{$(this).attr 'id'}").show().siblings().hide()
-  ).filter('.active').click()
+  ).filter('.active').trigger 'click'
 
 # Bind the event handlers required for persisting toolbar behaviour changes.
 loadToolbarSaveEvents = ->
   log.trace()
-  $('#toolbarPopup .btn').click ->
+  $('#toolbarPopup .btn').on 'click', ->
     popup = not $('#toolbarPopupYes').hasClass 'active'
     store.modify 'toolbar', (toolbar) -> toolbar.popup = popup
     ext.updateToolbar()
@@ -586,7 +588,7 @@ loadUrlShorteners = ->
   log.trace()
   $('input[name="enabled_shortener"]').each ->
     $this = $ this
-    $this.attr 'checked', 'checked' if store.get "#{$this.attr 'id'}.enabled"
+    $this.prop 'checked', store.get "#{$this.attr 'id'}.enabled"
     yes
   yourls = store.get 'yourls'
   $('#yourlsAuthentication' + (switch yourls.authentication
@@ -613,7 +615,7 @@ loadUrlShortenerAccounts = ->
       # Bind the event handler required for logging in and out of accounts and
       # then reflect the current login state in the button.
       button = $ "##{shortener.name}Account"
-      button.click ->
+      button.on 'click', ->
         $this = $(this).blur()
         if $this.data('oauth') isnt 'true'
           $this.tooltip 'hide'
@@ -651,21 +653,21 @@ loadUrlShortenerAccounts = ->
 loadUrlShortenerControlEvents = ->
   log.trace()
   # Bind a click event to listen for changes to the button selection.
-  $('#yourlsAuthentication button').click( ->
+  $('#yourlsAuthentication button').on('click', ->
     $(".#{$(this).attr 'id'}").show().siblings().hide()
-  ).filter('.active').click()
+  ).filter('.active').trigger 'click'
 
 # Bind the event handlers required for persisting URL shortener configuration
 # changes.
 loadUrlShortenerSaveEvents = ->
   log.trace()
-  $('input[name="enabled_shortener"]').change ->
+  $('input[name="enabled_shortener"]').on 'change', ->
     store.modify 'bitly', 'googl', 'yourls', (data, key) ->
       if data.enabled = $("##{key}").is ':checked'
         shortener = ext.queryUrlShortener (shortener) -> shortener.name is key
         log.debug "Enabling #{shortener.title} URL shortener"
         analytics.track 'Shorteners', 'Enabled', shortener.title
-  $('#yourlsAuthentication button').click ->
+  $('#yourlsAuthentication button').on 'click', ->
     $this = $ this
     auth = $this.attr('id').match(/yourlsAuthentication(.*)/)[1]
     store.modify 'yourls', (yourls) ->
@@ -1028,7 +1030,7 @@ activateDraggables = ->
 # been previously bound.
 activateModifications = ->
   log.trace()
-  $('#templates tbody tr td:not(:first-child)').off('click').click ->
+  $('#templates tbody tr td:not(:first-child)').off('click').on 'click', ->
     activeKey = $(this).parents('tr:first').find(':checkbox').val()
     openWizard ext.queryTemplate (template) -> template.key is activeKey
 
@@ -1039,13 +1041,13 @@ activateSelections = ->
   log.trace()
   table       = $ '#templates'
   selectBoxes = table.find 'tbody :checkbox'
-  selectBoxes.off('change').change ->
+  selectBoxes.off('change').on 'change', ->
     $this       = $ this
     messageKey  = 'opt_select_box'
     messageKey += '_checked' if $this.is ':checked'
     $this.attr 'data-original-title', i18n.get messageKey
     refreshSelectButtons()
-  table.find('thead :checkbox').off('change').change ->
+  table.find('thead :checkbox').off('change').on 'change', ->
     $this       = $ this
     checked     = $this.is ':checked'
     messageKey  = 'opt_select_all_box'
@@ -1102,8 +1104,8 @@ createImport = (str) ->
     data = JSON.parse str
   catch error
     throw i18n.get 'error_import_data'
-  if not $.isArray(data.templates) or data.templates.length is 0 or
-      typeof data.version isnt 'string'
+  if not _.isArray(data.templates) or _.isEmpty(data.templates) or
+      not _.isString data.version
     throw i18n.get 'error_import_invalid'
   log.debug 'Following data was created from the string...', data
   data
@@ -1229,14 +1231,14 @@ paginate = (templates) ->
       list.append $('<li/>').append $ '<a>&raquo;</a>'
     # Bind event handlers to manage navigating pages.
     pagination.find('ul li').off 'click'
-    pagination.find('ul li:first-child').click ->
+    pagination.find('ul li:first-child').on 'click', ->
       unless $(this).hasClass 'disabled'
         refreshPagination pagination.find('ul li.active').index() - 1
-    pagination.find('ul li:not(:first-child, :last-child)').click ->
+    pagination.find('ul li:not(:first-child, :last-child)').on 'click', ->
       $this = $ this
       unless $this.hasClass 'active'
         refreshPagination $this.index()
-    pagination.find('ul li:last-child').click ->
+    pagination.find('ul li:last-child').on 'click', ->
       unless $(this).hasClass 'disabled'
         refreshPagination pagination.find('ul li.active').index() + 1
     refreshPagination()
@@ -1290,7 +1292,7 @@ readImport = (importData) ->
           existing = $.extend yes, {}, ext.queryTemplate (temp) ->
             temp.key is template.key
           # Attempt to update the derived template.
-          if existing and not $.isEmptyObject existing
+          if existing and not _.isEmpty existing
             existing = updateImportedTemplate template, existing
             data.templates.push existing
             keys.push existing.key
@@ -1335,8 +1337,8 @@ resetWizard = ->
   if imgOpt.length is 0
     $('#template_image option:first-child').attr 'selected', 'selected'
   else
-    imgOpt.attr 'selected', 'selected'
-  $('#template_image').change()
+    imgOpt.prop 'selected', yes
+  $('#template_image').trigger 'change'
   # Disable appropriate fields for predefined templates.
   $('#template_content, #template_title').prop 'disabled',
     !!activeTemplate.readOnly
@@ -1401,7 +1403,7 @@ options = window.options = new class Options extends utils.Class
     $('.year-repl').html "#{new Date().getFullYear()}"
     # Bind tab selection event to all tabs.
     initialTabChange = yes
-    $('a[tabify]').click ->
+    $('a[tabify]').on 'click', ->
       target  = $(this).attr 'tabify'
       nav     = $ "#navigation a[tabify='#{target}']"
       parent  = nav.parent 'li'
@@ -1420,19 +1422,23 @@ options = window.options = new class Options extends utils.Class
     # Reflect the persisted tab.
     store.init 'options_active_tab', 'general_nav'
     optionsActiveTab = store.get 'options_active_tab'
-    $("##{optionsActiveTab}").click()
+    $("##{optionsActiveTab}").trigger 'click'
     log.debug "Initially displaying tab for #{optionsActiveTab}"
     # Bind Developer Tools wizard events to their corresponding elements.
-    $('#tools_nav').click -> $('#tools_wizard').modal 'show'
-    $('.tools_close_btn').click -> $('#tools_wizard').modal 'hide'
+    $('#tools_nav').on 'click', ->
+      $('#tools_wizard').modal 'show'
+    $('.tools_close_btn').on 'click', ->
+      $('#tools_wizard').modal 'hide'
     # Ensure that form submissions don't reload the page.
-    $('form:not([target="_blank"])').submit -> no
+    $('form:not([target="_blank"])').on 'submit', ->
+      no
     # Bind analytical tracking events to key footer buttons and links.
-    $('footer a[href*="neocotic.com"]').click -> analytics.track 'Footer',
-      'Clicked', 'Homepage'
+    $('footer a[href*="neocotic.com"]').on 'click', ->
+      analytics.track 'Footer', 'Clicked', 'Homepage'
     # Setup and configure the donation button in the footer.
     $('#donation input[name="hosted_button_id"]').val ext.config.options.payPal
-    $('#donation').submit -> analytics.track 'Footer', 'Clicked', 'Donate'
+    $('#donation').on 'submit', ->
+      analytics.track 'Footer', 'Clicked', 'Donate'
     # Load the current option values.
     load()
     # Ensure first enabled input field in modals get focus when opened.
@@ -1456,10 +1462,11 @@ options = window.options = new class Options extends utils.Class
         placement: placement
         trigger:   trigger
       if trigger is 'manual'
-        $this.click -> $this.popover 'toggle'
+        $this.on 'click', ->
+          $this.popover 'toggle'
     activateTooltips()
     navHeight = $('.navbar').height()
-    $('[data-goto]').click ->
+    $('[data-goto]').on 'click', ->
       goto = $ $(this).attr 'data-goto'
       pos  = goto.position()?.top or 0
       pos -= navHeight if pos and pos >= navHeight

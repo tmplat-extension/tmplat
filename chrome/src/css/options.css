@@ -30,7 +30,6 @@ textarea {resize: vertical;}
 .navbar-fixed-top .brand {padding-right: 0; padding-left: 0; margin-left: 20px; float: right; font-weight: bold; color: black; text-shadow: 0 1px 0 rgba(255, 255, 255, .1), 0 0 30px rgba(255, 255, 255, .125); -webkit-transition: all .2s linear; -moz-transition: all .2s linear; transition: all .2s linear;}
 #template_content {resize: both;}
 #template_shortcut {text-transform: uppercase;}
-#moveDown_btn, #moveUp_btn {display: block; margin-top: 11px;}
 .form-vertical .control-group > label, .control-label {padding-top: 6px;}
 #shorteners_tab .form-horizontal .control-group > label {width: 100px;}
 #shorteners_tab .form-horizontal .controls  {margin-left: 40px;}
@@ -38,9 +37,6 @@ textarea {resize: vertical;}
 .input-prepend, .input-append {margin-bottom: 0;}
 pre {overflow: auto; white-space: pre; word-wrap: normal;}
 .label.pull-right, .badge.pull-right {padding-bottom: 1px;}
-.popover {font-size: 14px; line-height: 20px;}
-.popover-inner {text-align: left;}
-a[popover="opt_template_shortcut_help"] {position: relative; top: -25px; left: 145px; float: left; height: 0;}
 #template_image_preview {margin: -4px 0 0 6px;}
 #template_wizard .modal-body {position: static;}
 #donation {display: inline; margin: 0;}
@@ -61,6 +57,8 @@ a[popover="opt_template_shortcut_help"] {position: relative; top: -25px; left: 1
 .top {vertical-align: top;}
 .middle {vertical-align: middle;}
 .bottom {vertical-align: bottom;}
+.popover {font-size: 14px; line-height: 20px;}
+.popover-content, .popover-title {text-align: left;}
 *[draggable], .pagination {user-select: none; -webkit-user-select: none;}
 *[draggable].dnd-moving {opacity: 0.4;}
 *[draggable].dnd-over {background: #f5f5f5;border: 1px dashed #ddd;}
