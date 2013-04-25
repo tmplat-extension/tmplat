@@ -40,7 +40,7 @@ DEFAULT_TEMPLATES = [
     title:    i18n.get 'default_template_short'
     usage:    0
   ,
-    content:  "<a href=\"{{url}}\"{#anchorTarget}
+    content:  "<a href=\"{url}\"{#anchorTarget}
  target=\"_blank\"{/anchorTarget}{#anchorTitle}
  title=\"{{title}}\"{/anchorTitle}>{{title}}</a>"
     enabled:  yes

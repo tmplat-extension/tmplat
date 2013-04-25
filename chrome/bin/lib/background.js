@@ -40,7 +40,7 @@
       title: i18n.get('default_template_short'),
       usage: 0
     }, {
-      content: "<a href=\"{{url}}\"{#anchorTarget} target=\"_blank\"{/anchorTarget}{#anchorTitle} title=\"{{title}}\"{/anchorTitle}>{{title}}</a>",
+      content: "<a href=\"{url}\"{#anchorTarget} target=\"_blank\"{/anchorTarget}{#anchorTitle} title=\"{{title}}\"{/anchorTitle}>{{title}}</a>",
       enabled: true,
       image: 'font',
       index: 2,
