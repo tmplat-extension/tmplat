@@ -30,6 +30,18 @@
       return _ref;
     }
 
+    Utils.prototype.callback = function(fn) {
+      return function() {
+        var args;
+
+        args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        if (_.isFunction(fn)) {
+          fn.apply(null, args);
+          return true;
+        }
+      };
+    };
+
     Utils.prototype.keyGen = function(separator, length, prefix, upperCase) {
       var i, key, max, min, part, parts, _i, _len;
 
@@ -64,22 +76,6 @@
       } else {
         return key.toLowerCase();
       }
-    };
-
-    Utils.prototype.onMessage = function() {
-      var args, base, external, type;
-
-      type = arguments[0], external = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
-      if (type == null) {
-        type = 'runtime';
-      }
-      base = chrome[type];
-      if (external) {
-        base = base.onMessageExternal || base.onRequestExternal;
-      } else {
-        base = base.onMessage || base.onRequest;
-      }
-      return base.addListener.apply(base, args);
     };
 
     Utils.prototype.query = function(entities, singular, filter) {
@@ -141,17 +137,6 @@
         }
       }
       return str;
-    };
-
-    Utils.prototype.sendMessage = function() {
-      var args, base, type;
-
-      type = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-      if (type == null) {
-        type = 'runtime';
-      }
-      base = chrome[type];
-      return (base.sendMessage || base.sendRequest).apply(base, args);
     };
 
     Utils.prototype.time = function(key) {

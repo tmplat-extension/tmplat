@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var AppError, BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, addAdditionalData, browser, buildDerivedData, buildPopup, buildStandardData, buildTemplate, callUrlShortener, deriveMessageInfo, deriveMessageTempate, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isExtensionGallery, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, nullIfEmpty, onMessage, operatingSystem, runSelectors, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
+  var AppError, BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, addAdditionalData, browser, buildDerivedData, buildPopup, buildStandardData, buildTemplate, callUrlShortener, deriveMessageInfo, deriveMessageTempate, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isExtensionGallery, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, nullIfEmpty, onMessage, onMessageExternal, operatingSystem, runSelectors, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -476,20 +476,15 @@
   };
 
   onMessage = function(message, sender, sendResponse) {
-    var active, data, editable, id, link, output, placeholders, shortcut, template, _ref, _ref1;
+    var active, callback, data, editable, id, link, output, placeholders, shortcut, template, _ref, _ref1;
 
     log.trace();
+    callback = utils.callback(sendResponse);
     if (!message.type) {
-      if (typeof sendResponse === "function") {
-        sendResponse();
-      }
-      return true;
+      return callback();
     }
     if (message.type === 'shortcut' && !store.get('shortcuts.enabled')) {
-      if (typeof sendResponse === "function") {
-        sendResponse();
-      }
-      return true;
+      return callback();
     }
     if (message.type === 'options') {
       selectOrCreateTab(utils.url('pages/options.html'));
@@ -498,20 +493,14 @@
       })[0]) != null) {
         _ref.close();
       }
-      if (typeof sendResponse === "function") {
-        sendResponse();
-      }
-      return true;
+      return callback();
     }
     if ((_ref1 = message.type) === 'info' || _ref1 === 'version') {
-      if (typeof sendResponse === "function") {
-        sendResponse({
-          hotkeys: getHotkeys(),
-          id: EXTENSION_ID,
-          version: ext.version
-        });
-      }
-      return true;
+      return callback({
+        hotkeys: getHotkeys(),
+        id: EXTENSION_ID,
+        version: ext.version
+      });
     }
     active = data = output = template = null;
     editable = link = shortcut = false;
@@ -694,7 +683,7 @@
         ext.notification.description = i18n.get('result_good_description', template.title);
         ext.copy(output);
         if (!isProtectedPage(active) && (editable && store.get('menu.paste')) || (shortcut && store.get('shortcuts.paste'))) {
-          utils.sendMessage('tabs', active.id, {
+          chrome.tabs.sendMessage(active.id, {
             contents: output,
             id: id,
             type: 'paste'
@@ -703,6 +692,21 @@
       }
       return log.debug("Finished handling " + type + " request");
     });
+  };
+
+  onMessageExternal = function(message, sender, sendResponse) {
+    var blocked, callback;
+
+    log.trace();
+    callback = utils.callback(sendResponse);
+    blocked = isBlacklisted(sender.id);
+    analytics.track('External Requests', 'Started', sender.id, Number(!blocked));
+    if (blocked) {
+      log.debug("Blocking external request from " + sender.id);
+      return callback();
+    }
+    log.debug("Accepting external request from " + sender.id);
+    return onMessage(message, sender, sendResponse);
   };
 
   selectOrCreateTab = function(url, callback) {
@@ -763,7 +767,7 @@
       for (_i = 0, _len = tabs.length; _i < _len; _i++) {
         tab = tabs[_i];
         if (!isProtectedPage(tab)) {
-          _results.push(utils.sendMessage('tabs', tab.id, {
+          _results.push(chrome.tabs.sendMessage(tab.id, {
             hotkeys: hotkeys
           }));
         }
@@ -973,7 +977,7 @@
           if (isProtectedPage(tab)) {
             return done();
           }
-          return utils.sendMessage('tabs', tab.id, {
+          return chrome.tabs.sendMessage(tab.id, {
             editable: editable,
             id: id,
             link: link,
@@ -1378,7 +1382,7 @@
       }
       return callback();
     } else {
-      return utils.sendMessage('tabs', tab.id, {
+      return chrome.tabs.sendMessage(tab.id, {
         selectors: map
       }, function(response) {
         var result, value, _ref;
@@ -2181,20 +2185,8 @@
             type: 'toolbar'
           });
         });
-        utils.onMessage('extension', false, onMessage);
-        utils.onMessage('extension', true, function(msg, sender, cb) {
-          var block;
-
-          block = isBlacklisted(sender.id);
-          analytics.track('External Requests', 'Started', sender.id, Number(!block));
-          if (block) {
-            log.debug("Blocking external request from " + sender.id);
-            return typeof cb === "function" ? cb() : void 0;
-          } else {
-            log.debug("Accepting external request from " + sender.id);
-            return onMessage(msg, sender, cb);
-          }
-        });
+        chrome.runtime.onMessage.addListener(onMessage);
+        chrome.runtime.onMessageExternal.addListener(onMessageExternal);
         browser.version = getBrowserVersion();
         operatingSystem = getOperatingSystem();
         if (isNewInstall) {

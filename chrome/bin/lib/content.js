@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var elementBackups, elements, extractAll, getContent, getLink, getMeta, hotkeys, isEditable, onMessage, parentLink, paste, sendMessage,
+  var elementBackups, elements, extractAll, getContent, getLink, getMeta, hotkeys, isEditable, parentLink, paste,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty;
@@ -85,15 +85,6 @@
     return (node != null) && !node.disabled && !node.readOnly;
   };
 
-  onMessage = function() {
-    var args, base;
-
-    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    base = chrome.runtime;
-    base = base.onMessage || base.onRequest;
-    return base.addListener.apply(base, args);
-  };
-
   parentLink = function(node) {
     if (node == null) {
       return;
@@ -117,15 +108,7 @@
     return node.value = str;
   };
 
-  sendMessage = function() {
-    var args, base;
-
-    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    base = chrome.runtime;
-    return (base.sendMessage || base.sendRequest).apply(base, args);
-  };
-
-  sendMessage({
+  chrome.runtime.sendMessage({
     type: 'info'
   }, function(data) {
     var isMac;
@@ -158,7 +141,7 @@
           } else {
             elements.field = null;
           }
-          sendMessage({
+          chrome.runtime.sendMessage({
             data: {
               key: key
             },
@@ -168,15 +151,21 @@
         }
       }
     });
-    return onMessage(function(message, sender, sendResponse) {
-      var container, contents, href, images, info, key, link, links, node, nodes, result, selection, src, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
+    return chrome.runtime.onMessage(function(message, sender, sendResponse) {
+      var callback, container, contents, href, images, info, key, link, links, node, nodes, result, selection, src, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
 
+      callback = function() {
+        var args;
+
+        args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        if (typeof sendResponse === 'function') {
+          sendResponse.apply(null, args);
+          return true;
+        }
+      };
       if (message.hotkeys != null) {
         hotkeys = message.hotkeys;
-        if (typeof sendResponse === "function") {
-          sendResponse();
-        }
-        return true;
+        return callback();
       }
       if (message.selectors != null) {
         _ref = message.selectors;
@@ -202,28 +191,19 @@
           }
           info.result = result;
         }
-        if (typeof sendResponse === "function") {
-          sendResponse({
-            selectors: message.selectors
-          });
-        }
-        return true;
+        return callback({
+          selectors: message.selectors
+        });
       }
       if (message.id == null) {
-        if (typeof sendResponse === "function") {
-          sendResponse();
-        }
-        return true;
+        return callback();
       }
       if (message.type === 'paste') {
         if ((message.contents != null) && isEditable((_ref1 = elementBackups[message.id]) != null ? _ref1.field : void 0)) {
           paste(elementBackups[message.id].field, message.contents);
         }
         delete elementBackups[message.id];
-        if (typeof sendResponse === "function") {
-          sendResponse();
-        }
-        return true;
+        return callback();
       }
       elementBackups[message.id] = {
         field: message.editable || message.shortcut ? elements.field : void 0,
@@ -250,29 +230,26 @@
         }
       }
       link = getLink(message.id, message.url);
-      if (typeof sendResponse === "function") {
-        sendResponse({
-          author: getMeta('author'),
-          characterSet: document.characterSet,
-          description: getMeta('description'),
-          images: extractAll(document.images, 'src'),
-          keywords: getMeta('keywords', true),
-          lastModified: document.lastModified,
-          linkHTML: link != null ? link.innerHTML : void 0,
-          linkText: link != null ? link.textContent : void 0,
-          links: extractAll(document.links, 'href'),
-          pageHeight: window.innerHeight,
-          pageWidth: window.innerWidth,
-          referrer: document.referrer,
-          scripts: extractAll(document.scripts, 'src'),
-          selectedImages: images,
-          selectedLinks: links,
-          selection: selection.toString(),
-          selectionHTML: container != null ? container.innerHTML : void 0,
-          styleSheets: extractAll(document.styleSheets, 'href')
-        });
-      }
-      return true;
+      return callback({
+        author: getMeta('author'),
+        characterSet: document.characterSet,
+        description: getMeta('description'),
+        images: extractAll(document.images, 'src'),
+        keywords: getMeta('keywords', true),
+        lastModified: document.lastModified,
+        linkHTML: link != null ? link.innerHTML : void 0,
+        linkText: link != null ? link.textContent : void 0,
+        links: extractAll(document.links, 'href'),
+        pageHeight: window.innerHeight,
+        pageWidth: window.innerWidth,
+        referrer: document.referrer,
+        scripts: extractAll(document.scripts, 'src'),
+        selectedImages: images,
+        selectedLinks: links,
+        selection: selection.toString(),
+        selectionHTML: container != null ? container.innerHTML : void 0,
+        styleSheets: extractAll(document.styleSheets, 'href')
+      });
     });
   });
 

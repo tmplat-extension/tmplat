@@ -343,30 +343,26 @@ nullIfEmpty = (object) ->
 # that they do not originate from a blacklisted extension.
 onMessage = (message, sender, sendResponse) ->
   log.trace()
+  # Safely handle callback functionality.
+  callback = utils.callback sendResponse
   # Message type is required. Informal rejection.
-  unless message.type
-    sendResponse?()
-    return true
+  return callback() unless message.type
   # Don't allow shortcut requests when shortcuts are disabled.
   if message.type is 'shortcut' and not store.get 'shortcuts.enabled'
-    sendResponse?()
-    return true
+    return callback()
   # Select or create a tab for the Options page.
   if message.type is 'options'
     selectOrCreateTab utils.url 'pages/options.html'
     # Close the popup if it's currently open. This should happen naturally but
     # is being forced to ensure consistency.
     chrome.extension.getViews(type: 'popup')[0]?.close()
-    sendResponse?()
-    return true
+    return callback()
   # Info requests are simple, just send some useful information back. Done!
   if message.type in ['info', 'version']
-    sendResponse? {
+    return callback
       hotkeys: getHotkeys()
       id:      EXTENSION_ID
       version: ext.version
-    }
-    return true
   active       = data   = output   = template = null
   editable     = link   = shortcut = no
   id           = utils.keyGen '', null, 't', no
@@ -514,9 +510,25 @@ onMessage = (message, sender, sendResponse) ->
       if not isProtectedPage(active) and
          (editable and store.get 'menu.paste') or
          (shortcut and store.get 'shortcuts.paste')
-        utils.sendMessage 'tabs', active.id,
+        chrome.tabs.sendMessage active.id,
           {contents: output, id, type: 'paste'}
     log.debug "Finished handling #{type} request"
+
+# Listener for external messages sent to the extension.  
+# Only messages sent from extensions/apps that have not been previously
+# blacklisted routed to `onMessage`.
+onMessageExternal = (message, sender, sendResponse) ->
+  log.trace()
+  # Safely handle callback functionality.
+  callback = utils.callback sendResponse
+  # Ensure blacklisted extensions/apps are blocked.
+  blocked  = isBlacklisted sender.id
+  analytics.track 'External Requests', 'Started', sender.id, Number !blocked
+  if blocked
+    log.debug "Blocking external request from #{sender.id}"
+    return callback()
+  log.debug "Accepting external request from #{sender.id}"
+  onMessage message, sender, sendResponse
 
 # Attempt to select a tab in the current window displaying a page whose
 # location begins with `url`.  
@@ -563,7 +575,7 @@ updateHotkeys = ->
     # Check tabs are not displaying a *protected* page (i.e. one that will
     # cause an error if an attempt is made to send a message to it).
     for tab in tabs when not isProtectedPage tab
-      utils.sendMessage 'tabs', tab.id, {hotkeys}
+      chrome.tabs.sendMessage tab.id, {hotkeys}
 
 # Update the popup UI state to reflect the progress of the current request.  
 # Ignore `percent` if `toggle` is specified; otherwise update the percentage on
@@ -687,7 +699,7 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
         # Try to prevent pages hanging because content script should not have
         # been executed.
         return done() if isProtectedPage tab
-        utils.sendMessage 'tabs', tab.id,
+        chrome.tabs.sendMessage tab.id,
           {editable, id, link, shortcut, url: data.url}
         , (response) ->
           log.debug 'Retrieved the following data from content script...',
@@ -953,7 +965,7 @@ runSelectors = (tab, map, callback) ->
     map[placeholder] = '' for own placeholder of map
     callback()
   else
-    utils.sendMessage 'tabs', tab.id, selectors: map, (response) ->
+    chrome.tabs.sendMessage tab.id, selectors: map, (response) ->
       log.debug 'Retrieved the following data from the content script...',
         response
       for own placeholder, value of response.selectors
@@ -1533,21 +1545,13 @@ ext = window.ext = new class Extension extends utils.Class
       initUrlShorteners()
       # Add listener for toolbar/browser action clicks.  
       # This listener will be ignored whenever the popup is enabled.
-      chrome.browserAction.onClicked.addListener (tab) -> onMessage
-        data: key: store.get 'toolbar.key'
-        type: 'toolbar'
+      chrome.browserAction.onClicked.addListener (tab) ->
+        onMessage
+          data: key: store.get 'toolbar.key'
+          type: 'toolbar'
       # Add listeners for internal and external messages.
-      utils.onMessage 'extension', no,  onMessage
-      utils.onMessage 'extension', yes, (msg, sender, cb) ->
-        block = isBlacklisted sender.id
-        analytics.track 'External Requests', 'Started', sender.id,
-          Number !block
-        if block
-          log.debug "Blocking external request from #{sender.id}"
-          cb?()
-        else
-          log.debug "Accepting external request from #{sender.id}"
-          onMessage msg, sender, cb
+      chrome.runtime.onMessage.addListener onMessage
+      chrome.runtime.onMessageExternal.addListener onMessageExternal
       # Derive the browser and OS information.
       browser.version = getBrowserVersion()
       operatingSystem = getOperatingSystem()
