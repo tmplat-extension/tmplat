@@ -140,7 +140,7 @@
     };
 
     Utils.prototype.time = function(key) {
-      if (timings.hasOwnProperty(key)) {
+      if (_.has(timings, key)) {
         return new Date().getTime() - timings[key];
       } else {
         return timings[key] = new Date().getTime();
@@ -150,7 +150,7 @@
     Utils.prototype.timeEnd = function(key) {
       var start;
 
-      if (timings.hasOwnProperty(key)) {
+      if (_.has(timings, key)) {
         start = timings[key];
         delete timings[key];
         return new Date().getTime() - start;

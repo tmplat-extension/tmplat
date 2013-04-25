@@ -14,6 +14,7 @@ chrome.runtime.sendMessage type: 'info', (data) ->
   newClasses = ['disabled']
   # Names of the classes to be removed from the targeted elements.
   oldClasses = ['chrome_install_button']
+
   # Disable all "Install" links on the homepage for Template.
   for link in document.querySelectorAll "a.#{oldClasses[0]}[href$=#{data.id}]"
     link.innerHTML = link.innerHTML.replace 'Install', 'Installed'

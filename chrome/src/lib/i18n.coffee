@@ -1,5 +1,5 @@
 # [Template](http://neocotic.com/template)  
-# (c) 2012 Alasdair Mercer  
+# (c) 2013 Alasdair Mercer  
 # Freely distributable under the MIT license.  
 # For all details and documentation:  
 # <http://neocotic.com/template>
@@ -8,67 +8,71 @@
 # -----------------
 
 # Mapping for internationalization handlers.  
-# Each handler represents an attribute (based on the property name) and is
-# called for each attribute found within the node currently being processed.
+# Each handler represents an attribute (based on the property name) and is called for each
+# attribute found within the node currently being processed.
 handlers   =
 
-  # Replace the HTML content of `element` with the named message looked up for
-  # `name`.
+  # Replace the HTML content of `element` with the named message looked up for `name`.
   'i18n-content': (element, name, map) ->
     subs = subst element, name, map
+
     element.innerHTML = i18n.get name, subs
 
-  # Adds options to the select `element` with the message looked up for
-  # `name`.
+  # Adds options to the select `element` with the message looked up for `name`.
   'i18n-options': (element, name, map) ->
-    subs   = subst element, name, map
-    values = i18n.get name, subs
-    for value in values
+    subs = subst element, name, map
+
+    for value in i18n.get name, subs
       option = document.createElement 'option'
-      if typeof value is 'string'
+      if _.isString value
         option.text  = option.value = value
       else
         option.text  = value[1]
         option.value = value[0]
+
       element.appendChild option
 
-  # Replace the value of the properties and/or attributes of `element` with the
-  # messages looked up for their corresponding values.
+  # Replace the value of the properties and/or attributes of `element` with the messages looked up
+  # for their corresponding values.
   'i18n-values':  (element, value, map) ->
-    parts = value.replace(/\s/g, '').split ';'
-    for part in parts
+    for part in value.replace(/\s/g, '').split ';'
       prop = part.match /^([^:]+):(.+)$/
-      if prop
-        propName = prop[1]
-        propExpr = prop[2]
-        propSubs = subst element, propExpr, map
-        if propName.indexOf('.') is 0
-          path = propName.slice(1).split '.'
-          obj  = element
-          obj  = obj[path.shift()] while obj and path.length > 1
-          if obj
-            path = path[0]
-            obj[path] = i18n.get propExpr, propSubs
-            process element, map if path is 'innerHTML'
-        else
-          element.setAttribute propName, i18n.get propExpr, propSubs
+      continue unless prop
+
+      propName = prop[1]
+      propExpr = prop[2]
+      propSubs = subst element, propExpr, map
+
+      if propName[0] is '.'
+        path = propName[1..].split '.'
+
+        obj = element
+        obj = obj[path.shift()] while obj and path.length > 1
+
+        if obj
+          path = path[0]
+          obj[path] = i18n.get propExpr, propSubs
+          process element, map if path is 'innerHTML'
+      else
+        element.setAttribute propName, i18n.get propExpr, propSubs
+
 # List of internationalization attributes/handlers available.
 attributes = (key for own key of handlers)
-# Selector containing the available internationalization attributes/handlers
-# which is used by `process` to query all elements.
+# Selector containing the available internationalization attributes/handlers which is used by
+# `process` to query all elements.
 selector   = "[#{attributes.join '],['}]"
 
 # Private functions
 # -----------------
 
 # Find all elements to be localized and call their corresponding handler(s).
-process = (node, map) -> for element in node.querySelectorAll selector
-  for name in attributes
-    attribute = element.getAttribute name
-    handlers[name] element, attribute, map if attribute?
+process = (node, map) ->
+  for element in node.querySelectorAll selector
+    for name in attributes
+      attribute = element.getAttribute name
+      handlers[name] element, attribute, map if attribute?
 
-# Find an array of substitution strings using the element's ID and the message
-# key as the mapping.
+# Find an array of substitution strings using the element's ID and the message key as the mapping.
 subst = (element, value, map) ->
   if map
     for own prop, map2 of map when prop is element.id
@@ -106,34 +110,33 @@ i18n = window.i18n = new class Internationalization extends utils.Class
 
   # Localize the specified `attribute` of all the selected elements.
   attribute: (selector, attribute, name, subs) ->
-    elements = @manager.node.querySelectorAll selector
-    element.setAttribute attribute, @get name, subs for element in elements
+    for element in @manager.node.querySelectorAll selector
+      element.setAttribute attribute, @get name, subs
 
   # Localize the contents of all the selected elements.
   content: (selector, name, subs) ->
-    elements = @manager.node.querySelectorAll selector
-    element.innerHTML = @get name, subs for element in elements
+    for element in @manager.node.querySelectorAll selector
+      element.innerHTML = @get name, subs
 
   # Add localized `option` elements to the selected elements.
   options: (selector, name, subs) ->
-    elements = @manager.node.querySelectorAll selector
-    for element in elements
-      values = @get name, subs
-      for value in values
+    for element in @manager.node.querySelectorAll selector
+      for value in @get name, subs
         option = document.createElement 'option'
-        if typeof value is 'string'
+        if _.isString value
           option.text  = option.value = value
         else
           option.text  = value[1]
           option.value = value[0]
+
         element.appendChild option
 
   # Get the localized message.
   get: -> @manager.get arguments...
 
-  # Localize all relevant elements within the managed node (`document` by
-  # default).
-  init: (map) -> process @manager.node, map
+  # Localize all relevant elements within the managed node (`document` by default).
+  init: (map) ->
+    process @manager.node, map
 
   # Retrieve the accepted languages.
   langs: -> @manager.langs arguments...

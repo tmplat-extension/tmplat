@@ -1,10 +1,11 @@
 // [Template](http://neocotic.com/template)
-// (c) 2012 Alasdair Mercer
+// (c) 2013 Alasdair Mercer
 // Freely distributable under the MIT license.
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
   var Store, dig, store, tryParse, tryStringify, _ref,
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __slice = [].slice;
@@ -16,7 +17,7 @@
       parseFirst = true;
     }
     result = [root];
-    if (path && path.indexOf('.') !== -1) {
+    if (path && __indexOf.call(path, '.') >= 0) {
       path = path.split('.');
       object = base = root[basePath = path.shift()];
       if (parseFirst) {
@@ -88,7 +89,7 @@
       keys = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       for (_i = 0, _len = keys.length; _i < _len; _i++) {
         key = keys[_i];
-        if (!localStorage.hasOwnProperty(key)) {
+        if (!_.has(localStorage, key)) {
           return false;
         }
       }
