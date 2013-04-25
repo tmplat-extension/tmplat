@@ -229,6 +229,9 @@ SUPPORT           =
         str = '[escape]'
         if tab.url.indexOf(str) is 0
           tab.url = decodeURIComponent tab.url.substring str.length
+# Used by Chrome to represent an unknown language (i.e. one that it couldn't
+# detect).
+UNKNOWN_LOCALE    = 'und'
 
 # Private variables
 # -----------------
@@ -667,6 +670,11 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
     log.info 'Retrieved the following tabs...',   win.tabs
     $.extend data, tabs: (winTab.url for winTab in win.tabs)
     async.parallel [
+      (done) ->
+        chrome.tabs.detectLanguage tab.id, (locale) ->
+          log.debug "Detected language: '#{locale}'"
+          locale = '' unless locale and locale isnt UNKNOWN_LOCALE
+          done null, {locale}
       (done) ->
         coords = {}
         navigator.geolocation.getCurrentPosition (position) ->
