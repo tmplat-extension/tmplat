@@ -4,21 +4,12 @@
 # For all details and documentation:  
 # <http://neocotic.com/template>
 
-# Helpers
-# -------
-
-# Convenient shorthand the `sendMessage` method in the chrome API which
-# supports the old `sendRequest` variation for backwards compatibility.
-sendMessage = (args...) ->
-  base = chrome.runtime
-  (base.sendMessage or base.sendRequest).apply base, args
-
 # Functionality
 # -------------
 
 # Wrap the functionality in a message for Template's details in order to get
 # the ID in use.
-sendMessage type: 'info', (data) ->
+chrome.runtime.sendMessage type: 'info', (data) ->
   # Names of the classes to be added to the targeted elements.
   newClasses = ['disabled']
   # Names of the classes to be removed from the targeted elements.
