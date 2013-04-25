@@ -339,7 +339,7 @@ isSpecialPage = (tab) ->
 # Ensure `null` is returned instead of `object` if it is *empty*.
 nullIfEmpty = (object) ->
   log.trace()
-  if $.isEmptyObject object then null else object
+  if _.isEmpty object then null else object
 
 # Listener for internal messages sent to the extension.  
 # External messages are also routed through here, but only after being checked
@@ -979,7 +979,7 @@ runSelectors = (tab, map, callback) ->
         response
       for own placeholder, value of response.selectors
         result = value.result or ''
-        result = result.join '\n' if $.isArray result
+        result = result.join '\n' if _.isArray result
         result = md result if value.convertTo is 'markdown'
         map[placeholder] = result
       callback()
@@ -1003,7 +1003,7 @@ buildPopup = ->
   for template in ext.templates when template.enabled
     items = items.add buildTemplate template
   # Add a generic message to state the obvious... that the list is empty.
-  if items.length is 0
+  unless items.length
     items = items.add $('<li/>',
       class: 'empty'
     ).append($ '<i/>',
@@ -1488,7 +1488,7 @@ ext = window.ext = new class Extension extends utils.Class
   # If `str` is empty the contents of the system clipboard will not change.
   copy: (str, hidden) ->
     log.trace()
-    sandbox = $('#sandbox').val(str).select()
+    sandbox = $('#sandbox').val(str).trigger 'select'
     document.execCommand 'copy'
     log.debug 'Copied the following string...', str
     sandbox.val ''
@@ -1578,7 +1578,7 @@ ext = window.ext = new class Extension extends utils.Class
   paste: ->
     log.trace()
     result  = ''
-    sandbox = $('#sandbox').val('').select()
+    sandbox = $('#sandbox').val('').trigger 'select'
     result  = sandbox.val() if document.execCommand 'paste'
     log.debug 'Pasted the following string...', result
     sandbox.val ''
