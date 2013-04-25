@@ -116,7 +116,7 @@ chrome.runtime.sendMessage type: 'info', (data) ->
         e.preventDefault()
   # Add a listener to provide the background page with information that is
   # extracted from the DOM or perform auto-paste functionality.
-  chrome.runtime.onMessage (message, sender, sendResponse) ->
+  chrome.runtime.onMessage.addListener (message, sender, sendResponse) ->
     # Safely handle callback functionality.
     callback = (args...) ->
       if typeof sendResponse is 'function'

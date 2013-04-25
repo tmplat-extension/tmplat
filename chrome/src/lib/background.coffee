@@ -436,7 +436,7 @@ onMessage = (message, sender, sendResponse) ->
         log.debug "Using the following data to render #{template.title}...",
           data
         if template.content
-          output = Mustache.to_html template.content, data
+          output = Mustache.render template.content, data
           log.debug 'Following string is the rendered result...', output
           updateProgress 60
         output ?= ''
@@ -480,7 +480,7 @@ onMessage = (message, sender, sendResponse) ->
       ], (err) ->
         unless err
           # Request(s) were successful so re-render the output.
-          output = Mustache.to_html output, placeholders
+          output = Mustache.render output, placeholders
           log.debug 'Following string is the re-rendered result...', output
         done err
   ], (err) ->
@@ -665,7 +665,7 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
   chrome.windows.get tab.windowId, populate: yes, (win) ->
     log.info 'Retrieved the following window...', win
     log.info 'Retrieved the following tabs...',   win.tabs
-    $.extend data, tabs: (tab.url for tab in win.tabs)
+    $.extend data, tabs: (winTab.url for winTab in win.tabs)
     async.parallel [
       (done) ->
         coords = {}

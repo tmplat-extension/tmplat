@@ -151,7 +151,7 @@
         }
       }
     });
-    return chrome.runtime.onMessage(function(message, sender, sendResponse) {
+    return chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
       var callback, container, contents, href, images, info, key, link, links, node, nodes, result, selection, src, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
 
       callback = function() {

@@ -580,7 +580,7 @@
           });
           log.debug("Using the following data to render " + template.title + "...", data);
           if (template.content) {
-            output = Mustache.to_html(template.content, data);
+            output = Mustache.render(template.content, data);
             log.debug('Following string is the rendered result...', output);
             updateProgress(60);
           }
@@ -651,7 +651,7 @@
           }
         ], function(err) {
           if (!err) {
-            output = Mustache.to_html(output, placeholders);
+            output = Mustache.render(output, placeholders);
             log.debug('Following string is the re-rendered result...', output);
           }
           return done(err);
@@ -895,6 +895,8 @@
     return chrome.windows.get(tab.windowId, {
       populate: true
     }, function(win) {
+      var winTab;
+
       log.info('Retrieved the following window...', win);
       log.info('Retrieved the following tabs...', win.tabs);
       $.extend(data, {
@@ -904,8 +906,8 @@
           _ref = win.tabs;
           _results = [];
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            tab = _ref[_i];
-            _results.push(tab.url);
+            winTab = _ref[_i];
+            _results.push(winTab.url);
           }
           return _results;
         })()
