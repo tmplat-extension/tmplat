@@ -2839,6 +2839,20 @@
     "message": "The contextual (right-clicked) link text",
     "description": "Description of the linkText variable on the Guide tab of the Options page under the Standard section."
   },
+  "opt_guide_standard_locale_text": {
+    "message": "The $O_LINK_ISO_639$ISO 639$C_LINK$ code for the detected page language",
+    "description": "Description of the locale variable on the Guide tab of the Options page under the Standard section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_iso_639": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/ISO_639_macrolanguage\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/ISO_639_macrolanguage\">"
+      }
+    }
+  },
   "opt_guide_standard_offline_text": {
     "message": "Whether or not you are currently offline",
     "description": "Description of the offline variable on the Guide tab of the Options page under the Standard section."

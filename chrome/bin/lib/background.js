@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var AppError, BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, addAdditionalData, browser, buildDerivedData, buildPopup, buildStandardData, buildTemplate, callUrlShortener, deriveMessageInfo, deriveMessageTempate, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isExtensionGallery, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, nullIfEmpty, onMessage, onMessageExternal, operatingSystem, runSelectors, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
+  var AppError, BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, UNKNOWN_LOCALE, addAdditionalData, browser, buildDerivedData, buildPopup, buildStandardData, buildTemplate, callUrlShortener, deriveMessageInfo, deriveMessageTempate, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isExtensionGallery, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, nullIfEmpty, onMessage, onMessageExternal, operatingSystem, runSelectors, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -324,6 +324,8 @@
       }
     }
   };
+
+  UNKNOWN_LOCALE = 'und';
 
   browser = {
     title: 'Chrome',
@@ -914,6 +916,16 @@
       });
       return async.parallel([
         function(done) {
+          return chrome.tabs.detectLanguage(tab.id, function(locale) {
+            log.debug("Detected language: '" + locale + "'");
+            if (!(locale && locale !== UNKNOWN_LOCALE)) {
+              locale = '';
+            }
+            return done(null, {
+              locale: locale
+            });
+          });
+        }, function(done) {
           var coords;
 
           coords = {};
