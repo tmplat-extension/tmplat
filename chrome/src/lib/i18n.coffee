@@ -92,14 +92,26 @@ i18n = window.i18n = new class Internationalization extends utils.Class
 
   # Default configuration for how internationalization is managed.
   manager:
+
+    # Retrieve the message with the given `name`.  
+    # Any `substitutions` provided will be used to replace numeric placeholders within the message
+    # before it is returned.
     get: (name, substitutions = []) ->
       message = @messages[name]
       if message? and substitutions.length > 0
         for sub, i in substitutions
           message = message.replace new RegExp("\\$#{i + 1}", 'g'), sub
       message
-    langs: -> []
-    locale: -> navigator.language
+
+    # Retrieve a list of supported languages.
+    langs: ->
+      []
+
+    # Retrieve the current detected locale.
+    locale: ->
+      navigator.language
+
+    # Root node that is to be modified and traversed.
     node: document
 
   # Default container for localized messages.
@@ -132,25 +144,33 @@ i18n = window.i18n = new class Internationalization extends utils.Class
         element.appendChild option
 
   # Get the localized message.
-  get: -> @manager.get arguments...
+  get: ->
+    @manager.get arguments...
 
   # Localize all relevant elements within the managed node (`document` by default).
   init: (map) ->
     process @manager.node, map
 
   # Retrieve the accepted languages.
-  langs: -> @manager.langs arguments...
+  langs: ->
+    @manager.langs arguments...
 
   # Retrieve the current locale.
-  locale: -> @manager.locale arguments...
+  locale: ->
+    @manager.locale arguments...
 
 # Configuration
 # -------------
 
 # Reconfigure the internationalization manager to work for Chrome extensions.  
 # Convenient shorthand for `chrome.i18n.getMessage`.
-i18n.manager.get = -> chrome.i18n.getMessage arguments...
+i18n.manager.get = ->
+  chrome.i18n.getMessage arguments...
+
 # Convenient shorthand for `chrome.i18n.getAcceptLanguages`.
-i18n.manager.langs = -> chrome.i18n.getAcceptLanguages arguments...
+i18n.manager.langs = ->
+  chrome.i18n.getAcceptLanguages arguments...
+
 # Parse the predefined `@@ui_locale` message.
-i18n.manager.locale = -> i18n.get('@@ui_locale').replace '_', '-'
+i18n.manager.locale = ->
+  i18n.get('@@ui_locale').replace '_', '-'

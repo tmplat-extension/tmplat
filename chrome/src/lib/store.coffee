@@ -38,7 +38,8 @@ tryStringify = (value) ->
 # Store setup
 # -----------
 
-store = window.store = new class Store extends utils.Class
+# TODO: Trigger events throughout
+store = window.store = new class Store extends utils.Events
 
   # Public functions
   # ----------------
@@ -79,8 +80,7 @@ store = window.store = new class Store extends utils.Class
   # itself.
   init: (keys, defaultValue) ->
     switch typeof keys
-      when 'object'
-        @init key, defaultValue for own key, defaultValue of keys
+      when 'object' then @init key, defaultValue for own key, defaultValue of keys
       when 'string' then @set keys, @get(keys) ? defaultValue
 
   # For each of the specified `keys`, retrieve their value in `localStorage` and pass it, along
@@ -100,6 +100,7 @@ store = window.store = new class Store extends utils.Class
       value = @get keys[0]
       delete localStorage[keys[0]]
       return value
+
     delete localStorage[key] for key in keys
 
   # Copy the value of the existing key to that of the new key then remove the old key from
@@ -142,12 +143,15 @@ store = window.store = new class Store extends utils.Class
 
 # `Updater` simplifies the process of updating settings between updates. Inlcuding, but not limited
 # to, data transformations and migration.
-class store.Updater extends utils.Class
+# TODO: Trigger events throughout
+class store.Updater extends utils.Events
 
   # Create a new instance of `Updater` for `namespace`.  
   # Also indicate whether or not `namespace` existed initially.
   constructor: (@namespace) ->
-    @isNew = not @exists()
+    super
+
+    @isNew = not do @exists
 
   # Determine whether or not this namespace exists.
   exists: ->
@@ -170,7 +174,7 @@ class store.Updater extends utils.Class
     store.modify 'updates', (updates) =>
       updates[@namespace] ?= ''
       if updates[@namespace] < version
-        processor?()
+        processor? version
         updates[@namespace] = version
 
 # Configuration

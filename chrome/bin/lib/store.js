@@ -217,13 +217,14 @@
 
     return Store;
 
-  })(utils.Class));
+  })(utils.Events));
 
   store.Updater = (function(_super) {
     __extends(Updater, _super);
 
     function Updater(namespace) {
       this.namespace = namespace;
+      Updater.__super__.constructor.apply(this, arguments);
       this.isNew = !this.exists();
     }
 
@@ -262,7 +263,7 @@
         }
         if (updates[_this.namespace] < version) {
           if (typeof processor === "function") {
-            processor();
+            processor(version);
           }
           return updates[_this.namespace] = version;
         }
@@ -271,7 +272,7 @@
 
     return Updater;
 
-  })(utils.Class);
+  })(utils.Events);
 
   store.init('updates', {});
 

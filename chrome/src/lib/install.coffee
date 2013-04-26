@@ -7,8 +7,7 @@
 # Functionality
 # -------------
 
-# Wrap the functionality in a message for Template's details in order to get
-# the ID in use.
+# Wrap the functionality in a message for Template's details in order to get the ID in use.
 chrome.runtime.sendMessage type: 'info', (data) ->
   # Names of the classes to be added to the targeted elements.
   newClasses = ['disabled']

@@ -1,5 +1,5 @@
 // [Template](http://neocotic.com/template)
-// (c) 2012 Alasdair Mercer
+// (c) 2013 Alasdair Mercer
 // Freely distributable under the MIT license.
 // For all details and documentation:
 // <http://neocotic.com/template>
@@ -15,7 +15,7 @@
 
     log.trace();
     data = (_ref1 = ext.notification) != null ? _ref1 : {};
-    log.debug(data);
+    log.debug('Building the notification based on the following data...', data);
     if (data.html) {
       return document.body.innerHTML = data.html;
     } else {
