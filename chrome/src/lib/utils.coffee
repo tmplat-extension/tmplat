@@ -65,13 +65,6 @@ utils = window.utils = new class Utils extends Class
 
     if upperCase then key.toUpperCase() else key.toLowerCase()
 
-  # Retrieve the first entity/all entities that pass the specified `filter`.
-  query: (entities, singular, filter) ->
-    if singular
-      return entity for entity in entities when filter entity
-    else
-      entity for entity in entities when filter entity
-
   # Bind `handler` to event indicating that the DOM is ready.
   ready: (context, handler) ->
     unless handler?
@@ -106,6 +99,14 @@ utils = window.utils = new class Utils extends Class
       new Date().getTime() - start
     else
       0
+
+  # Convenient shorthand for safely trimming a string to lower case.
+  trimToLower: (str = '') ->
+    str.trim().toLowerCase()
+
+  # Convenient shorthand for safely trimming a string to upper case.
+  trimToUpper: (str = '') ->
+    str.trim().toUpperCase()
 
   # Convenient shorthand for `chrome.runtime.getURL`.
   url: ->

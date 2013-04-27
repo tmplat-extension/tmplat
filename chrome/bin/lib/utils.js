@@ -87,28 +87,6 @@
       }
     };
 
-    Utils.prototype.query = function(entities, singular, filter) {
-      var entity, _i, _j, _len, _len1, _results;
-
-      if (singular) {
-        for (_i = 0, _len = entities.length; _i < _len; _i++) {
-          entity = entities[_i];
-          if (filter(entity)) {
-            return entity;
-          }
-        }
-      } else {
-        _results = [];
-        for (_j = 0, _len1 = entities.length; _j < _len1; _j++) {
-          entity = entities[_j];
-          if (filter(entity)) {
-            _results.push(entity);
-          }
-        }
-        return _results;
-      }
-    };
-
     Utils.prototype.ready = function(context, handler) {
       if (handler == null) {
         handler = context;
@@ -166,6 +144,20 @@
       } else {
         return 0;
       }
+    };
+
+    Utils.prototype.trimToLower = function(str) {
+      if (str == null) {
+        str = '';
+      }
+      return str.trim().toLowerCase();
+    };
+
+    Utils.prototype.trimToUpper = function(str) {
+      if (str == null) {
+        str = '';
+      }
+      return str.trim().toUpperCase();
     };
 
     Utils.prototype.url = function() {
