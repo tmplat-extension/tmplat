@@ -4,10 +4,10 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var Class, R_EVENTS, Utils, eventHandler, timings, utils, _ref,
-    __slice = [].slice,
+  var Class, Utils, timings, utils, _ref,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __slice = [].slice;
 
   Class = (function() {
     function Class() {}
@@ -20,34 +20,7 @@
 
   })();
 
-  R_EVENTS = /\s+/;
-
   timings = {};
-
-  eventHandler = function() {
-    var action, args, callback, key, name, obj, _i, _len, _ref;
-
-    obj = arguments[0], action = arguments[1], name = arguments[2], args = 4 <= arguments.length ? __slice.call(arguments, 3) : [];
-    if (!name) {
-      return true;
-    }
-    if (_.isObject) {
-      for (key in name) {
-        callback = name[key];
-        obj[action].apply(obj, [key, callback].concat(__slice.call(args)));
-      }
-      return false;
-    }
-    if (R_EVENTS.test(name)) {
-      _ref = name.split(R_EVENTS);
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        name = _ref[_i];
-        obj[action].apply(obj, [name].concat(__slice.call(args)));
-      }
-      return false;
-    }
-    return true;
-  };
 
   utils = window.utils = new (Utils = (function(_super) {
     __extends(Utils, _super);
@@ -204,101 +177,6 @@
     return Utils;
 
   })(Class));
-
-  utils.Events = (function(_super) {
-    __extends(Events, _super);
-
-    function Events() {
-      this._events = {};
-    }
-
-    Events.prototype.off = function(name, callback, context) {
-      var events, evt, names, retain, _i, _j, _len, _len1;
-
-      if (_.isEmpty(this._events || !eventHandler(this, 'off', name, callback, context))) {
-        return this;
-      }
-      if (!(name || callback || context)) {
-        this._events = {};
-        return this;
-      }
-      names = name ? [name] : _.keys(this._events);
-      for (_i = 0, _len = names.length; _i < _len; _i++) {
-        name = names[_i];
-        if (!(events = this._events[name])) {
-          continue;
-        }
-        this._events[name] = retain = [];
-        if (callback || context) {
-          for (_j = 0, _len1 = events.length; _j < _len1; _j++) {
-            evt = events[_j];
-            if ((callback && callback !== evt.callback && callback !== evt.callback._callback) || (context && context !== evt.context)) {
-              retain.push(evt);
-            }
-          }
-        }
-        if (_.isEmpty(retain)) {
-          delete this._events[name];
-        }
-      }
-      return this;
-    };
-
-    Events.prototype.on = function(name, callback, context) {
-      var events, _base;
-
-      if (!eventHandler(this, 'on', name, callback, context) || !callback) {
-        return this;
-      }
-      if (context == null) {
-        context = this;
-      }
-      events = (_base = this._events)[name] || (_base[name] = []);
-      events.push({
-        callback: callback,
-        context: context
-      });
-      return this;
-    };
-
-    Events.prototype.once = function(name, callback, context) {
-      var once, self;
-
-      if (!eventHandler(this, 'once', name, callback, context) || !callback) {
-        return this;
-      }
-      self = this;
-      once = _.once(function() {
-        self.off(name, once);
-        return callback.apply(this, arguments);
-      });
-      once._callback = callback;
-      return this.on(name, once, context);
-    };
-
-    Events.prototype.trigger = function() {
-      var args, evt, name, _i, _j, _len, _len1, _ref1, _ref2, _ref3, _ref4;
-
-      name = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-      if (_.isEmpty(this._events || !eventHandler.apply(null, [this, 'trigger', name].concat(__slice.call(args))))) {
-        return this;
-      }
-      _ref2 = (_ref1 = this._events[name]) != null ? _ref1 : [];
-      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-        evt = _ref2[_i];
-        evt.callback.apply(evt.context, args);
-      }
-      _ref4 = (_ref3 = this._events.all) != null ? _ref3 : [];
-      for (_j = 0, _len1 = _ref4.length; _j < _len1; _j++) {
-        evt = _ref4[_j];
-        evt.callback.apply(evt.context, [name].concat(args));
-      }
-      return this;
-    };
-
-    return Events;
-
-  })(Class);
 
   utils.Class = Class;
 

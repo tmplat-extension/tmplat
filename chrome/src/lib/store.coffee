@@ -9,9 +9,8 @@
 
 # Attempt to dig down in to the `root` object and stop on the parent of the target property.  
 # Return the progress of the mining as an array in this structure;
-# `[root-object, base-object, base-path, target-parent, target-property]`.
+# `[base-object, base-path, target-parent, target-property]`.
 dig = (root, path, force, parseFirst = yes) ->
-  result = [root]
   if path and '.' in path
     path   = path.split '.'
     object = base = root[basePath = path.shift()]
@@ -21,10 +20,9 @@ dig = (root, path, force, parseFirst = yes) ->
       object = object[path.shift()]
       object = {} if not object? and force
 
-    result.push base, basePath, object, path.shift()
+    [base, basePath, object, path.shift()]
   else
-    result.push root, path, root, path
-  result
+    [root, path, root, path]
 
 # Attempt to parse `value` as a JSON object if it's not `null`; otherwise just return `value`.
 tryParse = (value) ->
@@ -38,8 +36,7 @@ tryStringify = (value) ->
 # Store setup
 # -----------
 
-# TODO: Trigger events throughout
-store = window.store = new class Store extends utils.Events
+store = window.store = new class Store extends utils.Class
 
   # Public functions
   # ----------------
@@ -56,7 +53,8 @@ store = window.store = new class Store extends utils.Events
 
   # Clear all keys from `localStorage`.
   clear: ->
-    delete localStorage[key] for own key of localStorage
+    localStorage.clear()
+    @trigger 'clear'
 
   # Determine whether or not the specified `keys` exist in `localStorage`.
   exists: (keys...) ->
@@ -66,11 +64,13 @@ store = window.store = new class Store extends utils.Events
   # Retrieve the value associated with the specified `key` from `localStorage`.  
   # If the value is found, parse it as a JSON object before being returning it.
   get: (key) ->
-    parts = dig localStorage, key
-    if parts[3]
-      value = parts[3][parts[4]]
+    [base, path, parent, property] = dig localStorage, key
+
+    if parent
+      value = parent[property]
       # Ensure that the value is parsed if retrieved directly from `localStorage`.
-      value = tryParse value if parts[3] is parts[0]
+      value = tryParse value if parent is localStorage
+
     value
 
   # Initialize the value of the specified key(s) in `localStorage`.  
@@ -97,11 +97,16 @@ store = window.store = new class Store extends utils.Events
   # removed.
   remove: (keys...) ->
     if keys.length is 1
-      value = @get keys[0]
-      delete localStorage[keys[0]]
-      return value
+      [key] = keys
 
-    delete localStorage[key] for key in keys
+      if @exists key
+        value = @get key
+        delete localStorage[key]
+        @trigger 'removed', key
+        @trigger "removed:#{key}", value
+        value
+    else
+      @remove key for key in keys
 
   # Copy the value of the existing key to that of the new key then remove the old key from
   # `localStorage`.  
@@ -132,25 +137,27 @@ store = window.store = new class Store extends utils.Events
   set: (keys, value) ->
     switch typeof keys
       when 'object'
-        @set key, value for own key, value of keys
+        (@set key, value for own key, value of keys)
       when 'string'
         oldValue = @get keys
         localStorage[keys] = tryStringify value
+        @trigger 'changed', keys, value, oldValue
+        @trigger "changed:#{keys}", value, oldValue
         oldValue
+
+# Apply event emitter functionality to the `Store.prototype`.
+_.extend Store::, Backbone.Events
 
 # Public classes
 # --------------
 
 # `Updater` simplifies the process of updating settings between updates. Inlcuding, but not limited
 # to, data transformations and migration.
-# TODO: Trigger events throughout
-class store.Updater extends utils.Events
+store.Updater = class Updater extends utils.Class
 
   # Create a new instance of `Updater` for `namespace`.  
   # Also indicate whether or not `namespace` existed initially.
   constructor: (@namespace) ->
-    super
-
     @isNew = not do @exists
 
   # Determine whether or not this namespace exists.
@@ -159,23 +166,38 @@ class store.Updater extends utils.Events
 
   # Remove this namespace.
   remove: ->
+    @trigger 'remove'
+
     store.modify 'updates', (updates) =>
-      delete updates[@namespace]
+      if _.has updates, @namespace
+        delete updates[@namespace]
+        @trigger 'removed'
 
   # Rename this namespace to `namespace`.
   rename: (namespace) ->
-    store.modify 'updates', (updates) =>
-      updates[namespace] = updates[@namespace] if updates[@namespace]?
-      delete updates[@namespace]
-      @namespace = namespace
+    old = @namespace
 
-  # Update this namespace to `version` using the `processor` provided when `version` is newer.
+    @trigger 'rename', namespace, old
+
+    store.modify 'updates', (updates) =>
+      @namespace         = namespace
+      updates[namespace] = updates[old] if updates[old]?
+      delete updates[old]
+      @trigger 'renamed', namespace, old
+
+  # Update this namespace to `version` using the `processor` provided when `version` is *newer*.
   update: (version, processor) ->
     store.modify 'updates', (updates) =>
       updates[@namespace] ?= ''
+
       if updates[@namespace] < version
+        @trigger 'update', version
         processor? version
         updates[@namespace] = version
+        @trigger 'updated', version
+
+# Apply event emitter functionality to the `Updater.prototype`.
+_.extend Updater::, Backbone.Events
 
 # Configuration
 # -------------

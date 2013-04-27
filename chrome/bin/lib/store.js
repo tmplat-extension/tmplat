@@ -4,19 +4,18 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var Store, dig, store, tryParse, tryStringify, _ref,
+  var Store, Updater, dig, store, tryParse, tryStringify, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __slice = [].slice;
 
   dig = function(root, path, force, parseFirst) {
-    var base, basePath, object, result;
+    var base, basePath, object;
 
     if (parseFirst == null) {
       parseFirst = true;
     }
-    result = [root];
     if (path && __indexOf.call(path, '.') >= 0) {
       path = path.split('.');
       object = base = root[basePath = path.shift()];
@@ -29,11 +28,10 @@
           object = {};
         }
       }
-      result.push(base, basePath, object, path.shift());
+      return [base, basePath, object, path.shift()];
     } else {
-      result.push(root, path, root, path);
+      return [root, path, root, path];
     }
-    return result;
   };
 
   tryParse = function(value) {
@@ -73,14 +71,8 @@
     };
 
     Store.prototype.clear = function() {
-      var key, _results;
-
-      _results = [];
-      for (key in localStorage) {
-        if (!__hasProp.call(localStorage, key)) continue;
-        _results.push(delete localStorage[key]);
-      }
-      return _results;
+      localStorage.clear();
+      return this.trigger('clear');
     };
 
     Store.prototype.exists = function() {
@@ -97,12 +89,12 @@
     };
 
     Store.prototype.get = function(key) {
-      var parts, value;
+      var base, parent, path, property, value, _ref1;
 
-      parts = dig(localStorage, key);
-      if (parts[3]) {
-        value = parts[3][parts[4]];
-        if (parts[3] === parts[0]) {
+      _ref1 = dig(localStorage, key), base = _ref1[0], path = _ref1[1], parent = _ref1[2], property = _ref1[3];
+      if (parent) {
+        value = parent[property];
+        if (parent === localStorage) {
           value = tryParse(value);
         }
       }
@@ -148,16 +140,22 @@
 
       keys = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (keys.length === 1) {
-        value = this.get(keys[0]);
-        delete localStorage[keys[0]];
-        return value;
+        key = keys[0];
+        if (this.exists(key)) {
+          value = this.get(key);
+          delete localStorage[key];
+          this.trigger('removed', key);
+          this.trigger("removed:" + key, value);
+          return value;
+        }
+      } else {
+        _results = [];
+        for (_i = 0, _len = keys.length; _i < _len; _i++) {
+          key = keys[_i];
+          _results.push(this.remove(key));
+        }
+        return _results;
       }
-      _results = [];
-      for (_i = 0, _len = keys.length; _i < _len; _i++) {
-        key = keys[_i];
-        _results.push(delete localStorage[key]);
-      }
-      return _results;
     };
 
     Store.prototype.rename = function(oldKey, newKey, defaultValue) {
@@ -207,24 +205,26 @@
             _results.push(this.set(key, value));
           }
           return _results;
-          break;
         case 'string':
           oldValue = this.get(keys);
           localStorage[keys] = tryStringify(value);
+          this.trigger('changed', keys, value, oldValue);
+          this.trigger("changed:" + keys, value, oldValue);
           return oldValue;
       }
     };
 
     return Store;
 
-  })(utils.Events));
+  })(utils.Class));
 
-  store.Updater = (function(_super) {
+  _.extend(Store.prototype, Backbone.Events);
+
+  store.Updater = Updater = (function(_super) {
     __extends(Updater, _super);
 
     function Updater(namespace) {
       this.namespace = namespace;
-      Updater.__super__.constructor.apply(this, arguments);
       this.isNew = !this.exists();
     }
 
@@ -235,20 +235,28 @@
     Updater.prototype.remove = function() {
       var _this = this;
 
+      this.trigger('remove');
       return store.modify('updates', function(updates) {
-        return delete updates[_this.namespace];
+        if (_.has(updates, _this.namespace)) {
+          delete updates[_this.namespace];
+          return _this.trigger('removed');
+        }
       });
     };
 
     Updater.prototype.rename = function(namespace) {
-      var _this = this;
+      var old,
+        _this = this;
 
+      old = this.namespace;
+      this.trigger('rename', namespace, old);
       return store.modify('updates', function(updates) {
-        if (updates[_this.namespace] != null) {
-          updates[namespace] = updates[_this.namespace];
+        _this.namespace = namespace;
+        if (updates[old] != null) {
+          updates[namespace] = updates[old];
         }
-        delete updates[_this.namespace];
-        return _this.namespace = namespace;
+        delete updates[old];
+        return _this.trigger('renamed', namespace, old);
       });
     };
 
@@ -262,17 +270,21 @@
           updates[_name] = '';
         }
         if (updates[_this.namespace] < version) {
+          _this.trigger('update', version);
           if (typeof processor === "function") {
             processor(version);
           }
-          return updates[_this.namespace] = version;
+          updates[_this.namespace] = version;
+          return _this.trigger('updated', version);
         }
       });
     };
 
     return Updater;
 
-  })(utils.Events);
+  })(utils.Class);
+
+  _.extend(Updater.prototype, Backbone.Events);
 
   store.init('updates', {});
 

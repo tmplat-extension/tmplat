@@ -405,22 +405,23 @@
 
   getTemplateWithKey = function(key) {
     log.trace();
-    return ext.queryTemplate(function(template) {
-      return template.key === key;
+    return _.findWhere(ext.templates, {
+      key: key
     });
   };
 
   getTemplateWithMenuId = function(menuId) {
     log.trace();
-    return ext.queryTemplate(function(template) {
-      return template.menuId === menuId;
+    return _.findWhere(ext.templates, {
+      menuId: menuId
     });
   };
 
   getTemplateWithShortcut = function(shortcut) {
     log.trace();
-    return ext.queryTemplate(function(template) {
-      return template.enabled && template.shortcut === shortcut;
+    return _.findWhere(ext.templates, {
+      enabled: true,
+      shortcut: shortcut
     });
   };
 
@@ -1455,9 +1456,11 @@
       });
     }
     updater = new store.Updater('settings');
+    updater.on('update', function(version) {
+      return log.info("Updating general settings for " + version);
+    });
     isNewInstall = updater.isNew;
     updater.update('0.1.0.0', function() {
-      log.info('Updating general settings for 0.1.0.0');
       store.rename('settingNotification', 'notifications', true);
       store.rename('settingNotificationTimer', 'notificationDuration', 3000);
       store.rename('settingShortcut', 'shortcuts', true);
@@ -1468,7 +1471,6 @@
     updater.update('1.0.0', function() {
       var optionsActiveTab, _ref, _ref1;
 
-      log.info('Updating general settings for 1.0.0');
       if (store.exists('options_active_tab')) {
         optionsActiveTab = store.get('options_active_tab');
         store.set('options_active_tab', (function() {
@@ -1504,7 +1506,6 @@
     return updater.update('1.1.0', function() {
       var _ref;
 
-      log.info('Updating general settings for 1.1.0');
       return store.set('shortcuts', {
         enabled: (_ref = store.get('shortcuts')) != null ? _ref : true
       });
@@ -1520,8 +1521,8 @@
     var idx, _base, _base1, _base10, _base11, _base12, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _ref, _ref1, _ref10, _ref11, _ref12, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
 
     log.trace();
-    idx = templates.indexOf(utils.query(templates, true, function(tmpl) {
-      return tmpl.key === template.key;
+    idx = templates.indexOf(_.findWhere(templates, {
+      key: template.key
     }));
     if (idx === -1) {
       log.debug('Adding the following predefined template...', template);
@@ -1605,9 +1606,11 @@
 
     log.trace();
     updater = new store.Updater('features');
+    updater.on('update', function(version) {
+      return log.info("Updating template settings for " + version);
+    });
     updater.rename('templates');
     updater.update('0.1.0.0', function() {
-      log.info('Updating template settings for 0.1.0.0');
       store.rename('copyAnchorEnabled', 'feat__anchor_enabled', true);
       store.rename('copyAnchorOrder', 'feat__anchor_index', 2);
       store.rename('copyBBCodeEnabled', 'feat__bbcode_enabled', false);
@@ -1620,19 +1623,18 @@
       return store.rename('copyUrlOrder', 'feat__url_index', 0);
     });
     updater.update('0.2.0.0', function() {
-      var i, image, legacy, name, names, oldImg, _i, _len, _ref, _results;
+      var i, image, legacy, name, names, _i, _len, _ref, _results;
 
-      log.info('Updating template settings for 0.2.0.0');
       names = (_ref = store.get('features')) != null ? _ref : [];
       _results = [];
       for (_i = 0, _len = names.length; _i < _len; _i++) {
         name = names[_i];
-        if (!(typeof name === 'string')) {
+        if (!(_.isString(name))) {
           continue;
         }
         store.rename("feat_" + name + "_template", "feat_" + name + "_content");
         image = store.get("feat_" + name + "_image");
-        if (typeof image === 'string') {
+        if (_.isString(image)) {
           if (image === '' || image === 'spacer.gif' || image === 'spacer.png') {
             _results.push(store.set("feat_" + name + "_image", 0));
           } else {
@@ -1643,8 +1645,7 @@
               _results1 = [];
               for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
                 legacy = _ref1[i];
-                oldImg = legacy.image.replace(/^tmpl/, 'feat');
-                if (("" + oldImg + ".png") === image) {
+                if (("" + (legacy.image.replace(/^tmpl/, 'feat')) + ".png") === image) {
                   store.set("feat_" + name + "_image", i + 1);
                   break;
                 } else {
@@ -1663,18 +1664,16 @@
     updater.update('1.0.0', function() {
       var image, key, name, names, templates, toolbarFeatureName, _i, _len, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
 
-      log.info('Updating template settings for 1.0.0');
       names = (_ref = store.remove('features')) != null ? _ref : [];
       templates = [];
       toolbarFeatureName = store.get('toolbarFeatureName');
       for (_i = 0, _len = names.length; _i < _len; _i++) {
         name = names[_i];
-        if (!(typeof name === 'string')) {
+        if (!(_.isString(name))) {
           continue;
         }
         image = (_ref1 = store.remove("feat_" + name + "_image")) != null ? _ref1 : 0;
-        image--;
-        image = image >= 0 ? ((_ref2 = icons.fromLegacy(image)) != null ? _ref2.name : void 0) || '' : '';
+        image = --image >= 0 ? ((_ref2 = icons.fromLegacy(image)) != null ? _ref2.name : void 0) || '' : '';
         key = ext.getKeyForName(name);
         if (toolbarFeatureName === name) {
           if (store.exists('toolbar')) {
@@ -1703,9 +1702,8 @@
       return store.remove.apply(store, store.search(/^feat_.*_(content|enabled|image|index|readonly|shortcut|title)$/));
     });
     return updater.update('1.1.0', function() {
-      log.info('Updating template settings for 1.1.0');
       return store.modify('templates', function(templates) {
-        var base, template, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _results;
+        var base, template, _i, _j, _len, _len1, _ref, _results;
 
         _results = [];
         for (_i = 0, _len = templates.length; _i < _len; _i++) {
@@ -1717,33 +1715,65 @@
                 break;
               }
             }
-            switch (template.key) {
-              case 'PREDEFINED.00001':
-                _results.push(template.image = template.image === 'tmpl_globe' ? base.image : ((_ref = icons.fromLegacy(template.image)) != null ? _ref.name : void 0) || '');
-                break;
-              case 'PREDEFINED.00002':
-                _results.push(template.image = template.image === 'tmpl_link' ? base.image : ((_ref1 = icons.fromLegacy(template.image)) != null ? _ref1.name : void 0) || '');
-                break;
-              case 'PREDEFINED.00003':
-                _results.push(template.image = template.image === 'tmpl_html' ? base.image : ((_ref2 = icons.fromLegacy(template.image)) != null ? _ref2.name : void 0) || '');
-                break;
-              case 'PREDEFINED.00004':
-                _results.push(template.image = template.image === 'tmpl_component' ? base.image : ((_ref3 = icons.fromLegacy(template.image)) != null ? _ref3.name : void 0) || '');
-                break;
-              case 'PREDEFINED.00005':
-                _results.push(template.image = template.image === 'tmpl_discussion' ? base.image : ((_ref4 = icons.fromLegacy(template.image)) != null ? _ref4.name : void 0) || '');
-                break;
-              case 'PREDEFINED.00006':
-                _results.push(template.image = template.image === 'tmpl_discussion' ? base.image : ((_ref5 = icons.fromLegacy(template.image)) != null ? _ref5.name : void 0) || '');
-                break;
-              case 'PREDEFINED.00007':
-                _results.push(template.image = template.image === 'tmpl_note' ? base.image : ((_ref6 = icons.fromLegacy(template.image)) != null ? _ref6.name : void 0) || '');
-                break;
-              default:
-                _results.push(template.image = base.image);
-            }
+            _results.push(template.image = (function() {
+              var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+
+              switch (template.key) {
+                case 'PREDEFINED.00001':
+                  if (template.image === 'tmpl_globe') {
+                    return base.image;
+                  } else {
+                    return ((_ref = icons.fromLegacy(template.image)) != null ? _ref.name : void 0) || '';
+                  }
+                  break;
+                case 'PREDEFINED.00002':
+                  if (template.image === 'tmpl_link') {
+                    return base.image;
+                  } else {
+                    return ((_ref1 = icons.fromLegacy(template.image)) != null ? _ref1.name : void 0) || '';
+                  }
+                  break;
+                case 'PREDEFINED.00003':
+                  if (template.image === 'tmpl_html') {
+                    return base.image;
+                  } else {
+                    return ((_ref2 = icons.fromLegacy(template.image)) != null ? _ref2.name : void 0) || '';
+                  }
+                  break;
+                case 'PREDEFINED.00004':
+                  if (template.image === 'tmpl_component') {
+                    return base.image;
+                  } else {
+                    return ((_ref3 = icons.fromLegacy(template.image)) != null ? _ref3.name : void 0) || '';
+                  }
+                  break;
+                case 'PREDEFINED.00005':
+                  if (template.image === 'tmpl_discussion') {
+                    return base.image;
+                  } else {
+                    return ((_ref4 = icons.fromLegacy(template.image)) != null ? _ref4.name : void 0) || '';
+                  }
+                  break;
+                case 'PREDEFINED.00006':
+                  if (template.image === 'tmpl_discussion') {
+                    return base.image;
+                  } else {
+                    return ((_ref5 = icons.fromLegacy(template.image)) != null ? _ref5.name : void 0) || '';
+                  }
+                  break;
+                case 'PREDEFINED.00007':
+                  if (template.image === 'tmpl_note') {
+                    return base.image;
+                  } else {
+                    return ((_ref6 = icons.fromLegacy(template.image)) != null ? _ref6.name : void 0) || '';
+                  }
+                  break;
+                default:
+                  return base.image;
+              }
+            })());
           } else {
-            _results.push(template.image = ((_ref7 = icons.fromLegacy(template.image)) != null ? _ref7.name : void 0) || '');
+            _results.push(template.image = ((_ref = icons.fromLegacy(template.image)) != null ? _ref.name : void 0) || '');
           }
         }
         return _results;
@@ -1776,8 +1806,10 @@
 
     log.trace();
     updater = new store.Updater('toolbar');
+    updater.on('update', function(version) {
+      return log.info("Updating toolbar settings for " + version);
+    });
     updater.update('1.0.0', function() {
-      log.info('Updating toolbar settings for 1.0.0');
       store.modify('toolbar', function(toolbar) {
         var _ref, _ref1;
 
@@ -1787,7 +1819,6 @@
       return store.remove('toolbarFeature', 'toolbarFeatureDetails', 'toolbarFeatureName', 'toolbarPopup');
     });
     return updater.update('1.1.0', function() {
-      log.info('Updating toolbar settings for 1.1.0');
       return store.modify('toolbar', function(toolbar) {
         return delete toolbar.style;
       });
@@ -1848,8 +1879,10 @@
 
     log.trace();
     updater = new store.Updater('shorteners');
+    updater.on('update', function(version) {
+      return log.info("Updating URL shortener settings for " + version);
+    });
     updater.update('0.1.0.0', function() {
-      log.info('Updating URL shortener settings for 0.1.0.0');
       store.rename('bitlyEnabled', 'bitly', true);
       store.rename('bitlyXApiKey', 'bitlyApiKey', '');
       store.rename('bitlyXLogin', 'bitlyUsername', '');
@@ -1859,22 +1892,21 @@
     updater.update('1.0.0', function() {
       var bitly, googl, yourls, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
 
-      log.info('Updating URL shortener settings for 1.0.0');
       bitly = store.get('bitly');
       store.set('bitly', {
         apiKey: (_ref = store.get('bitlyApiKey')) != null ? _ref : '',
-        enabled: typeof bitly === 'boolean' ? bitly : true,
+        enabled: _.isBoolean(bitly) ? bitly : true,
         username: (_ref1 = store.get('bitlyUsername')) != null ? _ref1 : ''
       });
       store.remove('bitlyApiKey', 'bitlyUsername');
       googl = store.get('googl');
       store.set('googl', {
-        enabled: typeof googl === 'boolean' ? googl : false
+        enabled: _.isBoolean(googl) ? googl : false
       });
       store.remove('googlOAuth');
       yourls = store.get('yourls');
       store.set('yourls', {
-        enabled: typeof yourls === 'boolean' ? yourls : false,
+        enabled: _.isBoolean(yourls) ? yourls : false,
         password: (_ref2 = store.get('yourlsPassword')) != null ? _ref2 : '',
         signature: (_ref3 = store.get('yourlsSignature')) != null ? _ref3 : '',
         url: (_ref4 = store.get('yourlsUrl')) != null ? _ref4 : '',
@@ -1936,15 +1968,12 @@
               xhr.setRequestHeader(header, value);
             }
             xhr.onreadystatechange = function() {
-              var message;
-
               if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
                   map[placeholder] = service.output(xhr.responseText);
                   return done();
                 } else {
-                  message = i18n.get('shortener_detailed_error', [title, url]);
-                  return done(new Error(message));
+                  return done(new Error(i18n.get('shortener_detailed_error', [title, url])));
                 }
               }
             };
@@ -1970,7 +1999,7 @@
     var shortener;
 
     log.trace();
-    shortener = ext.queryUrlShortener(function(shortener) {
+    shortener = _.find(SHORTENERS, function(shortener) {
       return shortener.isEnabled();
     });
     if (shortener == null) {
@@ -2068,8 +2097,8 @@
       return $.getJSON(utils.url('configuration.json'), function(data) {
         var shortener, _i, _len;
 
-        _this.version = chrome.runtime.getManifest().version;
         _this.config = data;
+        _this.version = chrome.runtime.getManifest().version;
         for (_i = 0, _len = SHORTENERS.length; _i < _len; _i++) {
           shortener = SHORTENERS[_i];
           shortener.oauth = typeof shortener.oauth === "function" ? shortener.oauth() : void 0;
@@ -2144,7 +2173,7 @@
 
     Extension.prototype.isThisPlatform = function(os) {
       log.trace();
-      return navigator.userAgent.toLowerCase().indexOf(os) !== -1;
+      return __indexOf.call(navigator.userAgent.toLowerCase(), os) >= 0;
     };
 
     Extension.prototype.modifiers = function() {
@@ -2221,60 +2250,58 @@
           });
         };
         menu = store.get('menu');
-        if (menu.enabled) {
-          parentId = chrome.contextMenus.create({
+        if (!menu.enabled) {
+          return;
+        }
+        parentId = chrome.contextMenus.create({
+          contexts: ['all'],
+          title: i18n.get('name')
+        });
+        _ref1 = _this.templates;
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          template = _ref1[_i];
+          if (!template.enabled) {
+            continue;
+          }
+          notEmpty = true;
+          menuId = chrome.contextMenus.create({
             contexts: ['all'],
-            title: i18n.get('name')
+            onclick: onMenuClick,
+            parentId: parentId,
+            title: template.title
           });
-          _ref1 = _this.templates;
-          for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-            template = _ref1[_i];
-            if (!template.enabled) {
-              continue;
-            }
-            notEmpty = true;
-            menuId = chrome.contextMenus.create({
-              contexts: ['all'],
-              onclick: onMenuClick,
-              parentId: parentId,
-              title: template.title
-            });
-            template.menuId = menuId;
-          }
-          if (!notEmpty) {
-            chrome.contextMenus.create({
-              contexts: ['all'],
-              parentId: parentId,
-              title: i18n.get('empty')
-            });
-          }
-          if (menu.options) {
-            chrome.contextMenus.create({
-              contexts: ['all'],
-              parentId: parentId,
-              type: 'separator'
-            });
-            return chrome.contextMenus.create({
-              contexts: ['all'],
-              onclick: function(info, tab) {
-                return onMessage({
-                  type: 'options'
-                });
-              },
-              parentId: parentId,
-              title: i18n.get('options')
-            });
-          }
+          template.menuId = menuId;
+        }
+        if (!notEmpty) {
+          chrome.contextMenus.create({
+            contexts: ['all'],
+            parentId: parentId,
+            title: i18n.get('empty')
+          });
+        }
+        if (menu.options) {
+          chrome.contextMenus.create({
+            contexts: ['all'],
+            parentId: parentId,
+            type: 'separator'
+          });
+          return chrome.contextMenus.create({
+            contexts: ['all'],
+            onclick: function(info, tab) {
+              return onMessage({
+                type: 'options'
+              });
+            },
+            parentId: parentId,
+            title: i18n.get('options')
+          });
         }
       });
     };
 
     Extension.prototype.updateTemplates = function() {
       log.trace();
-      this.templates = store.get('templates');
-      this.templates.sort(function(a, b) {
-        return a.index - b.index;
-      });
+      this.templates = _.sortBy(store.get('templates'), 'index');
       buildPopup();
       this.updateContextMenu();
       updateStatistics();

@@ -34,8 +34,7 @@
       key = '';
       value = null;
       store.modify(option, function(data) {
-        key = $this.attr('id').match(new RegExp("^" + option + "(\\S*)"))[1];
-        key = key[0].toLowerCase() + key.substr(1);
+        key = utils.capitalize($this.attr('id').match(new RegExp("^" + option + "(\\S*)"))[1]);
         return data[key] = value = evaluate.call($this, key);
       });
       return typeof callback === "function" ? callback($this, key, value) : void 0;
@@ -120,10 +119,7 @@
       }));
     }
     return images.on('change', function() {
-      var opt;
-
-      opt = images.find('option:selected');
-      return imagePreview.attr('class', icons.getClass(opt.val()));
+      return imagePreview.attr('class', icons.getClass(images.find('option:selected').val()));
     }).trigger('change');
   };
 

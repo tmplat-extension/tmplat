@@ -31,27 +31,30 @@ searchResults  = null
 # Load functions
 # --------------
 
-# Bind an event of the specified `type` to the elements included by
-# `selector` that, when triggered, modifies the underlying `option` with the
-# value returned by `evaluate`.
+# Bind an event of the specified `type` to the elements included by `selector` that, when
+# triggered, modifies the underlying `option` with the value returned by `evaluate`.
 bindSaveEvent = (selector, type, option, evaluate, callback) ->
   log.trace()
+
   $(selector).on type, ->
     $this = $ this
     key   = ''
     value = null
+
     store.modify option, (data) ->
-      key = $this.attr('id').match(new RegExp("^#{option}(\\S*)"))[1]
-      key = key[0].toLowerCase() + key.substr 1
+      key = utils.capitalize $this.attr('id').match(new RegExp("^#{option}(\\S*)"))[1]
       data[key] = value = evaluate.call $this, key
+
     callback? $this, key, value
 
 # Update the options page with the values from the current settings.
 load = ->
   log.trace()
+
   anchor    = store.get 'anchor'
   menu      = store.get 'menu'
   shortcuts = store.get 'shortcuts'
+
   $('#analytics').prop        'checked', store.get 'analytics'
   $('#anchorTarget').prop     'checked', anchor.target
   $('#anchorTitle').prop      'checked', anchor.title
@@ -60,54 +63,63 @@ load = ->
   $('#menuPaste').prop        'checked', menu.paste
   $('#shortcutsEnabled').prop 'checked', shortcuts.enabled
   $('#shortcutsPaste').prop   'checked', shortcuts.paste
-  loadControlEvents()
-  loadSaveEvents()
-  loadImages()
-  loadTemplates()
-  loadNotifications()
-  loadToolbar()
-  loadUrlShorteners()
-  loadDeveloperTools()
+
+  do loadControlEvents
+  do loadSaveEvents
+  do loadImages
+  do loadTemplates
+  do loadNotifications
+  do loadToolbar
+  do loadUrlShorteners
+  do loadDeveloperTools
 
 # Bind the event handlers required for controlling general changes.
 loadControlEvents = ->
   log.trace()
+
   $('#menuEnabled').on('change', ->
     groups = $('#menuOptions').parents('.control-group').first()
     groups = groups.add $('#menuPaste').parents('.control-group').first()
+
     if $(this).is ':checked' then groups.slideDown() else groups.slideUp()
   ).trigger 'change'
+
   $('#shortcutsEnabled').on('change', ->
     groups = $('#shortcutsPaste').parents('.control-group').first()
+
     if $(this).is ':checked' then groups.slideDown() else groups.slideUp()
   ).trigger 'change'
 
-# Update the developer tools section of the options page with the current
-# settings.
+# Update the developer tools section of the options page with the current settings.
 loadDeveloperTools = ->
   log.trace()
-  loadLogger()
+
+  do loadLogger
 
 # Create an `option` element for each available template image.  
-# Each element is inserted in to the `select` element containing template
-# images on the options page.
+# Each element is inserted in to the `select` element containing template images on the options
+# page.
 loadImages = ->
   log.trace()
+
   imagePreview = $ '#template_image_preview'
   images       = $ '#template_image'
+
   images.append $ '<option/>',
     text:  icons.getMessage()
     value: ''
+
   images.append $ '<option/>',
     disabled: 'disabled'
     text:     '---------------'
+
   for image in icons.ICONS
     images.append $ '<option/>',
       text:  image.getMessage()
       value: image.name
+
   images.on('change', ->
-    opt = images.find 'option:selected'
-    imagePreview.attr 'class', icons.getClass opt.val()
+    imagePreview.attr 'class', icons.getClass images.find('option:selected').val()
   ).trigger 'change'
 
 # Update the logging section of the options page with the current settings.

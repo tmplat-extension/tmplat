@@ -326,23 +326,20 @@ getOperatingSystem = ->
 getTemplateWithKey = (key) ->
   log.trace()
 
-  ext.queryTemplate (template) ->
-    template.key is key
+  _.findWhere ext.templates, {key}
 
 # Attempt to retrieve the template with the specified `menuId`.
 getTemplateWithMenuId = (menuId) ->
   log.trace()
 
-  ext.queryTemplate (template) ->
-    template.menuId is menuId
+  _.findWhere ext.templates, {menuId}
 
 # Attempt to retrieve the template with the specified keyboard `shortcut`.  
 # Exclude disabled templates from this query.
 getTemplateWithShortcut = (shortcut) ->
   log.trace()
 
-  ext.queryTemplate (template) ->
-    template.enabled and template.shortcut is shortcut
+  _.findWhere ext.templates, {enabled: yes, shortcut}
 
 # Determine whether or not the identified extension is blacklisted.
 isBlacklisted = (extensionId) ->
@@ -1253,13 +1250,13 @@ init_update = ->
 
   # Create an updater for the `settings` namespace.
   updater      = new store.Updater 'settings'
-  # TODO: Replace duplicating logging using events on `updater`
+  updater.on 'update', (version) ->
+    log.info "Updating general settings for #{version}"
+
   isNewInstall = updater.isNew
 
   # Define the processes for all required updates to the `settings` namespace.
   updater.update '0.1.0.0', ->
-    log.info 'Updating general settings for 0.1.0.0'
-
     store.rename 'settingNotification',      'notifications',        on
     store.rename 'settingNotificationTimer', 'notificationDuration', 3000
     store.rename 'settingShortcut',          'shortcuts',            on
@@ -1268,53 +1265,55 @@ init_update = ->
     store.remove 'settingIeTabExtract',      'settingIeTabTitle'
 
   updater.update '1.0.0', ->
-    log.info 'Updating general settings for 1.0.0'
     if store.exists 'options_active_tab'
       optionsActiveTab = store.get 'options_active_tab'
       store.set 'options_active_tab', switch optionsActiveTab
         when 'features_nav' then 'templates_nav'
         when 'toolbar_nav' then 'general_nav'
         else optionsActiveTab
+
     store.modify 'anchor', (anchor) ->
       anchor.target = store.get('doAnchorTarget') ? off
-      anchor.title  = store.get('doAnchorTitle') ? off
+      anchor.title  = store.get('doAnchorTitle')  ? off
     store.remove 'doAnchorTarget', 'doAnchorTitle'
+
     store.modify 'menu', (menu) ->
       menu.enabled = store.get('contextMenu') ? yes
     store.remove 'contextMenu'
+
     store.set 'notifications',
       duration: store.get('notificationDuration') ? 3000
-      enabled:  store.get('notifications') ? yes
+      enabled:  store.get('notifications')        ? yes
     store.remove 'notificationDuration'
 
   updater.update '1.1.0', ->
-    log.info 'Updating general settings for 1.1.0'
-    store.set 'shortcuts',
-      enabled: store.get('shortcuts') ? yes
+    store.set 'shortcuts', enabled: store.get('shortcuts') ? yes
 
 # Initialize the settings related to statistical information.
 initStatistics = ->
   log.trace()
-  updateStatistics()
 
-# Initialize `template` and its properties, before adding it to `templates` to
-# be persisted later.
+  do updateStatistics
+
+# Initialize `template` and its properties, before adding it to `templates` to be persisted later.
 initTemplate = (template, templates) ->
   log.trace()
-  # Derive the index of `template` to determine whether or not it already
-  # exists.
-  idx = templates.indexOf utils.query templates, yes, (tmpl) ->
-    tmpl.key is template.key
+
+  # Derive the index of `template` to determine whether or not it already exists.
+  idx = templates.indexOf _.findWhere templates, key: template.key
+
   if idx is -1
     # `template` doesn't already exist so add it now.
     log.debug 'Adding the following predefined template...', template
+
     templates.push template
   else
     # `template` exists so modify the properties to ensure they are reliable.
     log.debug 'Ensuring following template adheres to structure...', template
+
     if template.readOnly
-      # `template` is read-only so certain properties should always be
-      # overriden and others only when they are not already available.
+      # `template` is read-only so certain properties should always be overriden and others only
+      # when they are not already available.
       templates[idx].content   = template.content
       templates[idx].enabled  ?= template.enabled
       templates[idx].image    ?= template.image
@@ -1325,8 +1324,8 @@ initTemplate = (template, templates) ->
       templates[idx].title     = template.title
       templates[idx].usage    ?= template.usage
     else
-      # `template` is *not* read-only so set unavailable, but required,
-      # properties to their default value.
+      # `template` is *not* read-only so set unavailable, but required, properties to their default
+      # value.
       templates[idx].content  ?= ''
       templates[idx].enabled  ?= yes
       templates[idx].image    ?= ''
@@ -1336,32 +1335,38 @@ initTemplate = (template, templates) ->
       templates[idx].shortcut ?= ''
       templates[idx].title    ?= '?'
       templates[idx].usage    ?= 0
+
     template = templates[idx]
+
   template
 
 # Initialize the persisted managed templates.
 initTemplates = ->
   log.trace()
-  initTemplates_update()
+
+  do initTemplates_update
+
   store.modify 'templates', (templates) ->
-    # Initialize all default templates to ensure their properties are as
-    # expected.
+    # Initialize all default templates to ensure their properties are as expected.
     initTemplate template, templates for template in DEFAULT_TEMPLATES
     # Now, initialize *all* templates to ensure their properties are valid.
     initTemplate template, templates for template in templates
+
   ext.updateTemplates()
 
-# Handle the conversion/removal of older version of settings that may have been
-# stored previously by `initTemplates`.
+# Handle the conversion/removal of older version of settings that may have been stored previously
+# by `initTemplates`.
 initTemplates_update = ->
   log.trace()
-  # Create updater for the `features` namespace and then rename it to
-  # `templates`.
+
+  # Create updater for the `features` namespace and then rename it to `templates`.
   updater = new store.Updater 'features'
+  updater.on 'update', (version) ->
+    log.info "Updating template settings for #{version}"
   updater.rename 'templates'
+
   # Define the processes for all required updates to the `templates` namespace.
   updater.update '0.1.0.0', ->
-    log.info 'Updating template settings for 0.1.0.0'
     store.rename 'copyAnchorEnabled',  'feat__anchor_enabled',  yes
     store.rename 'copyAnchorOrder',    'feat__anchor_index',    2
     store.rename 'copyBBCodeEnabled',  'feat__bbcode_enabled',  no
@@ -1372,41 +1377,45 @@ initTemplates_update = ->
     store.rename 'copyShortOrder',     'feat__short_index',     1
     store.rename 'copyUrlEnabled',     'feat__url_enabled',     yes
     store.rename 'copyUrlOrder',       'feat__url_index',       0
+
   updater.update '0.2.0.0', ->
-    log.info 'Updating template settings for 0.2.0.0'
     names = store.get('features') ? []
-    for name in names when typeof name is 'string'
+
+    for name in names when _.isString name
       store.rename "feat_#{name}_template", "feat_#{name}_content"
+
       image = store.get "feat_#{name}_image"
-      if typeof image is 'string'
+
+      if _.isString image
         if image in ['', 'spacer.gif', 'spacer.png']
           store.set "feat_#{name}_image", 0
         else
           for legacy, i in icons.LEGACY
-            oldImg = legacy.image.replace /^tmpl/, 'feat'
-            if "#{oldImg}.png" is image
+            if "#{legacy.image.replace /^tmpl/, 'feat'}.png" is image
               store.set "feat_#{name}_image", i + 1
               break
       else
         store.set "feat_#{name}_image", 0
+
   updater.update '1.0.0', ->
-    log.info 'Updating template settings for 1.0.0'
     names              = store.remove('features') ? []
     templates          = []
+
     toolbarFeatureName = store.get 'toolbarFeatureName'
-    for name in names when typeof name is 'string'
+
+    for name in names when _.isString name
       image = store.remove("feat_#{name}_image") ? 0
-      image--
-      image = if image >= 0
-        icons.fromLegacy(image)?.name or ''
-      else
-        ''
+      image = if --image >= 0 then icons.fromLegacy(image)?.name or '' else ''
+
       key = ext.getKeyForName name
+
       if toolbarFeatureName is name
         if store.exists 'toolbar'
-          store.modify 'toolbar', (toolbar) -> toolbar.key = key
+          store.modify 'toolbar', (toolbar) ->
+            toolbar.key = key
         else
           store.set 'toolbar', key: key
+
       templates.push
         content:  store.remove("feat_#{name}_content")  ? ''
         enabled:  store.remove("feat_#{name}_enabled")  ? yes
@@ -1417,99 +1426,96 @@ initTemplates_update = ->
         shortcut: store.remove("feat_#{name}_shortcut") ? ''
         title:    store.remove("feat_#{name}_title")    ? '?'
         usage:    0
+
     store.set 'templates', templates
-    store.remove store.search(
-      /^feat_.*_(content|enabled|image|index|readonly|shortcut|title)$/
-    )...
+    store.remove store.search(/^feat_.*_(content|enabled|image|index|readonly|shortcut|title)$/)...
+
   updater.update '1.1.0', ->
-    log.info 'Updating template settings for 1.1.0'
     store.modify 'templates', (templates) ->
       for template in templates
         if template.readOnly
           break for base in DEFAULT_TEMPLATES when base.key is template.key
-          switch template.key
+
+          template.image = switch template.key
             when 'PREDEFINED.00001'
-              template.image = if template.image is 'tmpl_globe'
-                base.image
-              else
-                icons.fromLegacy(template.image)?.name or ''
+              if template.image is 'tmpl_globe' then base.image
+              else icons.fromLegacy(template.image)?.name or ''
             when 'PREDEFINED.00002'
-              template.image = if template.image is 'tmpl_link'
-                base.image
-              else
-                icons.fromLegacy(template.image)?.name or ''
+              if template.image is 'tmpl_link' then base.image
+              else icons.fromLegacy(template.image)?.name or ''
             when 'PREDEFINED.00003'
-              template.image = if template.image is 'tmpl_html'
-                base.image
-              else
-                icons.fromLegacy(template.image)?.name or ''
+              if template.image is 'tmpl_html' then base.image
+              else icons.fromLegacy(template.image)?.name or ''
             when 'PREDEFINED.00004'
-              template.image = if template.image is 'tmpl_component'
-                base.image
-              else
-                icons.fromLegacy(template.image)?.name or ''
+              if template.image is 'tmpl_component' then base.image
+              else icons.fromLegacy(template.image)?.name or ''
             when 'PREDEFINED.00005'
-              template.image = if template.image is 'tmpl_discussion'
-                base.image
-              else
-                icons.fromLegacy(template.image)?.name or ''
+              if template.image is 'tmpl_discussion' then base.image
+              else icons.fromLegacy(template.image)?.name or ''
             when 'PREDEFINED.00006'
-              template.image = if template.image is 'tmpl_discussion'
-                base.image
-              else
-                icons.fromLegacy(template.image)?.name or ''
+              if template.image is 'tmpl_discussion' then base.image
+              else icons.fromLegacy(template.image)?.name or ''
             when 'PREDEFINED.00007'
-              template.image = if template.image is 'tmpl_note'
-                base.image
-              else
-                icons.fromLegacy(template.image)?.name or ''
-            else template.image = base.image
+              if template.image is 'tmpl_note' then base.image
+              else icons.fromLegacy(template.image)?.name or ''
+            else base.image
         else
           template.image = icons.fromLegacy(template.image)?.name or ''
 
 # Initialize the settings related to the toolbar/browser action.
 initToolbar = ->
   log.trace()
-  initToolbar_update()
+
+  do initToolbar_update
+
   store.modify 'toolbar', (toolbar) ->
     toolbar.close   ?= yes
     toolbar.key     ?= 'PREDEFINED.00001'
     toolbar.options ?= yes
     toolbar.popup   ?= yes
+
   ext.updateToolbar()
 
-# Handle the conversion/removal of older version of settings that may have been
-# stored previously by `initToolbar`.
+# Handle the conversion/removal of older version of settings that may have been stored previously
+# by `initToolbar`.
 initToolbar_update = ->
   log.trace()
+
   # Create updater for the `toolbar` namespace.
   updater = new store.Updater 'toolbar'
+  updater.on 'update', (version) ->
+    log.info "Updating toolbar settings for #{version}"
+
   # Define the processes for all required updates to the `toolbar` namespace.
   updater.update '1.0.0', ->
-    log.info 'Updating toolbar settings for 1.0.0'
     store.modify 'toolbar', (toolbar) ->
       toolbar.popup = store.get('toolbarPopup') ? yes
       toolbar.style = store.get('toolbarFeatureDetails') ? no
-    store.remove 'toolbarFeature',     'toolbarFeatureDetails',
-                 'toolbarFeatureName', 'toolbarPopup'
+    store.remove 'toolbarFeature', 'toolbarFeatureDetails', 'toolbarFeatureName', 'toolbarPopup'
+
   updater.update '1.1.0', ->
-    log.info 'Updating toolbar settings for 1.1.0'
-    store.modify 'toolbar', (toolbar) -> delete toolbar.style
+    store.modify 'toolbar', (toolbar) ->
+      delete toolbar.style
 
 # Initialize the settings related to the supported URL Shortener services.
 initUrlShorteners = ->
   log.trace()
+
   store.init
     bitly:  {}
     googl:  {}
     yourls: {}
-  initUrlShorteners_update()
+
+  do initUrlShorteners_update
+
   store.modify 'bitly', (bitly) ->
     bitly.enabled ?= yes
     bitly.usage   ?= 0
+
   store.modify 'googl', (googl) ->
     googl.enabled ?= no
     googl.usage   ?= 0
+
   store.modify 'yourls', (yourls) ->
     yourls.authentication ?= ''
     yourls.enabled        ?= no
@@ -1519,101 +1525,115 @@ initUrlShorteners = ->
     yourls.username       ?= ''
     yourls.usage          ?= 0
 
-# Handle the conversion/removal of older version of settings that may have been
-# stored previously by `initUrlShorteners`.
+# Handle the conversion/removal of older version of settings that may have been stored previously
+# by `initUrlShorteners`.
 initUrlShorteners_update = ->
   log.trace()
+
   # Create updater for the `shorteners` namespace.
   updater = new store.Updater 'shorteners'
-  # Define the processes for all required updates to the `shorteners`
-  # namespace.
+  updater.on 'update', (version) ->
+    log.info "Updating URL shortener settings for #{version}"
+
+  # Define the processes for all required updates to the `shorteners` namespace.
   updater.update '0.1.0.0', ->
-    log.info 'Updating URL shortener settings for 0.1.0.0'
     store.rename 'bitlyEnabled',       'bitly',         yes
     store.rename 'bitlyXApiKey',       'bitlyApiKey',   ''
     store.rename 'bitlyXLogin',        'bitlyUsername', ''
     store.rename 'googleEnabled',      'googl',         no
     store.rename 'googleOAuthEnabled', 'googlOAuth',    yes
+
   updater.update '1.0.0', ->
-    log.info 'Updating URL shortener settings for 1.0.0'
     bitly = store.get 'bitly'
     store.set 'bitly',
-      apiKey:    store.get('bitlyApiKey') ? ''
-      enabled:   if typeof bitly is 'boolean' then bitly else yes
+      apiKey:    store.get('bitlyApiKey')   ? ''
+      enabled:   if _.isBoolean bitly then bitly else yes
       username:  store.get('bitlyUsername') ? ''
     store.remove 'bitlyApiKey', 'bitlyUsername'
+
     googl = store.get 'googl'
     store.set 'googl',
-      enabled: if typeof googl is 'boolean' then googl else no
+      enabled: if _.isBoolean googl then googl else no
     store.remove 'googlOAuth'
+
     yourls = store.get 'yourls'
     store.set 'yourls',
-      enabled:   if typeof yourls is 'boolean' then yourls else no
-      password:  store.get('yourlsPassword') ? ''
+      enabled:   if _.isBoolean yourls then yourls else no
+      password:  store.get('yourlsPassword')  ? ''
       signature: store.get('yourlsSignature') ? ''
-      url:       store.get('yourlsUrl') ? ''
-      username:  store.get('yourlsUsername') ? ''
-    store.remove 'yourlsPassword', 'yourlsSignature', 'yourlsUrl',
-                 'yourlsUsername'
+      url:       store.get('yourlsUrl')       ? ''
+      username:  store.get('yourlsUsername')  ? ''
+    store.remove 'yourlsPassword', 'yourlsSignature', 'yourlsUrl', 'yourlsUsername'
+
   updater.update '1.0.1', ->
     store.modify 'bitly', (bitly) ->
       delete bitly.apiKey
       delete bitly.username
+
     store.modify 'yourls', (yourls) ->
-      yourls.authentication = if yourls.signature
-        'advanced'
-      else if yourls.password and yourls.username
-        'basic'
-      else 
-        ''
+      yourls.authentication = if yourls.signature then 'advanced'
+      else if yourls.password and yourls.username then 'basic'
+      else ''
+
     store.remove store.search(/^oauth_token.*/)...
 
 # URL shortener functions
 # -----------------------
 
-# Call the active URL shortener service for each URL in `map` in order to
-# obtain their corresponding short URLs.  
-# `callback` will be called with the result once all URLs have been shortened
-# or an error is encountered.
+# Call the active URL shortener service for each URL in `map` in order to obtain their
+# corresponding short URLs.  
+# `callback` will be called with the result once all URLs have been shortened or an error is
+# encountered.
 callUrlShortener = (map, callback) ->
   log.trace()
-  service  = getActiveUrlShortener()
+
+  service  = do getActiveUrlShortener
   endpoint = service.url()
   oauth    = no
   title    = service.title
+
   # Ensure the service URL exists in case it is user-defined (e.g. YOURLS).
-  unless endpoint
-    return callback new Error i18n.get 'shortener_config_error', title
+  return callback new Error i18n.get 'shortener_config_error', title unless endpoint
+
   tasks = []
   _.each map, (url, placeholder) ->
     oauth = !!service.oauth?.hasAccessToken()
+
     tasks.push (done) ->
       async.series [
         (done) ->
-          if oauth then service.oauth.authorize -> done()
-          else done()
+          # Ensure the OAuth adapter has been authorized.
+          if oauth
+            service.oauth.authorize ->
+              do done
+          else
+            do done
+
         (done) ->
           params    = service.getParameters url
           endpoint += "?#{$.param params}" if params?
+
           # Build the HTTP asynchronous request for the URL shortener service.
           xhr = new XMLHttpRequest()
           xhr.open service.method, endpoint, yes
+
           # Allow service to populate request headers.
           for own header, value of service.getHeaders() ? {}
             xhr.setRequestHeader header, value
+
           xhr.onreadystatechange = ->
-            # Wait for the response and let the service handle it before
-            # passing the result back.
+            # Wait for the response and let the service handle it before passing the result back.
             if xhr.readyState is 4
               if xhr.status is 200
                 map[placeholder] = service.output xhr.responseText
-                done()
+                do done
               else
                 # Something went wrong so let's tell the user.
-                message = i18n.get 'shortener_detailed_error', [title, url]
-                done new Error message
+                done new Error i18n.get 'shortener_detailed_error', [title, url]
+
           # Finally, send the HTTP request.
           xhr.send service.input url
+
       ], done
   async.series tasks, (err) ->
     if err
@@ -1625,15 +1645,20 @@ callUrlShortener = (map, callback) ->
 # Retrieve the active URL shortener service.
 getActiveUrlShortener = ->
   log.trace()
+
   # Attempt to lookup enabled URL shortener service.
-  shortener = ext.queryUrlShortener (shortener) -> shortener.isEnabled()
+  shortener = _.find SHORTENERS, (shortener) ->
+    shortener.isEnabled()
+
   unless shortener?
-    # Should never reach here but we'll return bit.ly service by default after
-    # ensuring it's the active URL shortener service from now on to save some
-    # time in the future.
-    store.modify 'bitly', (bitly) -> bitly.enabled = yes
-    shortener = getActiveUrlShortener()
+    # Should never reach here but we'll return bit.ly service by default after ensuring it's the
+    # active URL shortener service from now on to save some time in the future.
+    store.modify 'bitly', (bitly) ->
+      bitly.enabled = yes
+    shortener = do getActiveUrlShortener
+
   log.debug "Getting details for #{shortener.title} URL shortener"
+
   shortener
 
 # Background page setup
@@ -1644,12 +1669,11 @@ ext = window.ext = new class Extension extends utils.Class
   # Public constants
   # ----------------
 
-  # String representation of the keyboard modifiers listened to by Template on
-  # Windows/Linux platforms.
+  # String representation of the keyboard modifiers listened to by Template on Windows/Linux
+  # platforms.
   SHORTCUT_MODIFIERS: 'Ctrl+Alt+'
 
-  # String representation of the keyboard modifiers listened to by Template on
-  # Mac platforms.
+  # String representation of the keyboard modifiers listened to by Template on Mac platforms.
   SHORTCUT_MAC_MODIFIERS: '&#8679;&#8997;'
 
   # Public variables
@@ -1669,13 +1693,12 @@ ext = window.ext = new class Extension extends utils.Class
     title:            ''
     titleStyle:       ''
 
-  # Local copy of templates being used, ordered to match that specified by the
-  # user.
+  # Local copy of templates being used, ordered to match that specified by the user.
   templates: []
 
   # Pre-prepared HTML for the popup to be populated using.  
-  # This should be updated whenever templates are changed/updated in any way as
-  # this is generated to improve performance and load times of the popup frame.
+  # This should be updated whenever templates are changed/updated in any way as this is generated
+  # to improve performance and load times of the popup frame.
   templatesHtml: ''
 
   # Current version of Template.
@@ -1689,17 +1712,20 @@ ext = window.ext = new class Extension extends utils.Class
   # If `str` is empty the contents of the system clipboard will not change.
   copy: (str, hidden) ->
     log.trace()
+
     sandbox = $('#sandbox').val(str).trigger 'select'
     document.execCommand 'copy'
     log.debug 'Copied the following string...', str
     sandbox.val ''
-    showNotification() unless hidden
+
+    do showNotification unless hidden
 
   # Attempt to retrieve the key of the template with the specified `name`.  
-  # Since only the names of predefined templates are known, return a newly
-  # generated key if it does not match any of their names.
+  # Since only the names of predefined templates are known, return a newly generated key if it does
+  # not match any of their names.
   getKeyForName: (name, generate = yes) ->
     log.trace()
+
     key = switch name
       when '_url'      then 'PREDEFINED.00001'
       when '_short'    then 'PREDEFINED.00002'
@@ -1708,24 +1734,30 @@ ext = window.ext = new class Extension extends utils.Class
       when '_bbcode'   then 'PREDEFINED.00005'
       when '_markdown' then 'PREDEFINED.00006'
       else utils.keyGen() if generate
+
     log.debug "Associating #{key} key with #{name} template"
+
     key
 
   # Initialize the background page.  
-  # This will involve initializing the settings and adding the message
-  # listeners.
+  # This will involve initializing the settings and adding the message listeners.
   init: ->
     log.trace()
+
     log.info 'Initializing extension controller'
+
     # Add support for analytics if the user hasn't opted out.
     analytics.add() if store.get 'analytics'
+
+    # Load the configuration data from the file.
     $.getJSON utils.url('configuration.json'), (data) =>
+      # Store the configuration data before initiating OAuth for each URL shortener service.
+      @config    = data
       # It's nice knowing what version is running.
       {@version} = chrome.runtime.getManifest()
-      # Store the configuration data before initiating OAuth for each URL
-      # shortener service.
-      @config    = data
+
       shortener.oauth = shortener.oauth?() for shortener in SHORTENERS
+
       # Begin initialization.
       store.init
         anchor:        {}
@@ -1735,24 +1767,31 @@ ext = window.ext = new class Extension extends utils.Class
         stats:         {}
         templates:     []
         toolbar:       {}
-      init_update()
+
+      do init_update
+
       store.modify 'anchor', (anchor) ->
         anchor.target ?= off
         anchor.title  ?= off
+
       store.modify 'menu', (menu) ->
         menu.enabled ?= yes
         menu.options ?= yes
         menu.paste   ?= no
+
       store.modify 'notifications', (notifications) ->
         notifications.duration ?= 3000
         notifications.enabled  ?= yes
+
       store.modify 'shortcuts', (shortcuts) ->
         shortcuts.enabled ?= yes
         shortcuts.paste   ?= no
-      initTemplates()
-      initToolbar()
-      initStatistics()
-      initUrlShorteners()
+
+      do initTemplates
+      do initToolbar
+      do initStatistics
+      do initUrlShorteners
+
       # Add listener for toolbar/browser action clicks.  
       # This listener will be ignored whenever the popup is enabled.
       chrome.browserAction.onClicked.addListener (tab) ->
@@ -1762,18 +1801,20 @@ ext = window.ext = new class Extension extends utils.Class
       # Add listeners for internal and external messages.
       chrome.runtime.onMessage.addListener onMessage
       chrome.runtime.onMessageExternal.addListener onMessageExternal
+
       # Derive the browser and OS information.
-      browser.version = getBrowserVersion()
-      operatingSystem = getOperatingSystem()
-      if isNewInstall
-        analytics.track 'Installs', 'New', @version, Number isProductionBuild
+      browser.version = do getBrowserVersion
+      operatingSystem = do getOperatingSystem
+      analytics.track 'Installs', 'New', @version, Number isProductionBuild if isNewInstall
+
       # Execute content scripts now that we know the version.
-      executeScriptsInExistingWindows()
+      do executeScriptsInExistingWindows
 
   # Determine whether or not `os` matches the user's operating system.
   isThisPlatform: (os) ->
     log.trace()
-    navigator.userAgent.toLowerCase().indexOf(os) isnt -1
+
+    os in navigator.userAgent.toLowerCase()
 
   # Retrieve the correct string representation of the keyboard modifiers for the user's operating
   # system.
@@ -1785,36 +1826,40 @@ ext = window.ext = new class Extension extends utils.Class
   # Attempt to retrieve the contents of the system clipboard as a string.
   paste: ->
     log.trace()
+
     result  = ''
     sandbox = $('#sandbox').val('').trigger 'select'
     result  = sandbox.val() if document.execCommand 'paste'
     log.debug 'Pasted the following string...', result
     sandbox.val ''
+
     result
 
   # Retrieve the first template that passes the specified `filter`.
   queryTemplate: (filter, singular = yes) ->
     log.trace()
+
     utils.query @templates, singular, filter
 
   # Retrieve all templates that pass the specified `filter`.
-  queryTemplates: (filter) -> @queryTemplate filter, no
+  queryTemplates: (filter) ->
+    @queryTemplate filter, no
 
-  # Retrieve the first URL shortener service that passes the specified
-  # `filter`.
+  # Retrieve the first URL shortener service that passes the specified `filter`.
   queryUrlShortener: (filter, singular = yes) ->
     log.trace()
+
     utils.query SHORTENERS, singular, filter
 
   # Retrieve all URL shortener services that pass the specified `filter`.
-  queryUrlShorteners: (filter) -> @queryUrlShortener filter, no
+  queryUrlShorteners: (filter) ->
+    @queryUrlShortener filter, no
 
-  # Reset the notification information associated with the current copy
-  # request.  
-  # This should be called when a copy request is completed regardless of its
-  # outcome.
+  # Reset the notification information associated with the current copy request.  
+  # This should be called when a copy request is completed regardless of its outcome.
   reset: ->
     log.trace()
+
     @notification =
       description:      ''
       descriptionStyle: ''
@@ -1825,73 +1870,88 @@ ext = window.ext = new class Extension extends utils.Class
       titleStyle:       ''
 
   # Update the context menu items to reflect the currently enabled templates.  
-  # If the context menu option has been disabled by the user, just remove all
-  # of the existing menu items.
+  # If the context menu option has been disabled by the user, just remove all of the existing menu
+  # items.
   updateContextMenu: ->
     log.trace()
+
     # Ensure that any previously added context menu items are removed.
     chrome.contextMenus.removeAll =>
       # Called whenever a template menu item is clicked.  
       # Message self, passing along the available information.
-      onMenuClick = (info, tab) -> onMessage data: info, type: 'menu'
+      onMenuClick = (info, tab) ->
+        onMessage data: info, type: 'menu'
+
       menu = store.get 'menu'
-      if menu.enabled
-        # Create and add the top-level Template menu.
-        parentId = chrome.contextMenus.create
+
+      # Stop now if the context menu is disabled.
+      return unless menu.enabled
+
+      # Create and add the top-level Template menu.
+      parentId = chrome.contextMenus.create
+        contexts: ['all']
+        title:    i18n.get 'name'
+
+      # Create and add a sub-menu item for each enabled template.
+      for template in @templates when template.enabled
+        notEmpty = yes
+        menuId   = chrome.contextMenus.create
           contexts: ['all']
-          title:    i18n.get 'name'
-        # Create and add a sub-menu item for each enabled template.
-        for template in @templates when template.enabled
-          notEmpty = yes
-          menuId   = chrome.contextMenus.create
-            contexts: ['all']
-            onclick:  onMenuClick
-            parentId: parentId
-            title:    template.title
-          template.menuId = menuId
-        unless notEmpty
-          chrome.contextMenus.create
-            contexts: ['all']
-            parentId: parentId
-            title:    i18n.get 'empty'
-        # Add an item to open the options page if the user doesn't mind.
-        if menu.options
-          chrome.contextMenus.create
-            contexts: ['all']
-            parentId: parentId
-            type:     'separator'
-          chrome.contextMenus.create
-            contexts: ['all']
-            onclick:  (info, tab) -> onMessage type: 'options'
-            parentId: parentId
-            title:    i18n.get 'options'
+          onclick:  onMenuClick
+          parentId: parentId
+          title:    template.title
+        template.menuId = menuId
+
+      # Indicate that no templates have been enabled.
+      unless notEmpty
+        chrome.contextMenus.create
+          contexts: ['all']
+          parentId: parentId
+          title:    i18n.get 'empty'
+
+      # Add an item to open the options page if the user doesn't mind.
+      if menu.options
+        chrome.contextMenus.create
+          contexts: ['all']
+          parentId: parentId
+          type:     'separator'
+
+        chrome.contextMenus.create
+          contexts: ['all']
+          onclick:  (info, tab) ->
+            onMessage type: 'options'
+          parentId: parentId
+          title:    i18n.get 'options'
 
   # Update the local list of templates to reflect those persisted.  
-  # It is very important that this is called whenever templates may have been
-  # changed in order to prepare the popup HTML and optimize performance.
+  # It is very important that this is called whenever templates may have been changed in order to
+  # prepare the popup HTML and optimize performance.
   updateTemplates: ->
     log.trace()
-    @templates = store.get 'templates'
-    @templates.sort (a, b) -> a.index - b.index
-    buildPopup()
-    @updateContextMenu()
-    updateStatistics()
-    updateHotkeys()
+
+    @templates = _.sortBy store.get('templates'), 'index'
+
+    do buildPopup
+    do @updateContextMenu
+    do updateStatistics
+    do updateHotkeys
 
   # Update the toolbar/browser action depending on the current settings.
   updateToolbar: ->
     log.trace()
+
     key      = store.get 'toolbar.key'
     template = getTemplateWithKey key if key
-    buildPopup()
+
+    do buildPopup
+
     if not template or store.get 'toolbar.popup'
       log.info 'Configuring toolbar to display popup'
       # Show the popup when the browser action is clicked.
       chrome.browserAction.setPopup popup: 'pages/popup.html'
     else
       log.info 'Configuring toolbar to activate specified template'
-      # Disable the popup, effectively enabling the listener for
-      # `chrome.browserAction.onClicked`.
+      # Disable the popup, effectively enabling the listener for `chrome.browserAction.onClicked`.
       chrome.browserAction.setPopup popup: ''
 
 # Initialize `ext` when the DOM is ready.
