@@ -1628,16 +1628,18 @@ refreshSelectButtons = ->
 
   templates = do getSelectedTemplates
 
-  # Enable delete and export buttons only if some templates have been selected.
+  # Export button can simply be enabled when any templates have been selected.
   $('#delete_btn, #export_btn').prop 'disabled', not templates.length
 
-  # Determine whether all results share the same enabled state.
-  allEnabled  = yes
-  allDisabled = yes
+  # Determine whether all selections share the same enabled state and if any are predefined.
+  allEnabled    = yes
+  allDisabled   = yes
+  hasPredefined = no
 
   for template in templates
-    allEnabled  = no unless template.enabled
-    allDisabled = no if     template.enabled
+    allEnabled    = no  unless template.enabled
+    allDisabled   = no  if     template.enabled
+    hasPredefined = yes if     template.readOnly
 
   unless templates.length
     # Doesn't matter as no templates have been selected.
@@ -1649,6 +1651,9 @@ refreshSelectButtons = ->
   else
     # Templates have a mixed enabled state so enable both buttons.
     $('#disable_btn, #enable_btn').prop 'disabled', no
+
+  # Delete button should only be enabled when *only* user-created templates have been selected.
+  $('#delete_btn').prop 'disabled', not templates.length or hasPredefined
 
 # Reset the wizard field values based on the current context.
 resetWizard = ->

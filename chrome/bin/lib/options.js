@@ -1617,13 +1617,14 @@
   };
 
   refreshSelectButtons = function() {
-    var allDisabled, allEnabled, template, templates, _i, _len;
+    var allDisabled, allEnabled, hasPredefined, template, templates, _i, _len;
 
     log.trace();
     templates = getSelectedTemplates();
     $('#delete_btn, #export_btn').prop('disabled', !templates.length);
     allEnabled = true;
     allDisabled = true;
+    hasPredefined = false;
     for (_i = 0, _len = templates.length; _i < _len; _i++) {
       template = templates[_i];
       if (!template.enabled) {
@@ -1632,15 +1633,19 @@
       if (template.enabled) {
         allDisabled = false;
       }
+      if (template.readOnly) {
+        hasPredefined = true;
+      }
     }
     if (!templates.length) {
-      return $('#disable_btn, #enable_btn').prop('disabled', true);
+      $('#disable_btn, #enable_btn').prop('disabled', true);
     } else if (allEnabled || allDisabled) {
       $('#disable_btn').prop('disabled', allDisabled);
-      return $('#enable_btn').prop('disabled', allEnabled);
+      $('#enable_btn').prop('disabled', allEnabled);
     } else {
-      return $('#disable_btn, #enable_btn').prop('disabled', false);
+      $('#disable_btn, #enable_btn').prop('disabled', false);
     }
+    return $('#delete_btn').prop('disabled', !templates.length || hasPredefined);
   };
 
   resetWizard = function() {
