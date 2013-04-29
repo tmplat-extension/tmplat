@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var elementBackups, elements, extractAll, getContent, getLink, getMeta, hotkeys, isEditable, onMessage, parentLink, paste, sendMessage,
+  var elementBackups, elements, extractAll, getContent, getLink, getMeta, hotkeys, isEditable, parentLink, paste,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty;
@@ -21,6 +21,7 @@
 
   extractAll = function(array, property) {
     var element, results, _i, _len, _ref;
+
     results = [];
     for (_i = 0, _len = array.length; _i < _len; _i++) {
       element = array[_i];
@@ -35,6 +36,7 @@
 
   getContent = function(info, node) {
     var _ref;
+
     if (!node) {
       return '';
     }
@@ -47,6 +49,7 @@
 
   getLink = function(id, url) {
     var _ref;
+
     if (elementBackups[id] == null) {
       return;
     }
@@ -59,6 +62,7 @@
 
   getMeta = function(name, csv) {
     var content, results, value, _i, _len, _ref, _ref1, _ref2;
+
     content = (_ref = document.querySelector("meta[name='" + name + "']")) != null ? (_ref1 = _ref.content) != null ? _ref1.trim() : void 0 : void 0;
     if (csv && (content != null)) {
       results = [];
@@ -81,14 +85,6 @@
     return (node != null) && !node.disabled && !node.readOnly;
   };
 
-  onMessage = function() {
-    var args, base;
-    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    base = chrome.extension;
-    base = base.onMessage || base.onRequest;
-    return base.addListener.apply(base, args);
-  };
-
   parentLink = function(node) {
     if (node == null) {
       return;
@@ -102,6 +98,7 @@
 
   paste = function(node, value) {
     var str;
+
     if (!((node != null) || value)) {
       return;
     }
@@ -111,24 +108,18 @@
     return node.value = str;
   };
 
-  sendMessage = function() {
-    var args, base;
-    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    base = chrome.extension;
-    return (base.sendMessage || base.sendRequest).apply(base, args);
-  };
-
-  sendMessage({
+  chrome.runtime.sendMessage({
     type: 'info'
   }, function(data) {
     var isMac;
+
     hotkeys = data.hotkeys;
     isMac = navigator.userAgent.toLowerCase().indexOf('mac') !== -1;
     if (document.body.getAttribute(data.id) === data.version) {
       return;
     }
     document.body.setAttribute(data.id, data.version);
-    window.addEventListener('contextmenu', function(e) {
+    addEventListener('contextmenu', function(e) {
       switch (e.target.nodeName) {
         case 'A':
           return elements.link = e.target;
@@ -139,17 +130,14 @@
           return elements.other = e.target;
       }
     });
-    window.addEventListener('keydown', function(e) {
+    addEventListener('keydown', function(e) {
       var key, _ref;
+
       if ((!isMac && e.ctrlKey && e.altKey) || (isMac && e.shiftKey && e.altKey)) {
         key = String.fromCharCode(e.keyCode).toUpperCase();
         if (__indexOf.call(hotkeys, key) >= 0) {
-          if ((_ref = e.target.nodeName) === 'INPUT' || _ref === 'TEXTAREA') {
-            elements.field = e.target;
-          } else {
-            elements.field = null;
-          }
-          sendMessage({
+          elements.field = (_ref = e.target.nodeName) === 'INPUT' || _ref === 'TEXTAREA' ? e.target : null;
+          chrome.runtime.sendMessage({
             data: {
               key: key
             },
@@ -159,11 +147,21 @@
         }
       }
     });
-    return onMessage(function(message, sender, sendResponse) {
-      var container, contents, href, images, info, key, link, links, node, nodes, result, selection, src, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
+    return chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+      var callback, container, contents, href, images, info, key, link, links, node, nodes, result, selection, src, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
+
+      callback = function() {
+        var args;
+
+        args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        if (typeof sendResponse === 'function') {
+          sendResponse.apply(null, args);
+          return true;
+        }
+      };
       if (message.hotkeys != null) {
         hotkeys = message.hotkeys;
-        return sendResponse();
+        return callback();
       }
       if (message.selectors != null) {
         _ref = message.selectors;
@@ -189,28 +187,29 @@
           }
           info.result = result;
         }
-        return sendResponse({
+        return callback({
           selectors: message.selectors
         });
       }
       if (message.id == null) {
-        return sendResponse();
+        return callback();
       }
       if (message.type === 'paste') {
         if ((message.contents != null) && isEditable((_ref1 = elementBackups[message.id]) != null ? _ref1.field : void 0)) {
           paste(elementBackups[message.id].field, message.contents);
         }
         delete elementBackups[message.id];
-        return sendResponse();
+        return callback();
       }
       elementBackups[message.id] = {
         field: message.editable || message.shortcut ? elements.field : void 0,
         link: message.link ? elements.link : void 0,
         other: message.link ? elements.other : void 0
       };
-      selection = window.getSelection();
+      selection = getSelection();
       if (!selection.isCollapsed) {
-        if (contents = selection.getRangeAt(0).cloneContents()) {
+        contents = selection.getRangeAt(0).cloneContents();
+        if (contents) {
           container = document.createElement('div');
           container.appendChild(contents);
           _ref2 = container.querySelectorAll('[href]');
@@ -228,7 +227,7 @@
         }
       }
       link = getLink(message.id, message.url);
-      return sendResponse({
+      return callback({
         author: getMeta('author'),
         characterSet: document.characterSet,
         description: getMeta('description'),
@@ -238,8 +237,8 @@
         linkHTML: link != null ? link.innerHTML : void 0,
         linkText: link != null ? link.textContent : void 0,
         links: extractAll(document.links, 'href'),
-        pageHeight: window.innerHeight,
-        pageWidth: window.innerWidth,
+        pageHeight: innerHeight,
+        pageWidth: innerWidth,
         referrer: document.referrer,
         scripts: extractAll(document.scripts, 'src'),
         selectedImages: images,

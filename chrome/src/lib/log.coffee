@@ -1,5 +1,5 @@
 # [Template](http://neocotic.com/template)  
-# (c) 2012 Alasdair Mercer  
+# (c) 2013 Alasdair Mercer  
 # Freely distributable under the MIT license.  
 # For all details and documentation:  
 # <http://neocotic.com/template>
@@ -25,7 +25,8 @@ LEVELS =
 # -----------------
 
 # Determine whether or not logging is enabled for the specified `level`.
-loggable = (level) -> log.config.enabled and level >= log.config.level
+loggable = (level) ->
+  log.config.enabled and level >= log.config.level
 
 # Logging setup
 # -------------
@@ -43,11 +44,8 @@ log = window.log = new class Log extends utils.Class
   ERROR:       LEVELS.error
 
   # A collection of all of the levels to allow iteration.
-  LEVELS: (
-    array = []
-    array.push name: key, value: value for own key, value of LEVELS
-    array.sort (a, b) -> a.value - b.value
-  )
+  LEVELS: ({name, value} for own name, value of LEVELS).sort (a, b) ->
+      a.value - b.value
 
   # Public variables
   # ----------------
@@ -94,7 +92,7 @@ log = window.log = new class Log extends utils.Class
 
   # Output a stack trace.
   trace: (caller = @trace) ->
-    console.log new @StackTrace(caller).stack if loggable @TRACE
+    console.log new @Trace(caller).stack if loggable @TRACE
 
   # Output all warning `entries`.
   warn: (entries...) ->
@@ -103,14 +101,14 @@ log = window.log = new class Log extends utils.Class
 # Public classes
 # --------------
 
-# `StackTrace` allows the current stack trace to be retrieved in the easiest
-# way possible.
-class log.StackTrace extends utils.Class
+# `Trace` allows the current stack trace to be retrieved in the easiest way possible.
+class log.Trace extends utils.Class
 
-  # Create a new instance of `StackTrace` for the `caller`.
-  constructor: (caller = log.StackTrace) ->
+  # Create a new instance of `Trace` for the `caller`.
+  constructor: (caller = log.Trace) ->
     # Create the stack trace and assign it to a new `stack` property.
     Error.captureStackTrace this, caller
+    @stack = @stack.replace /^Error/, 'Trace'
 
 # Configuration
 # -------------

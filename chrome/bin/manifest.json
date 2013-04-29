@@ -32,7 +32,7 @@
           , "run_at": "document_start"
         }
     ]
-  , "content_security_policy": "script-src 'self' https://ssl.google-analytics.com https://widget.uservoice.com; object-src 'self'"
+  , "content_security_policy": "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com https://*.uservoice.com; object-src 'self'"
   , "default_locale": "en"
   , "description": "__MSG_description__"
   , "homepage_url": "http://neocotic.com/template"
@@ -48,7 +48,7 @@
       , "128": "images/icon_128.png"
     }
   , "manifest_version": 2
-  , "minimum_chrome_version": "18"
+  , "minimum_chrome_version": "22"
   , "name": "__MSG_name__"
   , "options_page": "pages/options.html"
   , "permissions": [
@@ -61,5 +61,5 @@
       , "tabs"
       , "<all_urls>"
     ]
-  , "version": "1.2.0"
+  , "version": "1.2.1"
 }

@@ -1,10 +1,10 @@
 // [Template](http://neocotic.com/template)
-// (c) 2012 Alasdair Mercer
+// (c) 2013 Alasdair Mercer
 // Freely distributable under the MIT license.
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var LEVELS, Log, console, log, loggable,
+  var LEVELS, Log, console, log, loggable, _ref,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __slice = [].slice;
@@ -24,12 +24,13 @@
   };
 
   log = window.log = new (Log = (function(_super) {
-    var array, key, value;
+    var name, value;
 
     __extends(Log, _super);
 
     function Log() {
-      return Log.__super__.constructor.apply(this, arguments);
+      _ref = Log.__super__.constructor.apply(this, arguments);
+      return _ref;
     }
 
     Log.prototype.TRACE = LEVELS.trace;
@@ -43,19 +44,21 @@
     Log.prototype.ERROR = LEVELS.error;
 
     Log.prototype.LEVELS = ((function() {
-      array = [];
-      for (key in LEVELS) {
-        if (!__hasProp.call(LEVELS, key)) continue;
-        value = LEVELS[key];
-        array.push({
-          name: key,
+      var _results;
+
+      _results = [];
+      for (name in LEVELS) {
+        if (!__hasProp.call(LEVELS, name)) continue;
+        value = LEVELS[name];
+        _results.push({
+          name: name,
           value: value
         });
       }
-      return array.sort(function(a, b) {
-        return a.value - b.value;
-      });
-    })());
+      return _results;
+    })()).sort(function(a, b) {
+      return a.value - b.value;
+    });
 
     Log.prototype.config = {
       enabled: false,
@@ -63,7 +66,8 @@
     };
 
     Log.prototype.count = function() {
-      var name, names, _i, _len, _results;
+      var names, _i, _len, _results;
+
       names = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (loggable(this.DEBUG)) {
         _results = [];
@@ -77,6 +81,7 @@
 
     Log.prototype.debug = function() {
       var entries, entry, _i, _len, _results;
+
       entries = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (loggable(this.DEBUG)) {
         _results = [];
@@ -90,6 +95,7 @@
 
     Log.prototype.dir = function() {
       var entries, entry, _i, _len, _results;
+
       entries = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (loggable(this.DEBUG)) {
         _results = [];
@@ -103,6 +109,7 @@
 
     Log.prototype.error = function() {
       var entries, entry, _i, _len, _results;
+
       entries = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (loggable(this.ERROR)) {
         _results = [];
@@ -116,6 +123,7 @@
 
     Log.prototype.info = function() {
       var entries, entry, _i, _len, _results;
+
       entries = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (loggable(this.INFORMATION)) {
         _results = [];
@@ -129,6 +137,7 @@
 
     Log.prototype.out = function() {
       var entries, entry, _i, _len, _results;
+
       entries = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (this.config.enabled) {
         _results = [];
@@ -141,7 +150,8 @@
     };
 
     Log.prototype.time = function() {
-      var name, names, _i, _len, _results;
+      var names, _i, _len, _results;
+
       names = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (loggable(this.DEBUG)) {
         _results = [];
@@ -154,7 +164,8 @@
     };
 
     Log.prototype.timeEnd = function() {
-      var name, names, _i, _len, _results;
+      var names, _i, _len, _results;
+
       names = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (loggable(this.DEBUG)) {
         _results = [];
@@ -171,12 +182,13 @@
         caller = this.trace;
       }
       if (loggable(this.TRACE)) {
-        return console.log(new this.StackTrace(caller).stack);
+        return console.log(new this.Trace(caller).stack);
       }
     };
 
     Log.prototype.warn = function() {
       var entries, entry, _i, _len, _results;
+
       entries = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (loggable(this.WARNING)) {
         _results = [];
@@ -192,29 +204,30 @@
 
   })(utils.Class));
 
-  log.StackTrace = (function(_super) {
+  log.Trace = (function(_super) {
+    __extends(Trace, _super);
 
-    __extends(StackTrace, _super);
-
-    function StackTrace(caller) {
+    function Trace(caller) {
       if (caller == null) {
-        caller = log.StackTrace;
+        caller = log.Trace;
       }
       Error.captureStackTrace(this, caller);
+      this.stack = this.stack.replace(/^Error/, 'Trace');
     }
 
-    return StackTrace;
+    return Trace;
 
   })(utils.Class);
 
   if (typeof store !== "undefined" && store !== null) {
     store.init('logger', {});
     store.modify('logger', function(logger) {
-      var _ref, _ref1;
-      if ((_ref = logger.enabled) == null) {
+      var _ref1, _ref2;
+
+      if ((_ref1 = logger.enabled) == null) {
         logger.enabled = false;
       }
-      if ((_ref1 = logger.level) == null) {
+      if ((_ref2 = logger.level) == null) {
         logger.level = LEVELS.debug;
       }
       return log.config = logger;

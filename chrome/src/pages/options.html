@@ -4,15 +4,17 @@
     <meta charset="utf-8">
     <title i18n-content="name"></title>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/bootstrap-responsiveness.min.css">
     <link rel="stylesheet" href="../css/options.css">
     <script src="../vendor/jquery.min.js"></script>
+    <script src="../vendor/underscore.min.js"></script>
+    <script src="../vendor/backbone.min.js"></script>
     <script src="../vendor/bootstrap.min.js"></script>
     <script src="../lib/utils.js"></script>
     <script src="../lib/store.js"></script>
     <script src="../lib/i18n.js"></script>
     <script src="../lib/log.js"></script>
     <script src="../lib/analytics.js"></script>
-    <script src="../lib/icons.js"></script>
     <script src="../lib/options.js"></script>
   </head>
   <body id="top">
@@ -220,7 +222,7 @@
                   <div class="row">
                     <div class="span12">
                       <label for="template_filter" i18n-content="opt_show_label"></label>
-                      <select id="template_filter" class="input-mini"></select>
+                      <select id="template_filter" class="input-small"></select>
                       <div id="template_search" class="pull-right input-append">
                         <button type="reset" class="btn hide" i18n-content="opt_reset_text"></button>
                         <input id="template_query" type="text" class="input-medium" i18n-values="placeholder:opt_search_placeholder_text">
@@ -248,10 +250,18 @@
                   </div>
                 </div>
                 <div class="form-actions">
-                  <button id="import_btn" type="button" class="btn" i18n-content="opt_import_button"></button>
-                  <button id="export_btn" type="button" class="btn" disabled i18n-content="opt_export_button"></button>
-                  <button id="delete_btn" type="button" class="btn btn-danger" disabled i18n-content="opt_delete_button"></button>
-                  <button id="add_btn" type="button" class="btn btn-success" i18n-content="opt_add_button"></button>
+                  <div class="btn-group">
+                    <button id="import_btn" type="button" class="btn" i18n-content="opt_import_button"></button>
+                    <button id="export_btn" type="button" class="btn" disabled i18n-content="opt_export_button"></button>
+                  </div>
+                  <div class="btn-group">
+                    <button id="enable_btn" type="button" class="btn" disabled i18n-content="opt_enable_button"></button>
+                    <button id="disable_btn" type="button" class="btn" disabled i18n-content="opt_disable_button"></button>
+                  </div>
+                  <div class="btn-group">
+                    <button id="add_btn" type="button" class="btn btn-success" i18n-content="opt_add_button"></button>
+                    <button id="delete_btn" type="button" class="btn btn-danger" disabled i18n-content="opt_delete_button"></button>
+                  </div>
                 </div>
               </fieldset>
               <div id="template_wizard" class="hide modal">
@@ -389,7 +399,7 @@
                 <div class="modal-footer">
                   <button id="export_close_btn" type="button" class="btn pull-left" i18n-content="opt_wizard_cancel_button"></button>
                   <button id="export_copy_btn" type="button" class="btn btn-primary" i18n-content="opt_export_wizard_copy_button"></button>
-                  <button id="export_save_btn" type="button" class="btn btn-primary" i18n-content="opt_export_wizard_save_as_button"></button>
+                  <a id="export_save_btn" href="#" download="templates.json" class="btn btn-primary" i18n-content="opt_export_wizard_save_as_button"></a>
                 </div>
               </div>
             </form>
@@ -653,6 +663,10 @@
                           <tr>
                             <td>linkText <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a> <a data-goto="#guide_standard_ref_2" class="ref-link">&sup2;</a></td>
                             <td i18n-content="opt_guide_standard_link_text_text"></td>
+                          </tr>
+                          <tr>
+                            <td>locale <span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_locale_text"></td>
                           </tr>
                           <tr>
                             <td>offline</td>
@@ -1078,6 +1092,11 @@
                             <td i18n-content="opt_guide_operations_encode_text"></td>
                           </tr>
                           <tr>
+                            <td>escape <span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td><span i18n-content="opt_guide_argument_text_text"></span></td>
+                            <td i18n-content="opt_guide_operations_escape_text"></td>
+                          </tr>
+                          <tr>
                             <td>fparam</td>
                             <td i18n-content="opt_guide_argument_text_text"></td>
                             <td i18n-content="opt_guide_operations_fparam_text"></td>
@@ -1117,7 +1136,7 @@
                             <td i18n-content="opt_guide_operations_segment_text"></td>
                           </tr>
                           <tr>
-                            <td>select <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>select <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a></td>
                             <td>
                               <span i18n-content="opt_guide_argument_text_text"></span>
                               <a data-goto="#guide_operations_ref_2" class="ref-link">&sup2;</a>
@@ -1125,7 +1144,7 @@
                             <td i18n-content="opt_guide_operations_select_text"></td>
                           </tr>
                           <tr>
-                            <td>selectAll <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>selectAll <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a></td>
                             <td>
                               <span i18n-content="opt_guide_argument_text_text"></span>
                               <a data-goto="#guide_operations_ref_2" class="ref-link">&sup2;</a>
@@ -1133,7 +1152,7 @@
                             <td i18n-content="opt_guide_operations_select_all_text"></td>
                           </tr>
                           <tr>
-                            <td>selectAllHTML <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>selectAllHTML <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a></td>
                             <td>
                               <span i18n-content="opt_guide_argument_text_text"></span>
                               <a data-goto="#guide_operations_ref_2" class="ref-link">&sup2;</a>
@@ -1141,7 +1160,7 @@
                             <td i18n-content="opt_guide_operations_select_all_html_text"></td>
                           </tr>
                           <tr>
-                            <td>selectAllMarkdown <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>selectAllMarkdown <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a></td>
                             <td>
                               <span i18n-content="opt_guide_argument_text_text"></span>
                               <a data-goto="#guide_operations_ref_2" class="ref-link">&sup2;</a>
@@ -1149,7 +1168,7 @@
                             <td i18n-content="opt_guide_operations_select_all_markdown_text"></td>
                           </tr>
                           <tr>
-                            <td>selectHTML <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>selectHTML <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a></td>
                             <td>
                               <span i18n-content="opt_guide_argument_text_text"></span>
                               <a data-goto="#guide_operations_ref_2" class="ref-link">&sup2;</a>
@@ -1157,7 +1176,7 @@
                             <td i18n-content="opt_guide_operations_select_html_text"></td>
                           </tr>
                           <tr>
-                            <td>selectMarkdown <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>selectMarkdown <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a></td>
                             <td>
                               <span i18n-content="opt_guide_argument_text_text"></span>
                               <a data-goto="#guide_operations_ref_2" class="ref-link">&sup2;</a>
@@ -1188,6 +1207,11 @@
                             <td>trimRight</td>
                             <td i18n-content="opt_guide_argument_text_text"></td>
                             <td i18n-content="opt_guide_operations_trim_right_text"></td>
+                          </tr>
+                          <tr>
+                            <td>unescape <span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td><span i18n-content="opt_guide_argument_text_text"></span></td>
+                            <td i18n-content="opt_guide_operations_unescape_text"></td>
                           </tr>
                           <tr>
                             <td>upperCase</td>
