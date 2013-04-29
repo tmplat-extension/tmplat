@@ -4,16 +4,11 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, addAdditionalData, browser, buildDerivedData, buildPopup, buildStandardData, buildTemplate, callUrlShortener, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isExtensionGallery, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, nullIfEmpty, onMessage, operatingSystem, runSelectors, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage,
-    __hasProp = {}.hasOwnProperty,
+  var AppError, BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, Icon, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, UNKNOWN_LOCALE, addAdditionalData, browser, buildConfig, buildDerivedData, buildIcons, buildPopup, buildStandardData, buildTemplate, callUrlShortener, deriveMessageInfo, deriveMessageTempate, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, isWebStore, nullIfEmpty, onMessage, onMessageExternal, operatingSystem, runSelectors, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  String.prototype.capitalize = function() {
-    return this.replace(/\w+/g, function(word) {
-      return word.charAt(0).toUpperCase() + word.substr(1).toLowerCase();
-    });
-  };
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __slice = [].slice;
 
   BLACKLIST = [];
 
@@ -39,7 +34,7 @@
       title: i18n.get('default_template_short'),
       usage: 0
     }, {
-      content: "<a href=\"{{url}}\"{#anchorTarget} target=\"_blank\"{/anchorTarget}{#anchorTitle} title=\"{{title}}\"{/anchorTitle}>{{title}}</a>",
+      content: "<a href=\"{url}\"{#anchorTarget} target=\"_blank\"{/anchorTarget}{#anchorTitle} title=\"{{title}}\"{/anchorTitle}>{{title}}</a>",
       enabled: true,
       image: 'font',
       index: 2,
@@ -120,6 +115,9 @@
 
   SHORTENERS = [
     {
+      name: 'bitly',
+      title: i18n.get('shortener_bitly'),
+      method: 'GET',
       getHeaders: function() {
         return {
           'Content-Type': 'application/x-www-form-urlencoded'
@@ -127,6 +125,7 @@
       },
       getParameters: function(url) {
         var params;
+
         params = {
           format: 'json',
           longUrl: url
@@ -148,24 +147,25 @@
       isEnabled: function() {
         return store.get('bitly.enabled');
       },
-      method: 'GET',
-      name: 'bitly',
       oauth: function() {
-        return new OAuth2('bitly', {
-          client_id: ext.config.services.bitly.client_id,
-          client_secret: ext.config.services.bitly.client_secret
-        });
+        var options;
+
+        options = _.pick(ext.config.services.bitly, 'client_id', 'client_secret');
+        return new OAuth2('bitly', options);
       },
       output: function(resp) {
         return JSON.parse(resp).data.url;
       },
-      title: i18n.get('shortener_bitly'),
       url: function() {
         return ext.config.services.bitly.url;
       }
     }, {
+      name: 'googl',
+      title: i18n.get('shortener_googl'),
+      method: 'POST',
       getHeaders: function() {
         var headers;
+
         headers = {
           'Content-Type': 'application/json'
         };
@@ -192,48 +192,48 @@
       isEnabled: function() {
         return store.get('googl.enabled');
       },
-      method: 'POST',
-      name: 'googl',
       oauth: function() {
-        return new OAuth2('google', {
-          api_scope: ext.config.services.googl.api_scope,
-          client_id: ext.config.services.googl.client_id,
-          client_secret: ext.config.services.googl.client_secret
-        });
+        var options;
+
+        options = _.pick(ext.config.services.googl, 'api_scope', 'client_id', 'client_secret');
+        return new OAuth2('google', options);
       },
       output: function(resp) {
         return JSON.parse(resp).id;
       },
-      title: i18n.get('shortener_googl'),
       url: function() {
         return ext.config.services.googl.url;
       }
     }, {
+      name: 'yourls',
+      title: i18n.get('shortener_yourls'),
+      method: 'POST',
       getHeaders: function() {
         return {
           'Content-Type': 'application/json'
         };
       },
       getParameters: function(url) {
-        var params, yourls;
+        var authentication, params, password, signature, username, _ref;
+
         params = {
           action: 'shorturl',
           format: 'json',
           url: url
         };
-        yourls = store.get('yourls');
-        switch (yourls.authentication) {
+        _ref = store.get('yourls'), authentication = _ref.authentication, password = _ref.password, signature = _ref.signature, username = _ref.username;
+        switch (authentication) {
           case 'advanced':
-            if (yourls.signature) {
-              params.signature = yourls.signature;
+            if (signature) {
+              params.signature = signature;
             }
             break;
           case 'basic':
-            if (yourls.password) {
-              params.password = yourls.password;
+            if (password) {
+              params.password = password;
             }
-            if (yourls.username) {
-              params.username = yourls.username;
+            if (username) {
+              params.username = username;
             }
         }
         return params;
@@ -247,12 +247,9 @@
       isEnabled: function() {
         return store.get('yourls.enabled');
       },
-      method: 'POST',
-      name: 'yourls',
       output: function(resp) {
         return JSON.parse(resp).shorturl;
       },
-      title: i18n.get('shortener_yourls'),
       url: function() {
         return store.get('yourls.url');
       }
@@ -262,6 +259,7 @@
   SUPPORT = {
     hehijbfgiekmjfkfjpbkbammjbdenadd: function(tab) {
       var idx, str;
+
       if (tab.title) {
         str = 'IE: ';
         idx = tab.title.indexOf(str);
@@ -279,6 +277,7 @@
     },
     miedgcmlgpmdagojnnbemlkgidepfjfi: function(tab) {
       var idx, str;
+
       if (tab.url) {
         str = 'ie.html#';
         idx = tab.url.indexOf(str);
@@ -289,33 +288,37 @@
     },
     fnfnbeppfinmnjnjhedifcfllpcfgeea: function(tab) {
       var idx, str;
+
       if (tab.url) {
         str = 'navigate.html?chromeurl=';
         idx = tab.url.indexOf(str);
         if (idx !== -1) {
           tab.url = tab.url.substring(idx + str.length);
           str = '[escape]';
-          if (tab.url.indexOf(str) === 0) {
-            return tab.url = decodeURIComponent(tab.url.substring(str.length));
+          if (!tab.url.indexOf(str)) {
+            return tab.url = decodeURIComponent(tab.url.slice(str.length));
           }
         }
       }
     },
     icoloanbecehinobmflpeglknkplbfbm: function(tab) {
       var idx, str;
+
       if (tab.url) {
         str = 'navigate.html?chromeurl=';
         idx = tab.url.indexOf(str);
         if (idx !== -1) {
           tab.url = tab.url.substring(idx + str.length);
           str = '[escape]';
-          if (tab.url.indexOf(str) === 0) {
-            return tab.url = decodeURIComponent(tab.url.substring(str.length));
+          if (!tab.url.indexOf(str)) {
+            return tab.url = decodeURIComponent(tab.url.slice(str.length));
           }
         }
       }
     }
   };
+
+  UNKNOWN_LOCALE = 'und';
 
   browser = {
     title: 'Chrome',
@@ -329,46 +332,35 @@
   operatingSystem = '';
 
   executeScriptsInExistingWindows = function() {
-    var runner;
     log.trace();
-    runner = new utils.Runner();
-    runner.push(chrome.windows, 'getAll', null, function(windows) {
-      var win, _fn, _i, _len;
-      log.info('Retrieved the following windows...', windows);
-      _fn = function(win) {
-        return runner.push(chrome.tabs, 'query', {
-          windowId: win.id
-        }, function(tabs) {
-          var tab, _j, _len1;
-          log.info('Retrieved the following tabs...', tabs);
-          for (_j = 0, _len1 = tabs.length; _j < _len1; _j++) {
-            tab = tabs[_j];
-            if (!(!isProtectedPage(tab))) {
-              continue;
-            }
-            chrome.tabs.executeScript(tab.id, {
-              file: 'lib/content.js'
-            });
-            if (tab.url.indexOf(HOMEPAGE_DOMAIN) !== -1) {
-              chrome.tabs.executeScript(tab.id, {
-                file: 'lib/install.js'
-              });
-            }
-          }
-          return runner.next();
+    return chrome.tabs.query({}, function(tabs) {
+      var tab, _i, _len, _results;
+
+      log.info('Checking the following tabs for content script execution...', tabs);
+      _results = [];
+      for (_i = 0, _len = tabs.length; _i < _len; _i++) {
+        tab = tabs[_i];
+        if (!(!isProtectedPage(tab))) {
+          continue;
+        }
+        chrome.tabs.executeScript(tab.id, {
+          file: 'lib/content.js'
         });
-      };
-      for (_i = 0, _len = windows.length; _i < _len; _i++) {
-        win = windows[_i];
-        _fn(win);
+        if (__indexOf.call(tab.url, HOMEPAGE_DOMAIN) >= 0) {
+          _results.push(chrome.tabs.executeScript(tab.id, {
+            file: 'lib/install.js'
+          }));
+        } else {
+          _results.push(void 0);
+        }
       }
-      return runner.next();
+      return _results;
     });
-    return runner.run();
   };
 
   getBrowserVersion = function() {
     var idx, str;
+
     log.trace();
     str = navigator.userAgent;
     idx = str.indexOf(browser.title);
@@ -378,13 +370,14 @@
       if (idx === -1) {
         return str;
       } else {
-        return str.substring(0, idx);
+        return str.slice(0, idx);
       }
     }
   };
 
   getHotkeys = function() {
     var template, _i, _len, _ref, _results;
+
     log.trace();
     _ref = ext.templates;
     _results = [];
@@ -398,43 +391,43 @@
   };
 
   getOperatingSystem = function() {
-    var os, str, _i, _len;
+    var os, _i, _len, _ref;
+
     log.trace();
-    str = navigator.platform;
     for (_i = 0, _len = OPERATING_SYSTEMS.length; _i < _len; _i++) {
       os = OPERATING_SYSTEMS[_i];
-      if (!(str.indexOf(os.substring) !== -1)) {
-        continue;
+      if (_ref = os.substring, __indexOf.call(navigator.platform, _ref) >= 0) {
+        return os.title;
       }
-      str = os.title;
-      break;
     }
-    return str;
+    return navigator.platform;
   };
 
   getTemplateWithKey = function(key) {
     log.trace();
-    return ext.queryTemplate(function(template) {
-      return template.key === key;
+    return _.findWhere(ext.templates, {
+      key: key
     });
   };
 
   getTemplateWithMenuId = function(menuId) {
     log.trace();
-    return ext.queryTemplate(function(template) {
-      return template.menuId === menuId;
+    return _.findWhere(ext.templates, {
+      menuId: menuId
     });
   };
 
   getTemplateWithShortcut = function(shortcut) {
     log.trace();
-    return ext.queryTemplate(function(template) {
-      return template.enabled && template.shortcut === shortcut;
+    return _.findWhere(ext.templates, {
+      enabled: true,
+      shortcut: shortcut
     });
   };
 
   isBlacklisted = function(extensionId) {
     var extension, _i, _len;
+
     log.trace();
     for (_i = 0, _len = BLACKLIST.length; _i < _len; _i++) {
       extension = BLACKLIST[_i];
@@ -447,28 +440,28 @@
 
   isExtensionActive = function(tab, extensionId) {
     log.trace();
-    log.debug("Checking activity of " + extensionId);
-    return isSpecialPage(tab) && tab.url.indexOf(extensionId) !== -1;
-  };
-
-  isExtensionGallery = function(tab) {
-    log.trace();
-    return tab.url.indexOf('https://chrome.google.com/webstore') === 0;
+    log.debug("Checking activity of supported extension '" + extensionId + "'");
+    return isSpecialPage(tab) && __indexOf.call(tab.url, extensionId) >= 0;
   };
 
   isProtectedPage = function(tab) {
     log.trace();
-    return isSpecialPage(tab) || isExtensionGallery(tab);
+    return isSpecialPage(tab) || isWebStore(tab);
   };
 
   isSpecialPage = function(tab) {
     log.trace();
-    return tab.url.indexOf('chrome') === 0;
+    return !tab.url.indexOf('chrome');
+  };
+
+  isWebStore = function(tab) {
+    log.trace();
+    return !tab.url.indexOf('https://chrome.google.com/webstore');
   };
 
   nullIfEmpty = function(object) {
     log.trace();
-    if ($.isEmptyObject(object)) {
+    if (_.isEmpty(object)) {
       return null;
     } else {
       return object;
@@ -476,10 +469,15 @@
   };
 
   onMessage = function(message, sender, sendResponse) {
-    var data, editable, id, link, output, placeholders, runner, shortcut, tab, template, windowId, _ref, _ref1;
+    var active, callback, data, editable, id, link, output, placeholders, shortcut, template, _ref, _ref1;
+
     log.trace();
+    callback = utils.callback(sendResponse);
+    if (!message.type) {
+      return callback();
+    }
     if (message.type === 'shortcut' && !store.get('shortcuts.enabled')) {
-      return typeof sendResponse === "function" ? sendResponse() : void 0;
+      return callback();
     }
     if (message.type === 'options') {
       selectOrCreateTab(utils.url('pages/options.html'));
@@ -488,122 +486,86 @@
       })[0]) != null) {
         _ref.close();
       }
-      return typeof sendResponse === "function" ? sendResponse() : void 0;
+      return callback();
     }
     if ((_ref1 = message.type) === 'info' || _ref1 === 'version') {
-      return typeof sendResponse === "function" ? sendResponse({
+      return callback({
         hotkeys: getHotkeys(),
         id: EXTENSION_ID,
         version: ext.version
-      }) : void 0;
-    }
-    data = null;
-    editable = false;
-    id = utils.keyGen('', null, 't', false);
-    link = false;
-    output = null;
-    placeholders = {};
-    shortcut = false;
-    tab = null;
-    template = null;
-    windowId = chrome.windows.WINDOW_ID_CURRENT;
-    runner = new utils.Runner();
-    if (windowId == null) {
-      runner.push(chrome.windows, 'getCurrent', function(win) {
-        log.info('Retrieved the following window...', win);
-        windowId = win.id;
-        return runner.next();
       });
     }
-    runner.pushPacked(chrome.tabs, 'query', function() {
-      return [
-        {
+    active = data = output = template = null;
+    editable = link = shortcut = false;
+    id = utils.keyGen('', null, 't', false);
+    placeholders = {};
+    return async.series([
+      function(done) {
+        return chrome.tabs.query({
           active: true,
-          windowId: windowId
+          currentWindow: true
         }, function(tabs) {
-          log.info('Retrieved the following tabs...', tabs);
-          tab = tabs[0];
-          return runner.next();
-        }
-      ];
-    });
-    runner.push(null, function() {
-      var getCallback, _ref2;
-      getCallback = function(tag) {
-        return function(text, render) {
-          var key, placeholder, trim, val;
-          if (text) {
-            text = render(text);
-          }
-          if (tag === 'shorten' && !text) {
-            text = this.url;
-          }
-          trim = text.trim();
-          log.debug("Following is the contents of a " + tag + " tag...", text);
-          if (!trim || tag === 'shorten' && !R_VALID_URL.test(trim)) {
-            return text;
-          }
-          for (key in placeholders) {
-            if (!__hasProp.call(placeholders, key)) continue;
-            val = placeholders[key];
-            if (!(val.data === trim && val.tag === tag)) {
-              continue;
-            }
-            placeholder = key;
-            break;
-          }
-          if (placeholder == null) {
-            placeholder = utils.keyGen('', null, 'c', false);
-            placeholders[placeholder] = {
-              data: trim,
-              tag: tag
-            };
-            this[placeholder] = "{" + placeholder + "}";
-          }
-          log.debug("Replacing " + tag + " tag with " + placeholder + " placeholder");
-          return "{" + placeholder + "}";
-        };
-      };
-      updateProgress(null, true);
-      try {
-        switch (message.type) {
-          case 'menu':
-            template = getTemplateWithMenuId(message.data.menuItemId);
-            if (template != null) {
-              _ref2 = buildDerivedData(tab, message.data, getCallback), data = _ref2.data, editable = _ref2.editable, link = _ref2.link;
-            }
-            break;
-          case 'popup':
-          case 'toolbar':
-            template = getTemplateWithKey(message.data.key);
-            if (template != null) {
-              data = buildStandardData(tab, getCallback);
-            }
-            break;
-          case 'shortcut':
-            shortcut = true;
-            template = getTemplateWithShortcut(message.data.key);
-            if (template != null) {
-              data = buildStandardData(tab, getCallback);
-            }
-        }
-        updateProgress(20);
-        if (data != null) {
-          return runner.next();
-        } else {
-          return runner.finish();
-        }
-      } catch (error) {
-        log.error(error);
-        return runner.finish({
-          message: i18n.get(error instanceof URIError ? 'result_bad_uri_description' : 'result_bad_error_description'),
-          success: false
+          log.debug('Checking the following tabs for the active tab...', tabs);
+          active = _.first(tabs);
+          return done();
         });
-      }
-    });
-    runner.pushPacked(null, addAdditionalData, function() {
-      return [
-        tab, data, id, editable, shortcut, link, function() {
+      }, function(done) {
+        var err, getCallback, _ref2;
+
+        getCallback = function(tag) {
+          return function(text, render) {
+            var key, placeholder, trim, val;
+
+            if (text) {
+              text = render(text);
+            }
+            if (tag === 'shorten' && !text) {
+              text = this.url;
+            }
+            trim = text.trim();
+            log.debug("Following is the contents of a " + tag + " tag...", text);
+            if (!trim || tag === 'shorten' && !R_VALID_URL.test(trim)) {
+              return text;
+            }
+            for (key in placeholders) {
+              if (!__hasProp.call(placeholders, key)) continue;
+              val = placeholders[key];
+              if (val.data === trim && val.tag === tag) {
+                placeholder = key;
+                break;
+              }
+            }
+            if (placeholder == null) {
+              placeholder = utils.keyGen('', null, 'c', false);
+              placeholders[placeholder] = {
+                data: trim,
+                tag: tag
+              };
+              this[placeholder] = "{" + placeholder + "}";
+            }
+            log.debug("Replacing " + tag + " tag with " + placeholder + " placeholder");
+            return "{" + placeholder + "}";
+          };
+        };
+        updateProgress(null, true);
+        try {
+          template = deriveMessageTempate(message);
+          updateProgress(10);
+          _ref2 = deriveMessageInfo(message, active, getCallback), data = _ref2.data, editable = _ref2.editable, link = _ref2.link, shortcut = _ref2.shortcut;
+          updateProgress(20);
+          return done();
+        } catch (_error) {
+          err = _error;
+          log.error(err);
+          if (err instanceof AppError) {
+            return done(err);
+          } else {
+            return done(new AppError(err instanceof URIError ? 'result_bad_uri_description' : 'result_bad_error_description'));
+          }
+        }
+      }, function(done) {
+        updateProgress(30);
+        return addAdditionalData(active, data, id, editable, shortcut, link, function() {
           updateProgress(40);
           transformData(data);
           $.extend(data, {
@@ -611,198 +573,168 @@
           });
           log.debug("Using the following data to render " + template.title + "...", data);
           if (template.content) {
-            output = Mustache.to_html(template.content, data);
-            updateProgress(60);
-            log.debug('Following string is the rendered result...', output);
-            if ($.isEmptyObject(placeholders)) {
-              return runner.finish({
-                contents: output,
-                success: true,
-                template: template
-              });
-            } else {
-              return runner.next();
-            }
+            output = Mustache.render(template.content, data);
+            log.debug('The following was generated as a result...', output);
+          }
+          updateProgress(60);
+          if (output == null) {
+            output = '';
+          }
+          return done();
+        });
+      }, function(done) {
+        var info, match, placeholder, selectMap, shortenMap;
+
+        updateProgress(70);
+        if (_.isEmpty(placeholders)) {
+          return done();
+        }
+        selectMap = {};
+        shortenMap = {};
+        for (placeholder in placeholders) {
+          if (!__hasProp.call(placeholders, placeholder)) continue;
+          info = placeholders[placeholder];
+          if (info.tag === 'shorten') {
+            shortenMap[placeholder] = info.data;
           } else {
-            return runner.finish({
-              contents: '',
-              success: true,
-              template: template
-            });
+            match = info.tag.match(R_SELECT_TAG);
+            selectMap[placeholder] = {
+              all: match[1] != null,
+              convertTo: match[2],
+              selector: info.data
+            };
           }
         }
-      ];
-    });
-    runner.push(null, function() {
-      var info, match, placeholder, selectMap, shortenMap, subRunner;
-      updateProgress(80);
-      selectMap = {};
-      shortenMap = {};
-      for (placeholder in placeholders) {
-        if (!__hasProp.call(placeholders, placeholder)) continue;
-        info = placeholders[placeholder];
-        if (info.tag === 'shorten') {
-          shortenMap[placeholder] = info.data;
-        } else {
-          match = info.tag.match(R_SELECT_TAG);
-          selectMap[placeholder] = {
-            all: match[1] != null,
-            convertTo: match[2],
-            selector: info.data
-          };
-        }
-      }
-      subRunner = new utils.Runner();
-      if (!$.isEmptyObject(selectMap)) {
-        subRunner.push(null, runSelectors, tab, selectMap, function() {
-          var value;
-          log.info('One or more selectors were executed');
-          updateProgress(85);
-          for (placeholder in selectMap) {
-            if (!__hasProp.call(selectMap, placeholder)) continue;
-            value = selectMap[placeholder];
-            placeholders[placeholder] = value;
-          }
-          return subRunner.next({
-            success: true
-          });
-        });
-      }
-      if (!$.isEmptyObject(shortenMap)) {
-        subRunner.push(null, callUrlShortener, shortenMap, function(response) {
-          var value, _ref2;
-          log.info('URL shortener service was called one or more times');
-          updateProgress(90);
-          if (response.success) {
-            updateUrlShortenerUsage(response.service.name, response.oauth);
-            for (placeholder in shortenMap) {
-              if (!__hasProp.call(shortenMap, placeholder)) continue;
-              value = shortenMap[placeholder];
-              placeholders[placeholder] = value;
+        return async.series([
+          function(done) {
+            updateProgress(80);
+            if (_.isEmpty(selectMap)) {
+              return done();
             }
-            return subRunner.finish({
-              success: true
+            return runSelectors(active, selectMap, function() {
+              var value;
+
+              updateProgress(85);
+              log.info("" + (_.size(selectMap)) + " selector(s) were executed");
+              for (placeholder in selectMap) {
+                if (!__hasProp.call(selectMap, placeholder)) continue;
+                value = selectMap[placeholder];
+                placeholders[placeholder] = value;
+              }
+              return done();
             });
-          } else {
-            if ((_ref2 = response.message) == null) {
-              response.message = i18n.get('shortener_error', response.service.title);
+          }, function(done) {
+            updateProgress(90);
+            if (_.isEmpty(shortenMap)) {
+              return done();
             }
-            log.warn(response.message);
-            return subRunner.finish({
-              message: response.message,
-              success: false
+            return callUrlShortener(shortenMap, function(err, response) {
+              var value;
+
+              updateProgress(95);
+              if (!err) {
+                log.info("URL shortener service was called " + (_.size(shortenMap)) + " time(s)");
+                updateUrlShortenerUsage(response.service.name, response.oauth);
+                for (placeholder in shortenMap) {
+                  if (!__hasProp.call(shortenMap, placeholder)) continue;
+                  value = shortenMap[placeholder];
+                  placeholders[placeholder] = value;
+                }
+              }
+              return done(err);
             });
           }
+        ], function(err) {
+          if (!err) {
+            output = Mustache.render(output, placeholders);
+            log.debug('The follow was re-generated as a result...', output);
+          }
+          return done(err);
         });
       }
-      return subRunner.run(function(result) {
-        var newOutput;
-        if (result.success) {
-          newOutput = Mustache.to_html(output, placeholders);
-          log.debug('Following string is the re-rendered result...', newOutput);
-        }
-        return runner.finish({
-          contents: newOutput,
-          message: result.message,
-          success: result.success,
-          template: template
-        });
-      });
-    });
-    return runner.run(function(result) {
-      var type, value, _ref2, _ref3;
-      type = message.type[0].toUpperCase() + message.type.substr(1);
-      if (shortcut) {
-        value = message.data.key.charCodeAt(0);
-      }
-      analytics.track('Requests', 'Processed', type, value);
+    ], function(err) {
+      var notification, type, _ref2;
+
       updateProgress(100);
-      if (result != null) {
-        if (result.success && !result.contents) {
-          result.message = i18n.get('result_bad_empty_description', result.template.title);
-          result.success = false;
-        }
-        if (result.template != null) {
-          updateTemplateUsage(result.template.key);
-          updateStatistics();
-        }
-        if (result.success) {
-          ext.notification.title = i18n.get('result_good_title');
-          ext.notification.titleStyle = 'color: #468847';
-          ext.notification.description = (_ref2 = result.message) != null ? _ref2 : i18n.get('result_good_description', result.template.title);
-          ext.copy(result.contents);
-          if (!isProtectedPage(tab) && (editable && store.get('menu.paste')) || (shortcut && store.get('shortcuts.paste'))) {
-            utils.sendMessage('tabs', tab.id, {
-              contents: result.contents,
-              id: id,
-              type: 'paste'
-            });
-          }
-          if (typeof sendResponse === "function") {
-            sendResponse({
-              contents: result.contents
-            });
-          }
-        } else {
-          ext.notification.title = i18n.get('result_bad_title');
-          ext.notification.titleStyle = 'color: #B94A48';
-          ext.notification.description = (_ref3 = result.message) != null ? _ref3 : i18n.get('result_bad_description', result.template.title);
-          showNotification();
-          if (typeof sendResponse === "function") {
-            sendResponse();
-          }
-        }
-      } else {
-        updateProgress(null, false);
+      type = utils.capitalize(message.type);
+      analytics.track('Requests', 'Processed', type, shortcut ? message.data.key.charCodeAt(0) : void 0);
+      if (!err && !output) {
+        err = new Error(i18n.get('result_bad_empty_description', template.title));
       }
-      return log.debug("Finished handling " + type + " request");
+      notification = ext.notification;
+      if (err) {
+        log.warn(err.message);
+        notification.title = i18n.get('result_bad_title');
+        notification.titleStyle = 'color: #B94A48';
+        notification.description = (_ref2 = err.message) != null ? _ref2 : i18n.get('result_bad_description', template.title);
+        showNotification();
+      } else {
+        updateTemplateUsage(template.key);
+        updateStatistics();
+        notification.title = i18n.get('result_good_title');
+        notification.titleStyle = 'color: #468847';
+        notification.description = i18n.get('result_good_description', template.title);
+        ext.copy(output);
+        if (!isProtectedPage(active) && (editable && store.get('menu.paste')) || (shortcut && store.get('shortcuts.paste'))) {
+          chrome.tabs.sendMessage(active.id, {
+            contents: output,
+            id: id,
+            type: 'paste'
+          });
+        }
+      }
+      return log.debug("Finished handling a " + type + " request");
     });
   };
 
-  selectOrCreateTab = function(url, callback) {
-    var runner, tab, windowId;
+  onMessageExternal = function(message, sender, sendResponse) {
+    var blocked, callback;
+
     log.trace();
-    tab = null;
-    windowId = chrome.windows.WINDOW_ID_CURRENT;
-    runner = new utils.Runner();
-    if (windowId == null) {
-      runner.push(chrome.windows, 'getCurrent', function(win) {
-        log.debug('Retrieved the following window...', win);
-        windowId = win.id;
-        return runner.next();
-      });
+    callback = utils.callback(sendResponse);
+    blocked = isBlacklisted(sender.id);
+    analytics.track('External Requests', 'Started', sender.id, Number(!blocked));
+    if (blocked) {
+      log.debug("Blocked external request from " + sender.id);
+      return callback();
     }
-    runner.pushPacked(chrome.tabs, 'query', function() {
-      return [
-        {
-          windowId: windowId
-        }, function(tabs) {
-          var existingTab, result, _i, _len;
-          log.debug('Retrieved the following tabs...', tabs);
-          result = true;
-          for (_i = 0, _len = tabs.length; _i < _len; _i++) {
-            tab = tabs[_i];
-            if (tab.url.indexOf(url) === 0) {
-              existingTab = tab;
-              break;
-            }
-          }
-          if (existingTab != null) {
-            chrome.tabs.update(existingTab.id, {
-              active: true
-            });
-            result = false;
-          } else {
-            chrome.tabs.create({
-              url: url,
-              active: true
-            });
-          }
-          return runner.finish(result);
+    log.debug("Accepted external request from " + sender.id);
+    return onMessage(message, sender, sendResponse);
+  };
+
+  selectOrCreateTab = function(url, callback) {
+    log.trace();
+    return chrome.windows.getLastFocused({
+      populate: true
+    }, function(win) {
+      var existing, tab, tabs, _i, _len;
+
+      tabs = win.tabs;
+      log.debug('Checking the tabs of the following last focused window...', win);
+      log.debug('Checking the following tabs for a matching URL...', tabs);
+      for (_i = 0, _len = tabs.length; _i < _len; _i++) {
+        tab = tabs[_i];
+        if (!(!tab.url.indexOf(url))) {
+          continue;
         }
-      ];
+        existing = tab;
+        break;
+      }
+      if (existing != null) {
+        chrome.tabs.update(existing.id, {
+          active: true
+        });
+        return typeof callback === "function" ? callback(existing) : void 0;
+      } else {
+        return chrome.tabs.create({
+          windowId: win.id,
+          url: url,
+          active: true
+        }, function(tab) {
+          return typeof callback === "function" ? callback(tab) : void 0;
+        });
+      }
     });
-    return runner.run(callback);
   };
 
   showNotification = function() {
@@ -816,41 +748,30 @@
   };
 
   updateHotkeys = function() {
-    var hotkeys, runner;
+    var hotkeys;
+
     log.trace();
     hotkeys = getHotkeys();
-    runner = new utils.Runner();
-    runner.push(chrome.windows, 'getAll', null, function(windows) {
-      var win, _fn, _i, _len;
-      log.info('Retrieved the following windows...', windows);
-      _fn = function(win) {
-        return runner.push(chrome.tabs, 'query', {
-          windowId: win.id
-        }, function(tabs) {
-          var tab, _j, _len1;
-          log.info('Retrieved the following tabs...', tabs);
-          for (_j = 0, _len1 = tabs.length; _j < _len1; _j++) {
-            tab = tabs[_j];
-            if (!isProtectedPage(tab)) {
-              utils.sendMessage('tabs', tab.id, {
-                hotkeys: hotkeys
-              });
-            }
-          }
-          return runner.next();
-        });
-      };
-      for (_i = 0, _len = windows.length; _i < _len; _i++) {
-        win = windows[_i];
-        _fn(win);
+    return chrome.tabs.query({}, function(tabs) {
+      var tab, _i, _len, _results;
+
+      log.info('Updating the hotkeys registed in the following tabs...', tabs);
+      _results = [];
+      for (_i = 0, _len = tabs.length; _i < _len; _i++) {
+        tab = tabs[_i];
+        if (!isProtectedPage(tab)) {
+          _results.push(chrome.tabs.sendMessage(tab.id, {
+            hotkeys: hotkeys
+          }));
+        }
       }
-      return runner.next();
+      return _results;
     });
-    return runner.run();
   };
 
   updateProgress = function(percent, toggle) {
     var loading, popup, progressBar, templates;
+
     log.trace();
     popup = $(chrome.extension.getViews({
       type: 'popup'
@@ -868,6 +789,7 @@
         if (store.get('toolbar.close')) {
           return popup.queue(function() {
             var _ref;
+
             return (_ref = popup.dequeue()[0]) != null ? _ref.close() : void 0;
           });
         } else {
@@ -881,6 +803,7 @@
         }
       }
     } else if (percent != null) {
+      log.info("Updating bar progress to " + percent + "%");
       popup.dequeue().delay(POPUP_DELAY);
       templates.dequeue().delay(POPUP_DELAY);
       loading.dequeue().delay(POPUP_DELAY);
@@ -889,21 +812,14 @@
   };
 
   updateStatistics = function() {
-    var _this = this;
     log.trace();
     log.info('Updating statistics');
     store.init('stats', {});
     return store.modify('stats', function(stats) {
-      var maxUsage, popular;
-      maxUsage = 0;
-      utils.query(ext.templates, false, function(template) {
-        if (template.usage > maxUsage) {
-          maxUsage = template.usage;
-        }
-        return false;
-      });
-      popular = ext.queryTemplate(function(template) {
-        return template.usage === maxUsage;
+      var popular;
+
+      popular = _.max(ext.templates, function(template) {
+        return template.usage;
       });
       stats.count = ext.templates.length;
       stats.customCount = stats.count - DEFAULT_TEMPLATES.length;
@@ -912,198 +828,207 @@
   };
 
   updateTemplateUsage = function(key) {
-    var template, _i, _len, _ref;
+    var template;
+
     log.trace();
-    _ref = ext.templates;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      template = _ref[_i];
-      if (!(template.key === key)) {
-        continue;
-      }
+    template = _.findWhere(ext.templates, {
+      key: key
+    });
+    if (template != null) {
       template.usage++;
-      break;
+      store.set('templates', ext.templates);
+      log.info("Used the " + template.title + " template");
+      return analytics.track('Templates', 'Used', template.title, Number(template.readOnly));
     }
-    store.set('templates', ext.templates);
-    log.info("Used " + template.title + " template");
-    return analytics.track('Templates', 'Used', template.title, Number(template.readOnly));
   };
 
   updateUrlShortenerUsage = function(name, oauth) {
     var shortener;
+
     log.trace();
-    store.modify(name, function(shortener) {
-      return shortener.usage++;
+    shortener = _.findWhere(SHORTENERS, {
+      name: name
     });
-    shortener = ext.queryUrlShortener(function(shortener) {
-      return shortener.name === name;
-    });
-    log.info("Used " + shortener.title + " URL shortener");
-    return analytics.track('Shorteners', 'Used', shortener.title, Number(oauth));
+    if (shortener != null) {
+      store.modify(name, function(shortener) {
+        return shortener.usage++;
+      });
+      log.info("Used the " + shortener.title + " URL shortener");
+      return analytics.track('Shorteners', 'Used', shortener.title, Number(oauth));
+    }
   };
 
-  addAdditionalData = function(tab, data, id, editable, shortcut, link, callback) {
-    var runner, windowId;
-    log.trace();
-    windowId = chrome.windows.WINDOW_ID_CURRENT;
-    runner = new utils.Runner();
-    if (windowId == null) {
-      runner.push(chrome.windows, 'getCurrent', function(win) {
-        log.info('Retrieved the following window...', win);
-        windowId = win.id;
-        return runner.next();
-      });
+  AppError = (function(_super) {
+    __extends(AppError, _super);
+
+    function AppError() {
+      var messageKey, substitutions;
+
+      messageKey = arguments[0], substitutions = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      if (messageKey) {
+        this.message = i18n.get(messageKey, substitutions);
+      }
     }
-    runner.pushPacked(chrome.tabs, 'query', function() {
-      return [
-        {
-          windowId: windowId
+
+    return AppError;
+
+  })(Error);
+
+  addAdditionalData = function(tab, data, id, editable, shortcut, link, callback) {
+    log.trace();
+    return async.parallel([
+      function(done) {
+        return chrome.tabs.query({
+          windowId: tab.windowId
         }, function(tabs) {
-          var urls, _i, _len, _ref;
-          log.info('Retrieved the following tabs...', tabs);
-          urls = [];
-          for (_i = 0, _len = tabs.length; _i < _len; _i++) {
-            tab = tabs[_i];
-            if (_ref = tab.url, __indexOf.call(urls, _ref) < 0) {
-              urls.push(tab.url);
-            }
-          }
-          $.extend(data, {
-            tabs: urls
+          log.debug('Extracting the URLs from the following tabs...', tabs);
+          tabs = _.pluck(tabs, 'url');
+          return done(null, {
+            tabs: tabs
           });
-          return runner.next();
-        }
-      ];
-    });
-    runner.push(navigator.geolocation, 'getCurrentPosition', function(position) {
-      var coords, prop, value, _ref;
-      log.debug('Retrieved the following geolocation information...', position);
-      coords = {};
-      _ref = position.coords;
-      for (prop in _ref) {
-        if (!__hasProp.call(_ref, prop)) continue;
-        value = _ref[prop];
-        coords[prop.toLowerCase()] = value != null ? "" + value : '';
-      }
-      $.extend(data, {
-        coords: coords
-      });
-      return runner.next();
-    }, function(error) {
-      log.error(error.message);
-      return runner.next();
-    });
-    runner.push(chrome.cookies, 'getAll', {
-      url: data.url
-    }, function(cookies) {
-      var cookie, names;
-      if (cookies == null) {
-        cookies = [];
-      }
-      log.debug('Retrieved the following cookies...', cookies);
-      $.extend(data, {
-        cookie: function() {
-          return function(text, render) {
-            var cookie, name, _i, _len;
-            name = render(text);
-            for (_i = 0, _len = cookies.length; _i < _len; _i++) {
-              cookie = cookies[_i];
-              if (cookie.name === name) {
-                return cookie.value;
-              }
-            }
-            return '';
-          };
-        },
-        cookies: ((function() {
-          var _i, _len, _ref;
-          names = [];
-          for (_i = 0, _len = cookies.length; _i < _len; _i++) {
-            cookie = cookies[_i];
-            if (_ref = cookie.name, __indexOf.call(names, _ref) < 0) {
-              names.push(cookie.name);
-            }
+        });
+      }, function(done) {
+        return chrome.tabs.detectLanguage(tab.id, function(locale) {
+          log.debug("Chrome automatically detected language: " + locale);
+          if (!(locale && locale !== UNKNOWN_LOCALE)) {
+            locale = '';
           }
-          return names;
-        })())
-      });
-      if (isProtectedPage(tab)) {
-        return runner.finish();
-      } else {
-        return runner.next();
+          return done(null, {
+            locale: locale
+          });
+        });
+      }, function(done) {
+        var coords;
+
+        coords = {};
+        return navigator.geolocation.getCurrentPosition(function(position) {
+          var prop, value, _ref;
+
+          log.debug('Retrieved the following geolocation information...', position);
+          _ref = position.coords;
+          for (prop in _ref) {
+            if (!__hasProp.call(_ref, prop)) continue;
+            value = _ref[prop];
+            coords[prop.toLowerCase()] = value != null ? "" + value : '';
+          }
+          return done(null, {
+            coords: coords
+          });
+        }, function(err) {
+          log.warn('Ingoring error thrown when calculating geolocation', err.message);
+          return done(null, {
+            coords: coords
+          });
+        });
+      }, function(done) {
+        return chrome.cookies.getAll({
+          url: data.url
+        }, function(cookies) {
+          if (cookies == null) {
+            cookies = [];
+          }
+          log.debug('Found the following cookies...', cookies);
+          return done(null, {
+            cookie: function() {
+              return function(text, render) {
+                var cookie, name;
+
+                name = render(text);
+                cookie = _.findWhere(cookies, {
+                  name: name
+                });
+                return (cookie != null ? cookie.value : void 0) || '';
+              };
+            },
+            cookies: _.chain(cookies).pluck('name').uniq().value()
+          });
+        });
+      }, function(done) {
+        if (isProtectedPage(tab)) {
+          return done();
+        }
+        return chrome.tabs.sendMessage(tab.id, {
+          editable: editable,
+          id: id,
+          link: link,
+          shortcut: shortcut,
+          url: data.url
+        }, function(response) {
+          var lastModified, time, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+
+          log.debug('The following data was retrieved from the content script...', response);
+          lastModified = response.lastModified != null ? (time = Date.parse(response.lastModified), !isNaN(time) ? new Date(time) : void 0) : void 0;
+          return done(null, {
+            author: (_ref = response.author) != null ? _ref : '',
+            characterset: (_ref1 = response.characterSet) != null ? _ref1 : '',
+            description: (_ref2 = response.description) != null ? _ref2 : '',
+            images: (_ref3 = response.images) != null ? _ref3 : [],
+            keywords: (_ref4 = response.keywords) != null ? _ref4 : [],
+            lastmodified: function() {
+              return function(text, render) {
+                var _ref5;
+
+                return (_ref5 = lastModified != null ? lastModified.format(render(text) || void 0) : void 0) != null ? _ref5 : '';
+              };
+            },
+            linkhtml: (_ref5 = response.linkHTML) != null ? _ref5 : '',
+            links: (_ref6 = response.links) != null ? _ref6 : [],
+            linktext: (_ref7 = response.linkText) != null ? _ref7 : '',
+            pageheight: (_ref8 = response.pageHeight) != null ? _ref8 : '',
+            pagewidth: (_ref9 = response.pageWidth) != null ? _ref9 : '',
+            referrer: (_ref10 = response.referrer) != null ? _ref10 : '',
+            scripts: (_ref11 = response.scripts) != null ? _ref11 : [],
+            selectedimages: (_ref12 = response.selectedImages) != null ? _ref12 : [],
+            selectedlinks: (_ref13 = response.selectedLinks) != null ? _ref13 : [],
+            selection: (_ref14 = response.selection) != null ? _ref14 : '',
+            selectionhtml: (_ref15 = response.selectionHTML) != null ? _ref15 : '',
+            selectionlinks: function() {
+              return this.selectedlinks;
+            },
+            stylesheets: (_ref16 = response.styleSheets) != null ? _ref16 : []
+          });
+        });
       }
-    });
-    runner.push(utils, 'sendMessage', 'tabs', tab.id, {
-      editable: editable,
-      id: id,
-      link: link,
-      shortcut: shortcut,
-      url: data.url
-    }, function(response) {
-      log.debug('Retrieved the following data from the content script...', response);
-      return runner.finish(response);
-    });
-    return runner.run(function(result) {
-      var lastModified, time, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
-      if (result == null) {
-        result = {};
+    ], function(err, results) {
+      var result, _i, _len;
+
+      if (results == null) {
+        results = [];
       }
-      lastModified = result.lastModified != null ? (time = Date.parse(result.lastModified), !isNaN(time) ? new Date(time) : void 0) : void 0;
-      $.extend(data, {
-        author: (_ref = result.author) != null ? _ref : '',
-        characterset: (_ref1 = result.characterSet) != null ? _ref1 : '',
-        description: (_ref2 = result.description) != null ? _ref2 : '',
-        images: (_ref3 = result.images) != null ? _ref3 : [],
-        keywords: (_ref4 = result.keywords) != null ? _ref4 : [],
-        lastmodified: function() {
-          return function(text, render) {
-            var _ref5;
-            return (_ref5 = lastModified != null ? lastModified.format(render(text) || void 0) : void 0) != null ? _ref5 : '';
-          };
-        },
-        linkhtml: (_ref5 = result.linkHTML) != null ? _ref5 : '',
-        links: (_ref6 = result.links) != null ? _ref6 : [],
-        linktext: (_ref7 = result.linkText) != null ? _ref7 : '',
-        pageheight: (_ref8 = result.pageHeight) != null ? _ref8 : '',
-        pagewidth: (_ref9 = result.pageWidth) != null ? _ref9 : '',
-        referrer: (_ref10 = result.referrer) != null ? _ref10 : '',
-        scripts: (_ref11 = result.scripts) != null ? _ref11 : [],
-        selectedimages: (_ref12 = result.selectedImages) != null ? _ref12 : [],
-        selectedlinks: (_ref13 = result.selectedLinks) != null ? _ref13 : [],
-        selection: (_ref14 = result.selection) != null ? _ref14 : '',
-        selectionhtml: (_ref15 = result.selectionHTML) != null ? _ref15 : '',
-        selectionlinks: function() {
-          return this.selectedlinks;
-        },
-        stylesheets: (_ref16 = result.styleSheets) != null ? _ref16 : []
-      });
+      if (err) {
+        log.error(err);
+      }
+      for (_i = 0, _len = results.length; _i < _len; _i++) {
+        result = results[_i];
+        if (result != null) {
+          $.extend(data, result);
+        }
+      }
       return callback();
     });
   };
 
   buildDerivedData = function(tab, onClickData, getCallback) {
-    var data, obj;
+    var fakeTab, info;
+
     log.trace();
-    obj = {
+    info = {
       editable: onClickData.editable,
       link: false
     };
-    data = {
+    fakeTab = {
       title: tab.title,
-      url: onClickData.linkUrl ? (obj.link = true, onClickData.linkUrl) : onClickData.srcUrl ? onClickData.srcUrl : onClickData.frameUrl ? onClickData.frameUrl : onClickData.pageUrl
+      url: onClickData.linkUrl ? (info.link = true, onClickData.linkUrl) : onClickData.srcUrl ? onClickData.srcUrl : onClickData.frameUrl ? onClickData.frameUrl : onClickData.pageUrl
     };
-    obj.data = buildStandardData(data, getCallback);
-    return obj;
+    info.data = buildStandardData(fakeTab, getCallback);
+    return info;
   };
 
   buildStandardData = function(tab, getCallback) {
-    var anchor, bitly, ctab, data, extension, googl, handler, menu, notifications, plugin, prop, results, shortcuts, stats, toolbar, url, value, yourls;
+    var anchor, bitly, ctab, data, extension, googl, handler, menu, notifications, shortcuts, stats, toolbar, url, yourls;
+
     log.trace();
-    ctab = {};
-    for (prop in tab) {
-      if (!__hasProp.call(tab, prop)) continue;
-      value = tab[prop];
-      ctab[prop] = value;
-    }
+    ctab = $.extend({}, tab);
     for (extension in SUPPORT) {
       if (!__hasProp.call(SUPPORT, extension)) continue;
       handler = SUPPORT[extension];
@@ -1132,8 +1057,8 @@
       anchortitle: anchor.title,
       bitly: bitly.enabled,
       bitlyaccount: function() {
-        return ext.queryUrlShortener(function(shortener) {
-          return shortener.name === 'bitly';
+        return _.findWhere(SHORTENERS, {
+          name: 'bitly'
         }).oauth.hasAccessToken();
       },
       browser: browser.title,
@@ -1143,7 +1068,7 @@
       },
       capitalize: function() {
         return function(text, render) {
-          return render(text).capitalize();
+          return utils.capitalize(render(text));
         };
       },
       contextmenu: function() {
@@ -1155,12 +1080,14 @@
       datetime: function() {
         return function(text, render) {
           var _ref;
+
           return (_ref = new Date().format(render(text) || void 0)) != null ? _ref : '';
         };
       },
       decode: function() {
         return function(text, render) {
           var _ref;
+
           return (_ref = decodeURIComponent(render(text))) != null ? _ref : '';
         };
       },
@@ -1174,16 +1101,23 @@
       encode: function() {
         return function(text, render) {
           var _ref;
+
           return (_ref = encodeURIComponent(render(text))) != null ? _ref : '';
         };
       },
       encoded: function() {
         return encodeURIComponent(this.url);
       },
+      escape: function() {
+        return function(text, render) {
+          return _.escape(render(text));
+        };
+      },
       favicon: ctab.favIconUrl,
       fparam: function() {
         return function(text, render) {
           var _ref;
+
           return (_ref = url.fparam(render(text))) != null ? _ref : '';
         };
       },
@@ -1191,14 +1125,15 @@
       fsegment: function() {
         return function(text, render) {
           var _ref;
+
           return (_ref = url.fsegment(parseInt(render(text), 10))) != null ? _ref : '';
         };
       },
       fsegments: url.fsegment(),
       googl: googl.enabled,
       googlaccount: function() {
-        return ext.queryUrlShortener(function(shortener) {
-          return shortener.name === 'googl';
+        return _.findWhere(SHORTENERS, {
+          name: 'googl'
         }).oauth.hasAccessToken();
       },
       googloauth: function() {
@@ -1233,30 +1168,21 @@
       param: function() {
         return function(text, render) {
           var _ref;
+
           return (_ref = url.param(render(text))) != null ? _ref : '';
         };
       },
       params: nullIfEmpty(url.param()),
-      plugins: ((function() {
-        var _i, _len, _ref, _ref1;
-        results = [];
-        _ref = navigator.plugins;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          plugin = _ref[_i];
-          if (_ref1 = plugin.name, __indexOf.call(results, _ref1) < 0) {
-            results.push(plugin.name);
-          }
-        }
-        return results.sort();
-      })()),
-      popular: ext.queryTemplate(function(template) {
-        return template.key === stats.popular;
+      plugins: _.chain(navigator.plugins).pluck('name').uniq().value(),
+      popular: _.findWhere(ext.templates, {
+        key: stats.popular
       }),
       screenheight: screen.height,
       screenwidth: screen.width,
       segment: function() {
         return function(text, render) {
           var _ref;
+
           return (_ref = url.segment(parseInt(render(text), 10))) != null ? _ref : '';
         };
       },
@@ -1325,6 +1251,11 @@
           return render(text).trimRight();
         };
       },
+      unescape: function() {
+        return function(text, render) {
+          return _.unescape(render(text));
+        };
+      },
       uppercase: function() {
         return function(text, render) {
           return render(text).toUpperCase();
@@ -1342,8 +1273,62 @@
     return data;
   };
 
+  deriveMessageInfo = function(message, tab, getCallback) {
+    var info;
+
+    log.trace();
+    info = {
+      data: null,
+      editable: false,
+      link: false,
+      shortcut: false
+    };
+    return $.extend(info, (function() {
+      switch (message.type) {
+        case 'menu':
+          return buildDerivedData(tab, message.data, getCallback);
+        case 'popup':
+        case 'toolbar':
+          return {
+            data: buildStandardData(tab, getCallback)
+          };
+        case 'shortcut':
+          return {
+            data: buildStandardData(tab, getCallback),
+            shortcut: true
+          };
+        default:
+          throw new AppError('result_bad_type_description');
+      }
+    })());
+  };
+
+  deriveMessageTempate = function(message) {
+    var template;
+
+    log.trace();
+    template = (function() {
+      switch (message.type) {
+        case 'menu':
+          return getTemplateWithMenuId(message.data.menuItemId);
+        case 'popup':
+        case 'toolbar':
+          return getTemplateWithKey(message.data.key);
+        case 'shortcut':
+          return getTemplateWithShortcut(message.data.key);
+        default:
+          throw new AppError('result_bad_type_description');
+      }
+    })();
+    if (template == null) {
+      throw new AppError('result_bad_template_description');
+    }
+    return template;
+  };
+
   runSelectors = function(tab, map, callback) {
     var placeholder;
+
     log.trace();
     if (isProtectedPage(tab)) {
       for (placeholder in map) {
@@ -1351,32 +1336,30 @@
         map[placeholder] = '';
       }
       return callback();
-    } else {
-      return utils.sendMessage('tabs', tab.id, {
-        selectors: map
-      }, function(response) {
-        var result, value, _ref;
-        log.debug('Retrieved the following data from the content script...', response);
-        _ref = response.selectors;
-        for (placeholder in _ref) {
-          if (!__hasProp.call(_ref, placeholder)) continue;
-          value = _ref[placeholder];
-          result = value.result || '';
-          if ($.isArray(result)) {
-            result = result.join('\n');
-          }
-          if (value.convertTo === 'markdown') {
-            result = md(result);
-          }
-          map[placeholder] = result;
-        }
-        return callback();
-      });
     }
+    return chrome.tabs.sendMessage(tab.id, {
+      selectors: map
+    }, function(response) {
+      var result, selector, _ref;
+
+      log.debug('The following response was returned by the content script...', response);
+      _ref = response.selectors;
+      for (placeholder in _ref) {
+        if (!__hasProp.call(_ref, placeholder)) continue;
+        selector = _ref[placeholder];
+        result = selector.result || '';
+        if (_.isArray(result)) {
+          result = result.join('\n');
+        }
+        map[placeholder] = selector.convertTo === 'markdown' ? md(result) : result;
+      }
+      return callback();
+    });
   };
 
   transformData = function(data, deleteOld) {
     var prop, value, _results;
+
     log.trace();
     _results = [];
     for (prop in data) {
@@ -1395,8 +1378,27 @@
     return _results;
   };
 
+  buildConfig = function() {
+    log.trace();
+    return buildIcons();
+  };
+
+  buildIcons = function() {
+    var i, name, _i, _len, _ref, _results;
+
+    log.trace();
+    _ref = ext.config.icons.current;
+    _results = [];
+    for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+      name = _ref[i];
+      _results.push(ext.config.icons.current[i] = new Icon(name));
+    }
+    return _results;
+  };
+
   buildPopup = function() {
-    var anchor, items, template, _i, _len, _ref;
+    var anchor, items, message, template, _i, _len, _ref;
+
     log.trace();
     items = $();
     _ref = ext.templates;
@@ -1406,51 +1408,48 @@
         items = items.add(buildTemplate(template));
       }
     }
-    if (items.length === 0) {
+    if (!items.length) {
+      message = " " + (i18n.get('empty'));
       items = items.add($('<li/>', {
         "class": 'empty'
       }).append($('<i/>', {
         "class": 'icon-'
-      })).append(" " + (i18n.get('empty'))));
+      })).append(message));
     }
     if (store.get('toolbar.options')) {
-      items = items.add($('<li/>', {
-        "class": 'divider'
-      }));
       anchor = $('<a/>', {
         "class": 'options',
         'data-type': 'options'
       });
       anchor.append($('<i/>', {
-        "class": icons.getClass('cog')
+        "class": Icon.get('cog').style
       }));
       anchor.append(" " + (i18n.get('options')));
+      items = items.add($('<li/>', {
+        "class": 'divider'
+      }));
       items = items.add($('<li/>').append(anchor));
     }
     return ext.templatesHtml = $('<div/>').append(items).html();
   };
 
   buildTemplate = function(template) {
-    var anchor, modifiers;
+    var anchor;
+
     log.trace();
-    log.debug("Creating popup list item for " + template.title);
+    log.debug("Creating popup list item for the " + template.title + " template");
     anchor = $('<a/>', {
       'data-key': template.key,
       'data-type': 'popup'
     });
     if (template.shortcut && store.get('shortcuts.enabled')) {
-      if (ext.isThisPlatform('mac')) {
-        modifiers = ext.SHORTCUT_MAC_MODIFIERS;
-      } else {
-        modifiers = ext.SHORTCUT_MODIFIERS;
-      }
       anchor.append($('<span/>', {
         "class": 'pull-right',
-        html: "" + modifiers + template.shortcut
+        html: "" + (ext.modifiers()) + template.shortcut
       }));
     }
     anchor.append($('<i/>', {
-      "class": icons.getClass(template.image)
+      "class": Icon.get(template.image, true).style
     }));
     anchor.append(" " + template.title);
     return $('<li/>').append(anchor);
@@ -1458,24 +1457,28 @@
 
   init_update = function() {
     var updater;
+
     log.trace();
     if (store.exists('update_progress')) {
       store.modify('updates', function(updates) {
-        var namespace, progress, versions, _results;
-        progress = store.remove('update_progress');
+        var namespace, versions, _ref, _results;
+
+        _ref = store.remove('update_progress');
         _results = [];
-        for (namespace in progress) {
-          if (!__hasProp.call(progress, namespace)) continue;
-          versions = progress[namespace];
+        for (namespace in _ref) {
+          if (!__hasProp.call(_ref, namespace)) continue;
+          versions = _ref[namespace];
           _results.push(updates[namespace] = (versions != null ? versions.length : void 0) ? versions.pop() : '');
         }
         return _results;
       });
     }
     updater = new store.Updater('settings');
+    updater.on('update', function(version) {
+      return log.info("Updating general settings for " + version);
+    });
     isNewInstall = updater.isNew;
     updater.update('0.1.0.0', function() {
-      log.info('Updating general settings for 0.1.0.0');
       store.rename('settingNotification', 'notifications', true);
       store.rename('settingNotificationTimer', 'notificationDuration', 3000);
       store.rename('settingShortcut', 'shortcuts', true);
@@ -1485,7 +1488,7 @@
     });
     updater.update('1.0.0', function() {
       var optionsActiveTab, _ref, _ref1;
-      log.info('Updating general settings for 1.0.0');
+
       if (store.exists('options_active_tab')) {
         optionsActiveTab = store.get('options_active_tab');
         store.set('options_active_tab', (function() {
@@ -1501,12 +1504,14 @@
       }
       store.modify('anchor', function(anchor) {
         var _ref, _ref1;
+
         anchor.target = (_ref = store.get('doAnchorTarget')) != null ? _ref : false;
         return anchor.title = (_ref1 = store.get('doAnchorTitle')) != null ? _ref1 : false;
       });
       store.remove('doAnchorTarget', 'doAnchorTitle');
       store.modify('menu', function(menu) {
         var _ref;
+
         return menu.enabled = (_ref = store.get('contextMenu')) != null ? _ref : true;
       });
       store.remove('contextMenu');
@@ -1518,7 +1523,7 @@
     });
     return updater.update('1.1.0', function() {
       var _ref;
-      log.info('Updating general settings for 1.1.0');
+
       return store.set('shortcuts', {
         enabled: (_ref = store.get('shortcuts')) != null ? _ref : true
       });
@@ -1532,9 +1537,10 @@
 
   initTemplate = function(template, templates) {
     var idx, _base, _base1, _base10, _base11, _base12, _base2, _base3, _base4, _base5, _base6, _base7, _base8, _base9, _ref, _ref1, _ref10, _ref11, _ref12, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+
     log.trace();
-    idx = templates.indexOf(utils.query(templates, true, function(tmpl) {
-      return tmpl.key === template.key;
+    idx = templates.indexOf(_.findWhere(templates, {
+      key: template.key
     }));
     if (idx === -1) {
       log.debug('Adding the following predefined template...', template);
@@ -1598,6 +1604,7 @@
     initTemplates_update();
     store.modify('templates', function(templates) {
       var template, _i, _j, _len, _len1, _results;
+
       for (_i = 0, _len = DEFAULT_TEMPLATES.length; _i < _len; _i++) {
         template = DEFAULT_TEMPLATES[_i];
         initTemplate(template, templates);
@@ -1614,11 +1621,14 @@
 
   initTemplates_update = function() {
     var updater;
+
     log.trace();
     updater = new store.Updater('features');
+    updater.on('update', function(version) {
+      return log.info("Updating template settings for " + version);
+    });
     updater.rename('templates');
     updater.update('0.1.0.0', function() {
-      log.info('Updating template settings for 0.1.0.0');
       store.rename('copyAnchorEnabled', 'feat__anchor_enabled', true);
       store.rename('copyAnchorOrder', 'feat__anchor_index', 2);
       store.rename('copyBBCodeEnabled', 'feat__bbcode_enabled', false);
@@ -1631,29 +1641,29 @@
       return store.rename('copyUrlOrder', 'feat__url_index', 0);
     });
     updater.update('0.2.0.0', function() {
-      var i, image, legacy, name, names, oldImg, _i, _len, _ref, _results;
-      log.info('Updating template settings for 0.2.0.0');
+      var i, image, legacy, name, names, _i, _len, _ref, _results;
+
       names = (_ref = store.get('features')) != null ? _ref : [];
       _results = [];
       for (_i = 0, _len = names.length; _i < _len; _i++) {
         name = names[_i];
-        if (!(typeof name === 'string')) {
+        if (!(_.isString(name))) {
           continue;
         }
         store.rename("feat_" + name + "_template", "feat_" + name + "_content");
         image = store.get("feat_" + name + "_image");
-        if (typeof image === 'string') {
+        if (_.isString(image)) {
           if (image === '' || image === 'spacer.gif' || image === 'spacer.png') {
             _results.push(store.set("feat_" + name + "_image", 0));
           } else {
             _results.push((function() {
               var _j, _len1, _ref1, _results1;
-              _ref1 = icons.LEGACY;
+
+              _ref1 = ext.config.icons.legacy;
               _results1 = [];
               for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
                 legacy = _ref1[i];
-                oldImg = legacy.image.replace(/^tmpl/, 'feat');
-                if (("" + oldImg + ".png") === image) {
+                if (("" + (legacy.name.replace(/^tmpl/, 'feat')) + ".png") === image) {
                   store.set("feat_" + name + "_image", i + 1);
                   break;
                 } else {
@@ -1671,18 +1681,17 @@
     });
     updater.update('1.0.0', function() {
       var image, key, name, names, templates, toolbarFeatureName, _i, _len, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
-      log.info('Updating template settings for 1.0.0');
+
       names = (_ref = store.remove('features')) != null ? _ref : [];
       templates = [];
       toolbarFeatureName = store.get('toolbarFeatureName');
       for (_i = 0, _len = names.length; _i < _len; _i++) {
         name = names[_i];
-        if (!(typeof name === 'string')) {
+        if (!(_.isString(name))) {
           continue;
         }
         image = (_ref1 = store.remove("feat_" + name + "_image")) != null ? _ref1 : 0;
-        image--;
-        image = image >= 0 ? ((_ref2 = icons.fromLegacy(image)) != null ? _ref2.name : void 0) || '' : '';
+        image = --image >= 0 ? ((_ref2 = Icon.fromLegacy(image)) != null ? _ref2.name : void 0) || '' : '';
         key = ext.getKeyForName(name);
         if (toolbarFeatureName === name) {
           if (store.exists('toolbar')) {
@@ -1711,9 +1720,9 @@
       return store.remove.apply(store, store.search(/^feat_.*_(content|enabled|image|index|readonly|shortcut|title)$/));
     });
     return updater.update('1.1.0', function() {
-      log.info('Updating template settings for 1.1.0');
       return store.modify('templates', function(templates) {
-        var base, template, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _results;
+        var base, template, _i, _j, _len, _len1, _ref, _results;
+
         _results = [];
         for (_i = 0, _len = templates.length; _i < _len; _i++) {
           template = templates[_i];
@@ -1724,33 +1733,65 @@
                 break;
               }
             }
-            switch (template.key) {
-              case 'PREDEFINED.00001':
-                _results.push(template.image = template.image === 'tmpl_globe' ? base.image : ((_ref = icons.fromLegacy(template.image)) != null ? _ref.name : void 0) || '');
-                break;
-              case 'PREDEFINED.00002':
-                _results.push(template.image = template.image === 'tmpl_link' ? base.image : ((_ref1 = icons.fromLegacy(template.image)) != null ? _ref1.name : void 0) || '');
-                break;
-              case 'PREDEFINED.00003':
-                _results.push(template.image = template.image === 'tmpl_html' ? base.image : ((_ref2 = icons.fromLegacy(template.image)) != null ? _ref2.name : void 0) || '');
-                break;
-              case 'PREDEFINED.00004':
-                _results.push(template.image = template.image === 'tmpl_component' ? base.image : ((_ref3 = icons.fromLegacy(template.image)) != null ? _ref3.name : void 0) || '');
-                break;
-              case 'PREDEFINED.00005':
-                _results.push(template.image = template.image === 'tmpl_discussion' ? base.image : ((_ref4 = icons.fromLegacy(template.image)) != null ? _ref4.name : void 0) || '');
-                break;
-              case 'PREDEFINED.00006':
-                _results.push(template.image = template.image === 'tmpl_discussion' ? base.image : ((_ref5 = icons.fromLegacy(template.image)) != null ? _ref5.name : void 0) || '');
-                break;
-              case 'PREDEFINED.00007':
-                _results.push(template.image = template.image === 'tmpl_note' ? base.image : ((_ref6 = icons.fromLegacy(template.image)) != null ? _ref6.name : void 0) || '');
-                break;
-              default:
-                _results.push(template.image = base.image);
-            }
+            _results.push(template.image = (function() {
+              var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+
+              switch (template.key) {
+                case 'PREDEFINED.00001':
+                  if (template.image === 'tmpl_globe') {
+                    return base.image;
+                  } else {
+                    return ((_ref = Icon.fromLegacy(template.image)) != null ? _ref.name : void 0) || '';
+                  }
+                  break;
+                case 'PREDEFINED.00002':
+                  if (template.image === 'tmpl_link') {
+                    return base.image;
+                  } else {
+                    return ((_ref1 = Icon.fromLegacy(template.image)) != null ? _ref1.name : void 0) || '';
+                  }
+                  break;
+                case 'PREDEFINED.00003':
+                  if (template.image === 'tmpl_html') {
+                    return base.image;
+                  } else {
+                    return ((_ref2 = Icon.fromLegacy(template.image)) != null ? _ref2.name : void 0) || '';
+                  }
+                  break;
+                case 'PREDEFINED.00004':
+                  if (template.image === 'tmpl_component') {
+                    return base.image;
+                  } else {
+                    return ((_ref3 = Icon.fromLegacy(template.image)) != null ? _ref3.name : void 0) || '';
+                  }
+                  break;
+                case 'PREDEFINED.00005':
+                  if (template.image === 'tmpl_discussion') {
+                    return base.image;
+                  } else {
+                    return ((_ref4 = Icon.fromLegacy(template.image)) != null ? _ref4.name : void 0) || '';
+                  }
+                  break;
+                case 'PREDEFINED.00006':
+                  if (template.image === 'tmpl_discussion') {
+                    return base.image;
+                  } else {
+                    return ((_ref5 = Icon.fromLegacy(template.image)) != null ? _ref5.name : void 0) || '';
+                  }
+                  break;
+                case 'PREDEFINED.00007':
+                  if (template.image === 'tmpl_note') {
+                    return base.image;
+                  } else {
+                    return ((_ref6 = Icon.fromLegacy(template.image)) != null ? _ref6.name : void 0) || '';
+                  }
+                  break;
+                default:
+                  return base.image;
+              }
+            })());
           } else {
-            _results.push(template.image = ((_ref7 = icons.fromLegacy(template.image)) != null ? _ref7.name : void 0) || '');
+            _results.push(template.image = ((_ref = Icon.fromLegacy(template.image)) != null ? _ref.name : void 0) || '');
           }
         }
         return _results;
@@ -1763,6 +1804,7 @@
     initToolbar_update();
     store.modify('toolbar', function(toolbar) {
       var _ref, _ref1, _ref2, _ref3;
+
       if ((_ref = toolbar.close) == null) {
         toolbar.close = true;
       }
@@ -1779,19 +1821,22 @@
 
   initToolbar_update = function() {
     var updater;
+
     log.trace();
     updater = new store.Updater('toolbar');
+    updater.on('update', function(version) {
+      return log.info("Updating toolbar settings for " + version);
+    });
     updater.update('1.0.0', function() {
-      log.info('Updating toolbar settings for 1.0.0');
       store.modify('toolbar', function(toolbar) {
         var _ref, _ref1;
+
         toolbar.popup = (_ref = store.get('toolbarPopup')) != null ? _ref : true;
         return toolbar.style = (_ref1 = store.get('toolbarFeatureDetails')) != null ? _ref1 : false;
       });
       return store.remove('toolbarFeature', 'toolbarFeatureDetails', 'toolbarFeatureName', 'toolbarPopup');
     });
     return updater.update('1.1.0', function() {
-      log.info('Updating toolbar settings for 1.1.0');
       return store.modify('toolbar', function(toolbar) {
         return delete toolbar.style;
       });
@@ -1808,6 +1853,7 @@
     initUrlShorteners_update();
     store.modify('bitly', function(bitly) {
       var _ref, _ref1;
+
       if ((_ref = bitly.enabled) == null) {
         bitly.enabled = true;
       }
@@ -1815,6 +1861,7 @@
     });
     store.modify('googl', function(googl) {
       var _ref, _ref1;
+
       if ((_ref = googl.enabled) == null) {
         googl.enabled = false;
       }
@@ -1822,6 +1869,7 @@
     });
     return store.modify('yourls', function(yourls) {
       var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6;
+
       if ((_ref = yourls.authentication) == null) {
         yourls.authentication = '';
       }
@@ -1846,10 +1894,13 @@
 
   initUrlShorteners_update = function() {
     var updater;
+
     log.trace();
     updater = new store.Updater('shorteners');
+    updater.on('update', function(version) {
+      return log.info("Updating URL shortener settings for " + version);
+    });
     updater.update('0.1.0.0', function() {
-      log.info('Updating URL shortener settings for 0.1.0.0');
       store.rename('bitlyEnabled', 'bitly', true);
       store.rename('bitlyXApiKey', 'bitlyApiKey', '');
       store.rename('bitlyXLogin', 'bitlyUsername', '');
@@ -1858,22 +1909,22 @@
     });
     updater.update('1.0.0', function() {
       var bitly, googl, yourls, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
-      log.info('Updating URL shortener settings for 1.0.0');
+
       bitly = store.get('bitly');
       store.set('bitly', {
         apiKey: (_ref = store.get('bitlyApiKey')) != null ? _ref : '',
-        enabled: typeof bitly === 'boolean' ? bitly : true,
+        enabled: _.isBoolean(bitly) ? bitly : true,
         username: (_ref1 = store.get('bitlyUsername')) != null ? _ref1 : ''
       });
       store.remove('bitlyApiKey', 'bitlyUsername');
       googl = store.get('googl');
       store.set('googl', {
-        enabled: typeof googl === 'boolean' ? googl : false
+        enabled: _.isBoolean(googl) ? googl : false
       });
       store.remove('googlOAuth');
       yourls = store.get('yourls');
       store.set('yourls', {
-        enabled: typeof yourls === 'boolean' ? yourls : false,
+        enabled: _.isBoolean(yourls) ? yourls : false,
         password: (_ref2 = store.get('yourlsPassword')) != null ? _ref2 : '',
         signature: (_ref3 = store.get('yourlsSignature')) != null ? _ref3 : '',
         url: (_ref4 = store.get('yourlsUrl')) != null ? _ref4 : '',
@@ -1894,82 +1945,79 @@
   };
 
   callUrlShortener = function(map, callback) {
-    var endpoint, placeholder, runner, service, title, url, _fn;
+    var endpoint, oauth, service, tasks, title;
+
     log.trace();
     service = getActiveUrlShortener();
     endpoint = service.url();
+    oauth = false;
     title = service.title;
     if (!endpoint) {
-      return callback({
-        message: i18n.get('shortener_config_error', title),
-        service: service,
-        success: false
-      });
+      return callback(new Error(i18n.get('shortener_config_error', title)));
     }
-    runner = new utils.Runner();
-    _fn = function(placeholder, url) {
-      var oauth, _ref;
+    tasks = [];
+    _.each(map, function(url, placeholder) {
+      var _ref;
+
       oauth = !!((_ref = service.oauth) != null ? _ref.hasAccessToken() : void 0);
-      if (oauth) {
-        runner.push(service.oauth, 'authorize', function() {
-          return runner.next();
-        });
-      }
-      return runner.push(null, function() {
-        var header, params, value, xhr, _ref1, _ref2;
-        params = service.getParameters(url);
-        if (params != null) {
-          endpoint += "?" + ($.param(params));
-        }
-        xhr = new XMLHttpRequest();
-        xhr.open(service.method, endpoint, true);
-        _ref2 = (_ref1 = service.getHeaders()) != null ? _ref1 : {};
-        for (header in _ref2) {
-          if (!__hasProp.call(_ref2, header)) continue;
-          value = _ref2[header];
-          xhr.setRequestHeader(header, value);
-        }
-        xhr.onreadystatechange = function() {
-          if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-              map[placeholder] = service.output(xhr.responseText);
-              return runner.next({
-                oauth: oauth,
-                success: true
+      return tasks.push(function(done) {
+        return async.series([
+          function(done) {
+            if (oauth) {
+              return service.oauth.authorize(function() {
+                return done();
               });
             } else {
-              return runner.finish({
-                message: i18n.get('shortener_detailed_error', [title, url]),
-                success: false
-              });
+              return done();
             }
+          }, function(done) {
+            var header, params, value, xhr, _ref1, _ref2;
+
+            params = service.getParameters(url);
+            if (params != null) {
+              endpoint += "?" + ($.param(params));
+            }
+            xhr = new XMLHttpRequest();
+            xhr.open(service.method, endpoint, true);
+            _ref2 = (_ref1 = service.getHeaders()) != null ? _ref1 : {};
+            for (header in _ref2) {
+              if (!__hasProp.call(_ref2, header)) continue;
+              value = _ref2[header];
+              xhr.setRequestHeader(header, value);
+            }
+            xhr.onreadystatechange = function() {
+              if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                  map[placeholder] = service.output(xhr.responseText);
+                  return done();
+                } else {
+                  return done(new Error(i18n.get('shortener_detailed_error', [title, url])));
+                }
+              }
+            };
+            return xhr.send(service.input(url));
           }
-        };
-        return xhr.send(service.input(url));
+        ], done);
       });
-    };
-    for (placeholder in map) {
-      if (!__hasProp.call(map, placeholder)) continue;
-      url = map[placeholder];
-      _fn(placeholder, url);
-    }
-    return runner.run(function(result) {
-      if (result == null) {
-        result = {};
+    });
+    return async.series(tasks, function(err) {
+      if (err) {
+        err.message || (err.message = i18n.get('shortener_error', service.title));
+        return callback(err);
+      } else {
+        return callback(null, {
+          oauth: oauth,
+          service: service
+        });
       }
-      return callback({
-        message: result.message,
-        oauth: result.oauth,
-        service: service,
-        success: result.success
-      });
     });
   };
 
   getActiveUrlShortener = function() {
     var shortener;
+
     log.trace();
-    shortener = ext.queryUrlShortener(function(shortener) {
+    shortener = _.find(SHORTENERS, function(shortener) {
       return shortener.isEnabled();
     });
     if (shortener == null) {
@@ -1983,11 +2031,11 @@
   };
 
   ext = window.ext = new (Extension = (function(_super) {
-
     __extends(Extension, _super);
 
     function Extension() {
-      return Extension.__super__.constructor.apply(this, arguments);
+      _ref = Extension.__super__.constructor.apply(this, arguments);
+      return _ref;
     }
 
     Extension.prototype.SHORTCUT_MODIFIERS = 'Ctrl+Alt+';
@@ -2006,6 +2054,8 @@
       titleStyle: ''
     };
 
+    Extension.prototype.shorteners = SHORTENERS;
+
     Extension.prototype.templates = [];
 
     Extension.prototype.templatesHtml = '';
@@ -2014,8 +2064,9 @@
 
     Extension.prototype.copy = function(str, hidden) {
       var sandbox;
+
       log.trace();
-      sandbox = $('#sandbox').val(str).select();
+      sandbox = $('#sandbox').val(str).trigger('select');
       document.execCommand('copy');
       log.debug('Copied the following string...', str);
       sandbox.val('');
@@ -2026,6 +2077,7 @@
 
     Extension.prototype.getKeyForName = function(name, generate) {
       var key;
+
       if (generate == null) {
         generate = true;
       }
@@ -2055,28 +2107,23 @@
     };
 
     Extension.prototype.init = function() {
-      var runner,
-        _this = this;
+      var _this = this;
+
       log.trace();
       log.info('Initializing extension controller');
       if (store.get('analytics')) {
         analytics.add();
       }
-      runner = new utils.Runner();
-      runner.push(jQuery, 'getJSON', utils.url('manifest.json'), function(data) {
-        _this.version = data.version;
-        return runner.next();
-      });
-      runner.push(jQuery, 'getJSON', utils.url('configuration.json'), function(data) {
+      return $.getJSON(utils.url('configuration.json'), function(data) {
         var shortener, _i, _len;
+
         _this.config = data;
+        buildConfig();
+        _this.version = chrome.runtime.getManifest().version;
         for (_i = 0, _len = SHORTENERS.length; _i < _len; _i++) {
           shortener = SHORTENERS[_i];
           shortener.oauth = typeof shortener.oauth === "function" ? shortener.oauth() : void 0;
         }
-        return runner.next();
-      });
-      return runner.run(function() {
         store.init({
           anchor: {},
           menu: {},
@@ -2088,35 +2135,39 @@
         });
         init_update();
         store.modify('anchor', function(anchor) {
-          var _ref, _ref1;
-          if ((_ref = anchor.target) == null) {
+          var _ref1, _ref2;
+
+          if ((_ref1 = anchor.target) == null) {
             anchor.target = false;
           }
-          return (_ref1 = anchor.title) != null ? _ref1 : anchor.title = false;
+          return (_ref2 = anchor.title) != null ? _ref2 : anchor.title = false;
         });
         store.modify('menu', function(menu) {
-          var _ref, _ref1, _ref2;
-          if ((_ref = menu.enabled) == null) {
+          var _ref1, _ref2, _ref3;
+
+          if ((_ref1 = menu.enabled) == null) {
             menu.enabled = true;
           }
-          if ((_ref1 = menu.options) == null) {
+          if ((_ref2 = menu.options) == null) {
             menu.options = true;
           }
-          return (_ref2 = menu.paste) != null ? _ref2 : menu.paste = false;
+          return (_ref3 = menu.paste) != null ? _ref3 : menu.paste = false;
         });
         store.modify('notifications', function(notifications) {
-          var _ref, _ref1;
-          if ((_ref = notifications.duration) == null) {
+          var _ref1, _ref2;
+
+          if ((_ref1 = notifications.duration) == null) {
             notifications.duration = 3000;
           }
-          return (_ref1 = notifications.enabled) != null ? _ref1 : notifications.enabled = true;
+          return (_ref2 = notifications.enabled) != null ? _ref2 : notifications.enabled = true;
         });
         store.modify('shortcuts', function(shortcuts) {
-          var _ref, _ref1;
-          if ((_ref = shortcuts.enabled) == null) {
+          var _ref1, _ref2;
+
+          if ((_ref1 = shortcuts.enabled) == null) {
             shortcuts.enabled = true;
           }
-          return (_ref1 = shortcuts.paste) != null ? _ref1 : shortcuts.paste = false;
+          return (_ref2 = shortcuts.paste) != null ? _ref2 : shortcuts.paste = false;
         });
         initTemplates();
         initToolbar();
@@ -2130,19 +2181,8 @@
             type: 'toolbar'
           });
         });
-        utils.onMessage('extension', false, onMessage);
-        utils.onMessage('extension', true, function(msg, sender, cb) {
-          var block;
-          block = isBlacklisted(sender.id);
-          analytics.track('External Requests', 'Started', sender.id, Number(!block));
-          if (block) {
-            log.debug("Blocking external request from " + sender.id);
-            return typeof cb === "function" ? cb() : void 0;
-          } else {
-            log.debug("Accepting external request from " + sender.id);
-            return onMessage(msg, sender, cb);
-          }
-        });
+        chrome.runtime.onMessage.addListener(onMessage);
+        chrome.runtime.onMessageExternal.addListener(onMessageExternal);
         browser.version = getBrowserVersion();
         operatingSystem = getOperatingSystem();
         if (isNewInstall) {
@@ -2154,44 +2194,30 @@
 
     Extension.prototype.isThisPlatform = function(os) {
       log.trace();
-      return navigator.userAgent.toLowerCase().indexOf(os) !== -1;
+      return __indexOf.call(navigator.userAgent.toLowerCase(), os) >= 0;
+    };
+
+    Extension.prototype.modifiers = function() {
+      log.trace();
+      if (this.isThisPlatform('mac')) {
+        return this.SHORTCUT_MAC_MODIFIERS;
+      } else {
+        return this.SHORTCUT_MODIFIERS;
+      }
     };
 
     Extension.prototype.paste = function() {
       var result, sandbox;
+
       log.trace();
       result = '';
-      sandbox = $('#sandbox').val('').select();
+      sandbox = $('#sandbox').val('').trigger('select');
       if (document.execCommand('paste')) {
         result = sandbox.val();
       }
       log.debug('Pasted the following string...', result);
       sandbox.val('');
       return result;
-    };
-
-    Extension.prototype.queryTemplate = function(filter, singular) {
-      if (singular == null) {
-        singular = true;
-      }
-      log.trace();
-      return utils.query(this.templates, singular, filter);
-    };
-
-    Extension.prototype.queryTemplates = function(filter) {
-      return this.queryTemplate(filter, false);
-    };
-
-    Extension.prototype.queryUrlShortener = function(filter, singular) {
-      if (singular == null) {
-        singular = true;
-      }
-      log.trace();
-      return utils.query(SHORTENERS, singular, filter);
-    };
-
-    Extension.prototype.queryUrlShorteners = function(filter) {
-      return this.queryUrlShortener(filter, false);
     };
 
     Extension.prototype.reset = function() {
@@ -2209,9 +2235,11 @@
 
     Extension.prototype.updateContextMenu = function() {
       var _this = this;
+
       log.trace();
       return chrome.contextMenus.removeAll(function() {
-        var menu, menuId, notEmpty, onMenuClick, parentId, template, _i, _len, _ref;
+        var menu, menuId, notEmpty, onMenuClick, parentId, template, _i, _len, _ref1;
+
         onMenuClick = function(info, tab) {
           return onMessage({
             data: info,
@@ -2219,60 +2247,58 @@
           });
         };
         menu = store.get('menu');
-        if (menu.enabled) {
-          parentId = chrome.contextMenus.create({
+        if (!menu.enabled) {
+          return;
+        }
+        parentId = chrome.contextMenus.create({
+          contexts: ['all'],
+          title: i18n.get('name')
+        });
+        _ref1 = _this.templates;
+        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+          template = _ref1[_i];
+          if (!template.enabled) {
+            continue;
+          }
+          notEmpty = true;
+          menuId = chrome.contextMenus.create({
             contexts: ['all'],
-            title: i18n.get('name')
+            onclick: onMenuClick,
+            parentId: parentId,
+            title: template.title
           });
-          _ref = _this.templates;
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            template = _ref[_i];
-            if (!template.enabled) {
-              continue;
-            }
-            notEmpty = true;
-            menuId = chrome.contextMenus.create({
-              contexts: ['all'],
-              onclick: onMenuClick,
-              parentId: parentId,
-              title: template.title
-            });
-            template.menuId = menuId;
-          }
-          if (!notEmpty) {
-            chrome.contextMenus.create({
-              contexts: ['all'],
-              parentId: parentId,
-              title: i18n.get('empty')
-            });
-          }
-          if (menu.options) {
-            chrome.contextMenus.create({
-              contexts: ['all'],
-              parentId: parentId,
-              type: 'separator'
-            });
-            return chrome.contextMenus.create({
-              contexts: ['all'],
-              onclick: function(info, tab) {
-                return onMessage({
-                  type: 'options'
-                });
-              },
-              parentId: parentId,
-              title: i18n.get('options')
-            });
-          }
+          template.menuId = menuId;
+        }
+        if (!notEmpty) {
+          chrome.contextMenus.create({
+            contexts: ['all'],
+            parentId: parentId,
+            title: i18n.get('empty')
+          });
+        }
+        if (menu.options) {
+          chrome.contextMenus.create({
+            contexts: ['all'],
+            parentId: parentId,
+            type: 'separator'
+          });
+          return chrome.contextMenus.create({
+            contexts: ['all'],
+            onclick: function(info, tab) {
+              return onMessage({
+                type: 'options'
+              });
+            },
+            parentId: parentId,
+            title: i18n.get('options')
+          });
         }
       });
     };
 
     Extension.prototype.updateTemplates = function() {
       log.trace();
-      this.templates = store.get('templates');
-      this.templates.sort(function(a, b) {
-        return a.index - b.index;
-      });
+      this.templates = _.sortBy(store.get('templates'), 'index');
       buildPopup();
       this.updateContextMenu();
       updateStatistics();
@@ -2281,6 +2307,7 @@
 
     Extension.prototype.updateToolbar = function() {
       var key, template;
+
       log.trace();
       key = store.get('toolbar.key');
       if (key) {
@@ -2303,6 +2330,54 @@
     return Extension;
 
   })(utils.Class));
+
+  ext.Icon = Icon = (function(_super) {
+    __extends(Icon, _super);
+
+    function Icon(name) {
+      this.name = name;
+      this.message = i18n.get("icon_" + ((name != null ? name.replace(/-/g, '_') : void 0) || 'none'));
+      this.style = "icon-" + (name || '');
+    }
+
+    return Icon;
+
+  })(utils.Class);
+
+  Icon.exists = function(name) {
+    return Icon.get(name) != null;
+  };
+
+  Icon.get = function(name, safe) {
+    var icon;
+
+    icon = _.findWhere(ext.config.icons.current, {
+      name: name
+    });
+    if ((icon == null) && safe) {
+      return new Icon();
+    } else {
+      return icon;
+    }
+  };
+
+  Icon.fromLegacy = function(name) {
+    var legacy;
+
+    legacy = (function() {
+      switch (typeof name) {
+        case 'number':
+          return ext.config.icons.legacy[name];
+        case 'string':
+          return _.findWhere(ext.config.icons.legacy, {
+            name: name
+          });
+      }
+    })();
+    if (legacy) {
+      return Icon.get(legacy.icon);
+    }
+  };
 
   utils.ready(function() {
     return ext.init();

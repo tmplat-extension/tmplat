@@ -1,3 +1,25 @@
+2013.04.29, Version 1.2.1
+
+* [#109](https://github.com/neocotic/template/issues/109): Upgrade feedback widget from [UserVoice][] to newer version to avoid CSP workaround
+* [#119](https://github.com/neocotic/template/issues/119): Update [mustache.js][] to v0.7.2
+* [#133](https://github.com/neocotic/template/issues/133): Update [jQuery][] to v1.9.1
+* [#133](https://github.com/neocotic/template/issues/133): Update [Bootstrap][] to v2.3.1
+* [#136](https://github.com/neocotic/template/issues/136): Add [Underscore.js][] v1.4.4 to allow for cleaner code and remove duplication
+* [#137](https://github.com/neocotic/template/issues/137): Add [Async][] v0.2.7 to greatly simplify asynchronous code
+* [#141](https://github.com/neocotic/template/issues/141): Change CSP to prevent errors caused by the [UserVoice][] feedback widget
+* [#143](https://github.com/neocotic/template/issues/143): Dialog windows to provide initial focus to first field when opened
+* [#144](https://github.com/neocotic/template/issues/144): Make trace logs cleaner
+* [#145](https://github.com/neocotic/template/issues/145): Fix bug where whitespace in templates was being ignored
+* [#146](https://github.com/neocotic/template/issues/146): Support bulk enable & disable operations
+* [#153](https://github.com/neocotic/template/issues/153): Fix "Save As..." functionality in export process
+* [#155](https://github.com/neocotic/template/issues/155): Add new *"escape"* operation to escape strings for insertion into HTML
+* [#155](https://github.com/neocotic/template/issues/155): Add new *"unescape"* operation to perform the opposite action of *"escape"*
+* [#162](https://github.com/neocotic/template/issues/162): Add new *"locale"* standard variable to enable access to the detected [ISO 639][] language code
+* [#166](https://github.com/neocotic/template/issues/166): Simplify how template icons are manage internally
+* Massive re-write of a lot of code to make it simpler and more optimized
+* Huge number of bug fixes and UI tweaks
+* Some nice new undocumented features
+
 2013.01.15, Version 1.2.0
 
 * [#110](https://github.com/neocotic/template/issues/110): Replace calls to deprecated chrome API methods
@@ -304,6 +326,7 @@
 * Add French language support
 * Change images to be more consistent
 
+[async]: https://github.com/caolan/async
 [bit.ly]: http://bit.ly
 [bootstrap]: http://twitter.github.com/bootstrap
 [character set]: http://www.iana.org/assignments/character-sets
@@ -320,6 +343,7 @@
 [ie tab classic]: https://chrome.google.com/webstore/detail/miedgcmlgpmdagojnnbemlkgidepfjfi
 [ie tab multi (enhance)]: https://chrome.google.com/webstore/detail/fnfnbeppfinmnjnjhedifcfllpcfgeea
 [inline installation]: http://code.google.com/chrome/webstore/docs/inline_installation.html
+[iso 639]: http://en.wikipedia.org/wiki/ISO_639_macrolanguage
 [jquery]: http://jquery.com
 [jquery url parser]: https://github.com/allmarkedup/jQuery-URL-Parser
 [manifest version]: http://code.google.com/chrome/extensions/manifestVersion.html
@@ -331,4 +355,6 @@
 [oauth 2.0]: http://oauth.net/2
 [tmpl.at]: http://tmpl.at
 [translation]: http://i18n.tmpl.at
+[underscore.js]: http://underscorejs.org
+[uservoice]: https://www.uservoice.com
 [yourls]: http://yourls.org

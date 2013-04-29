@@ -735,6 +735,16 @@
     "message": "Do you want to continue anyway?",
     "description": "2nd paragraph for the confirmation dialog displayed when deleting a template."
   },
+  "opt_disable_button": {
+    "message": "$ICON$ Disable",
+    "description": "Text of button used to disable templates.",
+    "placeholders": {
+      "icon": {
+        "content": "<i class=\"icon-remove\"></i>",
+        "example": "<i class=\"icon-remove\"></i>"
+      }
+    }
+  },
   "opt_donate_button": {
     "message": "$ICON$ Donate",
     "description": "Text for the Donate button.",
@@ -748,6 +758,16 @@
   "opt_donate_button_title": {
     "message": "Share the love!",
     "description": "Hover text for the Donate button."
+  },
+  "opt_enable_button": {
+    "message": "$ICON$ Enable",
+    "description": "Text of button used to enable templates.",
+    "placeholders": {
+      "icon": {
+        "content": "<i class=\"icon-ok\"></i>",
+        "example": "<i class=\"icon-ok\"></i>"
+      }
+    }
   },
   "opt_errors_header": {
     "message": "The following problem(s) need to be corrected;",
@@ -782,6 +802,10 @@
   "opt_export_wizard_text": {
     "message": "Copy or download the exported template data.",
     "description": "Text for the Export dialog."
+  },
+  "opt_feedback_button": {
+    "message": "feedback",
+    "description": "Text of Feedback button on the Options page."
   },
   "opt_general_header": {
     "message": "General",
@@ -1100,7 +1124,7 @@
     }
   },
   "opt_guide_introduction_simple_tag_text_2": {
-    "message": "Values are not escaped by default and, in order to do so, you must use double braces like this $SYNTAX$. This will escape $CHARACTERS$ characters so that the final output can be safely copied in to $O_ABBR_1$Extensible Markup Language$O_ABBR_2$XML$C_ABBR$ and $O_ABBR_1$Hyper Text Markup Language$O_ABBR_2$HTML$C_ABBR$.",
+    "message": "Values are not escaped by default and, in order to do so, you must either use double braces like $SYNTAX_DOUBLE$ or a leading ampersand like $SYNTAX_AMP$. This will escape $CHARACTERS$ characters so that the final output can be safely copied in to $O_ABBR_1$Extensible Markup Language$O_ABBR_2$XML$C_ABBR$ and $O_ABBR_1$Hyper Text Markup Language$O_ABBR_2$HTML$C_ABBR$.",
     "description": "2nd paragraph for the Simple Tag area on the Guide tab of the Options page under the Introduction section.",
     "placeholders": {
       "c_abbr": {
@@ -1119,7 +1143,11 @@
         "content": "\">",
         "example": "\">"
       },
-      "syntax": {
+      "syntax_amp": {
+        "content": "<code>{&amp;name}</code>",
+        "example": "{&name}"
+      },
+      "syntax_double": {
         "content": "<code>{{name}}</code>",
         "example": "{{name}}"
       }
@@ -1677,6 +1705,24 @@
     "message": "Encode the text provided so that it can be safely used in a query string",
     "description": "Description of the encode variable on the Guide tab of the Options page under the Operations section."
   },
+  "opt_guide_operations_escape_text": {
+    "message": "Escape the text provided so that it can be safely inserted into $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$",
+    "description": "Description of the escape variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>",
+        "example": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\"",
+        "example": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">",
+        "example": "\">"
+      }
+    }
+  },
   "opt_guide_operations_examples_code_1": {
     "message": "$URL$",
     "description": "Text for the 1st code block in the Examples area on the Guide tab of the Options page under the Operations section.",
@@ -2087,6 +2133,16 @@
     "message": "Remove all trailing whitespace from the text provided",
     "description": "Description of the trimRight variable on the Guide tab of the Options page under the Operations section."
   },
+  "opt_guide_operations_unescape_text": {
+    "message": "The opposite of $ESCAPE_LABEL$; Replace escaped characters in text provided with their unescaped counterparts",
+    "description": "Description of the unescape variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "escape_label": {
+        "content": "<span class=\"label\">escape</span>",
+        "example": "escape"
+      }
+    }
+  },
   "opt_guide_operations_upper_case_text": {
     "message": "Transform the text provided into upper case",
     "description": "Description of the upperCase variable on the Guide tab of the Options page under the Operations section."
@@ -2170,8 +2226,8 @@
     "description": "Text for the 2nd code block in the Examples area on the Guide tab of the Options page under the Options section.",
     "placeholders": {
       "syntax_1": {
-        "content": "&lt;a href=&quot;{{url}}&quot;{#anchorTitle} title=&quot;{{title}}&quot;{/anchorTitle}&gt;",
-        "example": "<a href=\"{{url}}\"{#anchorTitle} title=\"{{title}}\"{/anchorTitle}>"
+        "content": "&lt;a href=&quot;{url}&quot;{#anchorTitle} title=&quot;{{title}}&quot;{/anchorTitle}&gt;",
+        "example": "<a href=\"{url}\"{#anchorTitle} title=\"{{title}}\"{/anchorTitle}>"
       },
       "syntax_2": {
         "content": "&lt;/a&gt;",
@@ -2782,6 +2838,20 @@
   "opt_guide_standard_link_text_text": {
     "message": "The contextual (right-clicked) link text",
     "description": "Description of the linkText variable on the Guide tab of the Options page under the Standard section."
+  },
+  "opt_guide_standard_locale_text": {
+    "message": "The $O_LINK_ISO_639$ISO 639$C_LINK$ code for the detected page language",
+    "description": "Description of the locale variable on the Guide tab of the Options page under the Standard section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_iso_639": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/ISO_639_macrolanguage\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/ISO_639_macrolanguage\">"
+      }
+    }
   },
   "opt_guide_standard_offline_text": {
     "message": "Whether or not you are currently offline",
@@ -3762,6 +3832,14 @@
   "result_bad_error_description": {
     "message": "An error occurred while collecting information",
     "description": "Notification for when something went wrong while collecting contextual data before processing a template."
+  },
+  "result_bad_template_description": {
+    "message": "An error occurred while deriving the activated template",
+    "description": "Notification for when no active template can be derived from the current context."
+  },
+  "result_bad_type_description": {
+    "message": "An error occurred while requesting information",
+    "description": "Notification for when an invalid type was used by the requesting message."
   },
   "result_bad_uri_description": {
     "message": "The URL is not properly encoded",

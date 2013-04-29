@@ -4,20 +4,11 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var sendMessage,
-    __slice = [].slice;
-
-  sendMessage = function() {
-    var args, base;
-    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    base = chrome.extension;
-    return (base.sendMessage || base.sendRequest).apply(base, args);
-  };
-
-  sendMessage({
+  chrome.runtime.sendMessage({
     type: 'info'
   }, function(data) {
     var cls, link, newClasses, oldClasses, _i, _j, _len, _len1, _ref, _results;
+
     newClasses = ['disabled'];
     oldClasses = ['chrome_install_button'];
     _ref = document.querySelectorAll("a." + oldClasses[0] + "[href$=" + data.id + "]");
@@ -31,6 +22,7 @@
       }
       _results.push((function() {
         var _k, _len2, _results1;
+
         _results1 = [];
         for (_k = 0, _len2 = oldClasses.length; _k < _len2; _k++) {
           cls = oldClasses[_k];
