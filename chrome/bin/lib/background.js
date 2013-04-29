@@ -396,7 +396,7 @@
     log.trace();
     for (_i = 0, _len = OPERATING_SYSTEMS.length; _i < _len; _i++) {
       os = OPERATING_SYSTEMS[_i];
-      if (_ref = os.substring, __indexOf.call(str, _ref) >= 0) {
+      if (_ref = os.substring, __indexOf.call(navigator.platform, _ref) >= 0) {
         return os.title;
       }
     }

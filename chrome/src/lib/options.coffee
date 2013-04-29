@@ -281,7 +281,7 @@ loadTemplate = (template, modifiers) ->
 
   # Add a column to display the key details to allow the user to easily identify the template.
   row.append $('<td/>').append $ '<span/>',
-    html:  "<i class="#{icons.getClass template.image}"></i> #{template.title}"
+    html:  """<i class="#{icons.getClass template.image}"></i> #{template.title}"""
     title: i18n.get 'opt_template_modify_title', template.title
 
   # Add a column to indicate the keyboard shortcut, if specified.
@@ -1650,10 +1650,8 @@ resetWizard = ->
 
   # Update the fields and controls to reflect selected option.
   imgOpt = $ "#template_image option[value='#{activeTemplate.image}']"
-  if imgOpt.length is 0
-    $('#template_image option:first-child').attr 'selected', 'selected'
-  else
-    imgOpt.prop 'selected', yes
+  if imgOpt.length then imgOpt.prop 'selected', yes
+  else $('#template_image option:first-child').prop 'selected', yes
 
   $('#template_image').trigger 'change'
 

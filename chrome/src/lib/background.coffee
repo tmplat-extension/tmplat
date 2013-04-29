@@ -319,7 +319,7 @@ getHotkeys = ->
 getOperatingSystem = ->
   log.trace()
 
-  return os.title for os in OPERATING_SYSTEMS when os.substring in str
+  return os.title for os in OPERATING_SYSTEMS when os.substring in navigator.platform
   navigator.platform
 
 # Attempt to retrieve the template with the specified `key`.

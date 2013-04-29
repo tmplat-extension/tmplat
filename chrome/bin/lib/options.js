@@ -274,7 +274,7 @@
       value: template.key
     })));
     row.append($('<td/>').append($('<span/>', {
-      html: "<i class=",
+      html: "<i class=\"" + (icons.getClass(template.image)) + "\"></i> " + template.title,
       title: i18n.get('opt_template_modify_title', template.title)
     })));
     row.append($('<td/>', {
@@ -1638,10 +1638,10 @@
     $('#template_shortcut').val(activeTemplate.shortcut || '');
     $('#template_title').val(activeTemplate.title || '');
     imgOpt = $("#template_image option[value='" + activeTemplate.image + "']");
-    if (imgOpt.length === 0) {
-      $('#template_image option:first-child').attr('selected', 'selected');
-    } else {
+    if (imgOpt.length) {
       imgOpt.prop('selected', true);
+    } else {
+      $('#template_image option:first-child').prop('selected', true);
     }
     $('#template_image').trigger('change');
     $('#template_content, #template_title').prop('disabled', !!activeTemplate.readOnly);
