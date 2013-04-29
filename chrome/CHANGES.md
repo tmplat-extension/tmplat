@@ -15,7 +15,7 @@
 * [#155](https://github.com/neocotic/template/issues/155): Add new *"escape"* operation to escape strings for insertion into HTML
 * [#155](https://github.com/neocotic/template/issues/155): Add new *"unescape"* operation to perform the opposite action of *"escape"*
 * [#162](https://github.com/neocotic/template/issues/162): Add new *"locale"* standard variable to enable access to the detected [ISO 639][] language code
-* [#166](https://github.com/neocotic/template/issues/166): Simplify how template icons are manage internally
+* [#166](https://github.com/neocotic/template/issues/166): Simplify how template icons are managed internally
 * Massive re-write of a lot of code to make it simpler and more optimized
 * Huge number of bug fixes and UI tweaks
 * Some nice new undocumented features
