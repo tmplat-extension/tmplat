@@ -21,8 +21,9 @@ R_WHITESPACE     = /\s+/
 
 # Copy of template being actively modified.
 activeTemplate = null
-# Easily accessible reference to the extension controller.
+# Easily accessible reference to the extension controller as well as it's `Icon` class.
 {ext}          = chrome.extension.getBackgroundPage()
+{Icon}         = ext
 # Indicate whether or not the user feedback feature has been added to the page.
 feedbackAdded  = no
 # Templates matching the current search query.
@@ -106,22 +107,24 @@ loadImages = ->
 
   # Add an option for when no icon is to be associated with the template.
   images.append $ '<option/>',
-    text:  icons.getMessage()
+    text:  new Icon().message
     value: ''
 
   images.append $ '<option/>',
     disabled: 'disabled'
     text:     '---------------'
 
-  # Add options for each of the available template icons.
-  for image in icons.ICONS
+  # Add options for each of the available template images.
+  for icon in ext.config.icons.current
     images.append $ '<option/>',
-      text:  image.getMessage()
-      value: image.name
+      text:  icon.message
+      value: icon.name
 
   # Update the icon preview initially and whenever the user changes the selection.
   images.on('change', ->
-    $('#template_image_preview').attr 'class', icons.getClass $(this).find('option:selected').val()
+    selectedIcon = Icon.get $(this).find('option:selected').val(), yes
+
+    $('#template_image_preview').attr 'class', selectedIcon.style
   ).trigger 'change'
 
 # Update the logging section of the options page with the current settings.
@@ -281,7 +284,7 @@ loadTemplate = (template, modifiers) ->
 
   # Add a column to display the key details to allow the user to easily identify the template.
   row.append $('<td/>').append $ '<span/>',
-    html:  """<i class="#{icons.getClass template.image}"></i> #{template.title}"""
+    html:  """<i class="#{Icon.get(template.image, yes).style}"></i> #{template.title}"""
     title: i18n.get 'opt_template_modify_title', template.title
 
   # Add a column to indicate the keyboard shortcut, if specified.
@@ -1007,7 +1010,7 @@ updateImportedTemplate = (template, existing) ->
     existing.title   = template.title if 0 < template.title.length <= 32
 
   # Only allow existing images or *None*.
-  if template.image is '' or icons.exists template.image
+  if template.image is '' or Icon.exists template.image
     existing.image = template.image
 
   # Only allow valid keyboard shortcuts or *empty*.
@@ -1211,7 +1214,7 @@ addImportedTemplate = (template) ->
       usage:    template.usage
 
     # Only allow existing images.
-    newTemplate.image    = template.image    if icons.exists template.image
+    newTemplate.image    = template.image    if Icon.exists template.image
     # Only allow valid keyboard shortcuts.
     newTemplate.shortcut = template.shortcut if isShortcutValid template.shortcut
     # Only allow valid titles.
@@ -1570,11 +1573,11 @@ readImport = (importData) ->
       # Ensure templates imported from previous versions are valid for v1.0.0+.
       template.key   = ext.getKeyForName template.name
       template.usage = 0
-      template.image = if template.image > 0 then icons.fromLegacy(template.image - 1)?.name or ''
+      template.image = if template.image > 0 then Icon.fromLegacy(template.image - 1)?.name or ''
       else ''
     else if importData.version < '1.1.0'
       # Ensure templates imported from previous versions are valid for v1.1.0+.
-      template.image = icons.fromLegacy(template.image)?.name or ''
+      template.image = Icon.fromLegacy(template.image)?.name or ''
 
     if validateImportedTemplate template
       if template.key not in storedKeys and template.key not in keys

@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var ErrorMessage, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, closeWizard, createExport, createImport, deleteTemplates, deriveTemplate, enableTemplates, ext, feedback, feedbackAdded, getSelectedTemplates, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, searchResults, searchTemplates, setContext, updateImportedTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate, _ref,
+  var ErrorMessage, Icon, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, closeWizard, createExport, createImport, deleteTemplates, deriveTemplate, enableTemplates, ext, feedback, feedbackAdded, getSelectedTemplates, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, searchResults, searchTemplates, setContext, updateImportedTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -20,6 +20,8 @@
   activeTemplate = null;
 
   ext = chrome.extension.getBackgroundPage().ext;
+
+  Icon = ext.Icon;
 
   feedbackAdded = false;
 
@@ -97,28 +99,31 @@
   };
 
   loadImages = function() {
-    var image, images, _i, _len, _ref;
+    var icon, images, _i, _len, _ref;
 
     log.trace();
     images = $('#template_image');
     images.append($('<option/>', {
-      text: icons.getMessage(),
+      text: new Icon().message,
       value: ''
     }));
     images.append($('<option/>', {
       disabled: 'disabled',
       text: '---------------'
     }));
-    _ref = icons.ICONS;
+    _ref = ext.config.icons.current;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      image = _ref[_i];
+      icon = _ref[_i];
       images.append($('<option/>', {
-        text: image.getMessage(),
-        value: image.name
+        text: icon.message,
+        value: icon.name
       }));
     }
     return images.on('change', function() {
-      return $('#template_image_preview').attr('class', icons.getClass($(this).find('option:selected').val()));
+      var selectedIcon;
+
+      selectedIcon = Icon.get($(this).find('option:selected').val(), true);
+      return $('#template_image_preview').attr('class', selectedIcon.style);
     }).trigger('change');
   };
 
@@ -274,7 +279,7 @@
       value: template.key
     })));
     row.append($('<td/>').append($('<span/>', {
-      html: "<i class=\"" + (icons.getClass(template.image)) + "\"></i> " + template.title,
+      html: "<i class=\"" + (Icon.get(template.image, true).style) + "\"></i> " + template.title,
       title: i18n.get('opt_template_modify_title', template.title)
     })));
     row.append($('<td/>', {
@@ -981,7 +986,7 @@
         existing.title = template.title;
       }
     }
-    if (template.image === '' || icons.exists(template.image)) {
+    if (template.image === '' || Icon.exists(template.image)) {
       existing.image = template.image;
     }
     if (template.shortcut === '' || isShortcutValid(template.shortcut)) {
@@ -1196,7 +1201,7 @@
         title: i18n.get('untitled'),
         usage: template.usage
       };
-      if (icons.exists(template.image)) {
+      if (Icon.exists(template.image)) {
         newTemplate.image = template.image;
       }
       if (isShortcutValid(template.shortcut)) {
@@ -1561,9 +1566,9 @@
       if (importData.version < '1.0.0') {
         template.key = ext.getKeyForName(template.name);
         template.usage = 0;
-        template.image = template.image > 0 ? ((_ref1 = icons.fromLegacy(template.image - 1)) != null ? _ref1.name : void 0) || '' : '';
+        template.image = template.image > 0 ? ((_ref1 = Icon.fromLegacy(template.image - 1)) != null ? _ref1.name : void 0) || '' : '';
       } else if (importData.version < '1.1.0') {
-        template.image = ((_ref2 = icons.fromLegacy(template.image)) != null ? _ref2.name : void 0) || '';
+        template.image = ((_ref2 = Icon.fromLegacy(template.image)) != null ? _ref2.name : void 0) || '';
       }
       if (validateImportedTemplate(template)) {
         if ((_ref3 = template.key, __indexOf.call(storedKeys, _ref3) < 0) && (_ref4 = template.key, __indexOf.call(keys, _ref4) < 0)) {
