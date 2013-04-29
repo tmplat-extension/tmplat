@@ -42,6 +42,15 @@
       };
     };
 
+    Utils.prototype.capitalize = function(str) {
+      if (!str) {
+        return str;
+      }
+      return str.replace(/\w+/g, function(word) {
+        return word[0].toUpperCase() + word.slice(1).toLowerCase();
+      });
+    };
+
     Utils.prototype.keyGen = function(separator, length, prefix, upperCase) {
       var i, key, max, min, part, parts, _i, _len;
 
@@ -75,28 +84,6 @@
         return key.toUpperCase();
       } else {
         return key.toLowerCase();
-      }
-    };
-
-    Utils.prototype.query = function(entities, singular, filter) {
-      var entity, _i, _j, _len, _len1, _results;
-
-      if (singular) {
-        for (_i = 0, _len = entities.length; _i < _len; _i++) {
-          entity = entities[_i];
-          if (filter(entity)) {
-            return entity;
-          }
-        }
-      } else {
-        _results = [];
-        for (_j = 0, _len1 = entities.length; _j < _len1; _j++) {
-          entity = entities[_j];
-          if (filter(entity)) {
-            _results.push(entity);
-          }
-        }
-        return _results;
       }
     };
 
@@ -140,7 +127,7 @@
     };
 
     Utils.prototype.time = function(key) {
-      if (timings.hasOwnProperty(key)) {
+      if (_.has(timings, key)) {
         return new Date().getTime() - timings[key];
       } else {
         return timings[key] = new Date().getTime();
@@ -150,13 +137,27 @@
     Utils.prototype.timeEnd = function(key) {
       var start;
 
-      if (timings.hasOwnProperty(key)) {
+      if (_.has(timings, key)) {
         start = timings[key];
         delete timings[key];
         return new Date().getTime() - start;
       } else {
         return 0;
       }
+    };
+
+    Utils.prototype.trimToLower = function(str) {
+      if (str == null) {
+        str = '';
+      }
+      return str.trim().toLowerCase();
+    };
+
+    Utils.prototype.trimToUpper = function(str) {
+      if (str == null) {
+        str = '';
+      }
+      return str.trim().toUpperCase();
     };
 
     Utils.prototype.url = function() {

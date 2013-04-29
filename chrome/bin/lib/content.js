@@ -119,7 +119,7 @@
       return;
     }
     document.body.setAttribute(data.id, data.version);
-    window.addEventListener('contextmenu', function(e) {
+    addEventListener('contextmenu', function(e) {
       switch (e.target.nodeName) {
         case 'A':
           return elements.link = e.target;
@@ -130,17 +130,13 @@
           return elements.other = e.target;
       }
     });
-    window.addEventListener('keydown', function(e) {
+    addEventListener('keydown', function(e) {
       var key, _ref;
 
       if ((!isMac && e.ctrlKey && e.altKey) || (isMac && e.shiftKey && e.altKey)) {
         key = String.fromCharCode(e.keyCode).toUpperCase();
         if (__indexOf.call(hotkeys, key) >= 0) {
-          if ((_ref = e.target.nodeName) === 'INPUT' || _ref === 'TEXTAREA') {
-            elements.field = e.target;
-          } else {
-            elements.field = null;
-          }
+          elements.field = (_ref = e.target.nodeName) === 'INPUT' || _ref === 'TEXTAREA' ? e.target : null;
           chrome.runtime.sendMessage({
             data: {
               key: key
@@ -210,9 +206,10 @@
         link: message.link ? elements.link : void 0,
         other: message.link ? elements.other : void 0
       };
-      selection = window.getSelection();
+      selection = getSelection();
       if (!selection.isCollapsed) {
-        if (contents = selection.getRangeAt(0).cloneContents()) {
+        contents = selection.getRangeAt(0).cloneContents();
+        if (contents) {
           container = document.createElement('div');
           container.appendChild(contents);
           _ref2 = container.querySelectorAll('[href]');
@@ -240,8 +237,8 @@
         linkHTML: link != null ? link.innerHTML : void 0,
         linkText: link != null ? link.textContent : void 0,
         links: extractAll(document.links, 'href'),
-        pageHeight: window.innerHeight,
-        pageWidth: window.innerWidth,
+        pageHeight: innerHeight,
+        pageWidth: innerWidth,
         referrer: document.referrer,
         scripts: extractAll(document.scripts, 'src'),
         selectedImages: images,

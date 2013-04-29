@@ -4,18 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var sendMessage,
-    __slice = [].slice;
-
-  sendMessage = function() {
-    var args, base;
-
-    args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    base = chrome.runtime;
-    return (base.sendMessage || base.sendRequest).apply(base, args);
-  };
-
-  sendMessage({
+  chrome.runtime.sendMessage({
     type: 'info'
   }, function(data) {
     var cls, link, newClasses, oldClasses, _i, _j, _len, _len1, _ref, _results;

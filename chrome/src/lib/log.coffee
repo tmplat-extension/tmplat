@@ -1,5 +1,5 @@
 # [Template](http://neocotic.com/template)  
-# (c) 2012 Alasdair Mercer  
+# (c) 2013 Alasdair Mercer  
 # Freely distributable under the MIT license.  
 # For all details and documentation:  
 # <http://neocotic.com/template>
@@ -25,7 +25,8 @@ LEVELS =
 # -----------------
 
 # Determine whether or not logging is enabled for the specified `level`.
-loggable = (level) -> log.config.enabled and level >= log.config.level
+loggable = (level) ->
+  log.config.enabled and level >= log.config.level
 
 # Logging setup
 # -------------
@@ -43,11 +44,8 @@ log = window.log = new class Log extends utils.Class
   ERROR:       LEVELS.error
 
   # A collection of all of the levels to allow iteration.
-  LEVELS: (
-    array = []
-    array.push name: key, value: value for own key, value of LEVELS
-    array.sort (a, b) -> a.value - b.value
-  )
+  LEVELS: ({name, value} for own name, value of LEVELS).sort (a, b) ->
+      a.value - b.value
 
   # Public variables
   # ----------------
@@ -103,8 +101,7 @@ log = window.log = new class Log extends utils.Class
 # Public classes
 # --------------
 
-# `Trace` allows the current stack trace to be retrieved in the easiest way
-# possible.
+# `Trace` allows the current stack trace to be retrieved in the easiest way possible.
 class log.Trace extends utils.Class
 
   # Create a new instance of `Trace` for the `caller`.

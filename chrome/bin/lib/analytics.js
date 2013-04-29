@@ -1,5 +1,5 @@
 // [Template](http://neocotic.com/template)
-// (c) 2012 Alasdair Mercer
+// (c) 2013 Alasdair Mercer
 // Freely distributable under the MIT license.
 // For all details and documentation:
 // <http://neocotic.com/template>
@@ -51,22 +51,23 @@
     Analytics.prototype.track = function(category, action, label, value, nonInteraction) {
       var event, _gaq, _ref1;
 
-      if (this.enabled()) {
-        event = ['_trackEvent'];
-        event.push(category);
-        event.push(action);
-        if (label != null) {
-          event.push(label);
-        }
-        if (value != null) {
-          event.push(value);
-        }
-        if (nonInteraction != null) {
-          event.push(nonInteraction);
-        }
-        _gaq = (_ref1 = window._gaq) != null ? _ref1 : window._gaq = [];
-        return _gaq.push(event);
+      if (!this.enabled()) {
+        return;
       }
+      event = ['_trackEvent'];
+      event.push(category);
+      event.push(action);
+      if (label != null) {
+        event.push(label);
+      }
+      if (value != null) {
+        event.push(value);
+      }
+      if (nonInteraction != null) {
+        event.push(nonInteraction);
+      }
+      _gaq = (_ref1 = window._gaq) != null ? _ref1 : window._gaq = [];
+      return _gaq.push(event);
     };
 
     return Analytics;

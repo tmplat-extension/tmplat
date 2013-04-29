@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var ErrorMessage, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, closeWizard, createExport, createImport, deleteTemplates, deriveTemplate, enableTemplates, ext, feedback, feedbackAdded, fileErrorHandler, getSelectedTemplates, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, searchResults, searchTemplates, setContext, trimToLower, trimToUpper, updateImportedTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate, _ref,
+  var ErrorMessage, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, closeWizard, createExport, createImport, deleteTemplates, deriveTemplate, enableTemplates, ext, feedback, feedbackAdded, getSelectedTemplates, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, searchResults, searchTemplates, setContext, updateImportedTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -34,8 +34,7 @@
       key = '';
       value = null;
       store.modify(option, function(data) {
-        key = $this.attr('id').match(new RegExp("^" + option + "(\\S*)"))[1];
-        key = key[0].toLowerCase() + key.substr(1);
+        key = utils.capitalize($this.attr('id').match(new RegExp("^" + option + "(\\S*)"))[1]);
         return data[key] = value = evaluate.call($this, key);
       });
       return typeof callback === "function" ? callback($this, key, value) : void 0;
@@ -98,10 +97,9 @@
   };
 
   loadImages = function() {
-    var image, imagePreview, images, _i, _len, _ref;
+    var image, images, _i, _len, _ref;
 
     log.trace();
-    imagePreview = $('#template_image_preview');
     images = $('#template_image');
     images.append($('<option/>', {
       text: icons.getMessage(),
@@ -120,10 +118,7 @@
       }));
     }
     return images.on('change', function() {
-      var opt;
-
-      opt = images.find('option:selected');
-      return imagePreview.attr('class', icons.getClass(opt.val()));
+      return $('#template_image_preview').attr('class', icons.getClass($(this).find('option:selected').val()));
     }).trigger('change');
   };
 
@@ -142,9 +137,7 @@
         text: i18n.get("opt_logger_level_" + level.name + "_text"),
         value: level.value
       });
-      if (level.value === logger.level) {
-        option.attr('selected', 'selected');
-      }
+      option.prop('selected', level.value === logger.level);
       loggerLevel.append(option);
     }
     if (!loggerLevel.find('option[selected]').length) {
@@ -162,11 +155,8 @@
       log.debug("Changing logging " + key + " to '" + value + "'");
       return value;
     }, function(jel, key, value) {
-      var logger;
-
-      logger = store.get('logger');
-      chrome.extension.getBackgroundPage().log.config = log.config = logger;
-      return analytics.track('Logging', 'Changed', key[0].toUpperCase() + key.substr(1), Number(value));
+      chrome.extension.getBackgroundPage().log.config = log.config = store.get('logger');
+      return analytics.track('Logging', 'Changed', utils.capitalize(key), Number(value));
     });
   };
 
@@ -183,26 +173,22 @@
   loadNotificationSaveEvents = function() {
     log.trace();
     $('#notificationDuration').on('input', function() {
-      var _this = this;
+      var ms;
 
+      ms = $(this).val();
+      ms = ms != null ? parseInt(ms, 10) * 1000 : 0;
+      log.debug("Changing notification duration to " + ms + " milliseconds");
       return store.modify('notifications', function(notifications) {
-        var ms;
-
-        ms = $(_this).val();
-        ms = ms != null ? parseInt(ms, 10) * 1000 : 0;
-        log.debug("Changing notification duration to " + ms + " milliseconds");
         notifications.duration = ms;
         return analytics.track('Notifications', 'Changed', 'Duration', ms);
       });
     });
     return $('#notifications').on('change', function() {
-      var _this = this;
+      var enabled;
 
+      enabled = $(this).is(':checked');
+      log.debug("Changing notifications to '" + enabled + "'");
       return store.modify('notifications', function(notifications) {
-        var enabled;
-
-        enabled = $(_this).is(':checked');
-        log.debug("Changing notifications to '" + enabled + "'");
         notifications.enabled = enabled;
         return analytics.track('Notifications', 'Changed', 'Enabled', Number(enabled));
       });
@@ -235,8 +221,7 @@
       log.debug("Changing anchor " + key + " to '" + value + "'");
       return value;
     }, function(jel, key, value) {
-      key = key[0].toUpperCase() + key.substr(1);
-      return analytics.track('Anchors', 'Changed', key, Number(value));
+      return analytics.track('Anchors', 'Changed', utils.capitalize(key), Number(value));
     });
     bindSaveEvent('#menuEnabled, #menuOptions, #menuPaste', 'change', 'menu', function(key) {
       var value;
@@ -246,8 +231,7 @@
       return value;
     }, function(jel, key, value) {
       ext.updateContextMenu();
-      key = key[0].toUpperCase() + key.substr(1);
-      return analytics.track('Context Menu', 'Changed', key, Number(value));
+      return analytics.track('Context Menu', 'Changed', utils.capitalize(key), Number(value));
     });
     return bindSaveEvent('#shortcutsEnabled, #shortcutsPaste', 'change', 'shortcuts', function(key) {
       var value;
@@ -256,8 +240,7 @@
       log.debug("Changing keyboard shortcuts " + key + " to '" + value + "'");
       return value;
     }, function(jel, key, value) {
-      key = key[0].toUpperCase() + key.substr(1);
-      return analytics.track('Keyboard Shortcuts', 'Changed', key, Number(value));
+      return analytics.track('Keyboard Shortcuts', 'Changed', utils.capitalize(key), Number(value));
     });
   };
 
@@ -269,14 +252,14 @@
     return loadTemplateRows();
   };
 
-  loadTemplate = function(template, shortcutModifiers) {
-    var alignCenter, enabledIcon, row;
+  loadTemplate = function(template, modifiers) {
+    var alignCenter, row;
 
     log.trace();
-    log.debug('Creating a row for the following template...', template);
-    if (shortcutModifiers == null) {
-      shortcutModifiers = ext.isThisPlatform('mac') ? ext.SHORTCUT_MAC_MODIFIERS : ext.SHORTCUT_MODIFIERS;
+    if (modifiers == null) {
+      modifiers = ext.modifiers();
     }
+    log.debug('Creating a row for the following template...', template);
     row = $('<tr/>', {
       draggable: true
     });
@@ -295,32 +278,27 @@
       title: i18n.get('opt_template_modify_title', template.title)
     })));
     row.append($('<td/>', {
-      html: "" + shortcutModifiers + template.shortcut
+      html: template.shortcut ? "" + modifiers + template.shortcut : '&nbsp;'
     }));
-    enabledIcon = template.enabled ? 'ok' : 'remove';
     row.append($('<td/>', alignCenter).append($('<i/>', {
-      "class": "icon-" + enabledIcon
+      "class": "icon-" + (template.enabled ? 'ok' : 'remove')
     })));
     row.append($('<td/>').append($('<span/>', {
       text: template.content,
       title: template.content
     })));
-    row.append($('<td/>').append($('<span/>', {
+    return row.append($('<td/>').append($('<span/>', {
       "class": 'muted',
       text: '::::',
       title: i18n.get('opt_template_move_title', template.title)
     })));
-    return row;
   };
 
   loadTemplateControlEvents = function() {
     var filter, limit, selectedTemplates, validationErrors, warningMsg, _i, _len, _ref;
 
     log.trace();
-    $('#template_wizard [tabify]').on('click', function() {
-      return closeWizard();
-    });
-    $('#template_cancel_btn').on('click', function() {
+    $('#template_wizard [tabify], #template_cancel_btn').on('click', function() {
       return closeWizard();
     });
     $('#template_reset_btn').on('click', function() {
@@ -404,9 +382,7 @@
         }
         return _results;
       } else {
-        validationErrors = [];
-        $.extend(activeTemplate, template);
-        saveTemplate(activeTemplate);
+        saveTemplate($.extend(activeTemplate, template));
         $('#template_search :reset').hide();
         $('#template_search :text').val('');
         return closeWizard();
@@ -425,40 +401,46 @@
     });
     warningMsg = null;
     $('#delete_btn').on('click', function() {
-      var deleteItems, div, item, predefinedCount, predefinedTemplates, template, _j, _len1;
+      var deleteItems, div, list, predefinedCount, predefinedTemplates, template, _j, _len1;
 
+      if (warningMsg != null) {
+        warningMsg.hide();
+      }
       deleteItems = $('#delete_items');
       predefinedTemplates = $('<ul/>');
       selectedTemplates = getSelectedTemplates();
       deleteItems.find('li').remove();
       for (_j = 0, _len1 = selectedTemplates.length; _j < _len1; _j++) {
         template = selectedTemplates[_j];
-        item = $('<li/>', {
+        list = template.readOnly ? predefinedTemplates : deleteItems;
+        list.append($('<li/>', {
           text: template.title
-        });
-        if (template.readOnly) {
-          predefinedTemplates.append(item);
-        } else {
-          deleteItems.append(item);
-        }
+        }));
       }
       predefinedCount = predefinedTemplates.find('li').length;
       if (predefinedCount) {
-        if (warningMsg != null) {
-          warningMsg.hide();
-        }
         div = $('<div/>');
-        div.append($('<p/>', {
-          html: i18n.get(predefinedCount === 1 ? 'opt_template_delete_predefined_error_1' : 'opt_template_delete_multiple_predefined_error_1')
-        }));
-        div.append(predefinedTemplates);
-        div.append($('<p/>', {
-          html: i18n.get(predefinedCount === 1 ? 'opt_template_delete_predefined_error_2' : 'opt_template_delete_multiple_predefined_error_2')
-        }));
+        if (predefinedCount === 1) {
+          div.append($('<p/>', {
+            html: i18n.get('opt_template_delete_predefined_error_1')
+          }));
+          div.append(predefinedTemplates);
+          div.append($('<p/>', {
+            html: i18n.get('opt_template_delete_predefined_error_2')
+          }));
+        } else {
+          div.append($('<p/>', {
+            html: i18n.get('opt_template_delete_multiple_predefined_error_1')
+          }));
+          div.append(predefinedTemplates);
+          div.append($('<p/>', {
+            html: i18n.get('opt_template_delete_multiple_predefined_error_2')
+          }));
+        }
         warningMsg = new WarningMessage(true);
         warningMsg.message = div.html();
         return warningMsg.show();
-      } else {
+      } else if (selectedTemplates.length) {
         return $('#delete_wizard').modal('show');
       }
     });
@@ -482,30 +464,28 @@
       return $('#export_error').find('span').html('&nbsp;').end().hide();
     });
     $('#export_btn').on('click', function() {
-      var URL, blob, str;
+      var URL, blob, selectedTemplates, str;
 
-      log.info('Launching export wizard');
-      str = createExport(getSelectedTemplates());
-      $('#export_content').val(str);
-      blob = new Blob([str], {
-        type: 'application/json'
-      });
-      URL = window.URL || window.webkitURL;
-      $('#export_save_btn').attr('href', URL.createObjectURL(blob));
-      return $('#export_wizard').modal('show');
+      selectedTemplates = getSelectedTemplates();
+      if (selectedTemplates.length) {
+        log.info('Launching export wizard');
+        str = createExport(selectedTemplates);
+        $('#export_content').val(str);
+        blob = new Blob([str], {
+          type: 'application/json'
+        });
+        URL = window.URL || window.webkitURL;
+        $('#export_save_btn').attr('href', URL.createObjectURL(blob));
+        return $('#export_wizard').modal('show');
+      }
     });
     $('#export_close_btn').on('click', function() {
       return $('#export_wizard').modal('hide');
     });
     return $('#export_copy_btn').on('click', function() {
-      var $this;
-
-      $this = $(this);
       ext.copy($('#export_content').val(), true);
-      $this.text(i18n.get('opt_export_wizard_copy_alt_button'));
-      return $this.delay(800).queue(function() {
-        $this.text(i18n.get('opt_export_wizard_copy_button'));
-        return $this.dequeue();
+      return $(this).text(i18n.get('opt_export_wizard_copy_alt_button')).delay(800).queue(function() {
+        return $(this).text(i18n.get('opt_export_wizard_copy_button')).dequeue();
       });
     });
   };
@@ -519,6 +499,7 @@
       return $(this).next().html('&nbsp').parent().hide();
     });
     $('#import_wizard').on('hide', function() {
+      data = null;
       $('#import_final_btn').prop('disabled', true);
       $('#import_wizard_stage2, #import_back_btn, #import_final_btn').hide();
       $('#import_wizard_stage1, #import_continue_btn').show();
@@ -551,51 +532,65 @@
 
       file = e.target.files[0];
       reader = new FileReader();
-      reader.onerror = fileErrorHandler(function(message) {
-        log.error(message);
+      reader.onerror = function(err) {
+        var message;
+
+        message = i18n.get((function() {
+          switch (err.code) {
+            case FileError.NOT_FOUND_ERR:
+              return 'error_file_not_found';
+            case FileError.ABORT_ERR:
+              return 'error_file_aborted';
+            default:
+              return 'error_file_default';
+          }
+        })());
+        log.warn('The following error was caught when loading the imported file...', err);
         return $('#import_error').find('span').text(message).end().show();
-      });
+      };
       reader.onload = function(e) {
         var result;
 
         result = e.target.result;
-        log.debug('Following contents were read from the file...', result);
+        log.debug('The following contents were read from the file...', result);
         $('#import_error').find('span').html('&nbsp;').end().hide();
         return $('#import_content').val(result);
       };
       return reader.readAsText(file);
     });
     $('#import_final_btn').on('click', function() {
-      var existing, existingFound, i, template, _i, _j, _len, _len1, _ref, _ref1;
+      var existing, index, matched, template, _i, _j, _len, _len1, _ref, _ref1;
 
-      if (data != null) {
-        _ref = data.templates;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          template = _ref[_i];
-          if ($("#import_items option[value='" + template.key + "']").is(':selected')) {
-            existingFound = false;
-            _ref1 = ext.templates;
-            for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
-              existing = _ref1[i];
-              if (!(existing.key === template.key)) {
-                continue;
-              }
-              existingFound = true;
-              template.index = i;
-              ext.templates[i] = template;
-            }
-            if (!existingFound) {
-              template.index = ext.templates.length;
-              ext.templates.push(template);
-            }
-          }
-        }
-        store.set('templates', ext.templates);
-        ext.updateTemplates();
-        loadTemplateRows();
-        updateToolbarTemplates();
-        analytics.track('Templates', 'Imported', data.version, data.templates.length);
+      if (data == null) {
+        return;
       }
+      _ref = data.templates;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        template = _ref[_i];
+        if (!$("#import_items option[value='" + template.key + "']").is(':selected')) {
+          continue;
+        }
+        matched = false;
+        _ref1 = ext.templates;
+        for (index = _j = 0, _len1 = _ref1.length; _j < _len1; index = ++_j) {
+          existing = _ref1[index];
+          if (!(existing.key === template.key)) {
+            continue;
+          }
+          matched = true;
+          template.index = index;
+          ext.templates[index] = template;
+        }
+        if (!matched) {
+          template.index = ext.templates.length;
+          ext.templates.push(template);
+        }
+      }
+      store.set('templates', ext.templates);
+      ext.updateTemplates();
+      loadTemplateRows();
+      updateToolbarTemplates();
+      analytics.track('Templates', 'Imported', data.version, data.templates.length);
       $('#import_wizard').modal('hide');
       $('#template_search :reset').hide();
       return $('#template_search :text').val('');
@@ -604,34 +599,23 @@
       return $('#import_wizard').modal('hide');
     });
     $('#import_paste_btn').on('click', function() {
-      var $this;
-
-      $this = $(this);
       $('#import_file_btn').val('');
       $('#import_content').val(ext.paste());
-      $this.text(i18n.get('opt_import_wizard_paste_alt_button'));
-      return $this.delay(800).queue(function() {
-        $this.text(i18n.get('opt_import_wizard_paste_button'));
-        return $this.dequeue();
+      return $(this).text(i18n.get('opt_import_wizard_paste_alt_button')).delay(800).queue(function() {
+        return $(this).text(i18n.get('opt_import_wizard_paste_button')).dequeue();
       });
     });
     return $('#import_continue_btn').on('click', function() {
-      var $this, error, importData, list, str, template, _i, _len, _ref;
+      var $this, error, list, str, template, _i, _len, _ref;
 
       $this = $(this).prop('disabled', true);
+      data = null;
       list = $('#import_items');
       str = $('#import_content').val();
       $('#import_error').find('span').html('&nbsp;').end().hide();
       list.find('option').remove();
       try {
-        importData = createImport(str);
-      } catch (_error) {
-        error = _error;
-        log.error(error);
-        $('#import_error').find('span').text(error).end().show();
-      }
-      if (importData) {
-        data = readImport(importData);
+        data = readImport(createImport(str));
         if (data.templates.length) {
           $('#import_count').text(data.templates.length);
           _ref = data.templates;
@@ -646,13 +630,17 @@
           $('#import_wizard_stage1, #import_continue_btn').hide();
           $('#import_wizard_stage2, #import_back_btn, #import_final_btn').show();
         }
+      } catch (_error) {
+        error = _error;
+        log.warn('The following error occurred when parsing the imported data', error);
+        $('#import_error').find('span').text(error).end().show();
       }
       return $this.prop('disabled', false);
     });
   };
 
   loadTemplateRows = function(templates, pagination) {
-    var shortcutModifiers, table, template, _i, _len;
+    var modifiers, table, template, _i, _len;
 
     if (templates == null) {
       templates = ext.templates;
@@ -664,10 +652,10 @@
     table = $('#templates');
     table.find('tbody tr').remove();
     if (templates.length) {
-      shortcutModifiers = ext.isThisPlatform('mac') ? ext.SHORTCUT_MAC_MODIFIERS : ext.SHORTCUT_MODIFIERS;
+      modifiers = ext.modifiers();
       for (_i = 0, _len = templates.length; _i < _len; _i++) {
         template = templates[_i];
-        table.append(loadTemplate(template, shortcutModifiers));
+        table.append(loadTemplate(template, modifiers));
       }
       if (pagination) {
         paginate(templates);
@@ -729,12 +717,7 @@
       return value;
     }, function(jel, key, value) {
       ext.updateToolbar();
-      key = key[0].toUpperCase() + key.substr(1);
-      if (key === 'Key') {
-        return analytics.track('Toolbars', 'Changed', key);
-      } else {
-        return analytics.track('Toolbars', 'Changed', key, Number(value));
-      }
+      return analytics.track('Toolbars', 'Change', utils.capitalize(key), key === 'key' ? Number(value) : void 0);
     });
   };
 
@@ -770,15 +753,15 @@
   };
 
   loadUrlShortenerAccounts = function() {
-    var shortener, _i, _len, _ref, _results;
+    var shortener, shorteners, _i, _len, _results;
 
     log.trace();
-    _ref = ext.queryUrlShorteners(function(shortener) {
+    shorteners = _.filter(ext.shorteners, function(shortener) {
       return shortener.oauth != null;
     });
     _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      shortener = _ref[_i];
+    for (_i = 0, _len = shorteners.length; _i < _len; _i++) {
+      shortener = shorteners[_i];
       _results.push((function(shortener) {
         var button;
 
@@ -794,7 +777,8 @@
               var success;
 
               log.debug("Authorization response for " + shortener.name + "...", arguments);
-              if (success = shortener.oauth.hasAccessToken()) {
+              success = shortener.oauth.hasAccessToken();
+              if (success) {
                 $this.addClass('btn-danger').removeClass('btn-success');
                 $this.data('oauth', 'true');
                 $this.html(i18n.get('opt_url_shortener_logout_button'));
@@ -836,14 +820,17 @@
   };
 
   loadUrlShortenerSaveEvents = function() {
+    var yourlsFields;
+
     log.trace();
     $('input[name="enabled_shortener"]').on('change', function() {
       return store.modify('bitly', 'googl', 'yourls', function(data, key) {
-        var shortener;
+        var enabled, shortener;
 
-        if (data.enabled = $("#" + key).is(':checked')) {
-          shortener = ext.queryUrlShortener(function(shortener) {
-            return shortener.name === key;
+        enabled = data.enabled = $("#" + key).is(':checked');
+        if (enabled) {
+          shortener = _.findWhere(ext.shorteners, {
+            name: key
           });
           log.debug("Enabling " + shortener.title + " URL shortener");
           return analytics.track('Shorteners', 'Enabled', shortener.title);
@@ -861,13 +848,14 @@
       log.debug("YOURLS authentication changed: " + auth);
       return analytics.track('Shorteners', 'Changed', 'YOURLS Authentication', $this.index());
     });
-    return bindSaveEvent("#yourlsPassword, #yourlsSignature, #yourlsUrl   , #yourlsUsername", 'input', 'yourls', function() {
+    yourlsFields = '#yourlsPassword, #yourlsSignature, #yourlsUrl, #yourlsUsername';
+    return bindSaveEvent(yourlsFields, 'input', 'yourls', function() {
       return this.val().trim();
     });
   };
 
   deleteTemplates = function(templates) {
-    var i, keep, keys, list, template, _i, _j, _len, _len1, _ref, _ref1;
+    var i, keys, list, retain, template, _i, _j, _len, _len1, _ref, _ref1;
 
     log.trace();
     keys = [];
@@ -880,82 +868,72 @@
       keys.push(template.key);
       list.push(template);
     }
-    if (keys.length) {
-      keep = [];
-      _ref = ext.templates;
-      for (i = _j = 0, _len1 = _ref.length; _j < _len1; i = ++_j) {
-        template = _ref[i];
-        if (!(_ref1 = template.key, __indexOf.call(keys, _ref1) < 0)) {
-          continue;
-        }
-        template.index = i;
-        keep.push(template);
-      }
-      store.set('templates', keep);
-      ext.updateTemplates();
-      if (keys.length > 1) {
-        log.debug("Deleted " + keys.length + " templates");
-        analytics.track('Templates', 'Deleted', "Count[" + keys.length + "]");
-      } else {
-        template = list[0];
-        log.debug("Deleted " + template.title + " template");
-        analytics.track('Templates', 'Deleted', template.title);
-      }
-      loadTemplateRows(searchResults != null ? searchResults : ext.templates);
-      return updateToolbarTemplates();
+    if (!keys.length) {
+      return;
     }
+    retain = [];
+    _ref = ext.templates;
+    for (i = _j = 0, _len1 = _ref.length; _j < _len1; i = ++_j) {
+      template = _ref[i];
+      if (!(_ref1 = template.key, __indexOf.call(keys, _ref1) < 0)) {
+        continue;
+      }
+      template.index = retain.length;
+      retain.push(template);
+    }
+    store.set('templates', retain);
+    ext.updateTemplates();
+    if (keys.length > 1) {
+      log.debug("Deleted " + keys.length + " templates");
+      analytics.track('Templates', 'Deleted', "Count[" + keys.length + "]");
+    } else {
+      template = list[0];
+      log.debug("Deleted " + template.title + " template");
+      analytics.track('Templates', 'Deleted', template.title);
+    }
+    loadTemplateRows(searchResults != null ? searchResults : ext.templates);
+    return updateToolbarTemplates();
   };
 
   enableTemplates = function(templates, enable) {
-    var action, keys, stored, template, _i, _len, _ref;
+    var action, keys, template, _i, _len, _ref, _ref1;
 
     if (enable == null) {
       enable = true;
     }
     log.trace();
-    keys = (function() {
-      var _i, _len, _results;
-
-      _results = [];
-      for (_i = 0, _len = templates.length; _i < _len; _i++) {
-        template = templates[_i];
-        _results.push(template.key);
-      }
-      return _results;
-    })();
-    if (keys.length) {
-      stored = store.get('templates');
-      for (_i = 0, _len = stored.length; _i < _len; _i++) {
-        template = stored[_i];
-        if (_ref = template.key, __indexOf.call(keys, _ref) >= 0) {
-          template.enabled = enable;
-        }
-      }
-      store.set('templates', stored);
-      ext.updateTemplates();
-      action = enable ? 'Enabled' : 'Disabled';
-      if (keys.length > 1) {
-        log.debug("" + action + " " + keys.length + " templates");
-        analytics.track('Templates', action, "Count[" + keys.length + "]");
-      } else {
-        template = templates[0];
-        log.debug("" + action + " " + template.title + " template");
-        analytics.track('Templates', action, template.title);
-      }
-      return loadTemplateRows(searchResults != null ? searchResults : ext.templates);
+    keys = _.pluck(templates, 'key');
+    if (!keys.length) {
+      return;
     }
+    _ref = ext.templates;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      template = _ref[_i];
+      if (_ref1 = template.key, __indexOf.call(keys, _ref1) >= 0) {
+        template.enabled = enable;
+      }
+    }
+    store.set('templates', ext.templates);
+    ext.updateTemplates();
+    action = enable ? 'Enabled' : 'Disabled';
+    if (keys.length > 1) {
+      log.debug("" + action + " " + keys.length + " templates");
+      analytics.track('Templates', action, "Count[" + keys.length + "]");
+    } else {
+      template = templates[0];
+      log.debug("" + action + " " + template.title + " template");
+      analytics.track('Templates', action, template.title);
+    }
+    return loadTemplateRows(searchResults != null ? searchResults : ext.templates);
   };
 
   reorderTemplates = function(fromIndex, toIndex) {
-    var templates;
-
     log.trace();
-    templates = ext.templates;
     if ((fromIndex != null) && (toIndex != null)) {
-      templates[fromIndex].index = toIndex;
-      templates[toIndex].index = fromIndex;
+      ext.templates[fromIndex].index = toIndex;
+      ext.templates[toIndex].index = fromIndex;
     }
-    store.set('templates', templates);
+    store.set('templates', ext.templates);
     ext.updateTemplates();
     return updateToolbarTemplates();
   };
@@ -968,6 +946,7 @@
     isNew = template.key == null;
     templates = store.get('templates');
     if (isNew) {
+      template.index = templates.length;
       template.key = utils.keyGen();
       templates.push(template);
     } else {
@@ -993,21 +972,21 @@
     var _ref;
 
     log.trace();
-    log.debug('Updating existing template with the following imported data...', template);
+    log.debug('Updating an existing template with the following imported data...', template);
+    existing.enabled = template.enabled;
+    existing.usage = template.usage;
     if (!existing.readOnly) {
       existing.content = template.content;
       if ((0 < (_ref = template.title.length) && _ref <= 32)) {
         existing.title = template.title;
       }
     }
-    existing.enabled = template.enabled;
     if (template.image === '' || icons.exists(template.image)) {
       existing.image = template.image;
     }
     if (template.shortcut === '' || isShortcutValid(template.shortcut)) {
       existing.shortcut = template.shortcut;
     }
-    existing.usage = template.usage;
     log.debug('Updated the following template...', existing);
     return existing;
   };
@@ -1019,10 +998,7 @@
     toolbarKey = store.get('toolbar.key');
     toolbarTemplates = $('#toolbarKey');
     lastSelectedTemplate = toolbarTemplates.find('option:selected');
-    lastSelectedTemplateKey = '';
-    if (lastSelectedTemplate.length) {
-      lastSelectedTemplateKey = lastSelectedTemplate.val();
-    }
+    lastSelectedTemplateKey = lastSelectedTemplate.length ? lastSelectedTemplate.val() : '';
     toolbarTemplates.find('option').remove();
     _ref = ext.templates;
     _results = [];
@@ -1085,19 +1061,17 @@
 
   isKeyValid = function(key) {
     log.trace();
-    log.debug("Validating template key '" + key + "'");
     return R_VALID_KEY.test(key);
   };
 
   isShortcutValid = function(shortcut) {
     log.trace();
-    log.debug("Validating keyboard shortcut '" + shortcut + "'");
     return R_VALID_SHORTCUT.test(shortcut);
   };
 
   validateImportedTemplate = function(template) {
     log.trace();
-    log.debug('Validating property types of the following template...', template);
+    log.debug('Validating property types of the following imported template...', template);
     return 'object' === typeof template && 'string' === typeof template.content && 'boolean' === typeof template.enabled && 'string' === typeof template.image && 'string' === typeof template.key && 'string' === typeof template.shortcut && 'string' === typeof template.title && 'number' === typeof template.usage;
   };
 
@@ -1108,10 +1082,8 @@
     isNew = template.key == null;
     errors = [];
     log.debug('Validating the following template...', template);
-    if (!template.readOnly) {
-      if (!template.title) {
-        errors.push(new ValidationError('template_title', 'opt_template_title_invalid'));
-      }
+    if (!template.readOnly && !template.title) {
+      errors.push(new ValidationError('template_title', 'opt_template_title_invalid'));
     }
     if (template.shortcut && !isShortcutValid(template.shortcut)) {
       errors.push(new ValidationError('template_shortcut', 'opt_template_shortcut_invalid'));
@@ -1258,9 +1230,9 @@
       return e.originalEvent.dataTransfer.setData('text/html', $this.html());
     });
     draggables.on('dragend', function(e) {
+      dragSource = null;
       draggables.removeClass('dnd-moving dnd-over');
-      table.addClass('table-hover');
-      return dragSource = null;
+      return table.addClass('table-hover');
     });
     draggables.on('dragenter', function(e) {
       var $this;
@@ -1270,8 +1242,8 @@
       return $this.addClass('dnd-over');
     });
     draggables.on('dragover', function(e) {
-      e.preventDefault();
       e.originalEvent.dataTransfer.dropEffect = 'move';
+      e.preventDefault();
       return false;
     });
     return draggables.on('drop', function(e) {
@@ -1301,11 +1273,11 @@
   activateModifications = function() {
     log.trace();
     return $('#templates tbody tr td:not(:first-child)').off('click').on('click', function() {
-      var activeKey;
+      var key;
 
-      activeKey = $(this).parents('tr:first').find(':checkbox').val();
-      return openWizard(ext.queryTemplate(function(template) {
-        return template.key === activeKey;
+      key = $(this).parents('tr:first').find(':checkbox').val();
+      return openWizard(_.findWhere(ext.templates, {
+        key: key
       }));
     });
   };
@@ -1361,7 +1333,7 @@
 
       $this = $(this);
       placement = $this.attr('data-placement');
-      placement = placement != null ? trimToLower(placement) : 'top';
+      placement = placement != null ? utils.trimToLower(placement) : 'top';
       return $this.tooltip({
         container: (_ref = $this.attr('data-container')) != null ? _ref : 'body',
         placement: placement
@@ -1370,10 +1342,12 @@
   };
 
   clearContext = function() {
+    log.trace();
     return setContext(null);
   };
 
   closeWizard = function() {
+    log.trace();
     clearContext();
     return $('#template_wizard').modal('hide');
   };
@@ -1381,9 +1355,6 @@
   createExport = function(templates) {
     var data, template, _i, _len, _ref;
 
-    if (templates == null) {
-      templates = [];
-    }
     log.trace();
     log.debug('Creating an export string for the following templates...', templates);
     data = {
@@ -1432,7 +1403,7 @@
       index: (_ref1 = activeTemplate.index) != null ? _ref1 : ext.templates.length,
       key: activeTemplate.key,
       readOnly: readOnly,
-      shortcut: trimToUpper($('#template_shortcut').val()),
+      shortcut: utils.trimToUpper($('#template_shortcut').val()),
       title: readOnly ? activeTemplate.title : $('#template_title').val().trim(),
       usage: (_ref2 = activeTemplate.usage) != null ? _ref2 : 0
     };
@@ -1444,60 +1415,48 @@
     var UserVoice, script, uv;
 
     log.trace();
-    if (!feedbackAdded) {
-      uv = document.createElement('script');
-      uv.async = 'async';
-      uv.src = "https://widget.uservoice.com/" + ext.config.options.userVoice.id + ".js";
-      script = document.getElementsByTagName('script')[0];
-      script.parentNode.insertBefore(uv, script);
-      UserVoice = window.UserVoice || (window.UserVoice = []);
-      UserVoice.push([
-        'showTab', 'classic_widget', {
-          mode: 'full',
-          primary_color: '#333',
-          link_color: '#08c',
-          default_mode: 'feedback',
-          forum_id: ext.config.options.userVoice.forum,
-          tab_label: i18n.get('opt_feedback_button'),
-          tab_color: '#333',
-          tab_position: 'middle-left',
-          tab_inverted: true
-        }
-      ]);
-      return feedbackAdded = true;
+    if (feedbackAdded) {
+      return;
     }
-  };
-
-  fileErrorHandler = function(callback) {
-    return function(e) {
-      return callback(i18n.get((function() {
-        switch (e.code) {
-          case FileError.NOT_FOUND_ERR:
-            return 'error_file_not_found';
-          case FileError.ABORT_ERR:
-            return 'error_file_aborted';
-          default:
-            return 'error_file_default';
-        }
-      })()));
-    };
+    uv = document.createElement('script');
+    uv.async = 'async';
+    uv.src = "https://widget.uservoice.com/" + ext.config.options.userVoice.id + ".js";
+    script = document.getElementsByTagName('script')[0];
+    script.parentNode.insertBefore(uv, script);
+    UserVoice = window.UserVoice || (window.UserVoice = []);
+    UserVoice.push([
+      'showTab', 'classic_widget', {
+        mode: 'full',
+        primary_color: '#333',
+        link_color: '#08c',
+        default_mode: 'feedback',
+        forum_id: ext.config.options.userVoice.forum,
+        tab_label: i18n.get('opt_feedback_button'),
+        tab_color: '#333',
+        tab_position: 'middle-left',
+        tab_inverted: true
+      }
+    ]);
+    return feedbackAdded = true;
   };
 
   getSelectedTemplates = function() {
-    var selectedKeys;
+    var keys;
 
-    selectedKeys = [];
+    log.trace();
+    keys = [];
     $('#templates tbody :checkbox:checked').each(function() {
-      return selectedKeys.push($(this).val());
+      return keys.push($(this).val());
     });
-    return ext.queryTemplates(function(template) {
+    return _.filter(ext.templates, function(template) {
       var _ref;
 
-      return _ref = template.key, __indexOf.call(selectedKeys, _ref) >= 0;
+      return _ref = template.key, __indexOf.call(keys, _ref) >= 0;
     });
   };
 
   openWizard = function(template) {
+    log.trace();
     if (arguments.length) {
       setContext(template);
     }
@@ -1523,13 +1482,10 @@
         end = start + limit;
         loadTemplateRows(templates.slice(start, end), false);
         pagination.find('ul li:first-child').each(function() {
-          var $this;
-
-          $this = $(this);
           if (page === 1) {
-            return $this.addClass('disabled');
+            return $(this).addClass('disabled');
           } else {
-            return $this.removeClass('disabled');
+            return $(this).removeClass('disabled');
           }
         });
         pagination.find('ul li:not(:first-child, :last-child)').each(function() {
@@ -1597,25 +1553,15 @@
       templates: []
     };
     keys = [];
-    storedKeys = (function() {
-      var _i, _len, _ref, _results;
-
-      _ref = ext.templates;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        template = _ref[_i];
-        _results.push(template.key);
-      }
-      return _results;
-    })();
+    storedKeys = _.pluck(ext.templates, 'key');
     _ref = importData.templates;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       template = _ref[_i];
       existing = {};
       if (importData.version < '1.0.0') {
-        template.image = template.image > 0 ? ((_ref1 = icons.fromLegacy(template.image - 1)) != null ? _ref1.name : void 0) || '' : '';
         template.key = ext.getKeyForName(template.name);
         template.usage = 0;
+        template.image = template.image > 0 ? ((_ref1 = icons.fromLegacy(template.image - 1)) != null ? _ref1.name : void 0) || '' : '';
       } else if (importData.version < '1.1.0') {
         template.image = ((_ref2 = icons.fromLegacy(template.image)) != null ? _ref2.name : void 0) || '';
       }
@@ -1639,8 +1585,8 @@
             break;
           }
           if (!existing.key) {
-            existing = $.extend(true, {}, ext.queryTemplate(function(temp) {
-              return temp.key === template.key;
+            existing = $.extend(true, {}, _.findWhere(ext.templates, {
+              key: template.key
             }));
             if (existing && !_.isEmpty(existing)) {
               existing = updateImportedTemplate(template, existing);
@@ -1671,12 +1617,35 @@
   };
 
   refreshSelectButtons = function() {
-    var buttons, selections;
+    var allDisabled, allEnabled, hasPredefined, template, templates, _i, _len;
 
     log.trace();
-    buttons = $('#delete_btn, #disable_btn, #enable_btn, #export_btn');
-    selections = $('#templates tbody :checkbox:checked');
-    return buttons.prop('disabled', selections.length === 0);
+    templates = getSelectedTemplates();
+    $('#delete_btn, #export_btn').prop('disabled', !templates.length);
+    allEnabled = true;
+    allDisabled = true;
+    hasPredefined = false;
+    for (_i = 0, _len = templates.length; _i < _len; _i++) {
+      template = templates[_i];
+      if (!template.enabled) {
+        allEnabled = false;
+      }
+      if (template.enabled) {
+        allDisabled = false;
+      }
+      if (template.readOnly) {
+        hasPredefined = true;
+      }
+    }
+    if (!templates.length) {
+      $('#disable_btn, #enable_btn').prop('disabled', true);
+    } else if (allEnabled || allDisabled) {
+      $('#disable_btn').prop('disabled', allDisabled);
+      $('#enable_btn').prop('disabled', allEnabled);
+    } else {
+      $('#disable_btn, #enable_btn').prop('disabled', false);
+    }
+    return $('#delete_btn').prop('disabled', !templates.length || hasPredefined);
   };
 
   resetWizard = function() {
@@ -1687,15 +1656,15 @@
       activeTemplate = {};
     }
     $('#template_wizard .modal-header h3').html(activeTemplate.key != null ? i18n.get('opt_template_modify_title', activeTemplate.title) : i18n.get('opt_template_new_header'));
-    $('#template_content').val(activeTemplate.content || '');
     $('#template_enabled').prop('checked', (_ref = activeTemplate.enabled) != null ? _ref : true);
+    $('#template_content').val(activeTemplate.content || '');
     $('#template_shortcut').val(activeTemplate.shortcut || '');
     $('#template_title').val(activeTemplate.title || '');
     imgOpt = $("#template_image option[value='" + activeTemplate.image + "']");
-    if (imgOpt.length === 0) {
-      $('#template_image option:first-child').attr('selected', 'selected');
-    } else {
+    if (imgOpt.length) {
       imgOpt.prop('selected', true);
+    } else {
+      $('#template_image option:first-child').prop('selected', true);
     }
     $('#template_image').trigger('change');
     $('#template_content, #template_title').prop('disabled', !!activeTemplate.readOnly);
@@ -1733,7 +1702,7 @@
         }
         return _results;
       })()).join('|')), "i");
-      searchResults = ext.queryTemplates(function(template) {
+      searchResults = _.filter(ext.templates, function(template) {
         return expression.test("" + template.content + " " + template.title);
       });
     } else {
@@ -1748,23 +1717,8 @@
       template = {};
     }
     log.trace();
-    activeTemplate = {};
-    $.extend(activeTemplate, template);
+    activeTemplate = $.extend({}, template);
     return resetWizard();
-  };
-
-  trimToLower = function(str) {
-    if (str == null) {
-      str = '';
-    }
-    return str.trim().toLowerCase();
-  };
-
-  trimToUpper = function(str) {
-    if (str == null) {
-      str = '';
-    }
-    return str.trim().toUpperCase();
   };
 
   options = window.options = new (Options = (function(_super) {
@@ -1804,13 +1758,12 @@
         nav = $("#navigation a[tabify='" + target + "']");
         parent = nav.parent('li');
         if (!parent.hasClass('active')) {
-          parent.siblings().removeClass('active');
-          parent.addClass('active');
+          parent.addClass('active').siblings().removeClass('active');
           $(target).show().siblings('.tab').hide();
-          store.set('options_active_tab', id = nav.attr('id'));
+          id = nav.attr('id');
+          store.set('options_active_tab', id);
           if (!initialTabChange) {
-            id = id.match(/(\S*)_nav$/)[1];
-            id = id[0].toUpperCase() + id.substr(1);
+            id = utils.capitalize(id.match(/(\S*)_nav$/)[1]);
             log.debug("Changing tab to " + id);
             analytics.track('Tabs', 'Changed', id);
           }
@@ -1842,22 +1795,22 @@
       $('.modal').on('shown', function() {
         return $(this).find(':input:enabled:first').focus();
       });
-      $('#template_shortcut_modifier').html(ext.isThisPlatform('mac') ? ext.SHORTCUT_MAC_MODIFIERS : ext.SHORTCUT_MODIFIERS);
+      $('#template_shortcut_modifier').html(ext.modifiers());
       $('[popover]').each(function() {
         var $this, placement, trigger;
 
         $this = $(this);
         placement = $this.attr('data-placement');
-        placement = placement != null ? trimToLower(placement) : 'right';
+        placement = placement != null ? utils.trimToLower(placement) : 'right';
         trigger = $this.attr('data-trigger');
-        trigger = trigger != null ? trimToLower(trigger) : 'hover';
+        trigger = trigger != null ? utils.trimToLower(trigger) : 'hover';
         $this.popover({
+          placement: placement,
+          trigger: trigger,
+          html: true,
           content: function() {
             return i18n.get($this.attr('popover'));
-          },
-          html: true,
-          placement: placement,
-          trigger: trigger
+          }
         });
         if (trigger === 'manual') {
           return $this.on('click', function() {
