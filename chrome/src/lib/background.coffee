@@ -1182,6 +1182,23 @@ transformData = (data, deleteOld) ->
     data[prop.toLowerCase()] = value
     delete data[prop] if deleteOld
 
+# Configuration functions
+# -----------------------
+
+# Transform specific sections of the data loaded from `configuration.json` so that they're more
+# usable and localized.
+buildConfig = ->
+  log.trace()
+
+  do buildIcons
+
+# Transform the configuration icons into usable `Icon` instances.
+buildIcons = ->
+  log.trace()
+
+  for name, i in ext.config.icons.current
+    ext.config.icons.current[i] = new Icon name
+
 # HTML building functions
 # -----------------------
 
@@ -1203,7 +1220,7 @@ buildPopup = ->
     anchor = $ '<a/>',
       class:       'options'
       'data-type': 'options'
-    anchor.append $ '<i/>', class: icons.getClass 'cog'
+    anchor.append $ '<i/>', class: Icon.get('cog').style
     anchor.append " #{i18n.get 'options'}"
 
     items = items.add $ '<li/>', class: 'divider'
@@ -1229,7 +1246,7 @@ buildTemplate = (template) ->
       class: 'pull-right',
       html:  "#{ext.modifiers()}#{template.shortcut}"
 
-  anchor.append $ '<i/>', class: icons.getClass template.image
+  anchor.append $ '<i/>', class: Icon.get(template.image, yes).style
   anchor.append " #{template.title}"
 
   $('<li/>').append anchor
@@ -1390,8 +1407,8 @@ initTemplates_update = ->
         if image in ['', 'spacer.gif', 'spacer.png']
           store.set "feat_#{name}_image", 0
         else
-          for legacy, i in icons.LEGACY
-            if "#{legacy.image.replace /^tmpl/, 'feat'}.png" is image
+          for legacy, i in ext.config.icons.legacy
+            if "#{legacy.name.replace /^tmpl/, 'feat'}.png" is image
               store.set "feat_#{name}_image", i + 1
               break
       else
@@ -1405,7 +1422,7 @@ initTemplates_update = ->
 
     for name in names when _.isString name
       image = store.remove("feat_#{name}_image") ? 0
-      image = if --image >= 0 then icons.fromLegacy(image)?.name or '' else ''
+      image = if --image >= 0 then Icon.fromLegacy(image)?.name or '' else ''
 
       key = ext.getKeyForName name
 
@@ -1439,28 +1456,28 @@ initTemplates_update = ->
           template.image = switch template.key
             when 'PREDEFINED.00001'
               if template.image is 'tmpl_globe' then base.image
-              else icons.fromLegacy(template.image)?.name or ''
+              else Icon.fromLegacy(template.image)?.name or ''
             when 'PREDEFINED.00002'
               if template.image is 'tmpl_link' then base.image
-              else icons.fromLegacy(template.image)?.name or ''
+              else Icon.fromLegacy(template.image)?.name or ''
             when 'PREDEFINED.00003'
               if template.image is 'tmpl_html' then base.image
-              else icons.fromLegacy(template.image)?.name or ''
+              else Icon.fromLegacy(template.image)?.name or ''
             when 'PREDEFINED.00004'
               if template.image is 'tmpl_component' then base.image
-              else icons.fromLegacy(template.image)?.name or ''
+              else Icon.fromLegacy(template.image)?.name or ''
             when 'PREDEFINED.00005'
               if template.image is 'tmpl_discussion' then base.image
-              else icons.fromLegacy(template.image)?.name or ''
+              else Icon.fromLegacy(template.image)?.name or ''
             when 'PREDEFINED.00006'
               if template.image is 'tmpl_discussion' then base.image
-              else icons.fromLegacy(template.image)?.name or ''
+              else Icon.fromLegacy(template.image)?.name or ''
             when 'PREDEFINED.00007'
               if template.image is 'tmpl_note' then base.image
-              else icons.fromLegacy(template.image)?.name or ''
+              else Icon.fromLegacy(template.image)?.name or ''
             else base.image
         else
-          template.image = icons.fromLegacy(template.image)?.name or ''
+          template.image = Icon.fromLegacy(template.image)?.name or ''
 
 # Initialize the settings related to the toolbar/browser action.
 initToolbar = ->
@@ -1754,11 +1771,13 @@ ext = window.ext = new class Extension extends utils.Class
 
     # Load the configuration data from the file.
     $.getJSON utils.url('configuration.json'), (data) =>
-      # Store the configuration data before initiating OAuth for each URL shortener service.
-      @config    = data
+      # Store the configuration data and then ensure it's data is in the most usable format.
+      @config = data
+      do buildConfig
       # It's nice knowing what version is running.
       {@version} = chrome.runtime.getManifest()
 
+      # Initiate OAuth for each of the applicable URL shortener services.
       shortener.oauth = shortener.oauth?() for shortener in SHORTENERS
 
       # Begin initialization.
@@ -1936,6 +1955,40 @@ ext = window.ext = new class Extension extends utils.Class
       log.info 'Configuring toolbar to activate specified template'
       # Disable the popup, effectively enabling the listener for `chrome.browserAction.onClicked`.
       chrome.browserAction.setPopup popup: ''
+
+# Public classes
+# --------------
+
+# `Icon` provides common functionality for using icons throughout the extension.
+ext.Icon = class Icon extends utils.Class
+
+  # Create a new instance of `Icon` with the specified `name`.  
+  # An appropriate localized message and CSS style is also derived.
+  constructor: (@name) ->
+    @message = i18n.get "icon_#{name?.replace(/-/g, '_') or 'none'}"
+    @style   = "icon-#{name or ''}"
+
+# Determine whether an `Icon` with the given `name` exists.
+Icon.exists = (name) ->
+  Icon.get(name)?
+
+# Retrieve the `Icon` with the given `name`.  
+# `safe` can be used to ensure that an `Icon` is always returned, although this will be *empty* (no
+# name) if none had a matching `name`.
+Icon.get = (name, safe) ->
+  icon = _.findWhere ext.config.icons.current, {name}
+
+  if not icon? and safe then new Icon() else icon
+
+# Attempt to retrieve the replacement for the legacy icon with the given `name`.  
+# If `name` is a number it will be treated as an index of the legacy icon; otherwise a simple
+# lookup is performed.
+Icon.fromLegacy = (name) ->
+  legacy = switch typeof name
+    when 'number' then ext.config.icons.legacy[name]
+    when 'string' then _.findWhere ext.config.icons.legacy, {name}
+
+  if legacy then Icon.get legacy.icon
 
 # Initialize `ext` when the DOM is ready.
 utils.ready -> ext.init()

@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var AppError, BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, UNKNOWN_LOCALE, addAdditionalData, browser, buildDerivedData, buildPopup, buildStandardData, buildTemplate, callUrlShortener, deriveMessageInfo, deriveMessageTempate, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, isWebStore, nullIfEmpty, onMessage, onMessageExternal, operatingSystem, runSelectors, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
+  var AppError, BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, Icon, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, UNKNOWN_LOCALE, addAdditionalData, browser, buildConfig, buildDerivedData, buildIcons, buildPopup, buildStandardData, buildTemplate, callUrlShortener, deriveMessageInfo, deriveMessageTempate, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, isWebStore, nullIfEmpty, onMessage, onMessageExternal, operatingSystem, runSelectors, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -1378,6 +1378,24 @@
     return _results;
   };
 
+  buildConfig = function() {
+    log.trace();
+    return buildIcons();
+  };
+
+  buildIcons = function() {
+    var i, name, _i, _len, _ref, _results;
+
+    log.trace();
+    _ref = ext.config.icons.current;
+    _results = [];
+    for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+      name = _ref[i];
+      _results.push(ext.config.icons.current[i] = new Icon(name));
+    }
+    return _results;
+  };
+
   buildPopup = function() {
     var anchor, items, message, template, _i, _len, _ref;
 
@@ -1404,7 +1422,7 @@
         'data-type': 'options'
       });
       anchor.append($('<i/>', {
-        "class": icons.getClass('cog')
+        "class": Icon.get('cog').style
       }));
       anchor.append(" " + (i18n.get('options')));
       items = items.add($('<li/>', {
@@ -1431,7 +1449,7 @@
       }));
     }
     anchor.append($('<i/>', {
-      "class": icons.getClass(template.image)
+      "class": Icon.get(template.image, true).style
     }));
     anchor.append(" " + template.title);
     return $('<li/>').append(anchor);
@@ -1641,11 +1659,11 @@
             _results.push((function() {
               var _j, _len1, _ref1, _results1;
 
-              _ref1 = icons.LEGACY;
+              _ref1 = ext.config.icons.legacy;
               _results1 = [];
               for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
                 legacy = _ref1[i];
-                if (("" + (legacy.image.replace(/^tmpl/, 'feat')) + ".png") === image) {
+                if (("" + (legacy.name.replace(/^tmpl/, 'feat')) + ".png") === image) {
                   store.set("feat_" + name + "_image", i + 1);
                   break;
                 } else {
@@ -1673,7 +1691,7 @@
           continue;
         }
         image = (_ref1 = store.remove("feat_" + name + "_image")) != null ? _ref1 : 0;
-        image = --image >= 0 ? ((_ref2 = icons.fromLegacy(image)) != null ? _ref2.name : void 0) || '' : '';
+        image = --image >= 0 ? ((_ref2 = Icon.fromLegacy(image)) != null ? _ref2.name : void 0) || '' : '';
         key = ext.getKeyForName(name);
         if (toolbarFeatureName === name) {
           if (store.exists('toolbar')) {
@@ -1723,49 +1741,49 @@
                   if (template.image === 'tmpl_globe') {
                     return base.image;
                   } else {
-                    return ((_ref = icons.fromLegacy(template.image)) != null ? _ref.name : void 0) || '';
+                    return ((_ref = Icon.fromLegacy(template.image)) != null ? _ref.name : void 0) || '';
                   }
                   break;
                 case 'PREDEFINED.00002':
                   if (template.image === 'tmpl_link') {
                     return base.image;
                   } else {
-                    return ((_ref1 = icons.fromLegacy(template.image)) != null ? _ref1.name : void 0) || '';
+                    return ((_ref1 = Icon.fromLegacy(template.image)) != null ? _ref1.name : void 0) || '';
                   }
                   break;
                 case 'PREDEFINED.00003':
                   if (template.image === 'tmpl_html') {
                     return base.image;
                   } else {
-                    return ((_ref2 = icons.fromLegacy(template.image)) != null ? _ref2.name : void 0) || '';
+                    return ((_ref2 = Icon.fromLegacy(template.image)) != null ? _ref2.name : void 0) || '';
                   }
                   break;
                 case 'PREDEFINED.00004':
                   if (template.image === 'tmpl_component') {
                     return base.image;
                   } else {
-                    return ((_ref3 = icons.fromLegacy(template.image)) != null ? _ref3.name : void 0) || '';
+                    return ((_ref3 = Icon.fromLegacy(template.image)) != null ? _ref3.name : void 0) || '';
                   }
                   break;
                 case 'PREDEFINED.00005':
                   if (template.image === 'tmpl_discussion') {
                     return base.image;
                   } else {
-                    return ((_ref4 = icons.fromLegacy(template.image)) != null ? _ref4.name : void 0) || '';
+                    return ((_ref4 = Icon.fromLegacy(template.image)) != null ? _ref4.name : void 0) || '';
                   }
                   break;
                 case 'PREDEFINED.00006':
                   if (template.image === 'tmpl_discussion') {
                     return base.image;
                   } else {
-                    return ((_ref5 = icons.fromLegacy(template.image)) != null ? _ref5.name : void 0) || '';
+                    return ((_ref5 = Icon.fromLegacy(template.image)) != null ? _ref5.name : void 0) || '';
                   }
                   break;
                 case 'PREDEFINED.00007':
                   if (template.image === 'tmpl_note') {
                     return base.image;
                   } else {
-                    return ((_ref6 = icons.fromLegacy(template.image)) != null ? _ref6.name : void 0) || '';
+                    return ((_ref6 = Icon.fromLegacy(template.image)) != null ? _ref6.name : void 0) || '';
                   }
                   break;
                 default:
@@ -1773,7 +1791,7 @@
               }
             })());
           } else {
-            _results.push(template.image = ((_ref = icons.fromLegacy(template.image)) != null ? _ref.name : void 0) || '');
+            _results.push(template.image = ((_ref = Icon.fromLegacy(template.image)) != null ? _ref.name : void 0) || '');
           }
         }
         return _results;
@@ -2100,6 +2118,7 @@
         var shortener, _i, _len;
 
         _this.config = data;
+        buildConfig();
         _this.version = chrome.runtime.getManifest().version;
         for (_i = 0, _len = SHORTENERS.length; _i < _len; _i++) {
           shortener = SHORTENERS[_i];
@@ -2311,6 +2330,54 @@
     return Extension;
 
   })(utils.Class));
+
+  ext.Icon = Icon = (function(_super) {
+    __extends(Icon, _super);
+
+    function Icon(name) {
+      this.name = name;
+      this.message = i18n.get("icon_" + ((name != null ? name.replace(/-/g, '_') : void 0) || 'none'));
+      this.style = "icon-" + (name || '');
+    }
+
+    return Icon;
+
+  })(utils.Class);
+
+  Icon.exists = function(name) {
+    return Icon.get(name) != null;
+  };
+
+  Icon.get = function(name, safe) {
+    var icon;
+
+    icon = _.findWhere(ext.config.icons.current, {
+      name: name
+    });
+    if ((icon == null) && safe) {
+      return new Icon();
+    } else {
+      return icon;
+    }
+  };
+
+  Icon.fromLegacy = function(name) {
+    var legacy;
+
+    legacy = (function() {
+      switch (typeof name) {
+        case 'number':
+          return ext.config.icons.legacy[name];
+        case 'string':
+          return _.findWhere(ext.config.icons.legacy, {
+            name: name
+          });
+      }
+    })();
+    if (legacy) {
+      return Icon.get(legacy.icon);
+    }
+  };
 
   utils.ready(function() {
     return ext.init();
