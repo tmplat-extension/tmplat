@@ -1626,9 +1626,29 @@ refreshResetButton = ->
 refreshSelectButtons = ->
   log.trace()
 
-  buttons    = $ '#delete_btn, #disable_btn, #enable_btn, #export_btn'
-  selections = $ '#templates tbody :checkbox:checked'
-  buttons.prop 'disabled', not selections.length
+  templates = do getSelectedTemplates
+
+  # Enable delete and export buttons only if some templates have been selected.
+  $('#delete_btn, #export_btn').prop 'disabled', not templates.length
+
+  # Determine whether all results share the same enabled state.
+  allEnabled  = yes
+  allDisabled = yes
+
+  for template in templates
+    allEnabled  = no unless template.enabled
+    allDisabled = no if     template.enabled
+
+  unless templates.length
+    # Doesn't matter as no templates have been selected.
+    $('#disable_btn, #enable_btn').prop 'disabled', yes
+  else if allEnabled or allDisabled
+    # Templates are either all enabled or disabled so only enable the relevant button.
+    $('#disable_btn').prop 'disabled', allDisabled
+    $('#enable_btn').prop  'disabled', allEnabled
+  else
+    # Templates have a mixed enabled state so enable both buttons.
+    $('#disable_btn, #enable_btn').prop 'disabled', no
 
 # Reset the wizard field values based on the current context.
 resetWizard = ->

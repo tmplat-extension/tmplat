@@ -1617,12 +1617,30 @@
   };
 
   refreshSelectButtons = function() {
-    var buttons, selections;
+    var allDisabled, allEnabled, template, templates, _i, _len;
 
     log.trace();
-    buttons = $('#delete_btn, #disable_btn, #enable_btn, #export_btn');
-    selections = $('#templates tbody :checkbox:checked');
-    return buttons.prop('disabled', !selections.length);
+    templates = getSelectedTemplates();
+    $('#delete_btn, #export_btn').prop('disabled', !templates.length);
+    allEnabled = true;
+    allDisabled = true;
+    for (_i = 0, _len = templates.length; _i < _len; _i++) {
+      template = templates[_i];
+      if (!template.enabled) {
+        allEnabled = false;
+      }
+      if (template.enabled) {
+        allDisabled = false;
+      }
+    }
+    if (!templates.length) {
+      return $('#disable_btn, #enable_btn').prop('disabled', true);
+    } else if (allEnabled || allDisabled) {
+      $('#disable_btn').prop('disabled', allDisabled);
+      return $('#enable_btn').prop('disabled', allEnabled);
+    } else {
+      return $('#disable_btn, #enable_btn').prop('disabled', false);
+    }
   };
 
   resetWizard = function() {
