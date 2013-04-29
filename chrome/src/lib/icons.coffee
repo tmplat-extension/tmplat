@@ -1,5 +1,5 @@
 # [Template](http://neocotic.com/template)  
-# (c) 2012 Alasdair Mercer  
+# (c) 2013 Alasdair Mercer  
 # Freely distributable under the MIT license.  
 # For all details and documentation:  
 # <http://neocotic.com/template>
@@ -7,18 +7,19 @@
 # Private classes
 # ---------------
 
-# `Icon` provides common functionality for using icons throughout the
-# extension.
+# `Icon` provides common functionality for using icons throughout the extension.
 class Icon extends utils.Class
 
   # Create a new instance of `Icon`.
   constructor: (@name) ->
 
   # Return the CSS class for this icon.
-  getClass: -> icons.getClass this
+  getClass: ->
+    icons.getClass this
 
   # Return the internationalization message used to describe this icon.
-  getMessage: -> icons.getMessage this
+  getMessage: ->
+    icons.getMessage this
 
 # Icons setup
 # -----------
@@ -220,24 +221,24 @@ icons = window.icons = new class Icons extends utils.Class
 
   # Attempt to retrieve the replacement icon for the legacy `value`.
   fromLegacy: (value) ->
-    @getIcon (switch typeof value
+    icon = @getIcon switch typeof value
       when 'number' then @LEGACY[value]
-      when 'string'
-        for old in @LEGACY when old.image is value
-          legacy = old
-          break
-        legacy
-    )?.icon 
+      when 'string' then (return old for old in @LEGACY when old.image is value)
+
+    icon?.icon
 
   # Return the CSS class for `icon`.
   getClass: (icon) ->
-    icon = icon?.name if typeof icon is 'object'
+    icon = icon.name if _.isObject icon
+
     "icon-#{icon or ''}"
 
   # Attempt to retrieve the icon with `name`.
-  getIcon: (name) -> return icon for icon in @ICONS when icon.name is name
+  getIcon: (name) ->
+    return icon for icon in @ICONS when icon.name is name
 
   # Return the internationalization message used to describe `icon`.
   getMessage: (icon) ->
-    icon = icon?.name if typeof icon is 'object'
+    icon = icon.name if _.isObject icon
+
     i18n.get "icon_#{icon?.replace(/-/g, '_') or 'none'}"

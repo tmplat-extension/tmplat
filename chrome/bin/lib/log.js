@@ -1,5 +1,5 @@
 // [Template](http://neocotic.com/template)
-// (c) 2012 Alasdair Mercer
+// (c) 2013 Alasdair Mercer
 // Freely distributable under the MIT license.
 // For all details and documentation:
 // <http://neocotic.com/template>
@@ -24,7 +24,7 @@
   };
 
   log = window.log = new (Log = (function(_super) {
-    var array, key, value;
+    var name, value;
 
     __extends(Log, _super);
 
@@ -44,19 +44,21 @@
     Log.prototype.ERROR = LEVELS.error;
 
     Log.prototype.LEVELS = ((function() {
-      array = [];
-      for (key in LEVELS) {
-        if (!__hasProp.call(LEVELS, key)) continue;
-        value = LEVELS[key];
-        array.push({
-          name: key,
+      var _results;
+
+      _results = [];
+      for (name in LEVELS) {
+        if (!__hasProp.call(LEVELS, name)) continue;
+        value = LEVELS[name];
+        _results.push({
+          name: name,
           value: value
         });
       }
-      return array.sort(function(a, b) {
-        return a.value - b.value;
-      });
-    })());
+      return _results;
+    })()).sort(function(a, b) {
+      return a.value - b.value;
+    });
 
     Log.prototype.config = {
       enabled: false,
@@ -64,7 +66,7 @@
     };
 
     Log.prototype.count = function() {
-      var name, names, _i, _len, _results;
+      var names, _i, _len, _results;
 
       names = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (loggable(this.DEBUG)) {
@@ -148,7 +150,7 @@
     };
 
     Log.prototype.time = function() {
-      var name, names, _i, _len, _results;
+      var names, _i, _len, _results;
 
       names = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (loggable(this.DEBUG)) {
@@ -162,7 +164,7 @@
     };
 
     Log.prototype.timeEnd = function() {
-      var name, names, _i, _len, _results;
+      var names, _i, _len, _results;
 
       names = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       if (loggable(this.DEBUG)) {

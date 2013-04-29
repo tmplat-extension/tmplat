@@ -1,5 +1,5 @@
 // [Template](http://neocotic.com/template)
-// (c) 2012 Alasdair Mercer
+// (c) 2013 Alasdair Mercer
 // Freely distributable under the MIT license.
 // For all details and documentation:
 // <http://neocotic.com/template>
@@ -157,32 +157,30 @@
     };
 
     Icons.prototype.fromLegacy = function(value) {
-      var legacy, old, _ref1;
+      var icon, old;
 
-      return this.getIcon((_ref1 = ((function() {
-        var _i, _len, _ref2;
+      icon = this.getIcon((function() {
+        var _i, _len, _ref1;
 
         switch (typeof value) {
           case 'number':
             return this.LEGACY[value];
           case 'string':
-            _ref2 = this.LEGACY;
-            for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-              old = _ref2[_i];
-              if (!(old.image === value)) {
-                continue;
+            _ref1 = this.LEGACY;
+            for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+              old = _ref1[_i];
+              if (old.image === value) {
+                return old;
               }
-              legacy = old;
-              break;
             }
-            return legacy;
         }
-      }).call(this))) != null ? _ref1.icon : void 0);
+      }).call(this));
+      return icon != null ? icon.icon : void 0;
     };
 
     Icons.prototype.getClass = function(icon) {
-      if (typeof icon === 'object') {
-        icon = icon != null ? icon.name : void 0;
+      if (_.isObject(icon)) {
+        icon = icon.name;
       }
       return "icon-" + (icon || '');
     };
@@ -200,8 +198,8 @@
     };
 
     Icons.prototype.getMessage = function(icon) {
-      if (typeof icon === 'object') {
-        icon = icon != null ? icon.name : void 0;
+      if (_.isObject(icon)) {
+        icon = icon.name;
       }
       return i18n.get("icon_" + ((icon != null ? icon.replace(/-/g, '_') : void 0) || 'none'));
     };
