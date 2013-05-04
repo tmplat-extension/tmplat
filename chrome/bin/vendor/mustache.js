@@ -146,6 +146,8 @@
   };
 
   Context.prototype.lookup = function (name) {
+    name = name && name.toLowerCase();
+
     var value = this._cache[name];
 
     if (!value) {
@@ -290,7 +292,7 @@
   };
 
   Writer.prototype._name = function (name, context) {
-    var value = context.lookup(name && name.toLowerCase());
+    var value = context.lookup(name);
 
     if (typeof value === "function") {
       value = value.call(context.view);
