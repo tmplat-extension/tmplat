@@ -957,6 +957,9 @@
           var lastModified, time, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
 
           log.debug('The following data was retrieved from the content script...', response);
+          if (response == null) {
+            response = {};
+          }
           lastModified = response.lastModified != null ? (time = Date.parse(response.lastModified), !isNaN(time) ? new Date(time) : void 0) : void 0;
           return done(null, {
             author: (_ref = response.author) != null ? _ref : '',
