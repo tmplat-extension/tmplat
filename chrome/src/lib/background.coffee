@@ -1840,7 +1840,7 @@ ext = window.ext = new class Extension extends utils.Class
   isThisPlatform: (os) ->
     log.trace()
 
-    os in navigator.userAgent.toLowerCase()
+    /// #{os} ///i.test navigator.platform
 
   # Retrieve the correct string representation of the keyboard modifiers for the user's operating
   # system.

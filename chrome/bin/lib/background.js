@@ -2197,7 +2197,7 @@
 
     Extension.prototype.isThisPlatform = function(os) {
       log.trace();
-      return __indexOf.call(navigator.userAgent.toLowerCase(), os) >= 0;
+      return RegExp("" + os, "i").test(navigator.platform);
     };
 
     Extension.prototype.modifiers = function() {
