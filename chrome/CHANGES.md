@@ -1,3 +1,9 @@
+2013.05.04, Version 1.2.2
+
+* [#168](https://github.com/neocotic/template/issues/168): Fix bug on OS X causing Windows keyboard shortcut modifiers to be displayed
+* [#169](https://github.com/neocotic/template/issues/169): Update [html.md][] to v2.1.0
+* [#171](https://github.com/neocotic/template/issues/171): Fix bug which caused sections to be case-sensitive
+
 2013.04.29, Version 1.2.1
 
 * [#109](https://github.com/neocotic/template/issues/109): Upgrade feedback widget from [UserVoice][] to newer version to avoid CSP workaround

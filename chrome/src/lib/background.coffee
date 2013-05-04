@@ -865,6 +865,10 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
       chrome.tabs.sendMessage tab.id, {editable, id, link, shortcut, url: data.url}, (response) ->
         log.debug 'The following data was retrieved from the content script...', response
 
+        # Safety mechanism for when content scripts haven't been updated along with the extension
+        # so the request gets stuck. This is mainly an issue in development and not production.
+        response ?= {}
+
         # Attempt to transform `lastModified` into a usable date.
         lastModified = if response.lastModified?
           time = Date.parse response.lastModified
@@ -1836,7 +1840,7 @@ ext = window.ext = new class Extension extends utils.Class
   isThisPlatform: (os) ->
     log.trace()
 
-    os in navigator.userAgent.toLowerCase()
+    /// #{os} ///i.test navigator.platform
 
   # Retrieve the correct string representation of the keyboard modifiers for the user's operating
   # system.
