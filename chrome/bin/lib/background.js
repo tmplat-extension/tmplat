@@ -1524,11 +1524,45 @@
       });
       return store.remove('notificationDuration');
     });
-    return updater.update('1.1.0', function() {
+    updater.update('1.1.0', function() {
       var _ref;
 
       return store.set('shortcuts', {
         enabled: (_ref = store.get('shortcuts')) != null ? _ref : true
+      });
+    });
+    return updater.update('1.2.3', function() {
+      store.modify('anchor', function(anchor) {
+        delete anchor.Target;
+        return delete anchor.Title;
+      });
+      store.modify('logger', function(logger) {
+        delete logger.Enabled;
+        return delete logger.Level;
+      });
+      store.modify('menu', function(menu) {
+        delete menu.Enabled;
+        delete menu.Options;
+        return delete menu.Paste;
+      });
+      store.modify('notifications', function(notifications) {
+        delete notifications.Duration;
+        return delete notifications.Enabled;
+      });
+      store.modify('shortcuts', function(shortcuts) {
+        delete shortcuts.Enabled;
+        return delete shortcuts.Paste;
+      });
+      store.modify('toolbar', function(toolbar) {
+        delete toolbar.Close;
+        delete toolbar.Key;
+        return delete toolbar.Options;
+      });
+      return store.modify('yourls', function(yourls) {
+        delete yourls.Password;
+        delete yourls.Signature;
+        delete yourls.Url;
+        return delete yourls.Username;
       });
     });
   };

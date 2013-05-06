@@ -1310,6 +1310,39 @@ init_update = ->
   updater.update '1.1.0', ->
     store.set 'shortcuts', enabled: store.get('shortcuts') ? yes
 
+  updater.update '1.2.3', ->
+    store.modify 'anchor', (anchor) ->
+      delete anchor.Target
+      delete anchor.Title
+
+    store.modify 'logger', (logger) ->
+      delete logger.Enabled
+      delete logger.Level
+
+    store.modify 'menu', (menu) ->
+      delete menu.Enabled
+      delete menu.Options
+      delete menu.Paste
+
+    store.modify 'notifications', (notifications) ->
+      delete notifications.Duration
+      delete notifications.Enabled
+
+    store.modify 'shortcuts', (shortcuts) ->
+      delete shortcuts.Enabled
+      delete shortcuts.Paste
+
+    store.modify 'toolbar', (toolbar) ->
+      delete toolbar.Close
+      delete toolbar.Key
+      delete toolbar.Options
+
+    store.modify 'yourls', (yourls) ->
+      delete yourls.Password
+      delete yourls.Signature
+      delete yourls.Url
+      delete yourls.Username
+
 # Initialize the settings related to statistical information.
 initStatistics = ->
   log.trace()
