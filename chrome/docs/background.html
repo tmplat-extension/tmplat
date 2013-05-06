@@ -3345,7 +3345,34 @@ by <code>ext.init</code>.</p>
     store.remove <span class="string">'notificationDuration'</span>
 
   updater.update <span class="string">'1.1.0'</span>, -&gt;
-    store.set <span class="string">'shortcuts'</span>, enabled: store.get(<span class="string">'shortcuts'</span>) ? <span class="literal">yes</span></pre></div></div>
+    store.set <span class="string">'shortcuts'</span>, enabled: store.get(<span class="string">'shortcuts'</span>) ? <span class="literal">yes</span>
+
+  updater.update <span class="string">'1.2.3'</span>, -&gt;
+    store.modify <span class="string">'anchor'</span>, (anchor) -&gt;
+      <span class="keyword">delete</span> anchor.Target
+      <span class="keyword">delete</span> anchor.Title
+
+    store.modify <span class="string">'logger'</span>, (logger) -&gt;
+      <span class="keyword">delete</span> logger.Enabled
+      <span class="keyword">delete</span> logger.Level
+
+    store.modify <span class="string">'menu'</span>, (menu) -&gt;
+      <span class="keyword">delete</span> menu.Enabled
+      <span class="keyword">delete</span> menu.Options
+      <span class="keyword">delete</span> menu.Paste
+
+    store.modify <span class="string">'notifications'</span>, (notifications) -&gt;
+      <span class="keyword">delete</span> notifications.Duration
+      <span class="keyword">delete</span> notifications.Enabled
+
+    store.modify <span class="string">'shortcuts'</span>, (shortcuts) -&gt;
+      <span class="keyword">delete</span> shortcuts.Enabled
+      <span class="keyword">delete</span> shortcuts.Paste
+
+    store.modify <span class="string">'toolbar'</span>, (toolbar) -&gt;
+      <span class="keyword">delete</span> toolbar.Close
+      <span class="keyword">delete</span> toolbar.Key
+      <span class="keyword">delete</span> toolbar.Options</pre></div></div>
             
         </li>
         
@@ -3891,7 +3918,14 @@ by <code>initUrlShorteners</code>.</p>
       <span class="keyword">else</span> <span class="keyword">if</span> yourls.password <span class="keyword">and</span> yourls.username <span class="keyword">then</span> <span class="string">'basic'</span>
       <span class="keyword">else</span> <span class="string">''</span>
 
-    store.remove store.search(<span class="regexp">/^oauth_token.*/</span>)...</pre></div></div>
+    store.remove store.search(<span class="regexp">/^oauth_token.*/</span>)...
+
+  updater.update <span class="string">'1.2.3'</span>, -&gt;
+    store.modify <span class="string">'yourls'</span>, (yourls) -&gt;
+      <span class="keyword">delete</span> yourls.Password
+      <span class="keyword">delete</span> yourls.Signature
+      <span class="keyword">delete</span> yourls.Url
+      <span class="keyword">delete</span> yourls.Username</pre></div></div>
             
         </li>
         

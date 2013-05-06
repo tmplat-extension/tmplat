@@ -1,3 +1,7 @@
+2013.05.06, Version 1.2.3
+
+* [#176](https://github.com/neocotic/template/issues/176): Fix bug preventing options from being saved correctly
+
 2013.05.04, Version 1.2.2
 
 * [#168](https://github.com/neocotic/template/issues/168): Fix bug on OS X causing Windows keyboard shortcut modifiers to be displayed

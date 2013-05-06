@@ -36,7 +36,8 @@
       key = '';
       value = null;
       store.modify(option, function(data) {
-        key = utils.capitalize($this.attr('id').match(new RegExp("^" + option + "(\\S*)"))[1]);
+        key = $this.attr('id').match(new RegExp("^" + option + "(\\S*)"))[1];
+        key = key[0].toLowerCase() + key.slice(1);
         return data[key] = value = evaluate.call($this, key);
       });
       return typeof callback === "function" ? callback($this, key, value) : void 0;
