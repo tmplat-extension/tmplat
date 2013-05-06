@@ -1337,12 +1337,6 @@ init_update = ->
       delete toolbar.Key
       delete toolbar.Options
 
-    store.modify 'yourls', (yourls) ->
-      delete yourls.Password
-      delete yourls.Signature
-      delete yourls.Url
-      delete yourls.Username
-
 # Initialize the settings related to statistical information.
 initStatistics = ->
   log.trace()
@@ -1630,6 +1624,13 @@ initUrlShorteners_update = ->
       else ''
 
     store.remove store.search(/^oauth_token.*/)...
+
+  updater.update '1.2.3', ->
+    store.modify 'yourls', (yourls) ->
+      delete yourls.Password
+      delete yourls.Signature
+      delete yourls.Url
+      delete yourls.Username
 
 # URL shortener functions
 # -----------------------

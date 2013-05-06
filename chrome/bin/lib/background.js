@@ -1553,16 +1553,10 @@
         delete shortcuts.Enabled;
         return delete shortcuts.Paste;
       });
-      store.modify('toolbar', function(toolbar) {
+      return store.modify('toolbar', function(toolbar) {
         delete toolbar.Close;
         delete toolbar.Key;
         return delete toolbar.Options;
-      });
-      return store.modify('yourls', function(yourls) {
-        delete yourls.Password;
-        delete yourls.Signature;
-        delete yourls.Url;
-        return delete yourls.Username;
       });
     });
   };
@@ -1969,7 +1963,7 @@
       });
       return store.remove('yourlsPassword', 'yourlsSignature', 'yourlsUrl', 'yourlsUsername');
     });
-    return updater.update('1.0.1', function() {
+    updater.update('1.0.1', function() {
       store.modify('bitly', function(bitly) {
         delete bitly.apiKey;
         return delete bitly.username;
@@ -1978,6 +1972,14 @@
         return yourls.authentication = yourls.signature ? 'advanced' : yourls.password && yourls.username ? 'basic' : '';
       });
       return store.remove.apply(store, store.search(/^oauth_token.*/));
+    });
+    return updater.update('1.2.3', function() {
+      return store.modify('yourls', function(yourls) {
+        delete yourls.Password;
+        delete yourls.Signature;
+        delete yourls.Url;
+        return delete yourls.Username;
+      });
     });
   };
 
