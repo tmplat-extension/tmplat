@@ -280,7 +280,9 @@ triggered, modifies the underlying <code>option</code> with the value returned b
     value = <span class="literal">null</span>
 
     store.modify option, (data) -&gt;
-      key = utils.capitalize $<span class="keyword">this</span>.attr(<span class="string">'id'</span>).match(<span class="keyword">new</span> RegExp(<span class="string">"^<span class="subst">#{option}</span>(\\S*)"</span>))[<span class="number">1</span>]
+      key = $<span class="keyword">this</span>.attr(<span class="string">'id'</span>).match(<span class="keyword">new</span> RegExp(<span class="string">"^<span class="subst">#{option}</span>(\\S*)"</span>))[<span class="number">1</span>]
+      key = key[<span class="number">0</span>].toLowerCase() + key[<span class="number">1.</span>.]
+
       data[key] = value = evaluate.call $<span class="keyword">this</span>, key
 
     callback? $<span class="keyword">this</span>, key, value</pre></div></div>
