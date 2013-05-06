@@ -43,7 +43,9 @@ bindSaveEvent = (selector, type, option, evaluate, callback) ->
     value = null
 
     store.modify option, (data) ->
-      key = utils.capitalize $this.attr('id').match(new RegExp("^#{option}(\\S*)"))[1]
+      key = $this.attr('id').match(new RegExp("^#{option}(\\S*)"))[1]
+      key = key[0].toLowerCase() + key[1..]
+
       data[key] = value = evaluate.call $this, key
 
     callback? $this, key, value
