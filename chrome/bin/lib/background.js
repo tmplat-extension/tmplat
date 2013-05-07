@@ -2220,8 +2220,8 @@
             type: 'toolbar'
           });
         });
-        chrome.runtime.onMessage.addListener(onMessage);
-        chrome.runtime.onMessageExternal.addListener(onMessageExternal);
+        chrome.extension.onMessage.addListener(onMessage);
+        chrome.extension.onMessageExternal.addListener(onMessageExternal);
         browser.version = getBrowserVersion();
         operatingSystem = getOperatingSystem();
         if (isNewInstall) {
