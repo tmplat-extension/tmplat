@@ -21,7 +21,7 @@
       type: this.getAttribute('data-type')
     };
     log.debug('Sending the following message to the extension controller', message);
-    return chrome.runtime.sendMessage(message);
+    return chrome.extension.sendMessage(message);
   };
 
   popup = window.popup = new (Popup = (function(_super) {

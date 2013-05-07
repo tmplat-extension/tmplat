@@ -1,3 +1,7 @@
+2013.05.07, Version 1.2.4
+
+* [#179](https://github.com/neocotic/template/issues/179): Fix critical bug for Linux systems
+
 2013.05.06, Version 1.2.3
 
 * [#176](https://github.com/neocotic/template/issues/176): Fix bug preventing options from being saved correctly

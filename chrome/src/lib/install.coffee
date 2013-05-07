@@ -8,7 +8,7 @@
 # -------------
 
 # Wrap the functionality in a message for Template's details in order to get the ID in use.
-chrome.runtime.sendMessage type: 'info', (data) ->
+chrome.extension.sendMessage type: 'info', (data) ->
   # Names of the classes to be added to the targeted elements.
   newClasses = ['disabled']
   # Names of the classes to be removed from the targeted elements.
