@@ -1859,8 +1859,8 @@ ext = window.ext = new class Extension extends utils.Class
           data: key: store.get 'toolbar.key'
           type: 'toolbar'
       # Add listeners for internal and external messages.
-      chrome.runtime.onMessage.addListener onMessage
-      chrome.runtime.onMessageExternal.addListener onMessageExternal
+      chrome.extension.onMessage.addListener onMessage
+      chrome.extension.onMessageExternal.addListener onMessageExternal
 
       # Derive the browser and OS information.
       browser.version = do getBrowserVersion

@@ -163,7 +163,7 @@
     Utils.prototype.url = function() {
       var _ref1;
 
-      return (_ref1 = chrome.runtime).getURL.apply(_ref1, arguments);
+      return (_ref1 = chrome.extension).getURL.apply(_ref1, arguments);
     };
 
     return Utils;
