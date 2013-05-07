@@ -1,7 +1,7 @@
 {
     "name": "Template"
   , "description": "Browser extension that quickly and easily copies info on the current page using a simple and unique template system"
-  , "version": "1.2.3"
+  , "version": "1.2.4"
   , "homepage": "http://neocotic.com/template"
   , "bugs": {
       "url": "https://github.com/neocotic/template/issues"
