@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  chrome.runtime.sendMessage({
+  chrome.extension.sendMessage({
     type: 'info'
   }, function(data) {
     var cls, link, newClasses, oldClasses, _i, _j, _len, _len1, _ref, _results;
