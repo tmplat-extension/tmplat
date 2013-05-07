@@ -22,7 +22,7 @@ sendMessage = ->
     type: @getAttribute 'data-type'
 
   log.debug 'Sending the following message to the extension controller', message
-  chrome.runtime.sendMessage message
+  chrome.extension.sendMessage message
 
 # Popup page setup
 # ----------------

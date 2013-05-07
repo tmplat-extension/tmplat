@@ -108,7 +108,7 @@
     return node.value = str;
   };
 
-  chrome.runtime.sendMessage({
+  chrome.extension.sendMessage({
     type: 'info'
   }, function(data) {
     var isMac;
@@ -137,7 +137,7 @@
         key = String.fromCharCode(e.keyCode).toUpperCase();
         if (__indexOf.call(hotkeys, key) >= 0) {
           elements.field = (_ref = e.target.nodeName) === 'INPUT' || _ref === 'TEXTAREA' ? e.target : null;
-          chrome.runtime.sendMessage({
+          chrome.extension.sendMessage({
             data: {
               key: key
             },
@@ -147,7 +147,7 @@
         }
       }
     });
-    return chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+    return chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
       var callback, container, contents, href, images, info, key, link, links, node, nodes, result, selection, src, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
 
       callback = function() {

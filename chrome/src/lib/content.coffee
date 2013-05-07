@@ -84,7 +84,7 @@ paste = (node, value) ->
 
 # Wrap the function functionality in a message for Template's extension ID and current version so
 # that it can be used to detect previous injections.
-chrome.runtime.sendMessage type: 'info', (data) ->
+chrome.extension.sendMessage type: 'info', (data) ->
   hotkeys = data.hotkeys
   isMac   = navigator.userAgent.toLowerCase().indexOf('mac') isnt -1
 
@@ -108,14 +108,14 @@ chrome.runtime.sendMessage type: 'info', (data) ->
       if key in hotkeys
         elements.field = if e.target.nodeName in ['INPUT', 'TEXTAREA'] then e.target else null
 
-        chrome.runtime.sendMessage
+        chrome.extension.sendMessage
           data: key: key
           type: 'shortcut'
         e.preventDefault()
 
   # Add a listener to provide the background page with information that is extracted from the DOM
   # or perform auto-paste functionality.
-  chrome.runtime.onMessage.addListener (message, sender, sendResponse) ->
+  chrome.extension.onMessage.addListener (message, sender, sendResponse) ->
     # Safely handle callback functionality.
     callback = (args...) ->
       if typeof sendResponse is 'function'
