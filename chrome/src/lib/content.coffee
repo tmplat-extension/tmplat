@@ -30,12 +30,11 @@ extractAll = (array, property) ->
     results.push element[property] if element[property] not in results
   results
 
-# Extract the relevant content of `node` as is required by `info`.
-getContent = (info, node) ->
+# Extract the relevant content of `node` as defined by `output`.
+getContent = (node, output) ->
   return '' unless node
 
-  if info?.convertTo in ['html', 'markdown'] then node.innerHTML
-  else node.textContent
+  if output in ['html', 'markdown'] then node.innerHTML else node.textContent
 
 # Attempt to derive the most relevant anchor element from those stored under the `id` provided.
 getLink = (id, url) ->
@@ -61,6 +60,10 @@ getMeta = (name, csv) ->
 isEditable = (node) ->
   node? and not node.disabled and not node.readOnly
 
+# Determine whether or not `os` matches the user's operating system.
+isThisPlatform = (os) ->
+  /// #{os} ///i.test navigator.platform
+
 # Traverse the parents of `node` in search of the first anchor element, if any.
 parentLink = (node) ->
   return unless node?
@@ -79,6 +82,45 @@ paste = (node, value) ->
 
   node.value = str
 
+# Evaluate the CSS selectors provided and extract their corresponding contents.  
+# If an error occurs during the evaluation, it can be found at `info.error`.
+runSelector = (info) ->
+  {all, convertTo, expression} = info
+
+  try
+    info.result = if all
+      nodes = document.querySelectorAll expression
+      (getContent node, convertTo for node in nodes when node)
+    else
+      node = document.querySelector expression
+      if node then getContent node, convertTo
+  catch e
+    info.error = e
+
+# Evaluate the XPath expressions provided and extract their corresponding contents.  
+# If an error occurs during the evaluation, it can be found at `info.error`.
+runXPath = (info) ->
+  {all, convertTo, expression} = info
+
+  try
+    info.result = if all
+      result   = xpath expression, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE
+      contents = []
+      for i in [0...result.snapshotLength]
+        node = result.snapshotItem i
+        contents.push getContent node, convertTo if node
+      contents
+    else
+      result = xpath expression, XPathResult.FIRST_ORDERED_NODE_TYPE
+      node   = result.singleNodeValue
+      if node then getContent node, convertTo
+  catch e
+    info.error = e
+
+# Simple shorthand for evaluating a given XPath `expression` of a specific `type`.
+xpath = (expression, type) ->
+  document.evaluate expression, document, null, type, null
+
 # Functionality
 # -------------
 
@@ -86,7 +128,7 @@ paste = (node, value) ->
 # that it can be used to detect previous injections.
 chrome.extension.sendMessage type: 'info', (data) ->
   hotkeys = data.hotkeys
-  isMac   = navigator.userAgent.toLowerCase().indexOf('mac') isnt -1
+  isMac   = isThisPlatform 'mac'
 
   # Only add the listeners if a previous injection isn't detected for version
   # of Template that is currently running.
@@ -127,19 +169,14 @@ chrome.extension.sendMessage type: 'info', (data) ->
       hotkeys = message.hotkeys
       return do callback
 
-    # Retrieve the contents of all selected elements.
-    if message.selectors?
-      for own key, info of message.selectors
-        if info.all
-          nodes  = document.querySelectorAll info.selector
-          result = []
-          if nodes
-            result.push getContent info, node for node in nodes when node
-        else
-          node   = document.querySelector info.selector
-          result = getContent info, node if node
-        info.result = result
-      return callback selectors: message.selectors
+    # Retrieve the contents of all evaluated elements.
+    if message.expressions?
+      for own key, info of message.expressions
+        switch info.type
+          when 'select' then runSelector info
+          when 'xpath'  then runXPath    info
+
+      return callback expressions: message.expressions
 
     # Message identifier is required past this point.
     return do callback unless message.id?
