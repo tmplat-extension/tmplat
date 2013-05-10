@@ -1384,7 +1384,7 @@
         }
         map[placeholder] = result;
       }
-      return callback(error ? new AppError('result_bad_xpath_description') : void 0);
+      return callback(error ? new AppError('result_bad_expression_description') : void 0);
     });
   };
 

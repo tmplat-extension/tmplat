@@ -103,23 +103,50 @@ runXPath = (info) ->
   {all, convertTo, expression} = info
 
   try
-    info.result = if all
-      result   = xpath expression, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE
-      contents = []
-      for i in [0...result.snapshotLength]
-        node = result.snapshotItem i
-        contents.push getContent node, convertTo if node
-      contents
-    else
-      result = xpath expression, XPathResult.FIRST_ORDERED_NODE_TYPE
-      node   = result.singleNodeValue
-      if node then getContent node, convertTo
+    info.result = xpath expression, convertTo, not all
   catch e
     info.error = e
 
-# Simple shorthand for evaluating a given XPath `expression` of a specific `type`.
-xpath = (expression, type) ->
-  document.evaluate expression, document, null, type, null
+# Evaluate a given XPath `expression` and derive the best value(s) from the result.
+xpath = (expression, format, singular) ->
+  result = document.evaluate expression, document, null, XPathResult.ANY_TYPE, null
+  # Not sure if this would happen but let's guard against insanity.
+  return unless result
+
+  switch result.resultType
+    # Simple *primitive* results are easy to extract from `result`.
+    when XPathResult.BOOLEAN_TYPE then result.booleanValue
+    when XPathResult.NUMBER_TYPE  then result.numberValue
+    when XPathResult.STRING_TYPE  then result.stringValue
+
+    # Single nodes probably won't be returned for `ANY_TYPE` but it's easy enough to handle.
+    when XPathResult.ANY_UNORDERED_NODE_TYPE, XPathResult.FIRST_ORDERED_NODE_TYPE
+      node = result.singleNodeValue
+      if node then getContent node, format
+
+    # Extract the contents of each snapshot. Again, it's unlikely these will be used by `ANY_TYPE`
+    # but it's better to be safe than sorry.
+    when XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE
+      contents = []
+
+      for i in [0...result.snapshotLength]
+        node = result.snapshotItem i
+        if node
+          contents.push getContent node, format
+          break if singular
+
+      if singular then contents[0] else contents
+
+    # Extract the contents of all nodes returned in `result`.
+    when XPathResult.ORDERED_NODE_ITERATOR_TYPE, XPathResult.UNORDERED_NODE_ITERATOR_TYPE
+      contents = []
+
+      while node = result.iterateNext()
+        if node
+          contents.push getContent node, format
+          break if singular
+
+      if singular then contents[0] else contents
 
 # Functionality
 # -------------

@@ -867,7 +867,7 @@
         "content": "</a>",
         "example": "</a>"
       },
-      "o_link_selectors": {
+      "o_link_xpath": {
         "content": "<a href=\"http://www.w3.org/TR/xpath/\" target=\"_blank\">",
         "example": "<a href=\"http://www.w3.org/TR/xpath/\">"
       }
@@ -2162,7 +2162,7 @@
     "description": "Description of the upperCase variable on the Guide tab of the Options page under the Operations section."
   },
   "opt_guide_operations_xpath_all_html_text": {
-    "message": "Concatenate the $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of all elements matching the $O_LINK_XPATH$XPath$C_LINK$ expression",
+    "message": "Concatenate the $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of all results for the $O_LINK_XPATH$XPath$C_LINK$ expression",
     "description": "Description of the xpathAllHTML variable on the Guide tab of the Options page under the Operations section.",
     "placeholders": {
       "c_abbr": {
@@ -2188,7 +2188,7 @@
     }
   },
   "opt_guide_operations_xpath_all_markdown_text": {
-    "message": "Concatenate the contents of all elements matching the $O_LINK_XPATH$XPath$C_LINK$ expression as $O_LINK_MARKDOWN$Markdown$C_LINK$",
+    "message": "Concatenate the contents of all results for the $O_LINK_XPATH$XPath$C_LINK$ expression as $O_LINK_MARKDOWN$Markdown$C_LINK$",
     "description": "Description of the xpathAllMarkdown variable on the Guide tab of the Options page under the Operations section.",
     "placeholders": {
       "c_link": {
@@ -2206,7 +2206,7 @@
     }
   },
   "opt_guide_operations_xpath_all_text": {
-    "message": "Concatenate the text of all elements matching the $O_LINK_XPATH$XPath$C_LINK$ expression",
+    "message": "Concatenate all results for the $O_LINK_XPATH$XPath$C_LINK$ expression",
     "description": "Description of the xpathAll variable on the Guide tab of the Options page under the Operations section.",
     "placeholders": {
       "c_link": {
@@ -2220,7 +2220,7 @@
     }
   },
   "opt_guide_operations_xpath_html_text": {
-    "message": "Get the $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of the first element matching the $O_LINK_XPATH$XPath$C_LINK$ expression",
+    "message": "Get the $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of the first result for the $O_LINK_XPATH$XPath$C_LINK$ expression",
     "description": "Description of the xpathHTML variable on the Guide tab of the Options page under the Operations section.",
     "placeholders": {
       "c_abbr": {
@@ -2246,7 +2246,7 @@
     }
   },
   "opt_guide_operations_xpath_markdown_text": {
-    "message": "Get the contents of the first element matching the $O_LINK_XPATH$XPath$C_LINK$ expression as $O_LINK_MARKDOWN$Markdown$C_LINK$",
+    "message": "Get the contents of the first result for the $O_LINK_XPATH$XPath$C_LINK$ expression as $O_LINK_MARKDOWN$Markdown$C_LINK$",
     "description": "Description of the xpathMarkdown variable on the Guide tab of the Options page under the Operations section.",
     "placeholders": {
       "c_link": {
@@ -2264,7 +2264,7 @@
     }
   },
   "opt_guide_operations_xpath_text": {
-    "message": "Get the text of first element matching the $O_LINK_XPATH$XPath$C_LINK$ expression",
+    "message": "Get the first result for the $O_LINK_XPATH$XPath$C_LINK$ expression as text",
     "description": "Description of the xpath variable on the Guide tab of the Options page under the Operations section.",
     "placeholders": {
       "c_link": {
@@ -3963,6 +3963,10 @@
     "message": "An error occurred while collecting information",
     "description": "Notification for when something went wrong while collecting contextual data before processing a template."
   },
+  "result_bad_expression_description": {
+    "message": "There was a problem parsing an expression.",
+    "description": "Notification for when an error occurs when parsing CSS selector or XPath expressions while processing a template."
+  },
   "result_bad_template_description": {
     "message": "An error occurred while deriving the activated template",
     "description": "Notification for when no active template can be derived from the current context."
@@ -3971,17 +3975,13 @@
     "message": "An error occurred while requesting information",
     "description": "Notification for when an invalid type was used by the requesting message."
   },
-  "result_bad_uri_description": {
-    "message": "The URL is not properly encoded",
-    "description": "Notification for when collecting data for an invalid URL before processing a template."
-  },
   "result_bad_title": {
     "message": "Sorry!",
     "description": "Notification header for when something bad happened while processing a template."
   },
-  "result_bad_xpath_description": {
-    "message": "There was a problem parsing an XPath expression.",
-    "description": "Notification for when an error occurs when parsing XPath expressions while processing a template."
+  "result_bad_uri_description": {
+    "message": "The URL is not properly encoded",
+    "description": "Notification for when collecting data for an invalid URL before processing a template."
   },
   "result_good_description": {
     "message": "$TEMPLATE$ has been copied",

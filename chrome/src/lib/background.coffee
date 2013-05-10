@@ -1199,7 +1199,7 @@ evaluateExpressions = (tab, map, callback) ->
 
       map[placeholder] = result
 
-    callback if error then new AppError 'result_bad_xpath_description'
+    callback if error then new AppError 'result_bad_expression_description'
 
 # Ensure there is a lower case variant of all properties of `data`, optionally removing the
 # original non-lower-case property.

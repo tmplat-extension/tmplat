@@ -134,39 +134,73 @@
   };
 
   runXPath = function(info) {
-    var all, contents, convertTo, e, expression, i, node, result;
+    var all, convertTo, e, expression;
 
     all = info.all, convertTo = info.convertTo, expression = info.expression;
     try {
-      return info.result = (function() {
-        var _i, _ref;
-
-        if (all) {
-          result = xpath(expression, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE);
-          contents = [];
-          for (i = _i = 0, _ref = result.snapshotLength; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
-            node = result.snapshotItem(i);
-            if (node) {
-              contents.push(getContent(node, convertTo));
-            }
-          }
-          return contents;
-        } else {
-          result = xpath(expression, XPathResult.FIRST_ORDERED_NODE_TYPE);
-          node = result.singleNodeValue;
-          if (node) {
-            return getContent(node, convertTo);
-          }
-        }
-      })();
+      return info.result = xpath(expression, convertTo, !all);
     } catch (_error) {
       e = _error;
       return info.error = e;
     }
   };
 
-  xpath = function(expression, type) {
-    return document.evaluate(expression, document, null, type, null);
+  xpath = function(expression, format, singular) {
+    var contents, i, node, result, _i, _ref;
+
+    result = document.evaluate(expression, document, null, XPathResult.ANY_TYPE, null);
+    if (!result) {
+      return;
+    }
+    switch (result.resultType) {
+      case XPathResult.BOOLEAN_TYPE:
+        return result.booleanValue;
+      case XPathResult.NUMBER_TYPE:
+        return result.numberValue;
+      case XPathResult.STRING_TYPE:
+        return result.stringValue;
+      case XPathResult.ANY_UNORDERED_NODE_TYPE:
+      case XPathResult.FIRST_ORDERED_NODE_TYPE:
+        node = result.singleNodeValue;
+        if (node) {
+          return getContent(node, format);
+        }
+        break;
+      case XPathResult.ORDERED_NODE_SNAPSHOT_TYPE:
+      case XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE:
+        contents = [];
+        for (i = _i = 0, _ref = result.snapshotLength; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+          node = result.snapshotItem(i);
+          if (node) {
+            contents.push(getContent(node, format));
+            if (singular) {
+              break;
+            }
+          }
+        }
+        if (singular) {
+          return contents[0];
+        } else {
+          return contents;
+        }
+        break;
+      case XPathResult.ORDERED_NODE_ITERATOR_TYPE:
+      case XPathResult.UNORDERED_NODE_ITERATOR_TYPE:
+        contents = [];
+        while (node = result.iterateNext()) {
+          if (node) {
+            contents.push(getContent(node, format));
+            if (singular) {
+              break;
+            }
+          }
+        }
+        if (singular) {
+          return contents[0];
+        } else {
+          return contents;
+        }
+    }
   };
 
   chrome.extension.sendMessage({
