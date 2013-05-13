@@ -100,8 +100,9 @@ OPERATING_SYSTEMS = [
 ]
 # Milliseconds before the popup automatically resets or closes, depending on user preferences.
 POPUP_DELAY       = 600
-# Regular expression used to extract useful information from `select` tag name variations.
-R_SELECT_TAG      = /^select(all)?(\S*)?$/
+# Regular expression used to extract useful information from different variations of names for tags
+# that are evaluated/executed later.
+R_EXPRESSION_TAG  = /^(select|xpath)(all)?(\S*)?$/
 # Regular expression used to detect upper case characters.
 R_UPPER_CASE      = /[A-Z]+/
 # Very primitive regular expression used to perform simple URL validation.
@@ -435,7 +436,7 @@ onMessage = (message, sender, sendResponse) ->
         (text, render) ->
           text = render text if text
           text = @url        if tag is 'shorten' and not text
-          trim = text.trim()
+          trim = text?.trim() or ''
           log.debug "Following is the contents of a #{tag} tag...", text
 
           # If `trim` doesn't appear to be a valid so just return the rendered `text`.
@@ -516,36 +517,40 @@ onMessage = (message, sender, sendResponse) ->
       return do done if _.isEmpty placeholders
 
       # Maps to populated with relevant data derived from their related stored placeholders.
-      selectMap  = {}
-      shortenMap = {}
+      expressionMap = {}
+      shortenMap    = {}
 
       for own placeholder, info of placeholders
         if info.tag is 'shorten'
           shortenMap[placeholder] = info.data
         else
-          match = info.tag.match R_SELECT_TAG
-          selectMap[placeholder] =
-            all:       match[1]?
-            convertTo: match[2]
-            selector:  info.data
+          match = info.tag.match R_EXPRESSION_TAG
+          if match
+            expressionMap[placeholder] =
+              all:        match[2]?
+              convertTo:  match[3]
+              expression: info.data
+              type:       match[1]
 
       async.series [
         (done) ->
           updateProgress 80
 
-          # Only proceed if any *select* placeholders were used.
-          return do done if _.isEmpty selectMap
+          # Only proceed if any expression (e.g. *select*, *xpath*) placeholders were used.
+          return do done if _.isEmpty expressionMap
 
-          # Execute all selectors within the `active` tab and update `selectMap` with the results.
-          runSelectors active, selectMap, ->
+          # Evaluate all of the expressions within the `active` tab and update `expressionMap` with
+          # the results.
+          evaluateExpressions active, expressionMap, (err) ->
             updateProgress 85
 
-            log.info "#{_.size selectMap} selector(s) were executed"
+            unless err
+              log.info "#{_.size expressionMap} expression(s) were evaluated"
 
-            # Update the corresponding placeholders with their result.
-            placeholders[placeholder] = value for own placeholder, value of selectMap
+              # Update the corresponding placeholders with their result.
+              placeholders[placeholder] = value for own placeholder, value of expressionMap
 
-            do done
+            done err
 
         (done) ->
           updateProgress 90
@@ -587,7 +592,7 @@ onMessage = (message, sender, sendResponse) ->
     # Ensure that the user is notified if they have attempted to copy an empty string to the system
     # clipboard.
     if not err and not output
-      err = new Error i18n.get 'result_bad_empty_description', template.title
+      err = new AppError 'result_bad_empty_description', template.title
 
     notification = ext.notification
 
@@ -793,8 +798,7 @@ class AppError extends Error
 
   # Create a new instance of `AppError` with a localized message.
   constructor: (messageKey, substitutions...) ->
-    if messageKey
-      @message = i18n.get messageKey, substitutions
+    @message = i18n.get messageKey, substitutions if messageKey
 
 # Data functions
 # --------------
@@ -1109,6 +1113,18 @@ buildStandardData = (tab, getCallback) ->
         render(text).toUpperCase()
     url:                   url.attr 'source'
     version:               ext.version
+    xpath:                ->
+      getCallback 'xpath'
+    xpathall:             ->
+      getCallback 'xpathall'
+    xpathallhtml:         ->
+      getCallback 'xpathallhtml'
+    xpathallmarkdown:     ->
+      getCallback 'xpathallmarkdown'
+    xpathhtml:            ->
+      getCallback 'xpathhtml'
+    xpathmarkdown:        ->
+      getCallback 'xpathmarkdown'
     yourls:                yourls.enabled
     yourlsauthentication:  yourls.authentication
     yourlspassword:        yourls.password
@@ -1152,10 +1168,12 @@ deriveMessageTempate = (message) ->
 
   template
 
-# Run the selectors in `map` within the content scripts in `tab` in order to obtain their
+# Evaluate the expressions in `map` within the content scripts in `tab` in order to obtain their
 # corresponding values.  
-# `callback` will be called with the result once all the selectors have been run.
-runSelectors = (tab, map, callback) ->
+# Expressions can be of mixed type (i.e. CSS selector, XPath expression) and contain different
+# instructions depending on the tag that was used by the user.  
+# `callback` will be called with the result once all of the expressions have been evaluated.
+evaluateExpressions = (tab, map, callback) ->
   log.trace()
 
   # Since content scripts cannot be executed on *protected* pages attempting to send a message to
@@ -1165,17 +1183,25 @@ runSelectors = (tab, map, callback) ->
     map[placeholder] = '' for own placeholder of map
     return do callback
 
-  # Tell the content script in `tab` to run all of the selectors in `map` and update it with their
-  # corresponding values.
-  chrome.tabs.sendMessage tab.id, selectors: map, (response) ->
+  # Tell the content script in `tab` to evaluate all of the expressions in `map` and update it with
+  # their corresponding values.
+  chrome.tabs.sendMessage tab.id, expressions: map, (response) ->
     log.debug 'The following response was returned by the content script...', response
 
-    for own placeholder, selector of response.selectors
-      result = selector.result or ''
-      result = result.join '\n' if _.isArray result
-      map[placeholder] = if selector.convertTo is 'markdown' then md result else result
+    response ?= {}
 
-    do callback
+    for own placeholder, expression of response.expressions
+      {convertTo, error, result} = expression
+
+      break if error
+
+      result or= ''
+      result   = result.join '\n' if _.isArray result
+      result   = md result if convertTo is 'markdown'
+
+      map[placeholder] = result
+
+    callback if error then new AppError 'result_bad_expression_description'
 
 # Ensure there is a lower case variant of all properties of `data`, optionally removing the
 # original non-lower-case property.
@@ -1648,7 +1674,7 @@ callUrlShortener = (map, callback) ->
   title    = service.title
 
   # Ensure the service URL exists in case it is user-defined (e.g. YOURLS).
-  return callback new Error i18n.get 'shortener_config_error', title unless endpoint
+  return callback new AppError 'shortener_config_error', title unless endpoint
 
   tasks = []
   _.each map, (url, placeholder) ->
@@ -1684,7 +1710,7 @@ callUrlShortener = (map, callback) ->
                 do done
               else
                 # Something went wrong so let's tell the user.
-                done new Error i18n.get 'shortener_detailed_error', [title, url]
+                done new AppError 'shortener_detailed_error', title, url
 
           # Finally, send the HTTP request.
           xhr.send service.input url

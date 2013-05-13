@@ -30,12 +30,11 @@ extractAll = (array, property) ->
     results.push element[property] if element[property] not in results
   results
 
-# Extract the relevant content of `node` as is required by `info`.
-getContent = (info, node) ->
+# Extract the relevant content of `node` as defined by `output`.
+getContent = (node, output) ->
   return '' unless node
 
-  if info?.convertTo in ['html', 'markdown'] then node.innerHTML
-  else node.textContent
+  if output in ['html', 'markdown'] then node.innerHTML else node.textContent
 
 # Attempt to derive the most relevant anchor element from those stored under the `id` provided.
 getLink = (id, url) ->
@@ -61,6 +60,10 @@ getMeta = (name, csv) ->
 isEditable = (node) ->
   node? and not node.disabled and not node.readOnly
 
+# Determine whether or not `os` matches the user's operating system.
+isThisPlatform = (os) ->
+  /// #{os} ///i.test navigator.platform
+
 # Traverse the parents of `node` in search of the first anchor element, if any.
 parentLink = (node) ->
   return unless node?
@@ -79,6 +82,72 @@ paste = (node, value) ->
 
   node.value = str
 
+# Evaluate the CSS selectors provided and extract their corresponding contents.  
+# If an error occurs during the evaluation, it can be found at `info.error`.
+runSelector = (info) ->
+  {all, convertTo, expression} = info
+
+  try
+    info.result = if all
+      nodes = document.querySelectorAll expression
+      (getContent node, convertTo for node in nodes when node)
+    else
+      node = document.querySelector expression
+      if node then getContent node, convertTo
+  catch e
+    info.error = e
+
+# Evaluate the XPath expressions provided and extract their corresponding contents.  
+# If an error occurs during the evaluation, it can be found at `info.error`.
+runXPath = (info) ->
+  {all, convertTo, expression} = info
+
+  try
+    info.result = xpath expression, convertTo, not all
+  catch e
+    info.error = e
+
+# Evaluate a given XPath `expression` and derive the best value(s) from the result.
+xpath = (expression, format, singular) ->
+  result = document.evaluate expression, document, null, XPathResult.ANY_TYPE, null
+  # Not sure if this would happen but let's guard against insanity.
+  return unless result
+
+  switch result.resultType
+    # Simple *primitive* results are easy to extract from `result`.
+    when XPathResult.BOOLEAN_TYPE then result.booleanValue
+    when XPathResult.NUMBER_TYPE  then result.numberValue
+    when XPathResult.STRING_TYPE  then result.stringValue
+
+    # Single nodes probably won't be returned for `ANY_TYPE` but it's easy enough to handle.
+    when XPathResult.ANY_UNORDERED_NODE_TYPE, XPathResult.FIRST_ORDERED_NODE_TYPE
+      node = result.singleNodeValue
+      if node then getContent node, format
+
+    # Extract the contents of each snapshot. Again, it's unlikely these will be used by `ANY_TYPE`
+    # but it's better to be safe than sorry.
+    when XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE
+      contents = []
+
+      for i in [0...result.snapshotLength]
+        node = result.snapshotItem i
+        if node
+          contents.push getContent node, format
+          break if singular
+
+      if singular then contents[0] else contents
+
+    # Extract the contents of all nodes returned in `result`.
+    when XPathResult.ORDERED_NODE_ITERATOR_TYPE, XPathResult.UNORDERED_NODE_ITERATOR_TYPE
+      contents = []
+
+      while node = result.iterateNext()
+        if node
+          contents.push getContent node, format
+          break if singular
+
+      if singular then contents[0] else contents
+
 # Functionality
 # -------------
 
@@ -86,7 +155,7 @@ paste = (node, value) ->
 # that it can be used to detect previous injections.
 chrome.extension.sendMessage type: 'info', (data) ->
   hotkeys = data.hotkeys
-  isMac   = navigator.userAgent.toLowerCase().indexOf('mac') isnt -1
+  isMac   = isThisPlatform 'mac'
 
   # Only add the listeners if a previous injection isn't detected for version
   # of Template that is currently running.
@@ -127,19 +196,14 @@ chrome.extension.sendMessage type: 'info', (data) ->
       hotkeys = message.hotkeys
       return do callback
 
-    # Retrieve the contents of all selected elements.
-    if message.selectors?
-      for own key, info of message.selectors
-        if info.all
-          nodes  = document.querySelectorAll info.selector
-          result = []
-          if nodes
-            result.push getContent info, node for node in nodes when node
-        else
-          node   = document.querySelector info.selector
-          result = getContent info, node if node
-        info.result = result
-      return callback selectors: message.selectors
+    # Retrieve the contents of all evaluated elements.
+    if message.expressions?
+      for own key, info of message.expressions
+        switch info.type
+          when 'select' then runSelector info
+          when 'xpath'  then runXPath    info
+
+      return callback expressions: message.expressions
 
     # Message identifier is required past this point.
     return do callback unless message.id?
