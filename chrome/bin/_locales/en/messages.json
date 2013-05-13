@@ -859,6 +859,20 @@
       }
     }
   },
+  "opt_guide_definitions_footer_4": {
+    "message": "Learn more about the $O_LINK_XPATH$XPath API$C_LINK$",
+    "description": "Fourth optional footer displayed below Definitions tables.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_xpath": {
+        "content": "<a href=\"http://www.w3.org/TR/xpath/\" target=\"_blank\">",
+        "example": "<a href=\"http://www.w3.org/TR/xpath/\">"
+      }
+    }
+  },
   "opt_guide_description_header": {
     "message": "Description",
     "description": "Header for the Description column."
@@ -2146,6 +2160,122 @@
   "opt_guide_operations_upper_case_text": {
     "message": "Transform the text provided into upper case",
     "description": "Description of the upperCase variable on the Guide tab of the Options page under the Operations section."
+  },
+  "opt_guide_operations_xpath_all_html_text": {
+    "message": "Concatenate the $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of all results for the $O_LINK_XPATH$XPath$C_LINK$ expression",
+    "description": "Description of the xpathAllHTML variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>",
+        "example": "</abbr>"
+      },
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\"",
+        "example": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">",
+        "example": "\">"
+      },
+      "o_link_xpath": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/XPath\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/XPath\">"
+      }
+    }
+  },
+  "opt_guide_operations_xpath_all_markdown_text": {
+    "message": "Concatenate the contents of all results for the $O_LINK_XPATH$XPath$C_LINK$ expression as $O_LINK_MARKDOWN$Markdown$C_LINK$",
+    "description": "Description of the xpathAllMarkdown variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_markdown": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\">"
+      },
+      "o_link_xpath": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/XPath\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/XPath\">"
+      }
+    }
+  },
+  "opt_guide_operations_xpath_all_text": {
+    "message": "Concatenate all results for the $O_LINK_XPATH$XPath$C_LINK$ expression",
+    "description": "Description of the xpathAll variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_xpath": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/XPath\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/XPath\">"
+      }
+    }
+  },
+  "opt_guide_operations_xpath_html_text": {
+    "message": "Get the $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of the first result for the $O_LINK_XPATH$XPath$C_LINK$ expression",
+    "description": "Description of the xpathHTML variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>",
+        "example": "</abbr>"
+      },
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\"",
+        "example": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">",
+        "example": "\">"
+      },
+      "o_link_xpath": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/XPath\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/XPath\">"
+      }
+    }
+  },
+  "opt_guide_operations_xpath_markdown_text": {
+    "message": "Get the contents of the first result for the $O_LINK_XPATH$XPath$C_LINK$ expression as $O_LINK_MARKDOWN$Markdown$C_LINK$",
+    "description": "Description of the xpathMarkdown variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_markdown": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\">"
+      },
+      "o_link_xpath": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/XPath\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/XPath\">"
+      }
+    }
+  },
+  "opt_guide_operations_xpath_text": {
+    "message": "Get the first result for the $O_LINK_XPATH$XPath$C_LINK$ expression as text",
+    "description": "Description of the xpath variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_xpath": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/XPath\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/XPath\">"
+      }
+    }
   },
   "opt_guide_options_header": {
     "message": "Options",
@@ -3833,6 +3963,10 @@
     "message": "An error occurred while collecting information",
     "description": "Notification for when something went wrong while collecting contextual data before processing a template."
   },
+  "result_bad_expression_description": {
+    "message": "There was a problem parsing an expression.",
+    "description": "Notification for when an error occurs when parsing CSS selector or XPath expressions while processing a template."
+  },
   "result_bad_template_description": {
     "message": "An error occurred while deriving the activated template",
     "description": "Notification for when no active template can be derived from the current context."
@@ -3841,13 +3975,13 @@
     "message": "An error occurred while requesting information",
     "description": "Notification for when an invalid type was used by the requesting message."
   },
-  "result_bad_uri_description": {
-    "message": "The URL is not properly encoded",
-    "description": "Notification for when collecting data for an invalid URL before processing a template."
-  },
   "result_bad_title": {
     "message": "Sorry!",
     "description": "Notification header for when something bad happened while processing a template."
+  },
+  "result_bad_uri_description": {
+    "message": "The URL is not properly encoded",
+    "description": "Notification for when collecting data for an invalid URL before processing a template."
   },
   "result_good_description": {
     "message": "$TEMPLATE$ has been copied",

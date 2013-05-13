@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var AppError, BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, Icon, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, UNKNOWN_LOCALE, addAdditionalData, browser, buildConfig, buildDerivedData, buildIcons, buildPopup, buildStandardData, buildTemplate, callUrlShortener, deriveMessageInfo, deriveMessageTempate, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, isWebStore, nullIfEmpty, onMessage, onMessageExternal, operatingSystem, runSelectors, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
+  var AppError, BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, Icon, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_EXPRESSION_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, UNKNOWN_LOCALE, addAdditionalData, browser, buildConfig, buildDerivedData, buildIcons, buildPopup, buildStandardData, buildTemplate, callUrlShortener, deriveMessageInfo, deriveMessageTempate, evaluateExpressions, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, isWebStore, nullIfEmpty, onMessage, onMessageExternal, operatingSystem, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -105,7 +105,7 @@
 
   POPUP_DELAY = 600;
 
-  R_SELECT_TAG = /^select(all)?(\S*)?$/;
+  R_EXPRESSION_TAG = /^(select|xpath)(all)?(\S*)?$/;
 
   R_UPPER_CASE = /[A-Z]+/;
 
@@ -522,7 +522,7 @@
             if (tag === 'shorten' && !text) {
               text = this.url;
             }
-            trim = text.trim();
+            trim = (text != null ? text.trim() : void 0) || '';
             log.debug("Following is the contents of a " + tag + " tag...", text);
             if (!trim || tag === 'shorten' && !R_VALID_URL.test(trim)) {
               return text;
@@ -583,13 +583,13 @@
           return done();
         });
       }, function(done) {
-        var info, match, placeholder, selectMap, shortenMap;
+        var expressionMap, info, match, placeholder, shortenMap;
 
         updateProgress(70);
         if (_.isEmpty(placeholders)) {
           return done();
         }
-        selectMap = {};
+        expressionMap = {};
         shortenMap = {};
         for (placeholder in placeholders) {
           if (!__hasProp.call(placeholders, placeholder)) continue;
@@ -597,31 +597,36 @@
           if (info.tag === 'shorten') {
             shortenMap[placeholder] = info.data;
           } else {
-            match = info.tag.match(R_SELECT_TAG);
-            selectMap[placeholder] = {
-              all: match[1] != null,
-              convertTo: match[2],
-              selector: info.data
-            };
+            match = info.tag.match(R_EXPRESSION_TAG);
+            if (match) {
+              expressionMap[placeholder] = {
+                all: match[2] != null,
+                convertTo: match[3],
+                expression: info.data,
+                type: match[1]
+              };
+            }
           }
         }
         return async.series([
           function(done) {
             updateProgress(80);
-            if (_.isEmpty(selectMap)) {
+            if (_.isEmpty(expressionMap)) {
               return done();
             }
-            return runSelectors(active, selectMap, function() {
+            return evaluateExpressions(active, expressionMap, function(err) {
               var value;
 
               updateProgress(85);
-              log.info("" + (_.size(selectMap)) + " selector(s) were executed");
-              for (placeholder in selectMap) {
-                if (!__hasProp.call(selectMap, placeholder)) continue;
-                value = selectMap[placeholder];
-                placeholders[placeholder] = value;
+              if (!err) {
+                log.info("" + (_.size(expressionMap)) + " expression(s) were evaluated");
+                for (placeholder in expressionMap) {
+                  if (!__hasProp.call(expressionMap, placeholder)) continue;
+                  value = expressionMap[placeholder];
+                  placeholders[placeholder] = value;
+                }
               }
-              return done();
+              return done(err);
             });
           }, function(done) {
             updateProgress(90);
@@ -659,7 +664,7 @@
       type = utils.capitalize(message.type);
       analytics.track('Requests', 'Processed', type, shortcut ? message.data.key.charCodeAt(0) : void 0);
       if (!err && !output) {
-        err = new Error(i18n.get('result_bad_empty_description', template.title));
+        err = new AppError('result_bad_empty_description', template.title);
       }
       notification = ext.notification;
       if (err) {
@@ -1266,6 +1271,24 @@
       },
       url: url.attr('source'),
       version: ext.version,
+      xpath: function() {
+        return getCallback('xpath');
+      },
+      xpathall: function() {
+        return getCallback('xpathall');
+      },
+      xpathallhtml: function() {
+        return getCallback('xpathallhtml');
+      },
+      xpathallmarkdown: function() {
+        return getCallback('xpathallmarkdown');
+      },
+      xpathhtml: function() {
+        return getCallback('xpathhtml');
+      },
+      xpathmarkdown: function() {
+        return getCallback('xpathmarkdown');
+      },
       yourls: yourls.enabled,
       yourlsauthentication: yourls.authentication,
       yourlspassword: yourls.password,
@@ -1329,7 +1352,7 @@
     return template;
   };
 
-  runSelectors = function(tab, map, callback) {
+  evaluateExpressions = function(tab, map, callback) {
     var placeholder;
 
     log.trace();
@@ -1341,22 +1364,32 @@
       return callback();
     }
     return chrome.tabs.sendMessage(tab.id, {
-      selectors: map
+      expressions: map
     }, function(response) {
-      var result, selector, _ref;
+      var convertTo, error, expression, result, _ref;
 
       log.debug('The following response was returned by the content script...', response);
-      _ref = response.selectors;
+      if (response == null) {
+        response = {};
+      }
+      _ref = response.expressions;
       for (placeholder in _ref) {
         if (!__hasProp.call(_ref, placeholder)) continue;
-        selector = _ref[placeholder];
-        result = selector.result || '';
+        expression = _ref[placeholder];
+        convertTo = expression.convertTo, error = expression.error, result = expression.result;
+        if (error) {
+          break;
+        }
+        result || (result = '');
         if (_.isArray(result)) {
           result = result.join('\n');
         }
-        map[placeholder] = selector.convertTo === 'markdown' ? md(result) : result;
+        if (convertTo === 'markdown') {
+          result = md(result);
+        }
+        map[placeholder] = result;
       }
-      return callback();
+      return callback(error ? new AppError('result_bad_expression_description') : void 0);
     });
   };
 
@@ -1992,7 +2025,7 @@
     oauth = false;
     title = service.title;
     if (!endpoint) {
-      return callback(new Error(i18n.get('shortener_config_error', title)));
+      return callback(new AppError('shortener_config_error', title));
     }
     tasks = [];
     _.each(map, function(url, placeholder) {
@@ -2030,7 +2063,7 @@
                   map[placeholder] = service.output(xhr.responseText);
                   return done();
                 } else {
-                  return done(new Error(i18n.get('shortener_detailed_error', [title, url])));
+                  return done(new AppError('shortener_detailed_error', title, url));
                 }
               }
             };
