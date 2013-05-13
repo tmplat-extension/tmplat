@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var AppError, BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, Icon, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_EXPRESSION_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, UNKNOWN_LOCALE, addAdditionalData, browser, buildConfig, buildDerivedData, buildIcons, buildPopup, buildStandardData, buildTemplate, callUrlShortener, deriveMessageInfo, deriveMessageTempate, evaluateExpressions, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, isWebStore, nullIfEmpty, onMessage, onMessageExternal, operatingSystem, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
+  var AppError, BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, Icon, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_EXPRESSION_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, UNKNOWN_LOCALE, addAdditionalData, browser, buildConfig, buildDerivedData, buildIcons, buildPopup, buildStandardData, buildTemplate, callUrlShortener, deriveMessageInfo, deriveMessageTempate, evaluateExpressions, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, isWebStore, nullIfEmpty, onMessage, onMessageExternal, operatingSystem, selectOrCreateTab, showNotification, toMarkdown, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -752,6 +752,16 @@
     return updateProgress(null, false);
   };
 
+  toMarkdown = function(html) {
+    var inline;
+
+    log.trace();
+    inline = store.get('markdown').inline;
+    return md(html, {
+      inline: inline
+    });
+  };
+
   updateHotkeys = function() {
     var hotkeys;
 
@@ -1021,7 +1031,7 @@
   };
 
   buildStandardData = function(tab, getCallback) {
-    var anchor, bitly, ctab, data, extension, googl, handler, menu, notifications, shortcuts, stats, toolbar, url, yourls;
+    var anchor, bitly, ctab, data, extension, googl, handler, markdown, menu, notifications, shortcuts, stats, toolbar, url, yourls;
 
     log.trace();
     ctab = $.extend({}, tab);
@@ -1042,6 +1052,7 @@
     anchor = store.get('anchor');
     bitly = store.get('bitly');
     googl = store.get('googl');
+    markdown = store.get('markdown');
     menu = store.get('menu');
     notifications = store.get('notifications');
     shortcuts = store.get('shortcuts');
@@ -1142,13 +1153,14 @@
         };
       },
       linkmarkdown: function() {
-        return md(this.linkhtml);
+        return toMarkdown(this.linkhtml);
       },
       lowercase: function() {
         return function(text, render) {
           return render(text).toLowerCase();
         };
       },
+      markdowninline: markdown.inline,
       menu: menu.enabled,
       menuoptions: menu.options,
       menupaste: menu.paste,
@@ -1199,7 +1211,7 @@
         return getCallback('selecthtml');
       },
       selectionmarkdown: function() {
-        return md(this.selectionhtml);
+        return toMarkdown(this.selectionhtml);
       },
       selectmarkdown: function() {
         return getCallback('selectmarkdown');
@@ -1373,7 +1385,7 @@
           result = result.join('\n');
         }
         if (convertTo === 'markdown') {
-          result = md(result);
+          result = toMarkdown(result);
         }
         map[placeholder] = result;
       }
@@ -2198,6 +2210,7 @@
         }
         store.init({
           anchor: {},
+          markdown: {},
           menu: {},
           notifications: {},
           shortcuts: {},
@@ -2213,6 +2226,11 @@
             anchor.target = false;
           }
           return (_ref2 = anchor.title) != null ? _ref2 : anchor.title = false;
+        });
+        store.modify('markdown', function(markdown) {
+          var _ref1;
+
+          return (_ref1 = markdown.inline) != null ? _ref1 : markdown.inline = false;
         });
         store.modify('menu', function(menu) {
           var _ref1, _ref2, _ref3;

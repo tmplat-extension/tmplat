@@ -45,30 +45,6 @@
           <div class="span12">
             <form class="form-horizontal">
               <fieldset>
-                <legend i18n-content="opt_anchor_header"></legend>
-                <p i18n-content="opt_anchor_text"></p>
-                <div class="control-group">
-                  <label class="control-label" for="anchorTitle" i18n-content="opt_anchor_title_label"></label>
-                  <div class="controls">
-                    <label class="checkbox span5 tight-left">
-                      <input type="checkbox" id="anchorTitle">
-                      <span i18n-content="opt_anchor_title_text"></span>
-                      <p class="help-block" i18n-content="opt_anchor_title_sub_text"></p>
-                    </label>
-                  </div>
-                </div>
-                <div class="control-group">
-                  <label class="control-label" for="anchorTarget" i18n-content="opt_anchor_target_label"></label>
-                  <div class="controls">
-                    <label class="checkbox span5 tight-left">
-                      <input type="checkbox" id="anchorTarget">
-                      <span i18n-content="opt_anchor_target_text"></span>
-                      <p class="help-block" i18n-content="opt_anchor_target_sub_text"></p>
-                    </label>
-                  </div>
-                </div>
-              </fieldset>
-              <fieldset>
                 <legend i18n-content="opt_notification_header"></legend>
                 <div class="control-group">
                   <label class="control-label" for="notifications" i18n-content="opt_notification_label"></label>
@@ -191,6 +167,44 @@
                       <input type="checkbox" id="shortcutsPaste">
                       <span i18n-content="opt_shortcuts_paste_text"></span>
                       <p class="help-block" i18n-content="opt_protected_sub_text"></p>
+                    </label>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend i18n-content="opt_anchor_header"></legend>
+                <p i18n-content="opt_anchor_text"></p>
+                <div class="control-group">
+                  <label class="control-label" for="anchorTitle" i18n-content="opt_anchor_title_label"></label>
+                  <div class="controls">
+                    <label class="checkbox span5 tight-left">
+                      <input type="checkbox" id="anchorTitle">
+                      <span i18n-content="opt_anchor_title_text"></span>
+                      <p class="help-block" i18n-content="opt_anchor_title_sub_text"></p>
+                    </label>
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label" for="anchorTarget" i18n-content="opt_anchor_target_label"></label>
+                  <div class="controls">
+                    <label class="checkbox span5 tight-left">
+                      <input type="checkbox" id="anchorTarget">
+                      <span i18n-content="opt_anchor_target_text"></span>
+                      <p class="help-block" i18n-content="opt_anchor_target_sub_text"></p>
+                    </label>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend i18n-content="opt_markdown_header"></legend>
+                <p i18n-content="opt_markdown_text"></p>
+                <div class="control-group">
+                  <label class="control-label" for="markdownInline" i18n-content="opt_markdown_inline_label"></label>
+                  <div class="controls">
+                    <label class="checkbox span5 tight-left">
+                      <input type="checkbox" id="markdownInline">
+                      <span i18n-content="opt_markdown_inline_text"></span>
+                      <p class="help-block" i18n-content="opt_markdown_inline_sub_text"></p>
                     </label>
                   </div>
                 </div>
@@ -964,6 +978,10 @@
                           <tr>
                             <td>googlAccount</td>
                             <td i18n-content="opt_guide_options_googl_account_text"></td>
+                          </tr>
+                          <tr>
+                            <td>markdownInline <span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_options_markdown_inline_text"></td>
                           </tr>
                           <tr>
                             <td>menu</td>
