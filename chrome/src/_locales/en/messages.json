@@ -668,12 +668,24 @@
     }
   },
   "opt_anchor_text": {
-    "message": "This section refers to links that are rendered by the $O_EMPH$Anchor$C_EMPH$ template.",
+    "message": "This section refers to $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ links that are rendered by the $O_EMPH$Anchor$C_EMPH$ template.",
     "description": "Text for the Anchor Tags section.",
     "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>",
+        "example": "</abbr>"
+      },
       "c_emph": {
         "content": "</em>",
         "example": "</em>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\"",
+        "example": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">",
+        "example": "\">"
       },
       "o_emph": {
         "content": "<em>",
@@ -2493,6 +2505,20 @@
       }
     }
   },
+  "opt_guide_options_markdown_inline_text": {
+    "message": "Whether or not the option to render $O_LINK_MARKDOWN$Markdown$C_LINK$ links using the inline style is enabled",
+    "description": "Description of the markdownInline variable on the Guide tab of the Options page under the Options section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_markdown": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\">"
+      }
+    }
+  },
   "opt_guide_options_menu_text": {
     "message": "Whether or not the option to show the context (right-click) menu is enabled",
     "description": "Description of the menu variable on the Guide tab of the Options page under the Options section."
@@ -3384,6 +3410,54 @@
   "opt_logger_level_warning_text": {
     "message": "Warning",
     "description": "Text for the Warning option for the Level field in the Developer Tools dialog on the Options page under the Logging section."
+  },
+  "opt_markdown_header": {
+    "message": "Markdown",
+    "description": "Header for the Markdown section."
+  },
+  "opt_markdown_text": {
+    "message": "This section refers to content that is converted to $O_LINK_MARKDOWN$Markdown$C_LINK$ from $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$.",
+    "description": "Text for the Markdown section.",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>",
+        "example": "</abbr>"
+      },
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\"",
+        "example": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">",
+        "example": "\">"
+      },
+      "o_link_markdown": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\">"
+      }
+    }
+  },
+  "opt_markdown_inline_label": {
+    "message": "Inline Links",
+    "description": "Label for the Inline Links field."
+  },
+  "opt_markdown_inline_sub_text": {
+    "message": "Markdown links are rendered using the inline style $CODE$",
+    "description": "Help text for the Inline Links field.",
+    "placeholders": {
+      "code": {
+        "content": "<code>[text](url)</code>",
+        "example": "[title](url)"
+      }
+    }
+  },
+  "opt_markdown_inline_text": {
+    "message": "Link references no longer listed at the end of the output",
+    "description": "Text for the Inline Links field."
   },
   "opt_menu_header": {
     "message": "Context Menu",

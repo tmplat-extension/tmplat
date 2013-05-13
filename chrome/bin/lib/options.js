@@ -45,15 +45,17 @@
   };
 
   load = function() {
-    var anchor, menu, shortcuts;
+    var anchor, markdown, menu, shortcuts;
 
     log.trace();
     anchor = store.get('anchor');
+    markdown = store.get('markdown');
     menu = store.get('menu');
     shortcuts = store.get('shortcuts');
     $('#analytics').prop('checked', store.get('analytics'));
     $('#anchorTarget').prop('checked', anchor.target);
     $('#anchorTitle').prop('checked', anchor.title);
+    $('#markdownInline').prop('checked', markdown.inline);
     $('#menuEnabled').prop('checked', menu.enabled);
     $('#menuOptions').prop('checked', menu.options);
     $('#menuPaste').prop('checked', menu.paste);
@@ -228,6 +230,15 @@
       return value;
     }, function(jel, key, value) {
       return analytics.track('Anchors', 'Changed', utils.capitalize(key), Number(value));
+    });
+    bindSaveEvent('#markdownInline', 'change', 'markdown', function(key) {
+      var value;
+
+      value = this.is(':checked');
+      log.debug("Changing markdown " + key + " to '" + value + "'");
+      return value;
+    }, function(jel, key, value) {
+      return analytics.track('Markdown', 'Changed', utils.capitalize(key), Number(value));
     });
     bindSaveEvent('#menuEnabled, #menuOptions, #menuPaste', 'change', 'menu', function(key) {
       var value;
