@@ -34,7 +34,7 @@
       title: i18n.get('default_template_short'),
       usage: 0
     }, {
-      content: "<a href=\"{url}\"{#anchorTarget} target=\"_blank\"{/anchorTarget}{#anchorTitle} title=\"{{title}}\"{/anchorTitle}>{{title}}</a>",
+      content: "<a href=\"{url}\"{#linksTarget} target=\"_blank\"{/linksTarget}{#linksTitle} title=\"{{title}}\"{/linksTitle}>{{title}}</a>",
       enabled: true,
       image: 'font',
       index: 2,
@@ -64,7 +64,7 @@
       title: i18n.get('default_template_bbcode'),
       usage: 0
     }, {
-      content: '[{title}]({url})',
+      content: '[{title}]({url}{#linksTitle} "{title}"{/linksTitle})',
       enabled: false,
       image: 'asterisk',
       index: 4,
@@ -1031,7 +1031,7 @@
   };
 
   buildStandardData = function(tab, getCallback) {
-    var anchor, bitly, ctab, data, extension, googl, handler, markdown, menu, notifications, shortcuts, stats, toolbar, url, yourls;
+    var bitly, ctab, data, extension, googl, handler, links, markdown, menu, notifications, shortcuts, stats, toolbar, url, yourls;
 
     log.trace();
     ctab = $.extend({}, tab);
@@ -1049,9 +1049,9 @@
     }
     data = {};
     url = $.url(ctab.url);
-    anchor = store.get('anchor');
     bitly = store.get('bitly');
     googl = store.get('googl');
+    links = store.get('links');
     markdown = store.get('markdown');
     menu = store.get('menu');
     notifications = store.get('notifications');
@@ -1060,8 +1060,12 @@
     toolbar = store.get('toolbar');
     yourls = store.get('yourls');
     $.extend(data, url.attr(), {
-      anchortarget: anchor.target,
-      anchortitle: anchor.title,
+      anchortarget: function() {
+        return this.linkstarget;
+      },
+      anchortitle: function() {
+        return this.linkstitle;
+      },
       bitly: bitly.enabled,
       bitlyaccount: function() {
         return _.findWhere(SHORTENERS, {
@@ -1100,10 +1104,10 @@
       },
       depth: screen.colorDepth,
       doanchortarget: function() {
-        return this.anchortarget;
+        return this.linkstarget;
       },
       doanchortitle: function() {
-        return this.anchortitle;
+        return this.linkstitle;
       },
       encode: function() {
         return function(text, render) {
@@ -1155,6 +1159,8 @@
       linkmarkdown: function() {
         return toMarkdown(this.linkhtml);
       },
+      linkstarget: links.target,
+      linkstitle: links.title,
       lowercase: function() {
         return function(text, render) {
           return render(text).toLowerCase();
@@ -1550,11 +1556,11 @@
           }
         })());
       }
-      store.modify('anchor', function(anchor) {
+      store.modify('links', function(links) {
         var _ref, _ref1;
 
-        anchor.target = (_ref = store.get('doAnchorTarget')) != null ? _ref : false;
-        return anchor.title = (_ref1 = store.get('doAnchorTitle')) != null ? _ref1 : false;
+        links.target = (_ref = store.get('doAnchorTarget')) != null ? _ref : false;
+        return links.title = (_ref1 = store.get('doAnchorTitle')) != null ? _ref1 : false;
       });
       store.remove('doAnchorTarget', 'doAnchorTitle');
       store.modify('menu', function(menu) {
@@ -1576,11 +1582,7 @@
         enabled: (_ref = store.get('shortcuts')) != null ? _ref : true
       });
     });
-    return updater.update('1.2.3', function() {
-      store.modify('anchor', function(anchor) {
-        delete anchor.Target;
-        return delete anchor.Title;
-      });
+    updater.update('1.2.3', function() {
       store.modify('logger', function(logger) {
         delete logger.Enabled;
         return delete logger.Level;
@@ -1603,6 +1605,16 @@
         delete toolbar.Key;
         return delete toolbar.Options;
       });
+    });
+    return updater.update('1.2.5', function() {
+      store.modify('links', function(links) {
+        var anchor, _ref, _ref1, _ref2;
+
+        anchor = (_ref = store.get('anchor')) != null ? _ref : {};
+        links.target = (_ref1 = anchor.target) != null ? _ref1 : false;
+        return links.title = (_ref2 = anchor.title) != null ? _ref2 : false;
+      });
+      return store.remove('anchor');
     });
   };
 
@@ -2209,7 +2221,7 @@
           shortener.oauth = typeof shortener.oauth === "function" ? shortener.oauth() : void 0;
         }
         store.init({
-          anchor: {},
+          links: {},
           markdown: {},
           menu: {},
           notifications: {},
@@ -2219,13 +2231,13 @@
           toolbar: {}
         });
         init_update();
-        store.modify('anchor', function(anchor) {
+        store.modify('links', function(links) {
           var _ref1, _ref2;
 
-          if ((_ref1 = anchor.target) == null) {
-            anchor.target = false;
+          if ((_ref1 = links.target) == null) {
+            links.target = false;
           }
-          return (_ref2 = anchor.title) != null ? _ref2 : anchor.title = false;
+          return (_ref2 = links.title) != null ? _ref2 : links.title = false;
         });
         store.modify('markdown', function(markdown) {
           var _ref1;
