@@ -102,7 +102,7 @@ OPERATING_SYSTEMS = [
 POPUP_DELAY       = 600
 # Regular expression used to extract useful information from different variations of names for tags
 # that are evaluated/executed later.
-R_EXPRESION_TAG   = /^(select|xpath)(all)?(\S*)?$/
+R_EXPRESSION_TAG  = /^(select|xpath)(all)?(\S*)?$/
 # Regular expression used to detect upper case characters.
 R_UPPER_CASE      = /[A-Z]+/
 # Very primitive regular expression used to perform simple URL validation.
@@ -524,7 +524,7 @@ onMessage = (message, sender, sendResponse) ->
         if info.tag is 'shorten'
           shortenMap[placeholder] = info.data
         else
-          match = info.tag.match R_EXPRESION_TAG
+          match = info.tag.match R_EXPRESSION_TAG
           if match
             expressionMap[placeholder] =
               all:        match[2]?
@@ -798,7 +798,7 @@ class AppError extends Error
 
   # Create a new instance of `AppError` with a localized message.
   constructor: (messageKey, substitutions...) ->
-    Error.call this, if messageKey then i18n.get messageKey, substitutions
+    @message = i18n.get messageKey, substitutions if messageKey
 
 # Data functions
 # --------------
@@ -1187,6 +1187,8 @@ evaluateExpressions = (tab, map, callback) ->
   # their corresponding values.
   chrome.tabs.sendMessage tab.id, expressions: map, (response) ->
     log.debug 'The following response was returned by the content script...', response
+
+    response ?= {}
 
     for own placeholder, expression of response.expressions
       {convertTo, error, result} = expression

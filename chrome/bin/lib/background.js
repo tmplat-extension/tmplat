@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var AppError, BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, Icon, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_EXPRESION_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, UNKNOWN_LOCALE, addAdditionalData, browser, buildConfig, buildDerivedData, buildIcons, buildPopup, buildStandardData, buildTemplate, callUrlShortener, deriveMessageInfo, deriveMessageTempate, evaluateExpressions, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, isWebStore, nullIfEmpty, onMessage, onMessageExternal, operatingSystem, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
+  var AppError, BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, Icon, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_EXPRESSION_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, UNKNOWN_LOCALE, addAdditionalData, browser, buildConfig, buildDerivedData, buildIcons, buildPopup, buildStandardData, buildTemplate, callUrlShortener, deriveMessageInfo, deriveMessageTempate, evaluateExpressions, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, isWebStore, nullIfEmpty, onMessage, onMessageExternal, operatingSystem, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -105,7 +105,7 @@
 
   POPUP_DELAY = 600;
 
-  R_EXPRESION_TAG = /^(select|xpath)(all)?(\S*)?$/;
+  R_EXPRESSION_TAG = /^(select|xpath)(all)?(\S*)?$/;
 
   R_UPPER_CASE = /[A-Z]+/;
 
@@ -597,7 +597,7 @@
           if (info.tag === 'shorten') {
             shortenMap[placeholder] = info.data;
           } else {
-            match = info.tag.match(R_EXPRESION_TAG);
+            match = info.tag.match(R_EXPRESSION_TAG);
             if (match) {
               expressionMap[placeholder] = {
                 all: match[2] != null,
@@ -870,7 +870,9 @@
       var messageKey, substitutions;
 
       messageKey = arguments[0], substitutions = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-      Error.call(this, messageKey ? i18n.get(messageKey, substitutions) : void 0);
+      if (messageKey) {
+        this.message = i18n.get(messageKey, substitutions);
+      }
     }
 
     return AppError;
@@ -1367,6 +1369,9 @@
       var convertTo, error, expression, result, _ref;
 
       log.debug('The following response was returned by the content script...', response);
+      if (response == null) {
+        response = {};
+      }
       _ref = response.expressions;
       for (placeholder in _ref) {
         if (!__hasProp.call(_ref, placeholder)) continue;
