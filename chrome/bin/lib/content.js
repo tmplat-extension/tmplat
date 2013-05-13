@@ -4,7 +4,7 @@
 // For all details and documentation:
 // <http://neocotic.com/template>
 (function() {
-  var elementBackups, elements, extractAll, getContent, getLink, getMeta, hotkeys, isEditable, isThisPlatform, parentLink, paste, runSelector, runXPath, xpath,
+  var copyStorage, elementBackups, elements, extractAll, getContent, getLink, getMeta, hotkeys, isEditable, isThisPlatform, parentLink, paste, runSelector, runXPath, xpath,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty;
@@ -19,16 +19,25 @@
 
   hotkeys = [];
 
+  copyStorage = function(storage) {
+    var copy, i, key, _i, _ref;
+
+    copy = {};
+    for (i = _i = 0, _ref = storage.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+      key = storage.key(i);
+      copy[key] = storage.getItem(key);
+    }
+    return copy;
+  };
+
   extractAll = function(array, property) {
     var element, results, _i, _len, _ref;
 
     results = [];
     for (_i = 0, _len = array.length; _i < _len; _i++) {
       element = array[_i];
-      if (element[property] != null) {
-        if (_ref = element[property], __indexOf.call(results, _ref) < 0) {
-          results.push(element[property]);
-        }
+      if (element[property] && (_ref = element[property], __indexOf.call(results, _ref) < 0)) {
+        results.push(element[property]);
       }
     }
     return results;
@@ -321,6 +330,7 @@
         linkHTML: link != null ? link.innerHTML : void 0,
         linkText: link != null ? link.textContent : void 0,
         links: extractAll(document.links, 'href'),
+        localStorage: copyStorage(localStorage),
         pageHeight: innerHeight,
         pageWidth: innerWidth,
         referrer: document.referrer,
@@ -329,6 +339,7 @@
         selectedLinks: links,
         selection: selection.toString(),
         selectionHTML: container != null ? container.innerHTML : void 0,
+        sessionStorage: copyStorage(sessionStorage),
         styleSheets: extractAll(document.styleSheets, 'href')
       });
     });

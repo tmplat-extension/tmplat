@@ -21,13 +21,26 @@ hotkeys        = []
 # Helpers
 # -------
 
+# Create a clean copy of the specified web `storage`.  
+# The returned copy should only be a key/value map of the items stored in `storage`.
+copyStorage = (storage) ->
+  copy = {}
+
+  for i in [0...storage.length]
+    key = storage.key i
+    copy[key] = storage.getItem key
+
+  copy
+
 # Extract the value the specified `property` from all elements of `array`.  
 # If an element does not have a valid `property` or its value has already been recorded it should
 # be ignored from the results.
 extractAll = (array, property) ->
   results = []
-  for element in array when element[property]?
-    results.push element[property] if element[property] not in results
+
+  for element in array when element[property] and element[property] not in results
+    results.push element[property]
+
   results
 
 # Extract the relevant content of `node` as defined by `output`.
@@ -251,6 +264,7 @@ chrome.extension.sendMessage type: 'info', (data) ->
       linkHTML:       link?.innerHTML
       linkText:       link?.textContent
       links:          extractAll document.links, 'href'
+      localStorage:   copyStorage localStorage
       pageHeight:     innerHeight
       pageWidth:      innerWidth
       referrer:       document.referrer
@@ -259,4 +273,5 @@ chrome.extension.sendMessage type: 'info', (data) ->
       selectedLinks:  links
       selection:      selection.toString()
       selectionHTML:  container?.innerHTML
+      sessionStorage: copyStorage sessionStorage
       styleSheets:    extractAll document.styleSheets, 'href'

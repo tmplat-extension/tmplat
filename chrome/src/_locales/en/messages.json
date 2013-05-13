@@ -1459,6 +1459,16 @@
       }
     }
   },
+  "opt_guide_lists_objects_local_storage_text": {
+    "message": "The items stored in the $LOCAL_STORAGE$ of the page",
+    "description": "Description of the localStorage variable on the Guide tab of the Options page under the Lists & Objects section.",
+    "placeholders": {
+      "local_storage": {
+        "content": "<code>localStorage</code>",
+        "example": "localStorage"
+      }
+    }
+  },
   "opt_guide_lists_objects_params_text": {
     "message": "The key/value pairs of all parameters (e.g. query $EXAMPLE_1$ contains $EXAMPLE_2$ and $EXAMPLE_3$)",
     "description": "Description of the params variable on the Guide tab of the Options page under the Lists & Objects section.",
@@ -1574,6 +1584,16 @@
       "o_abbr_2": {
         "content": "\">",
         "example": "\">"
+      }
+    }
+  },
+  "opt_guide_lists_objects_session_storage_text": {
+    "message": "The items stored in the $SESSION_STORAGE$ of the page",
+    "description": "Description of the sessionStorage variable on the Guide tab of the Options page under the Lists & Objects section.",
+    "placeholders": {
+      "session_storage": {
+        "content": "<code>sessionStorage</code>",
+        "example": "sessionStorage"
       }
     }
   },
