@@ -691,6 +691,15 @@ showNotification = ->
   # Reset and hide any visible progress bar on the popup, where possible.
   updateProgress null, no
 
+# Convert the `html` into Markdown using [html.md](http://neocotic.com/html.md) while ensuring
+# related options are used.
+toMarkdown = (html) ->
+  log.trace()
+
+  {inline} = store.get 'markdown'
+
+  md html, {inline}
+
 # Update hotkeys stored by the `content.coffee` script within all of the tabs (where valid) of each
 # Chrome window.
 updateHotkeys = ->
@@ -952,6 +961,7 @@ buildStandardData = (tab, getCallback) ->
   anchor        = store.get 'anchor'
   bitly         = store.get 'bitly'
   googl         = store.get 'googl'
+  markdown      = store.get 'markdown'
   menu          = store.get 'menu'
   notifications = store.get 'notifications'
   shortcuts     = store.get 'shortcuts'
@@ -1025,10 +1035,11 @@ buildStandardData = (tab, getCallback) ->
       (text, render) ->
         render(text).length
     linkmarkdown:          ->
-      md @linkhtml
+      toMarkdown @linkhtml
     lowercase:             ->
       (text, render) ->
         render(text).toLowerCase()
+    markdowninline:        markdown.inline
     menu:                  menu.enabled
     menuoptions:           menu.options
     menupaste:             menu.paste
@@ -1064,7 +1075,7 @@ buildStandardData = (tab, getCallback) ->
     selecthtml:            ->
       getCallback 'selecthtml'
     selectionmarkdown:     ->
-      md @selectionhtml
+      toMarkdown @selectionhtml
     selectmarkdown:        ->
       getCallback 'selectmarkdown'
     # Deprecated since 1.0.0, use `shorten` instead.
@@ -1194,7 +1205,7 @@ evaluateExpressions = (tab, map, callback) ->
 
       result or= ''
       result   = result.join '\n' if _.isArray result
-      result   = md result if convertTo is 'markdown'
+      result   = toMarkdown result if convertTo is 'markdown'
 
       map[placeholder] = result
 
@@ -1863,6 +1874,7 @@ ext = window.ext = new class Extension extends utils.Class
       # Begin initialization.
       store.init
         anchor:        {}
+        markdown:      {}
         menu:          {}
         notifications: {}
         shortcuts:     {}
@@ -1875,6 +1887,9 @@ ext = window.ext = new class Extension extends utils.Class
       store.modify 'anchor', (anchor) ->
         anchor.target ?= off
         anchor.title  ?= off
+
+      store.modify 'markdown', (markdown) ->
+        markdown.inline ?= no
 
       store.modify 'menu', (menu) ->
         menu.enabled ?= yes
