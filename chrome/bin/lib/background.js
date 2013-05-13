@@ -567,10 +567,10 @@
         updateProgress(30);
         return addAdditionalData(active, data, id, editable, shortcut, link, function() {
           updateProgress(40);
-          transformData(data);
-          $.extend(data, {
+          $.extend(true, data, {
             template: template
           });
+          transformData(data);
           log.debug("Using the following data to render " + template.title + "...", data);
           if (template.content) {
             output = Mustache.render(template.content, data);
@@ -903,35 +903,21 @@
           });
         });
       }, function(done) {
-        var coords;
-
-        coords = {};
         return navigator.geolocation.getCurrentPosition(function(position) {
-          var prop, value, _ref;
-
           log.debug('Retrieved the following geolocation information...', position);
-          _ref = position.coords;
-          for (prop in _ref) {
-            if (!__hasProp.call(_ref, prop)) continue;
-            value = _ref[prop];
-            coords[prop.toLowerCase()] = value != null ? "" + value : '';
-          }
           return done(null, {
-            coords: coords
+            coords: transformData(position.coords, true)
           });
         }, function(err) {
           log.warn('Ingoring error thrown when calculating geolocation', err.message);
           return done(null, {
-            coords: coords
+            coords: {}
           });
         });
       }, function(done) {
         return chrome.cookies.getAll({
           url: data.url
         }, function(cookies) {
-          if (cookies == null) {
-            cookies = [];
-          }
           log.debug('Found the following cookies...', cookies);
           return done(null, {
             cookie: function() {
@@ -959,7 +945,7 @@
           shortcut: shortcut,
           url: data.url
         }, function(response) {
-          var lastModified, time, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+          var lastModified, time, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref17, _ref18, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
 
           log.debug('The following data was retrieved from the content script...', response);
           if (response == null) {
@@ -982,18 +968,20 @@
             linkhtml: (_ref5 = response.linkHTML) != null ? _ref5 : '',
             links: (_ref6 = response.links) != null ? _ref6 : [],
             linktext: (_ref7 = response.linkText) != null ? _ref7 : '',
-            pageheight: (_ref8 = response.pageHeight) != null ? _ref8 : '',
-            pagewidth: (_ref9 = response.pageWidth) != null ? _ref9 : '',
-            referrer: (_ref10 = response.referrer) != null ? _ref10 : '',
-            scripts: (_ref11 = response.scripts) != null ? _ref11 : [],
-            selectedimages: (_ref12 = response.selectedImages) != null ? _ref12 : [],
-            selectedlinks: (_ref13 = response.selectedLinks) != null ? _ref13 : [],
-            selection: (_ref14 = response.selection) != null ? _ref14 : '',
-            selectionhtml: (_ref15 = response.selectionHTML) != null ? _ref15 : '',
+            localstorage: (_ref8 = response.localStorage) != null ? _ref8 : {},
+            pageheight: (_ref9 = response.pageHeight) != null ? _ref9 : '',
+            pagewidth: (_ref10 = response.pageWidth) != null ? _ref10 : '',
+            referrer: (_ref11 = response.referrer) != null ? _ref11 : '',
+            scripts: (_ref12 = response.scripts) != null ? _ref12 : [],
+            selectedimages: (_ref13 = response.selectedImages) != null ? _ref13 : [],
+            selectedlinks: (_ref14 = response.selectedLinks) != null ? _ref14 : [],
+            selection: (_ref15 = response.selection) != null ? _ref15 : '',
+            selectionhtml: (_ref16 = response.selectionHTML) != null ? _ref16 : '',
             selectionlinks: function() {
               return this.selectedlinks;
             },
-            stylesheets: (_ref16 = response.styleSheets) != null ? _ref16 : []
+            sessionstorage: (_ref17 = response.sessionStorage) != null ? _ref17 : {},
+            stylesheets: (_ref18 = response.styleSheets) != null ? _ref18 : []
           });
         });
       }
@@ -1182,9 +1170,9 @@
       },
       params: nullIfEmpty(url.param()),
       plugins: _.chain(navigator.plugins).pluck('name').uniq().value(),
-      popular: _.findWhere(ext.templates, {
+      popular: $.extend(true, {}, _.findWhere(ext.templates, {
         key: stats.popular
-      }),
+      })),
       screenheight: screen.height,
       screenwidth: screen.width,
       segment: function() {
@@ -1393,25 +1381,37 @@
     });
   };
 
-  transformData = function(data, deleteOld) {
-    var prop, value, _results;
+  transformData = function(data, clone) {
+    var i, prop, result, transform, value, _i, _len;
 
     log.trace();
-    _results = [];
-    for (prop in data) {
-      if (!__hasProp.call(data, prop)) continue;
-      value = data[prop];
-      if (!(R_UPPER_CASE.test(prop))) {
-        continue;
-      }
-      data[prop.toLowerCase()] = value;
-      if (deleteOld) {
-        _results.push(delete data[prop]);
+    if (!data) {
+      return data;
+    }
+    result = clone ? _.isArray(data) ? [] : {} : data;
+    transform = function(value) {
+      if (_.isArray(value) || _.isObject(value)) {
+        return transformData(value, clone);
       } else {
-        _results.push(void 0);
+        return value;
+      }
+    };
+    if (_.isArray(result)) {
+      for (i = _i = 0, _len = data.length; _i < _len; i = ++_i) {
+        value = data[i];
+        result[i] = transform(value);
+      }
+    } else {
+      for (prop in data) {
+        if (!__hasProp.call(data, prop)) continue;
+        value = data[prop];
+        if (clone || R_UPPER_CASE.test(prop)) {
+          prop = prop.toLowerCase();
+        }
+        result[prop] = transform(value);
       }
     }
-    return _results;
+    return result;
   };
 
   buildConfig = function() {

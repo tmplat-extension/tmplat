@@ -492,10 +492,10 @@ onMessage = (message, sender, sendResponse) ->
       addAdditionalData active, data, id, editable, shortcut, link, ->
         updateProgress 40
 
+        # To complete the data, simply extend it using `template`.
+        $.extend yes, data, {template}
         # Ensure all properties of `data` are lower case.
         transformData data
-        # To complete the data, simply extend it using `template`.
-        $.extend data, {template}
         log.debug "Using the following data to render #{template.title}...", data
 
         # Render the initial template output based on `data`.  
@@ -827,24 +827,19 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
         done null, {locale}
 
     (done) ->
-      coords = {}
-
       # Retrieve the geolocation from the client.
       navigator.geolocation.getCurrentPosition (position) ->
         log.debug 'Retrieved the following geolocation information...', position
 
-        for own prop, value of position.coords
-          coords[prop.toLowerCase()] = if value? then "#{value}" else ''
-
-        done null, {coords}
+        done null, coords: transformData position.coords, yes
       , (err) ->
         log.warn 'Ingoring error thrown when calculating geolocation', err.message
 
-        done null, {coords}
+        done null, coords: {}
 
     (done) ->
       # Retrieve all of the cookies the client has stored for the contextual URL.
-      chrome.cookies.getAll url: data.url, (cookies = []) ->
+      chrome.cookies.getAll url: data.url, (cookies) ->
         log.debug 'Found the following cookies...', cookies
 
         done null,
@@ -891,6 +886,7 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
           linkhtml:       response.linkHTML       ? ''
           links:          response.links          ? []
           linktext:       response.linkText       ? ''
+          localstorage:   response.localStorage   ? {}
           pageheight:     response.pageHeight     ? ''
           pagewidth:      response.pageWidth      ? ''
           referrer:       response.referrer       ? ''
@@ -902,6 +898,7 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
           # Deprecated since 1.0.0, use `selectedLinks` instead.
           selectionlinks: ->
             @selectedlinks
+          sessionstorage: response.sessionStorage ? {}
           stylesheets:    response.styleSheets    ? []
 
   ], (err, results = []) ->
@@ -1049,7 +1046,7 @@ buildStandardData = (tab, getCallback) ->
         url.param(render text) ? ''
     params:                nullIfEmpty url.param()
     plugins:               _.chain(navigator.plugins).pluck('name').uniq().value()
-    popular:               _.findWhere ext.templates, key: stats.popular
+    popular:               $.extend yes, {}, _.findWhere ext.templates, key: stats.popular
     screenheight:          screen.height
     screenwidth:           screen.width
     segment:               ->
@@ -1203,14 +1200,33 @@ evaluateExpressions = (tab, map, callback) ->
 
     callback if error then new AppError 'result_bad_expression_description'
 
-# Ensure there is a lower case variant of all properties of `data`, optionally removing the
-# original non-lower-case property.
-transformData = (data, deleteOld) ->
+# Ensure there is a lower case variant of all properties of `data`, optionally only changing a
+# clone of the specified `data`.
+transformData = (data, clone) ->
   log.trace()
 
-  for own prop, value of data when R_UPPER_CASE.test prop
-    data[prop.toLowerCase()] = value
-    delete data[prop] if deleteOld
+  return data unless data
+
+  # Ensure that the `result` and `data` types match when cloning.
+  result = if clone
+    if _.isArray data then [] else {}
+  else
+    data
+
+  transform = (value) ->
+    if _.isArray(value) or _.isObject(value) then transformData value, clone else value
+
+  if _.isArray result
+    # Also transform any nested objects deep within the array.
+    result[i] = transform value for value, i in data
+  else
+    # Transform all properties of the object, included any deep nested objects.
+    for own prop, value of data
+      prop = prop.toLowerCase() if clone or R_UPPER_CASE.test prop
+
+      result[prop] = transform value
+
+  result
 
 # Configuration functions
 # -----------------------
