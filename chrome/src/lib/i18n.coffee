@@ -1,8 +1,7 @@
-# [Template](http://neocotic.com/template)  
+# [Template](http://template-extension.org)  
 # (c) 2013 Alasdair Mercer  
-# Freely distributable under the MIT license.  
-# For all details and documentation:  
-# <http://neocotic.com/template>
+# Freely distributable under the MIT license:  
+# <http://template-extension.org/license>
 
 # Private variables
 # -----------------

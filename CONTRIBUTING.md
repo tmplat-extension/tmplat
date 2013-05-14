@@ -45,7 +45,7 @@ have a chance of keeping things right.
     * Joe Bloggs <joe.bloggs@example.com>
 ```
 * Push your changes to a topic branch in your fork of the repository
-* Submit a pull request to neocotic's repository
+* Submit a pull request to Template's repository
 * Update your issue to mark that you have submitted code and are ready for it
   to be reviewed
   * Include a link to the pull request in the issue

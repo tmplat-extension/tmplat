@@ -31,4 +31,4 @@ To run a locally built extension in [Google Chrome][] you can follow these steps
 [google chrome]: http://www.google.com/chrome
 [node.js]: http://nodejs.org
 [npm]: http://npmjs.org
-[template]: http://neocotic.com/template
+[template]: http://template-extension.org

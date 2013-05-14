@@ -1,8 +1,7 @@
-// [Template](http://neocotic.com/template)
+// [Template](http://template-extension.org)
 // (c) 2013 Alasdair Mercer
-// Freely distributable under the MIT license.
-// For all details and documentation:
-// <http://neocotic.com/template>
+// Freely distributable under the MIT license:
+// <http://template-extension.org/license>
 (function() {
   var copyStorage, elementBackups, elements, extractAll, getContent, getLink, getMeta, hotkeys, isEditable, isThisPlatform, parentLink, paste, runSelector, runXPath, xpath,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },

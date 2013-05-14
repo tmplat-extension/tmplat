@@ -40,4 +40,4 @@ browsers sub-directory for building and installing specific browser versions.
 [git]: http://git-scm.com
 [node.js]: http://nodejs.org
 [npm]: http://npmjs.org
-[template]: http://neocotic.com/template
+[template]: http://template-extension.org
