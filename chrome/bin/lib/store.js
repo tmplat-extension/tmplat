@@ -1,8 +1,7 @@
-// [Template](http://neocotic.com/template)
+// [Template](http://template-extension.org)
 // (c) 2013 Alasdair Mercer
-// Freely distributable under the MIT license.
-// For all details and documentation:
-// <http://neocotic.com/template>
+// Freely distributable under the MIT license:
+// <http://template-extension.org/license>
 (function() {
   var Store, Updater, dig, store, tryParse, tryStringify, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
@@ -65,7 +64,7 @@
       for (key in localStorage) {
         if (!__hasProp.call(localStorage, key)) continue;
         value = localStorage[key];
-        data[key] = value;
+        data[key] = JSON.parse(value);
       }
       return encodeURIComponent(JSON.stringify(data));
     };
@@ -175,7 +174,7 @@
       for (key in data) {
         if (!__hasProp.call(data, key)) continue;
         value = data[key];
-        _results.push(localStorage[key] = value);
+        _results.push(localStorage[key] = JSON.stringify(value));
       }
       return _results;
     };

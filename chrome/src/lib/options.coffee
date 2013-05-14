@@ -1,8 +1,7 @@
-# [Template](http://neocotic.com/template)  
+# [Template](http://template-extension.org)  
 # (c) 2013 Alasdair Mercer  
-# Freely distributable under the MIT license.  
-# For all details and documentation:  
-# <http://neocotic.com/template>
+# Freely distributable under the MIT license:  
+# <http://template-extension.org/license>
 
 # Private constants
 # -----------------
@@ -54,13 +53,15 @@ bindSaveEvent = (selector, type, option, evaluate, callback) ->
 load = ->
   log.trace()
 
-  anchor    = store.get 'anchor'
+  links     = store.get 'links'
+  markdown  = store.get 'markdown'
   menu      = store.get 'menu'
   shortcuts = store.get 'shortcuts'
 
   $('#analytics').prop        'checked', store.get 'analytics'
-  $('#anchorTarget').prop     'checked', anchor.target
-  $('#anchorTitle').prop      'checked', anchor.title
+  $('#linksTarget').prop      'checked', links.target
+  $('#linksTitle').prop       'checked', links.title
+  $('#markdownInline').prop   'checked', markdown.inline
   $('#menuEnabled').prop      'checked', menu.enabled
   $('#menuOptions').prop      'checked', menu.options
   $('#menuPaste').prop        'checked', menu.paste
@@ -225,14 +226,23 @@ loadSaveEvents = ->
       chrome.extension.getBackgroundPage().analytics.remove()
       store.set 'analytics', no
 
-  bindSaveEvent '#anchorTarget, #anchorTitle', 'change', 'anchor', (key) ->
+  bindSaveEvent '#linksTarget, #linksTitle', 'change', 'links', (key) ->
     value = @is ':checked'
 
-    log.debug "Changing anchor #{key} to '#{value}'"
+    log.debug "Changing links #{key} to '#{value}'"
 
     value
   , (jel, key, value) ->
-    analytics.track 'Anchors', 'Changed', utils.capitalize(key), Number value
+    analytics.track 'Links', 'Changed', utils.capitalize(key), Number value
+
+  bindSaveEvent '#markdownInline', 'change', 'markdown', (key) ->
+    value = @is ':checked'
+
+    log.debug "Changing markdown #{key} to '#{value}'"
+
+    value
+  , (jel, key, value) ->
+    analytics.track 'Markdown', 'Changed', utils.capitalize(key), Number value
 
   bindSaveEvent '#menuEnabled, #menuOptions, #menuPaste', 'change', 'menu', (key) ->
     value = @is ':checked'
@@ -1791,7 +1801,7 @@ options = window.options = new class Options extends utils.Class
       false
 
     # Bind analytical tracking events to key footer buttons and links.
-    $('footer a[href*="neocotic.com"]').on 'click', ->
+    $('footer a[href*="template-extension.org"]').on 'click', ->
       analytics.track 'Footer', 'Clicked', 'Homepage'
 
     # Setup and configure the donation button in the footer.

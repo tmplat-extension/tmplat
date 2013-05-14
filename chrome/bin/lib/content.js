@@ -1,10 +1,9 @@
-// [Template](http://neocotic.com/template)
+// [Template](http://template-extension.org)
 // (c) 2013 Alasdair Mercer
-// Freely distributable under the MIT license.
-// For all details and documentation:
-// <http://neocotic.com/template>
+// Freely distributable under the MIT license:
+// <http://template-extension.org/license>
 (function() {
-  var elementBackups, elements, extractAll, getContent, getLink, getMeta, hotkeys, isEditable, parentLink, paste,
+  var copyStorage, elementBackups, elements, extractAll, getContent, getLink, getMeta, hotkeys, isEditable, isThisPlatform, parentLink, paste, runSelector, runXPath, xpath,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty;
@@ -19,28 +18,35 @@
 
   hotkeys = [];
 
+  copyStorage = function(storage) {
+    var copy, i, key, _i, _ref;
+
+    copy = {};
+    for (i = _i = 0, _ref = storage.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+      key = storage.key(i);
+      copy[key] = storage.getItem(key);
+    }
+    return copy;
+  };
+
   extractAll = function(array, property) {
     var element, results, _i, _len, _ref;
 
     results = [];
     for (_i = 0, _len = array.length; _i < _len; _i++) {
       element = array[_i];
-      if (element[property] != null) {
-        if (_ref = element[property], __indexOf.call(results, _ref) < 0) {
-          results.push(element[property]);
-        }
+      if (element[property] && (_ref = element[property], __indexOf.call(results, _ref) < 0)) {
+        results.push(element[property]);
       }
     }
     return results;
   };
 
-  getContent = function(info, node) {
-    var _ref;
-
+  getContent = function(node, output) {
     if (!node) {
       return '';
     }
-    if ((_ref = info != null ? info.convertTo : void 0) === 'html' || _ref === 'markdown') {
+    if (output === 'html' || output === 'markdown') {
       return node.innerHTML;
     } else {
       return node.textContent;
@@ -85,6 +91,10 @@
     return (node != null) && !node.disabled && !node.readOnly;
   };
 
+  isThisPlatform = function(os) {
+    return RegExp("" + os, "i").test(navigator.platform);
+  };
+
   parentLink = function(node) {
     if (node == null) {
       return;
@@ -108,13 +118,106 @@
     return node.value = str;
   };
 
+  runSelector = function(info) {
+    var all, convertTo, e, expression, node, nodes;
+
+    all = info.all, convertTo = info.convertTo, expression = info.expression;
+    try {
+      return info.result = all ? (nodes = document.querySelectorAll(expression), (function() {
+        var _i, _len, _results;
+
+        _results = [];
+        for (_i = 0, _len = nodes.length; _i < _len; _i++) {
+          node = nodes[_i];
+          if (node) {
+            _results.push(getContent(node, convertTo));
+          }
+        }
+        return _results;
+      })()) : (node = document.querySelector(expression), node ? getContent(node, convertTo) : void 0);
+    } catch (_error) {
+      e = _error;
+      return info.error = e;
+    }
+  };
+
+  runXPath = function(info) {
+    var all, convertTo, e, expression;
+
+    all = info.all, convertTo = info.convertTo, expression = info.expression;
+    try {
+      return info.result = xpath(expression, convertTo, !all);
+    } catch (_error) {
+      e = _error;
+      return info.error = e;
+    }
+  };
+
+  xpath = function(expression, format, singular) {
+    var contents, i, node, result, _i, _ref;
+
+    result = document.evaluate(expression, document, null, XPathResult.ANY_TYPE, null);
+    if (!result) {
+      return;
+    }
+    switch (result.resultType) {
+      case XPathResult.BOOLEAN_TYPE:
+        return result.booleanValue;
+      case XPathResult.NUMBER_TYPE:
+        return result.numberValue;
+      case XPathResult.STRING_TYPE:
+        return result.stringValue;
+      case XPathResult.ANY_UNORDERED_NODE_TYPE:
+      case XPathResult.FIRST_ORDERED_NODE_TYPE:
+        node = result.singleNodeValue;
+        if (node) {
+          return getContent(node, format);
+        }
+        break;
+      case XPathResult.ORDERED_NODE_SNAPSHOT_TYPE:
+      case XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE:
+        contents = [];
+        for (i = _i = 0, _ref = result.snapshotLength; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+          node = result.snapshotItem(i);
+          if (node) {
+            contents.push(getContent(node, format));
+            if (singular) {
+              break;
+            }
+          }
+        }
+        if (singular) {
+          return contents[0];
+        } else {
+          return contents;
+        }
+        break;
+      case XPathResult.ORDERED_NODE_ITERATOR_TYPE:
+      case XPathResult.UNORDERED_NODE_ITERATOR_TYPE:
+        contents = [];
+        while (node = result.iterateNext()) {
+          if (node) {
+            contents.push(getContent(node, format));
+            if (singular) {
+              break;
+            }
+          }
+        }
+        if (singular) {
+          return contents[0];
+        } else {
+          return contents;
+        }
+    }
+  };
+
   chrome.extension.sendMessage({
     type: 'info'
   }, function(data) {
     var isMac;
 
     hotkeys = data.hotkeys;
-    isMac = navigator.userAgent.toLowerCase().indexOf('mac') !== -1;
+    isMac = isThisPlatform('mac');
     if (document.body.getAttribute(data.id) === data.version) {
       return;
     }
@@ -148,7 +251,7 @@
       }
     });
     return chrome.extension.onMessage.addListener(function(message, sender, sendResponse) {
-      var callback, container, contents, href, images, info, key, link, links, node, nodes, result, selection, src, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
+      var callback, container, contents, href, images, info, key, link, links, selection, src, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3;
 
       callback = function() {
         var args;
@@ -163,32 +266,21 @@
         hotkeys = message.hotkeys;
         return callback();
       }
-      if (message.selectors != null) {
-        _ref = message.selectors;
+      if (message.expressions != null) {
+        _ref = message.expressions;
         for (key in _ref) {
           if (!__hasProp.call(_ref, key)) continue;
           info = _ref[key];
-          if (info.all) {
-            nodes = document.querySelectorAll(info.selector);
-            result = [];
-            if (nodes) {
-              for (_i = 0, _len = nodes.length; _i < _len; _i++) {
-                node = nodes[_i];
-                if (node) {
-                  result.push(getContent(info, node));
-                }
-              }
-            }
-          } else {
-            node = document.querySelector(info.selector);
-            if (node) {
-              result = getContent(info, node);
-            }
+          switch (info.type) {
+            case 'select':
+              runSelector(info);
+              break;
+            case 'xpath':
+              runXPath(info);
           }
-          info.result = result;
         }
         return callback({
-          selectors: message.selectors
+          expressions: message.expressions
         });
       }
       if (message.id == null) {
@@ -213,13 +305,13 @@
           container = document.createElement('div');
           container.appendChild(contents);
           _ref2 = container.querySelectorAll('[href]');
-          for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-            href = _ref2[_j];
+          for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+            href = _ref2[_i];
             href.href = href.href;
           }
           _ref3 = container.querySelectorAll('[src]');
-          for (_k = 0, _len2 = _ref3.length; _k < _len2; _k++) {
-            src = _ref3[_k];
+          for (_j = 0, _len1 = _ref3.length; _j < _len1; _j++) {
+            src = _ref3[_j];
             src.src = src.src;
           }
           images = extractAll(container.querySelectorAll('img[src]'), 'src');
@@ -237,6 +329,7 @@
         linkHTML: link != null ? link.innerHTML : void 0,
         linkText: link != null ? link.textContent : void 0,
         links: extractAll(document.links, 'href'),
+        localStorage: copyStorage(localStorage),
         pageHeight: innerHeight,
         pageWidth: innerWidth,
         referrer: document.referrer,
@@ -245,6 +338,7 @@
         selectedLinks: links,
         selection: selection.toString(),
         selectionHTML: container != null ? container.innerHTML : void 0,
+        sessionStorage: copyStorage(sessionStorage),
         styleSheets: extractAll(document.styleSheets, 'href')
       });
     });
