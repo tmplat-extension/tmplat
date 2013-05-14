@@ -93,7 +93,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <p><a href="http://neocotic.com/template">Template</a><br>(c) 2013 Alasdair Mercer<br>Freely distributable under the MIT license.<br>For all details and documentation:<br><a href="http://neocotic.com/template">http://neocotic.com/template</a></p>
+              <p><a href="http://template-extension.org">Template</a><br>(c) 2013 Alasdair Mercer<br>Freely distributable under the MIT license:<br><a href="http://template-extension.org/license">http://template-extension.org/license</a></p>
 
             </div>
             
@@ -303,13 +303,15 @@ triggered, modifies the underlying <code>option</code> with the value returned b
             <div class="content"><div class='highlight'><pre><span class="function"><span class="title">load</span></span> = -&gt;
   log.trace()
 
-  anchor    = store.get <span class="string">'anchor'</span>
+  links     = store.get <span class="string">'links'</span>
+  markdown  = store.get <span class="string">'markdown'</span>
   menu      = store.get <span class="string">'menu'</span>
   shortcuts = store.get <span class="string">'shortcuts'</span>
 
   $(<span class="string">'#analytics'</span>).prop        <span class="string">'checked'</span>, store.get <span class="string">'analytics'</span>
-  $(<span class="string">'#anchorTarget'</span>).prop     <span class="string">'checked'</span>, anchor.target
-  $(<span class="string">'#anchorTitle'</span>).prop      <span class="string">'checked'</span>, anchor.title
+  $(<span class="string">'#linksTarget'</span>).prop      <span class="string">'checked'</span>, links.target
+  $(<span class="string">'#linksTitle'</span>).prop       <span class="string">'checked'</span>, links.title
+  $(<span class="string">'#markdownInline'</span>).prop   <span class="string">'checked'</span>, markdown.inline
   $(<span class="string">'#menuEnabled'</span>).prop      <span class="string">'checked'</span>, menu.enabled
   $(<span class="string">'#menuOptions'</span>).prop      <span class="string">'checked'</span>, menu.options
   $(<span class="string">'#menuPaste'</span>).prop        <span class="string">'checked'</span>, menu.paste
@@ -629,14 +631,23 @@ page.</p>
       chrome.extension.getBackgroundPage().analytics.remove()
       store.set <span class="string">'analytics'</span>, <span class="literal">no</span>
 
-  bindSaveEvent <span class="string">'#anchorTarget, #anchorTitle'</span>, <span class="string">'change'</span>, <span class="string">'anchor'</span>, (key) -&gt;
+  bindSaveEvent <span class="string">'#linksTarget, #linksTitle'</span>, <span class="string">'change'</span>, <span class="string">'links'</span>, (key) -&gt;
     value = <span class="property">@is</span> <span class="string">':checked'</span>
 
-    log.debug <span class="string">"Changing anchor <span class="subst">#{key}</span> to '<span class="subst">#{value}</span>'"</span>
+    log.debug <span class="string">"Changing links <span class="subst">#{key}</span> to '<span class="subst">#{value}</span>'"</span>
 
     value
   , (jel, key, value) -&gt;
-    analytics.track <span class="string">'Anchors'</span>, <span class="string">'Changed'</span>, utils.capitalize(key), Number value
+    analytics.track <span class="string">'Links'</span>, <span class="string">'Changed'</span>, utils.capitalize(key), Number value
+
+  bindSaveEvent <span class="string">'#markdownInline'</span>, <span class="string">'change'</span>, <span class="string">'markdown'</span>, (key) -&gt;
+    value = <span class="property">@is</span> <span class="string">':checked'</span>
+
+    log.debug <span class="string">"Changing markdown <span class="subst">#{key}</span> to '<span class="subst">#{value}</span>'"</span>
+
+    value
+  , (jel, key, value) -&gt;
+    analytics.track <span class="string">'Markdown'</span>, <span class="string">'Changed'</span>, utils.capitalize(key), Number value
 
   bindSaveEvent <span class="string">'#menuEnabled, #menuOptions, #menuPaste'</span>, <span class="string">'change'</span>, <span class="string">'menu'</span>, (key) -&gt;
     value = <span class="property">@is</span> <span class="string">':checked'</span>
@@ -4753,7 +4764,7 @@ settings.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    $(<span class="string">'footer a[href*="neocotic.com"]'</span>).<span class="literal">on</span> <span class="string">'click'</span>, -&gt;
+            <div class="content"><div class='highlight'><pre>    $(<span class="string">'footer a[href*="template-extension.org"]'</span>).<span class="literal">on</span> <span class="string">'click'</span>, -&gt;
       analytics.track <span class="string">'Footer'</span>, <span class="string">'Clicked'</span>, <span class="string">'Homepage'</span></pre></div></div>
             
         </li>

@@ -149,7 +149,7 @@ optimizeStandard = (file, cb)  -> optimize file, null, cb
 task 'build', "Build #{CWD} extension", ->
   console.log "[#{CWD}]: Building Template..."
   wrench.mkdirSyncRecursive path for path in TARGET_SUB_DIRS
-  wrench.copyDirSyncRecursive SOURCE_DIR, TARGET_DIR
+  wrench.copyDirSyncRecursive SOURCE_DIR, TARGET_DIR, forceDelete: yes
   # TODO: Find & delete .git* files
   async.forEach getCoffeeFiles(TARGET_DIR), compile, (err) ->
     throw err if err
@@ -159,7 +159,7 @@ task 'dist', "Create #{CWD} distributable file", ->
   console.log "[#{CWD}]: Generating distributable...."
   wrench.mkdirSyncRecursive DIST_DIR
   wrench.mkdirSyncRecursive TEMP_PATH
-  wrench.copyDirSyncRecursive TARGET_DIR, TEMP_PATH
+  wrench.copyDirSyncRecursive TARGET_DIR, TEMP_PATH, forceDelete: yes
   async.series [
     (cb) ->
       files = (

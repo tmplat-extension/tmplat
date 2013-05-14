@@ -1,3 +1,15 @@
+2013.05.14, Version 1.2.5
+
+* [#181](https://github.com/neocotic/template/issues/181): Add new operations for evaluating [XPath][] expressions
+* [#183](https://github.com/neocotic/template/issues/183): Add new objects for accessing [Web Storage][]
+* [#184](https://github.com/neocotic/template/issues/184): Update [html.md][] to v2.1.1
+* [#184](https://github.com/neocotic/template/issues/184): Add options for configuring HTML to Markdown conversion
+* [#187](https://github.com/neocotic/template/issues/187): Make the Anchor Tags options more generic
+* [#187](https://github.com/neocotic/template/issues/187): Deprecate the *"anchorTarget"* option and replace with the *"linksTarget"* option
+* [#187](https://github.com/neocotic/template/issues/187): Deprecate the *"anchorTitle"* option and replace with the *"linksTitle"* option
+* [#189](https://github.com/neocotic/template/issues/189): Update the extension homepage to <http://template-extension.org>
+* Minor bug fixes and UI tweaks
+
 2013.05.07, Version 1.2.4
 
 * [#179](https://github.com/neocotic/template/issues/179): Fix critical bug for Linux systems
@@ -371,4 +383,6 @@
 [translation]: http://i18n.tmpl.at
 [underscore.js]: http://underscorejs.org
 [uservoice]: https://www.uservoice.com
+[web storage]: http://dev.w3.org/html5/webstorage/
+[xpath]: http://en.wikipedia.org/wiki/XPath
 [yourls]: http://yourls.org
