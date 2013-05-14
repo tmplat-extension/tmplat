@@ -58,8 +58,8 @@
       return _ref;
     }
 
-    Store.prototype.backup = function(encode) {
-      var data, key, str, value;
+    Store.prototype.backup = function() {
+      var data, key, value;
 
       data = {};
       for (key in localStorage) {
@@ -67,12 +67,7 @@
         value = localStorage[key];
         data[key] = value;
       }
-      str = JSON.stringify(data);
-      if (encode) {
-        return encodeURIComponent(str);
-      } else {
-        return str;
-      }
+      return encodeURIComponent(JSON.stringify(data));
     };
 
     Store.prototype.clear = function() {
@@ -175,13 +170,7 @@
     Store.prototype.restore = function(str) {
       var data, key, value, _results;
 
-      if (!str) {
-        return;
-      }
-      if (!str.indexOf('%7B')) {
-        str = decodeURIComponent(str);
-      }
-      data = JSON.parse(str);
+      data = JSON.parse(decodeURIComponent(str));
       _results = [];
       for (key in data) {
         if (!__hasProp.call(data, key)) continue;

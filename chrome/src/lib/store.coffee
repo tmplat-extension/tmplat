@@ -41,18 +41,14 @@ store = window.store = new class Store extends utils.Class
   # Public functions
   # ----------------
 
-  # Create a backup string containing all the information contained within `localStorage`.  
-  # The data should be formatted as a JSON string and can optionally be encoded to ensure that it
-  # can easily be copied from/pasted to the console.  
-  # The string created may **contain sensitive user data** in plain text if they have provided any
-  # to the extension.
-  backup: (encode) ->
+  # The data should be formatted as a JSON string and then encoded to ensure that it can easily be
+  # copied from/pasted to the console.  
+  # The string created may contain sensitive user data in plain text if they have provided any to
+  # the extension.
+  backup: ->
     data = {}
     data[key] = value for own key, value of localStorage
-
-    str = JSON.stringify data
-
-    if encode then encodeURIComponent str else str
+    encodeURIComponent JSON.stringify data
 
   # Clear all keys from `localStorage`.
   clear: ->
@@ -123,15 +119,9 @@ store = window.store = new class Store extends utils.Class
       @set newKey, defaultValue
 
   # Restore `localStorage` with data from the backup string provided.  
-  # The string is parsed as a JSON string in order to process the data, which may have been
-  # encoded.
+  # The string should be decoded and then parsed as a JSON string in order to process the data.
   restore: (str) ->
-    return unless str
-
-    # Ensure that encoded data is decoded before being parsed as JSON.
-    str  = decodeURIComponent str unless str.indexOf '%7B'
-    data = JSON.parse str
-
+    data = JSON.parse decodeURIComponent str
     localStorage[key] = value for own key, value of data
 
   # Search `localStorage` for all keys that match the specified regular expression.
