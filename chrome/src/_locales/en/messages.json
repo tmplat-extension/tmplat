@@ -4014,7 +4014,7 @@
     "description": "Notification for when something went wrong while collecting contextual data before processing a template."
   },
   "result_bad_expression_description": {
-    "message": "There was a problem parsing an expression.",
+    "message": "There was a problem parsing an expression",
     "description": "Notification for when an error occurs when parsing CSS selector or XPath expressions while processing a template."
   },
   "result_bad_template_description": {
@@ -4071,7 +4071,7 @@
       },
       "url": {
         "content": "$2",
-        "example": "http://neocotic.com/"
+        "example": "http://template-extension.org/"
       }
     }
   },

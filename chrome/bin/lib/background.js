@@ -1,8 +1,7 @@
-// [Template](http://neocotic.com/template)
+// [Template](http://template-extension.org)
 // (c) 2013 Alasdair Mercer
-// Freely distributable under the MIT license.
-// For all details and documentation:
-// <http://neocotic.com/template>
+// Freely distributable under the MIT license:
+// <http://template-extension.org/license>
 (function() {
   var AppError, BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, Icon, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_EXPRESSION_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, UNKNOWN_LOCALE, addAdditionalData, browser, buildConfig, buildDerivedData, buildIcons, buildPopup, buildStandardData, buildTemplate, callUrlShortener, deriveMessageInfo, deriveMessageTempate, evaluateExpressions, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, isWebStore, nullIfEmpty, onMessage, onMessageExternal, operatingSystem, selectOrCreateTab, showNotification, toMarkdown, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
@@ -88,7 +87,7 @@
 
   EXTENSION_ID = i18n.get('@@extension_id');
 
-  HOMEPAGE_DOMAIN = 'neocotic.com';
+  HOMEPAGE_DOMAIN = 'template-extension.org';
 
   OPERATING_SYSTEMS = [
     {

@@ -1,8 +1,7 @@
-// [Template](http://neocotic.com/template)
+// [Template](http://template-extension.org)
 // (c) 2013 Alasdair Mercer
-// Freely distributable under the MIT license.
-// For all details and documentation:
-// <http://neocotic.com/template>
+// Freely distributable under the MIT license:
+// <http://template-extension.org/license>
 (function() {
   var ErrorMessage, Icon, Message, Options, R_CLEAN_QUERY, R_VALID_KEY, R_VALID_SHORTCUT, R_WHITESPACE, SuccessMessage, ValidationError, ValidationWarning, WarningMessage, activateDraggables, activateModifications, activateSelections, activateTooltips, activeTemplate, addImportedTemplate, bindSaveEvent, clearContext, closeWizard, createExport, createImport, deleteTemplates, deriveTemplate, enableTemplates, ext, feedback, feedbackAdded, getSelectedTemplates, isKeyValid, isShortcutValid, load, loadControlEvents, loadDeveloperTools, loadImages, loadLogger, loadLoggerSaveEvents, loadNotificationSaveEvents, loadNotifications, loadSaveEvents, loadTemplate, loadTemplateControlEvents, loadTemplateExportEvents, loadTemplateImportEvents, loadTemplateRows, loadTemplates, loadToolbar, loadToolbarControlEvents, loadToolbarSaveEvents, loadUrlShortenerAccounts, loadUrlShortenerControlEvents, loadUrlShortenerSaveEvents, loadUrlShorteners, openWizard, options, paginate, readImport, refreshResetButton, refreshSelectButtons, reorderTemplates, resetWizard, saveTemplate, searchResults, searchTemplates, setContext, updateImportedTemplate, updateToolbarTemplates, validateImportedTemplate, validateTemplate, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
@@ -1801,7 +1800,7 @@
       $('form:not([target="_blank"])').on('submit', function() {
         return false;
       });
-      $('footer a[href*="neocotic.com"]').on('click', function() {
+      $('footer a[href*="template-extension.org"]').on('click', function() {
         return analytics.track('Footer', 'Clicked', 'Homepage');
       });
       $('#donation input[name="hosted_button_id"]').val(ext.config.options.payPal);

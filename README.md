@@ -26,13 +26,13 @@ Alternatively, you can take a look at `docs/*.html` within the browsers
 sub-directory within this repository to get a better understanding of what the
 code is doing.
 
-If that doesn't help, feel free to follow me on Twitter, [@neocotic][].
+If that doesn't help, feel free to follow us on Twitter, [@TemplateAddon][].
 
 However, if you want more information or examples of using this extension
-please visit the project's homepage;
+please visit our homepage;
 
-http://neocotic.com/template
+http://template-extension.org
 
-[@neocotic]: https://twitter.com/neocotic
+[@templateaddon]: https://twitter.com/TemplateAddon
 [help desk]: https://template.uservoice.com
-[template]: http://neocotic.com/template
+[template]: http://template-extension.org
