@@ -32,8 +32,8 @@ DEFAULT_TEMPLATES = [
   title:    i18n.get 'default_template_short'
   usage:    0
 ,
-  content:  "<a href=\"{url}\"{#anchorTarget} target=\"_blank\"{/anchorTarget}{#anchorTitle}
- title=\"{{title}}\"{/anchorTitle}>{{title}}</a>"
+  content:  "<a href=\"{url}\"{#linksTarget} target=\"_blank\"{/linksTarget}{#linksTitle}
+ title=\"{{title}}\"{/linksTitle}>{{title}}</a>"
   enabled:  yes
   image:    'font'
   index:    2
@@ -63,7 +63,7 @@ DEFAULT_TEMPLATES = [
   title:    i18n.get 'default_template_bbcode'
   usage:    0
 ,
-  content:  '[{title}]({url})'
+  content:  '[{title}]({url}{#linksTitle} "{title}"{/linksTitle})'
   enabled:  no
   image:    'asterisk'
   index:    4
@@ -958,9 +958,9 @@ buildStandardData = (tab, getCallback) ->
   url  = $.url ctab.url
 
   # Create references to the base of all grouped options to improve lookup performance.
-  anchor        = store.get 'anchor'
   bitly         = store.get 'bitly'
   googl         = store.get 'googl'
+  links         = store.get 'links'
   markdown      = store.get 'markdown'
   menu          = store.get 'menu'
   notifications = store.get 'notifications'
@@ -975,8 +975,12 @@ buildStandardData = (tab, getCallback) ->
   # All properties should be in lower case so that they can be looked up ignoring case by our
   # modified version of [mustache.js](https://github.com/janl/mustache.js).
   $.extend data, url.attr(),
-    anchortarget:          anchor.target
-    anchortitle:           anchor.title
+    # Deprecated since 1.2.5, use `linkstarget` instead.
+    anchortarget:          ->
+      @linkstarget
+    # Deprecated since 1.2.5, use `linkstitle` instead.
+    anchortitle:           ->
+      @linkstitle
     bitly:                 bitly.enabled
     bitlyaccount:          ->
       _.findWhere(SHORTENERS, name: 'bitly').oauth.hasAccessToken()
@@ -1000,12 +1004,12 @@ buildStandardData = (tab, getCallback) ->
       (text, render) ->
         decodeURIComponent(render text) ? ''
     depth:                 screen.colorDepth
-    # Deprecated since 1.0.0, use `anchortarget` instead.
+    # Deprecated since 1.0.0, use `linkstarget` instead.
     doanchortarget:        ->
-      @anchortarget
-    # Deprecated since 1.0.0, use `anchortitle` instead.
+      @linkstarget
+    # Deprecated since 1.0.0, use `linkstitle` instead.
     doanchortitle:         ->
-      @anchortitle
+      @linkstitle
     encode:                ->
       (text, render) ->
         encodeURIComponent(render text) ? ''
@@ -1036,6 +1040,8 @@ buildStandardData = (tab, getCallback) ->
         render(text).length
     linkmarkdown:          ->
       toMarkdown @linkhtml
+    linkstarget:           links.target
+    linkstitle:            links.title
     lowercase:             ->
       (text, render) ->
         render(text).toLowerCase()
@@ -1346,9 +1352,9 @@ init_update = ->
         when 'toolbar_nav' then 'general_nav'
         else optionsActiveTab
 
-    store.modify 'anchor', (anchor) ->
-      anchor.target = store.get('doAnchorTarget') ? off
-      anchor.title  = store.get('doAnchorTitle')  ? off
+    store.modify 'links', (links) ->
+      links.target = store.get('doAnchorTarget') ? off
+      links.title  = store.get('doAnchorTitle')  ? off
     store.remove 'doAnchorTarget', 'doAnchorTitle'
 
     store.modify 'menu', (menu) ->
@@ -1364,10 +1370,6 @@ init_update = ->
     store.set 'shortcuts', enabled: store.get('shortcuts') ? yes
 
   updater.update '1.2.3', ->
-    store.modify 'anchor', (anchor) ->
-      delete anchor.Target
-      delete anchor.Title
-
     store.modify 'logger', (logger) ->
       delete logger.Enabled
       delete logger.Level
@@ -1389,6 +1391,13 @@ init_update = ->
       delete toolbar.Close
       delete toolbar.Key
       delete toolbar.Options
+
+  updater.update '1.2.5', ->
+    store.modify 'links', (links) ->
+      anchor = store.get('anchor') ? {}
+      links.target = anchor.target ? off
+      links.title  = anchor.title  ? off
+    store.remove 'anchor'
 
 # Initialize the settings related to statistical information.
 initStatistics = ->
@@ -1873,7 +1882,7 @@ ext = window.ext = new class Extension extends utils.Class
 
       # Begin initialization.
       store.init
-        anchor:        {}
+        links:         {}
         markdown:      {}
         menu:          {}
         notifications: {}
@@ -1884,9 +1893,9 @@ ext = window.ext = new class Extension extends utils.Class
 
       do init_update
 
-      store.modify 'anchor', (anchor) ->
-        anchor.target ?= off
-        anchor.title  ?= off
+      store.modify 'links', (links) ->
+        links.target ?= off
+        links.title  ?= off
 
       store.modify 'markdown', (markdown) ->
         markdown.inline ?= no

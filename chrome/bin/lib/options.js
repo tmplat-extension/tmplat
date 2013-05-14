@@ -45,16 +45,16 @@
   };
 
   load = function() {
-    var anchor, markdown, menu, shortcuts;
+    var links, markdown, menu, shortcuts;
 
     log.trace();
-    anchor = store.get('anchor');
+    links = store.get('links');
     markdown = store.get('markdown');
     menu = store.get('menu');
     shortcuts = store.get('shortcuts');
     $('#analytics').prop('checked', store.get('analytics'));
-    $('#anchorTarget').prop('checked', anchor.target);
-    $('#anchorTitle').prop('checked', anchor.title);
+    $('#linksTarget').prop('checked', links.target);
+    $('#linksTitle').prop('checked', links.title);
     $('#markdownInline').prop('checked', markdown.inline);
     $('#menuEnabled').prop('checked', menu.enabled);
     $('#menuOptions').prop('checked', menu.options);
@@ -222,14 +222,14 @@
         return store.set('analytics', false);
       }
     });
-    bindSaveEvent('#anchorTarget, #anchorTitle', 'change', 'anchor', function(key) {
+    bindSaveEvent('#linksTarget, #linksTitle', 'change', 'links', function(key) {
       var value;
 
       value = this.is(':checked');
-      log.debug("Changing anchor " + key + " to '" + value + "'");
+      log.debug("Changing links " + key + " to '" + value + "'");
       return value;
     }, function(jel, key, value) {
-      return analytics.track('Anchors', 'Changed', utils.capitalize(key), Number(value));
+      return analytics.track('Links', 'Changed', utils.capitalize(key), Number(value));
     });
     bindSaveEvent('#markdownInline', 'change', 'markdown', function(key) {
       var value;
