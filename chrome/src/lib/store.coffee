@@ -41,6 +41,7 @@ store = window.store = new class Store extends utils.Class
   # Public functions
   # ----------------
 
+  # Create a backup string containing all the information contained within `localStorage`.  
   # The data should be formatted as a JSON string and then encoded to ensure that it can easily be
   # copied from/pasted to the console.  
   # The string created may contain sensitive user data in plain text if they have provided any to
