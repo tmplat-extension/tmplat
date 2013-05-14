@@ -9,7 +9,7 @@ OAuth2.adapter('bitly', {
   },
 
   redirectURL: function(config) {
-    return 'http://neocotic.com/robots.txt';
+    return 'http://template-extension.org/robots.txt';
   },
 
   parseAuthorizationCode: function(url) {

@@ -645,60 +645,6 @@
     "message": "Send anonymous usage statistics",
     "description": "Text for the Analytics field."
   },
-  "opt_anchor_header": {
-    "message": "Anchor Tags",
-    "description": "Header for the Anchor Tags section."
-  },
-  "opt_anchor_target_label": {
-    "message": "New Tab/Window",
-    "description": "Label for the New Tab/Window field."
-  },
-  "opt_anchor_target_text": {
-    "message": "Links open in a new browser tab/window when clicked",
-    "description": "Text for the New Tab/Window field."
-  },
-  "opt_anchor_target_sub_text": {
-    "message": "Anchor tags are rendered with the attribute $CODE$",
-    "description": "Help text for the New Tab/Window field.",
-    "placeholders": {
-      "code": {
-        "content": "<code>target=\"_blank\"</code>",
-        "example": "target=\"_blank\""
-      }
-    }
-  },
-  "opt_anchor_text": {
-    "message": "This section refers to links that are rendered by the $O_EMPH$Anchor$C_EMPH$ template.",
-    "description": "Text for the Anchor Tags section.",
-    "placeholders": {
-      "c_emph": {
-        "content": "</em>",
-        "example": "</em>"
-      },
-      "o_emph": {
-        "content": "<em>",
-        "example": "<em>"
-      }
-    }
-  },
-  "opt_anchor_title_label": {
-    "message": "Hover Text",
-    "description": "Label for the Hover Text field."
-  },
-  "opt_anchor_title_sub_text": {
-    "message": "Anchor tags are rendered with the attribute $CODE$",
-    "description": "Help text for the Hover Text field.",
-    "placeholders": {
-      "code": {
-        "content": "<code>title=\"{{title}}\"</code>",
-        "example": "title=\"{{title}}\""
-      }
-    }
-  },
-  "opt_anchor_title_text": {
-    "message": "Links show the contextual title when hovered over",
-    "description": "Text for the Hover Text field."
-  },
   "opt_confirm_button": {
     "message": "Confirm",
     "description": "Text for a Confirm button."
@@ -856,6 +802,20 @@
       "o_link_selectors": {
         "content": "<a href=\"http://www.w3.org/TR/selectors-api/\" target=\"_blank\">",
         "example": "<a href=\"http://www.w3.org/TR/selectors-api/\">"
+      }
+    }
+  },
+  "opt_guide_definitions_footer_4": {
+    "message": "Learn more about the $O_LINK_XPATH$XPath API$C_LINK$",
+    "description": "Fourth optional footer displayed below Definitions tables.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_xpath": {
+        "content": "<a href=\"http://www.w3.org/TR/xpath/\" target=\"_blank\">",
+        "example": "<a href=\"http://www.w3.org/TR/xpath/\">"
       }
     }
   },
@@ -1445,6 +1405,16 @@
       }
     }
   },
+  "opt_guide_lists_objects_local_storage_text": {
+    "message": "The items stored in the $LOCAL_STORAGE$ of the page",
+    "description": "Description of the localStorage variable on the Guide tab of the Options page under the Lists & Objects section.",
+    "placeholders": {
+      "local_storage": {
+        "content": "<code>localStorage</code>",
+        "example": "localStorage"
+      }
+    }
+  },
   "opt_guide_lists_objects_params_text": {
     "message": "The key/value pairs of all parameters (e.g. query $EXAMPLE_1$ contains $EXAMPLE_2$ and $EXAMPLE_3$)",
     "description": "Description of the params variable on the Guide tab of the Options page under the Lists & Objects section.",
@@ -1560,6 +1530,16 @@
       "o_abbr_2": {
         "content": "\">",
         "example": "\">"
+      }
+    }
+  },
+  "opt_guide_lists_objects_session_storage_text": {
+    "message": "The items stored in the $SESSION_STORAGE$ of the page",
+    "description": "Description of the sessionStorage variable on the Guide tab of the Options page under the Lists & Objects section.",
+    "placeholders": {
+      "session_storage": {
+        "content": "<code>sessionStorage</code>",
+        "example": "sessionStorage"
       }
     }
   },
@@ -2147,29 +2127,125 @@
     "message": "Transform the text provided into upper case",
     "description": "Description of the upperCase variable on the Guide tab of the Options page under the Operations section."
   },
+  "opt_guide_operations_xpath_all_html_text": {
+    "message": "Concatenate the $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of all results for the $O_LINK_XPATH$XPath$C_LINK$ expression",
+    "description": "Description of the xpathAllHTML variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>",
+        "example": "</abbr>"
+      },
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\"",
+        "example": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">",
+        "example": "\">"
+      },
+      "o_link_xpath": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/XPath\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/XPath\">"
+      }
+    }
+  },
+  "opt_guide_operations_xpath_all_markdown_text": {
+    "message": "Concatenate the contents of all results for the $O_LINK_XPATH$XPath$C_LINK$ expression as $O_LINK_MARKDOWN$Markdown$C_LINK$",
+    "description": "Description of the xpathAllMarkdown variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_markdown": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\">"
+      },
+      "o_link_xpath": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/XPath\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/XPath\">"
+      }
+    }
+  },
+  "opt_guide_operations_xpath_all_text": {
+    "message": "Concatenate all results for the $O_LINK_XPATH$XPath$C_LINK$ expression",
+    "description": "Description of the xpathAll variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_xpath": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/XPath\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/XPath\">"
+      }
+    }
+  },
+  "opt_guide_operations_xpath_html_text": {
+    "message": "Get the $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of the first result for the $O_LINK_XPATH$XPath$C_LINK$ expression",
+    "description": "Description of the xpathHTML variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>",
+        "example": "</abbr>"
+      },
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\"",
+        "example": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">",
+        "example": "\">"
+      },
+      "o_link_xpath": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/XPath\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/XPath\">"
+      }
+    }
+  },
+  "opt_guide_operations_xpath_markdown_text": {
+    "message": "Get the contents of the first result for the $O_LINK_XPATH$XPath$C_LINK$ expression as $O_LINK_MARKDOWN$Markdown$C_LINK$",
+    "description": "Description of the xpathMarkdown variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_markdown": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\">"
+      },
+      "o_link_xpath": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/XPath\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/XPath\">"
+      }
+    }
+  },
+  "opt_guide_operations_xpath_text": {
+    "message": "Get the first result for the $O_LINK_XPATH$XPath$C_LINK$ expression as text",
+    "description": "Description of the xpath variable on the Guide tab of the Options page under the Operations section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_xpath": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/XPath\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/XPath\">"
+      }
+    }
+  },
   "opt_guide_options_header": {
     "message": "Options",
     "description": "Header for the Options section on the Guide tab of the Options page."
-  },
-  "opt_guide_options_anchor_target_text": {
-    "message": "Whether or not the option to include the anchor tags $SYNTAX$ attribute is enabled",
-    "description": "Description of the anchorTarget variable on the Guide tab of the Options page under the Options section.",
-    "placeholders": {
-      "syntax": {
-        "content": "<em>target</em>",
-        "example": "target"
-      }
-    }
-  },
-  "opt_guide_options_anchor_title_text": {
-    "message": "Whether or not the option to include the anchor tags $SYNTAX$ attribute is enabled",
-    "description": "Description of the anchorTitle variable on the Guide tab of the Options page under the Options section.",
-    "placeholders": {
-      "syntax": {
-        "content": "<em>title</em>",
-        "example": "title"
-      }
-    }
   },
   "opt_guide_options_bitly_account_text": {
     "message": "Whether or not you are currently logged in to your $O_LINK_BITLY$bit.ly$C_LINK$ account",
@@ -2226,8 +2302,8 @@
     "description": "Text for the 2nd code block in the Examples area on the Guide tab of the Options page under the Options section.",
     "placeholders": {
       "syntax_1": {
-        "content": "&lt;a href=&quot;{url}&quot;{#anchorTitle} title=&quot;{{title}}&quot;{/anchorTitle}&gt;",
-        "example": "<a href=\"{url}\"{#anchorTitle} title=\"{{title}}\"{/anchorTitle}>"
+        "content": "&lt;a href=&quot;{url}&quot;{#linksTitle} title=&quot;{{title}}&quot;{/linksTitle}&gt;",
+        "example": "<a href=\"{url}\"{#linksTitle} title=\"{{title}}\"{/linksTitle}>"
       },
       "syntax_2": {
         "content": "&lt;/a&gt;",
@@ -2340,6 +2416,28 @@
       "o_link_googl": {
         "content": "<a href=\"http://goo.gl\" target=\"_blank\">",
         "example": "<a href=\"http://goo.gl\">"
+      }
+    }
+  },
+  "opt_guide_options_links_target_text": {
+    "message": "Whether or not the option to render links with instructions to open them in a new tab/window is enabled",
+    "description": "Description of the linksTarget variable on the Guide tab of the Options page under the Options section."
+  },
+  "opt_guide_options_links_title_text": {
+    "message": "Whether or not the option to render links with hover text is enabled",
+    "description": "Description of the linksTitle variable on the Guide tab of the Options page under the Options section."
+  },
+  "opt_guide_options_markdown_inline_text": {
+    "message": "Whether or not the option to render $O_LINK_MARKDOWN$Markdown$C_LINK$ links using the inline style is enabled",
+    "description": "Description of the markdownInline variable on the Guide tab of the Options page under the Options section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_markdown": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\">"
       }
     }
   },
@@ -3145,6 +3243,40 @@
     "message": "Select those to be imported;",
     "description": "2nd paragraph for the final successful step of the Import dialog."
   },
+  "opt_links_header": {
+    "message": "Links",
+    "description": "Header for the Links section."
+  },
+  "opt_links_target_label": {
+    "message": "New Tab/Window",
+    "description": "Label for the New Tab/Window field."
+  },
+  "opt_links_target_text": {
+    "message": "Links open in a new browser tab/window when clicked",
+    "description": "Text for the New Tab/Window field."
+  },
+  "opt_links_text": {
+    "message": "This section refers to links that are rendered by the templates. These options only apply to templates that implement logic using the corresponding template options (see the $O_LINK_GUIDE$Guide$C_LINK$ for more information) and not all markup languages support the functionality that these options represent.",
+    "description": "Text for the Links section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_guide": {
+        "content": "<a tabify=\"#guide_tab\">",
+        "example": "<a tabify=\"#guide_tab\">"
+      }
+    }
+  },
+  "opt_links_title_label": {
+    "message": "Hover Text",
+    "description": "Label for the Hover Text field."
+  },
+  "opt_links_title_text": {
+    "message": "Links show the contextual title when hovered over",
+    "description": "Text for the Hover Text field."
+  },
   "opt_logger_enabled_label": {
     "message": "Enabled",
     "description": "Label for the Enabled field in the Developer Tools dialog on the Options page under the Logging section."
@@ -3234,6 +3366,54 @@
   "opt_logger_level_warning_text": {
     "message": "Warning",
     "description": "Text for the Warning option for the Level field in the Developer Tools dialog on the Options page under the Logging section."
+  },
+  "opt_markdown_header": {
+    "message": "Markdown",
+    "description": "Header for the Markdown section."
+  },
+  "opt_markdown_text": {
+    "message": "This section refers to content that is converted to $O_LINK_MARKDOWN$Markdown$C_LINK$ from $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$.",
+    "description": "Text for the Markdown section.",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>",
+        "example": "</abbr>"
+      },
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\"",
+        "example": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">",
+        "example": "\">"
+      },
+      "o_link_markdown": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\">"
+      }
+    }
+  },
+  "opt_markdown_inline_label": {
+    "message": "Inline Links",
+    "description": "Label for the Inline Links field."
+  },
+  "opt_markdown_inline_sub_text": {
+    "message": "Markdown links are rendered using the inline style $CODE$",
+    "description": "Help text for the Inline Links field.",
+    "placeholders": {
+      "code": {
+        "content": "<code>[text](url)</code>",
+        "example": "[title](url)"
+      }
+    }
+  },
+  "opt_markdown_inline_text": {
+    "message": "Link references no longer listed at the end of the output",
+    "description": "Text for the Inline Links field."
   },
   "opt_menu_header": {
     "message": "Context Menu",
@@ -3833,6 +4013,10 @@
     "message": "An error occurred while collecting information",
     "description": "Notification for when something went wrong while collecting contextual data before processing a template."
   },
+  "result_bad_expression_description": {
+    "message": "There was a problem parsing an expression",
+    "description": "Notification for when an error occurs when parsing CSS selector or XPath expressions while processing a template."
+  },
   "result_bad_template_description": {
     "message": "An error occurred while deriving the activated template",
     "description": "Notification for when no active template can be derived from the current context."
@@ -3841,13 +4025,13 @@
     "message": "An error occurred while requesting information",
     "description": "Notification for when an invalid type was used by the requesting message."
   },
-  "result_bad_uri_description": {
-    "message": "The URL is not properly encoded",
-    "description": "Notification for when collecting data for an invalid URL before processing a template."
-  },
   "result_bad_title": {
     "message": "Sorry!",
     "description": "Notification header for when something bad happened while processing a template."
+  },
+  "result_bad_uri_description": {
+    "message": "The URL is not properly encoded",
+    "description": "Notification for when collecting data for an invalid URL before processing a template."
   },
   "result_good_description": {
     "message": "$TEMPLATE$ has been copied",
@@ -3887,7 +4071,7 @@
       },
       "url": {
         "content": "$2",
-        "example": "http://neocotic.com/"
+        "example": "http://template-extension.org/"
       }
     }
   },

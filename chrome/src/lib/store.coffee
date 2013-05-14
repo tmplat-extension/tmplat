@@ -1,8 +1,7 @@
-# [Template](http://neocotic.com/template)  
+# [Template](http://template-extension.org)  
 # (c) 2013 Alasdair Mercer  
-# Freely distributable under the MIT license.  
-# For all details and documentation:  
-# <http://neocotic.com/template>
+# Freely distributable under the MIT license:  
+# <http://template-extension.org/license>
 
 # Private functions
 # -----------------
@@ -48,7 +47,7 @@ store = window.store = new class Store extends utils.Class
   # the extension.
   backup: ->
     data = {}
-    data[key] = value for own key, value of localStorage
+    data[key] = JSON.parse value for own key, value of localStorage
     encodeURIComponent JSON.stringify data
 
   # Clear all keys from `localStorage`.
@@ -123,7 +122,7 @@ store = window.store = new class Store extends utils.Class
   # The string should be decoded and then parsed as a JSON string in order to process the data.
   restore: (str) ->
     data = JSON.parse decodeURIComponent str
-    localStorage[key] = value for own key, value of data
+    localStorage[key] = JSON.stringify value for own key, value of data
 
   # Search `localStorage` for all keys that match the specified regular expression.
   search: (regex) ->

@@ -1,8 +1,7 @@
-# [Template](http://neocotic.com/template)  
+# [Template](http://template-extension.org)  
 # (c) 2013 Alasdair Mercer  
-# Freely distributable under the MIT license.  
-# For all details and documentation:  
-# <http://neocotic.com/template>
+# Freely distributable under the MIT license:  
+# <http://template-extension.org/license>
 
 # Private constants
 # -----------------
@@ -32,8 +31,8 @@ DEFAULT_TEMPLATES = [
   title:    i18n.get 'default_template_short'
   usage:    0
 ,
-  content:  "<a href=\"{url}\"{#anchorTarget} target=\"_blank\"{/anchorTarget}{#anchorTitle}
- title=\"{{title}}\"{/anchorTitle}>{{title}}</a>"
+  content:  "<a href=\"{url}\"{#linksTarget} target=\"_blank\"{/linksTarget}{#linksTitle}
+ title=\"{{title}}\"{/linksTitle}>{{title}}</a>"
   enabled:  yes
   image:    'font'
   index:    2
@@ -63,7 +62,7 @@ DEFAULT_TEMPLATES = [
   title:    i18n.get 'default_template_bbcode'
   usage:    0
 ,
-  content:  '[{title}]({url})'
+  content:  '[{title}]({url}{#linksTitle} "{title}"{/linksTitle})'
   enabled:  no
   image:    'asterisk'
   index:    4
@@ -86,7 +85,7 @@ DEFAULT_TEMPLATES = [
 # Extension ID being used by Template.
 EXTENSION_ID      = i18n.get '@@extension_id'
 # Domain of this extension's homepage.
-HOMEPAGE_DOMAIN   = 'neocotic.com'
+HOMEPAGE_DOMAIN   = 'template-extension.org'
 # List of known operating systems that could be used by the user.
 OPERATING_SYSTEMS = [
   substring: 'Win'
@@ -100,8 +99,9 @@ OPERATING_SYSTEMS = [
 ]
 # Milliseconds before the popup automatically resets or closes, depending on user preferences.
 POPUP_DELAY       = 600
-# Regular expression used to extract useful information from `select` tag name variations.
-R_SELECT_TAG      = /^select(all)?(\S*)?$/
+# Regular expression used to extract useful information from different variations of names for tags
+# that are evaluated/executed later.
+R_EXPRESSION_TAG  = /^(select|xpath)(all)?(\S*)?$/
 # Regular expression used to detect upper case characters.
 R_UPPER_CASE      = /[A-Z]+/
 # Very primitive regular expression used to perform simple URL validation.
@@ -435,7 +435,7 @@ onMessage = (message, sender, sendResponse) ->
         (text, render) ->
           text = render text if text
           text = @url        if tag is 'shorten' and not text
-          trim = text.trim()
+          trim = text?.trim() or ''
           log.debug "Following is the contents of a #{tag} tag...", text
 
           # If `trim` doesn't appear to be a valid so just return the rendered `text`.
@@ -491,10 +491,10 @@ onMessage = (message, sender, sendResponse) ->
       addAdditionalData active, data, id, editable, shortcut, link, ->
         updateProgress 40
 
+        # To complete the data, simply extend it using `template`.
+        $.extend yes, data, {template}
         # Ensure all properties of `data` are lower case.
         transformData data
-        # To complete the data, simply extend it using `template`.
-        $.extend data, {template}
         log.debug "Using the following data to render #{template.title}...", data
 
         # Render the initial template output based on `data`.  
@@ -516,36 +516,40 @@ onMessage = (message, sender, sendResponse) ->
       return do done if _.isEmpty placeholders
 
       # Maps to populated with relevant data derived from their related stored placeholders.
-      selectMap  = {}
-      shortenMap = {}
+      expressionMap = {}
+      shortenMap    = {}
 
       for own placeholder, info of placeholders
         if info.tag is 'shorten'
           shortenMap[placeholder] = info.data
         else
-          match = info.tag.match R_SELECT_TAG
-          selectMap[placeholder] =
-            all:       match[1]?
-            convertTo: match[2]
-            selector:  info.data
+          match = info.tag.match R_EXPRESSION_TAG
+          if match
+            expressionMap[placeholder] =
+              all:        match[2]?
+              convertTo:  match[3]
+              expression: info.data
+              type:       match[1]
 
       async.series [
         (done) ->
           updateProgress 80
 
-          # Only proceed if any *select* placeholders were used.
-          return do done if _.isEmpty selectMap
+          # Only proceed if any expression (e.g. *select*, *xpath*) placeholders were used.
+          return do done if _.isEmpty expressionMap
 
-          # Execute all selectors within the `active` tab and update `selectMap` with the results.
-          runSelectors active, selectMap, ->
+          # Evaluate all of the expressions within the `active` tab and update `expressionMap` with
+          # the results.
+          evaluateExpressions active, expressionMap, (err) ->
             updateProgress 85
 
-            log.info "#{_.size selectMap} selector(s) were executed"
+            unless err
+              log.info "#{_.size expressionMap} expression(s) were evaluated"
 
-            # Update the corresponding placeholders with their result.
-            placeholders[placeholder] = value for own placeholder, value of selectMap
+              # Update the corresponding placeholders with their result.
+              placeholders[placeholder] = value for own placeholder, value of expressionMap
 
-            do done
+            done err
 
         (done) ->
           updateProgress 90
@@ -587,7 +591,7 @@ onMessage = (message, sender, sendResponse) ->
     # Ensure that the user is notified if they have attempted to copy an empty string to the system
     # clipboard.
     if not err and not output
-      err = new Error i18n.get 'result_bad_empty_description', template.title
+      err = new AppError 'result_bad_empty_description', template.title
 
     notification = ext.notification
 
@@ -685,6 +689,15 @@ showNotification = ->
 
   # Reset and hide any visible progress bar on the popup, where possible.
   updateProgress null, no
+
+# Convert the `html` into Markdown using [html.md](http://neocotic.com/html.md) while ensuring
+# related options are used.
+toMarkdown = (html) ->
+  log.trace()
+
+  {inline} = store.get 'markdown'
+
+  md html, {inline}
 
 # Update hotkeys stored by the `content.coffee` script within all of the tabs (where valid) of each
 # Chrome window.
@@ -793,8 +806,7 @@ class AppError extends Error
 
   # Create a new instance of `AppError` with a localized message.
   constructor: (messageKey, substitutions...) ->
-    if messageKey
-      @message = i18n.get messageKey, substitutions
+    @message = i18n.get messageKey, substitutions if messageKey
 
 # Data functions
 # --------------
@@ -823,24 +835,19 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
         done null, {locale}
 
     (done) ->
-      coords = {}
-
       # Retrieve the geolocation from the client.
       navigator.geolocation.getCurrentPosition (position) ->
         log.debug 'Retrieved the following geolocation information...', position
 
-        for own prop, value of position.coords
-          coords[prop.toLowerCase()] = if value? then "#{value}" else ''
-
-        done null, {coords}
+        done null, coords: transformData position.coords, yes
       , (err) ->
         log.warn 'Ingoring error thrown when calculating geolocation', err.message
 
-        done null, {coords}
+        done null, coords: {}
 
     (done) ->
       # Retrieve all of the cookies the client has stored for the contextual URL.
-      chrome.cookies.getAll url: data.url, (cookies = []) ->
+      chrome.cookies.getAll url: data.url, (cookies) ->
         log.debug 'Found the following cookies...', cookies
 
         done null,
@@ -887,6 +894,7 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
           linkhtml:       response.linkHTML       ? ''
           links:          response.links          ? []
           linktext:       response.linkText       ? ''
+          localstorage:   response.localStorage   ? {}
           pageheight:     response.pageHeight     ? ''
           pagewidth:      response.pageWidth      ? ''
           referrer:       response.referrer       ? ''
@@ -898,6 +906,7 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
           # Deprecated since 1.0.0, use `selectedLinks` instead.
           selectionlinks: ->
             @selectedlinks
+          sessionstorage: response.sessionStorage ? {}
           stylesheets:    response.styleSheets    ? []
 
   ], (err, results = []) ->
@@ -948,9 +957,10 @@ buildStandardData = (tab, getCallback) ->
   url  = $.url ctab.url
 
   # Create references to the base of all grouped options to improve lookup performance.
-  anchor        = store.get 'anchor'
   bitly         = store.get 'bitly'
   googl         = store.get 'googl'
+  links         = store.get 'links'
+  markdown      = store.get 'markdown'
   menu          = store.get 'menu'
   notifications = store.get 'notifications'
   shortcuts     = store.get 'shortcuts'
@@ -964,8 +974,12 @@ buildStandardData = (tab, getCallback) ->
   # All properties should be in lower case so that they can be looked up ignoring case by our
   # modified version of [mustache.js](https://github.com/janl/mustache.js).
   $.extend data, url.attr(),
-    anchortarget:          anchor.target
-    anchortitle:           anchor.title
+    # Deprecated since 1.2.5, use `linkstarget` instead.
+    anchortarget:          ->
+      @linkstarget
+    # Deprecated since 1.2.5, use `linkstitle` instead.
+    anchortitle:           ->
+      @linkstitle
     bitly:                 bitly.enabled
     bitlyaccount:          ->
       _.findWhere(SHORTENERS, name: 'bitly').oauth.hasAccessToken()
@@ -989,12 +1003,12 @@ buildStandardData = (tab, getCallback) ->
       (text, render) ->
         decodeURIComponent(render text) ? ''
     depth:                 screen.colorDepth
-    # Deprecated since 1.0.0, use `anchortarget` instead.
+    # Deprecated since 1.0.0, use `linkstarget` instead.
     doanchortarget:        ->
-      @anchortarget
-    # Deprecated since 1.0.0, use `anchortitle` instead.
+      @linkstarget
+    # Deprecated since 1.0.0, use `linkstitle` instead.
     doanchortitle:         ->
-      @anchortitle
+      @linkstitle
     encode:                ->
       (text, render) ->
         encodeURIComponent(render text) ? ''
@@ -1024,10 +1038,13 @@ buildStandardData = (tab, getCallback) ->
       (text, render) ->
         render(text).length
     linkmarkdown:          ->
-      md @linkhtml
+      toMarkdown @linkhtml
+    linkstarget:           links.target
+    linkstitle:            links.title
     lowercase:             ->
       (text, render) ->
         render(text).toLowerCase()
+    markdowninline:        markdown.inline
     menu:                  menu.enabled
     menuoptions:           menu.options
     menupaste:             menu.paste
@@ -1045,7 +1062,7 @@ buildStandardData = (tab, getCallback) ->
         url.param(render text) ? ''
     params:                nullIfEmpty url.param()
     plugins:               _.chain(navigator.plugins).pluck('name').uniq().value()
-    popular:               _.findWhere ext.templates, key: stats.popular
+    popular:               $.extend yes, {}, _.findWhere ext.templates, key: stats.popular
     screenheight:          screen.height
     screenwidth:           screen.width
     segment:               ->
@@ -1063,7 +1080,7 @@ buildStandardData = (tab, getCallback) ->
     selecthtml:            ->
       getCallback 'selecthtml'
     selectionmarkdown:     ->
-      md @selectionhtml
+      toMarkdown @selectionhtml
     selectmarkdown:        ->
       getCallback 'selectmarkdown'
     # Deprecated since 1.0.0, use `shorten` instead.
@@ -1109,6 +1126,18 @@ buildStandardData = (tab, getCallback) ->
         render(text).toUpperCase()
     url:                   url.attr 'source'
     version:               ext.version
+    xpath:                ->
+      getCallback 'xpath'
+    xpathall:             ->
+      getCallback 'xpathall'
+    xpathallhtml:         ->
+      getCallback 'xpathallhtml'
+    xpathallmarkdown:     ->
+      getCallback 'xpathallmarkdown'
+    xpathhtml:            ->
+      getCallback 'xpathhtml'
+    xpathmarkdown:        ->
+      getCallback 'xpathmarkdown'
     yourls:                yourls.enabled
     yourlsauthentication:  yourls.authentication
     yourlspassword:        yourls.password
@@ -1152,10 +1181,12 @@ deriveMessageTempate = (message) ->
 
   template
 
-# Run the selectors in `map` within the content scripts in `tab` in order to obtain their
+# Evaluate the expressions in `map` within the content scripts in `tab` in order to obtain their
 # corresponding values.  
-# `callback` will be called with the result once all the selectors have been run.
-runSelectors = (tab, map, callback) ->
+# Expressions can be of mixed type (i.e. CSS selector, XPath expression) and contain different
+# instructions depending on the tag that was used by the user.  
+# `callback` will be called with the result once all of the expressions have been evaluated.
+evaluateExpressions = (tab, map, callback) ->
   log.trace()
 
   # Since content scripts cannot be executed on *protected* pages attempting to send a message to
@@ -1165,26 +1196,53 @@ runSelectors = (tab, map, callback) ->
     map[placeholder] = '' for own placeholder of map
     return do callback
 
-  # Tell the content script in `tab` to run all of the selectors in `map` and update it with their
-  # corresponding values.
-  chrome.tabs.sendMessage tab.id, selectors: map, (response) ->
+  # Tell the content script in `tab` to evaluate all of the expressions in `map` and update it with
+  # their corresponding values.
+  chrome.tabs.sendMessage tab.id, expressions: map, (response) ->
     log.debug 'The following response was returned by the content script...', response
 
-    for own placeholder, selector of response.selectors
-      result = selector.result or ''
-      result = result.join '\n' if _.isArray result
-      map[placeholder] = if selector.convertTo is 'markdown' then md result else result
+    response ?= {}
 
-    do callback
+    for own placeholder, expression of response.expressions
+      {convertTo, error, result} = expression
 
-# Ensure there is a lower case variant of all properties of `data`, optionally removing the
-# original non-lower-case property.
-transformData = (data, deleteOld) ->
+      break if error
+
+      result or= ''
+      result   = result.join '\n' if _.isArray result
+      result   = toMarkdown result if convertTo is 'markdown'
+
+      map[placeholder] = result
+
+    callback if error then new AppError 'result_bad_expression_description'
+
+# Ensure there is a lower case variant of all properties of `data`, optionally only changing a
+# clone of the specified `data`.
+transformData = (data, clone) ->
   log.trace()
 
-  for own prop, value of data when R_UPPER_CASE.test prop
-    data[prop.toLowerCase()] = value
-    delete data[prop] if deleteOld
+  return data unless data
+
+  # Ensure that the `result` and `data` types match when cloning.
+  result = if clone
+    if _.isArray data then [] else {}
+  else
+    data
+
+  transform = (value) ->
+    if _.isArray(value) or _.isObject(value) then transformData value, clone else value
+
+  if _.isArray result
+    # Also transform any nested objects deep within the array.
+    result[i] = transform value for value, i in data
+  else
+    # Transform all properties of the object, included any deep nested objects.
+    for own prop, value of data
+      prop = prop.toLowerCase() if clone or R_UPPER_CASE.test prop
+
+      result[prop] = transform value
+
+  result
 
 # Configuration functions
 # -----------------------
@@ -1293,9 +1351,9 @@ init_update = ->
         when 'toolbar_nav' then 'general_nav'
         else optionsActiveTab
 
-    store.modify 'anchor', (anchor) ->
-      anchor.target = store.get('doAnchorTarget') ? off
-      anchor.title  = store.get('doAnchorTitle')  ? off
+    store.modify 'links', (links) ->
+      links.target = store.get('doAnchorTarget') ? off
+      links.title  = store.get('doAnchorTitle')  ? off
     store.remove 'doAnchorTarget', 'doAnchorTitle'
 
     store.modify 'menu', (menu) ->
@@ -1311,10 +1369,6 @@ init_update = ->
     store.set 'shortcuts', enabled: store.get('shortcuts') ? yes
 
   updater.update '1.2.3', ->
-    store.modify 'anchor', (anchor) ->
-      delete anchor.Target
-      delete anchor.Title
-
     store.modify 'logger', (logger) ->
       delete logger.Enabled
       delete logger.Level
@@ -1336,6 +1390,13 @@ init_update = ->
       delete toolbar.Close
       delete toolbar.Key
       delete toolbar.Options
+
+  updater.update '1.2.5', ->
+    store.modify 'links', (links) ->
+      anchor = store.get('anchor') ? {}
+      links.target = anchor.target ? off
+      links.title  = anchor.title  ? off
+    store.remove 'anchor'
 
 # Initialize the settings related to statistical information.
 initStatistics = ->
@@ -1648,7 +1709,7 @@ callUrlShortener = (map, callback) ->
   title    = service.title
 
   # Ensure the service URL exists in case it is user-defined (e.g. YOURLS).
-  return callback new Error i18n.get 'shortener_config_error', title unless endpoint
+  return callback new AppError 'shortener_config_error', title unless endpoint
 
   tasks = []
   _.each map, (url, placeholder) ->
@@ -1684,7 +1745,7 @@ callUrlShortener = (map, callback) ->
                 do done
               else
                 # Something went wrong so let's tell the user.
-                done new Error i18n.get 'shortener_detailed_error', [title, url]
+                done new AppError 'shortener_detailed_error', title, url
 
           # Finally, send the HTTP request.
           xhr.send service.input url
@@ -1820,7 +1881,8 @@ ext = window.ext = new class Extension extends utils.Class
 
       # Begin initialization.
       store.init
-        anchor:        {}
+        links:         {}
+        markdown:      {}
         menu:          {}
         notifications: {}
         shortcuts:     {}
@@ -1830,9 +1892,12 @@ ext = window.ext = new class Extension extends utils.Class
 
       do init_update
 
-      store.modify 'anchor', (anchor) ->
-        anchor.target ?= off
-        anchor.title  ?= off
+      store.modify 'links', (links) ->
+        links.target ?= off
+        links.title  ?= off
+
+      store.modify 'markdown', (markdown) ->
+        markdown.inline ?= no
 
       store.modify 'menu', (menu) ->
         menu.enabled ?= yes

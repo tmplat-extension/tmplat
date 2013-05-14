@@ -26,7 +26,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="http://neocotic.com/template" i18n-content="name" target="_blank"></a>
+          <a class="brand" href="http://template-extension.org" i18n-content="name" target="_blank"></a>
           <div class="nav-collapse">
             <ul id="navigation" class="nav">
               <li><a id="general_nav" tabify="#general_tab" i18n-content="opt_general_header"></a></li>
@@ -44,30 +44,6 @@
         <div class="row">
           <div class="span12">
             <form class="form-horizontal">
-              <fieldset>
-                <legend i18n-content="opt_anchor_header"></legend>
-                <p i18n-content="opt_anchor_text"></p>
-                <div class="control-group">
-                  <label class="control-label" for="anchorTitle" i18n-content="opt_anchor_title_label"></label>
-                  <div class="controls">
-                    <label class="checkbox span5 tight-left">
-                      <input type="checkbox" id="anchorTitle">
-                      <span i18n-content="opt_anchor_title_text"></span>
-                      <p class="help-block" i18n-content="opt_anchor_title_sub_text"></p>
-                    </label>
-                  </div>
-                </div>
-                <div class="control-group">
-                  <label class="control-label" for="anchorTarget" i18n-content="opt_anchor_target_label"></label>
-                  <div class="controls">
-                    <label class="checkbox span5 tight-left">
-                      <input type="checkbox" id="anchorTarget">
-                      <span i18n-content="opt_anchor_target_text"></span>
-                      <p class="help-block" i18n-content="opt_anchor_target_sub_text"></p>
-                    </label>
-                  </div>
-                </div>
-              </fieldset>
               <fieldset>
                 <legend i18n-content="opt_notification_header"></legend>
                 <div class="control-group">
@@ -191,6 +167,43 @@
                       <input type="checkbox" id="shortcutsPaste">
                       <span i18n-content="opt_shortcuts_paste_text"></span>
                       <p class="help-block" i18n-content="opt_protected_sub_text"></p>
+                    </label>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend i18n-content="opt_links_header"></legend>
+                <p i18n-content="opt_links_text"></p>
+                <div class="control-group">
+                  <label class="control-label" for="linksTitle" i18n-content="opt_links_title_label"></label>
+                  <div class="controls">
+                    <label class="checkbox span5 tight-left">
+                      <input type="checkbox" id="linksTitle">
+                      <span i18n-content="opt_links_title_text"></span>
+                    </label>
+                  </div>
+                </div>
+                <div class="control-group">
+                  <label class="control-label" for="linksTarget" i18n-content="opt_links_target_label"></label>
+                  <div class="controls">
+                    <label class="checkbox span5 tight-left">
+                      <input type="checkbox" id="linksTarget">
+                      <span i18n-content="opt_links_target_text"></span>
+                      <p class="help-block" i18n-content="opt_links_target_sub_text"></p>
+                    </label>
+                  </div>
+                </div>
+              </fieldset>
+              <fieldset>
+                <legend i18n-content="opt_markdown_header"></legend>
+                <p i18n-content="opt_markdown_text"></p>
+                <div class="control-group">
+                  <label class="control-label" for="markdownInline" i18n-content="opt_markdown_inline_label"></label>
+                  <div class="controls">
+                    <label class="checkbox span5 tight-left">
+                      <input type="checkbox" id="markdownInline">
+                      <span i18n-content="opt_markdown_inline_text"></span>
+                      <p class="help-block" i18n-content="opt_markdown_inline_sub_text"></p>
                     </label>
                   </div>
                 </div>
@@ -828,6 +841,11 @@
                             <td i18n-content="opt_guide_lists_objects_links_text"></td>
                           </tr>
                           <tr>
+                            <td>localStorage <a data-goto="#guide_lists_objects_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_type_object_text"></td>
+                            <td i18n-content="opt_guide_lists_objects_local_storage_text"></td>
+                          </tr>
+                          <tr>
                             <td>params</td>
                             <td i18n-content="opt_guide_type_object_text"></td>
                             <td i18n-content="opt_guide_lists_objects_params_text"></td>
@@ -861,6 +879,11 @@
                             <td>selectedLinks <a data-goto="#guide_lists_objects_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_type_list_text"></td>
                             <td i18n-content="opt_guide_lists_objects_selected_links_text"></td>
+                          </tr>
+                          <tr>
+                            <td>sessionStorage <a data-goto="#guide_lists_objects_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_type_object_text"></td>
+                            <td i18n-content="opt_guide_lists_objects_session_storage_text"></td>
                           </tr>
                           <tr>
                             <td>styleSheets <a data-goto="#guide_lists_objects_ref_1" class="ref-link">&sup1;</a></td>
@@ -932,14 +955,6 @@
                         </thead>
                         <tbody>
                           <tr>
-                            <td>anchorTarget</td>
-                            <td i18n-content="opt_guide_options_anchor_target_text"></td>
-                          </tr>
-                          <tr>
-                            <td>anchorTitle</td>
-                            <td i18n-content="opt_guide_options_anchor_title_text"></td>
-                          </tr>
-                          <tr>
                             <td>bitly</td>
                             <td i18n-content="opt_guide_options_bitly_text"></td>
                           </tr>
@@ -954,6 +969,18 @@
                           <tr>
                             <td>googlAccount</td>
                             <td i18n-content="opt_guide_options_googl_account_text"></td>
+                          </tr>
+                          <tr>
+                            <td>linksTarget <span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_options_links_target_text"></td>
+                          </tr>
+                          <tr>
+                            <td>linksTitle <span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_options_links_title_text"></td>
+                          </tr>
+                          <tr>
+                            <td>markdownInline <span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_options_markdown_inline_text"></td>
                           </tr>
                           <tr>
                             <td>menu</td>
@@ -1218,6 +1245,54 @@
                             <td i18n-content="opt_guide_argument_text_text"></td>
                             <td i18n-content="opt_guide_operations_upper_case_text"></td>
                           </tr>
+                          <tr>
+                            <td>xpath <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>
+                              <span i18n-content="opt_guide_argument_text_text"></span>
+                              <a data-goto="#guide_operations_ref_3" class="ref-link">&sup3;</a>
+                            </td>
+                            <td i18n-content="opt_guide_operations_xpath_text"></td>
+                          </tr>
+                          <tr>
+                            <td>xpathAll <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>
+                              <span i18n-content="opt_guide_argument_text_text"></span>
+                              <a data-goto="#guide_operations_ref_3" class="ref-link">&sup3;</a>
+                            </td>
+                            <td i18n-content="opt_guide_operations_xpath_all_text"></td>
+                          </tr>
+                          <tr>
+                            <td>xpathAllHTML <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>
+                              <span i18n-content="opt_guide_argument_text_text"></span>
+                              <a data-goto="#guide_operations_ref_3" class="ref-link">&sup3;</a>
+                            </td>
+                            <td i18n-content="opt_guide_operations_xpath_all_html_text"></td>
+                          </tr>
+                          <tr>
+                            <td>xpathAllMarkdown <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>
+                              <span i18n-content="opt_guide_argument_text_text"></span>
+                              <a data-goto="#guide_operations_ref_3" class="ref-link">&sup3;</a>
+                            </td>
+                            <td i18n-content="opt_guide_operations_xpath_all_markdown_text"></td>
+                          </tr>
+                          <tr>
+                            <td>xpathHTML <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>
+                              <span i18n-content="opt_guide_argument_text_text"></span>
+                              <a data-goto="#guide_operations_ref_3" class="ref-link">&sup3;</a>
+                            </td>
+                            <td i18n-content="opt_guide_operations_xpath_html_text"></td>
+                          </tr>
+                          <tr>
+                            <td>xpathMarkdown <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td>
+                              <span i18n-content="opt_guide_argument_text_text"></span>
+                              <a data-goto="#guide_operations_ref_3" class="ref-link">&sup3;</a>
+                            </td>
+                            <td i18n-content="opt_guide_operations_xpath_markdown_text"></td>
+                          </tr>
                         </tbody>
                         <tfoot>
                           <tr>
@@ -1225,6 +1300,7 @@
                               <ul class="unstyled tight-bottom">
                                 <li><a data-goto="#guide_operations_ref_1" id="guide_operations_ref_1" class="ref-link">&sup1;</a> <em i18n-content="opt_guide_definitions_footer_1"></em></li>
                                 <li><a data-goto="#guide_operations_ref_2" id="guide_operations_ref_2" class="ref-link">&sup2;</a> <em i18n-content="opt_guide_definitions_footer_3"></em></li>
+                                <li><a data-goto="#guide_operations_ref_3" id="guide_operations_ref_3" class="ref-link">&sup3;</a> <em i18n-content="opt_guide_definitions_footer_4"></em></li>
                               </ul>
                             </td>
                           </tr>
@@ -1276,7 +1352,7 @@
       <hr>
       <footer class="footer">
         <p class="pull-right"><a data-goto="#top" i18n-content="opt_top_button"></a></p>
-        &copy;<span class="year-repl"></span> <a href="http://neocotic.com" target="_blank">Alasdair Mercer</a>
+        &copy;<span class="year-repl"></span> <a href="http://template-extension.org" target="_blank">Alasdair Mercer</a>
         <form id="donation" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
           <input type="hidden" name="cmd" value="_s-xclick">
           <input type="hidden" name="hosted_button_id" value="">

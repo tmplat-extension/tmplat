@@ -1,10 +1,9 @@
-// [Template](http://neocotic.com/template)
+// [Template](http://template-extension.org)
 // (c) 2013 Alasdair Mercer
-// Freely distributable under the MIT license.
-// For all details and documentation:
-// <http://neocotic.com/template>
+// Freely distributable under the MIT license:
+// <http://template-extension.org/license>
 (function() {
-  var AppError, BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, Icon, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_SELECT_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, UNKNOWN_LOCALE, addAdditionalData, browser, buildConfig, buildDerivedData, buildIcons, buildPopup, buildStandardData, buildTemplate, callUrlShortener, deriveMessageInfo, deriveMessageTempate, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, isWebStore, nullIfEmpty, onMessage, onMessageExternal, operatingSystem, runSelectors, selectOrCreateTab, showNotification, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
+  var AppError, BLACKLIST, DEFAULT_TEMPLATES, EXTENSION_ID, Extension, HOMEPAGE_DOMAIN, Icon, OPERATING_SYSTEMS, POPUP_DELAY, REAL_EXTENSION_ID, R_EXPRESSION_TAG, R_UPPER_CASE, R_VALID_URL, SHORTENERS, SUPPORT, UNKNOWN_LOCALE, addAdditionalData, browser, buildConfig, buildDerivedData, buildIcons, buildPopup, buildStandardData, buildTemplate, callUrlShortener, deriveMessageInfo, deriveMessageTempate, evaluateExpressions, executeScriptsInExistingWindows, ext, getActiveUrlShortener, getBrowserVersion, getHotkeys, getOperatingSystem, getTemplateWithKey, getTemplateWithMenuId, getTemplateWithShortcut, initStatistics, initTemplate, initTemplates, initTemplates_update, initToolbar, initToolbar_update, initUrlShorteners, initUrlShorteners_update, init_update, isBlacklisted, isExtensionActive, isNewInstall, isProductionBuild, isProtectedPage, isSpecialPage, isWebStore, nullIfEmpty, onMessage, onMessageExternal, operatingSystem, selectOrCreateTab, showNotification, toMarkdown, transformData, updateHotkeys, updateProgress, updateStatistics, updateTemplateUsage, updateUrlShortenerUsage, _ref,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
@@ -34,7 +33,7 @@
       title: i18n.get('default_template_short'),
       usage: 0
     }, {
-      content: "<a href=\"{url}\"{#anchorTarget} target=\"_blank\"{/anchorTarget}{#anchorTitle} title=\"{{title}}\"{/anchorTitle}>{{title}}</a>",
+      content: "<a href=\"{url}\"{#linksTarget} target=\"_blank\"{/linksTarget}{#linksTitle} title=\"{{title}}\"{/linksTitle}>{{title}}</a>",
       enabled: true,
       image: 'font',
       index: 2,
@@ -64,7 +63,7 @@
       title: i18n.get('default_template_bbcode'),
       usage: 0
     }, {
-      content: '[{title}]({url})',
+      content: '[{title}]({url}{#linksTitle} "{title}"{/linksTitle})',
       enabled: false,
       image: 'asterisk',
       index: 4,
@@ -88,7 +87,7 @@
 
   EXTENSION_ID = i18n.get('@@extension_id');
 
-  HOMEPAGE_DOMAIN = 'neocotic.com';
+  HOMEPAGE_DOMAIN = 'template-extension.org';
 
   OPERATING_SYSTEMS = [
     {
@@ -105,7 +104,7 @@
 
   POPUP_DELAY = 600;
 
-  R_SELECT_TAG = /^select(all)?(\S*)?$/;
+  R_EXPRESSION_TAG = /^(select|xpath)(all)?(\S*)?$/;
 
   R_UPPER_CASE = /[A-Z]+/;
 
@@ -522,7 +521,7 @@
             if (tag === 'shorten' && !text) {
               text = this.url;
             }
-            trim = text.trim();
+            trim = (text != null ? text.trim() : void 0) || '';
             log.debug("Following is the contents of a " + tag + " tag...", text);
             if (!trim || tag === 'shorten' && !R_VALID_URL.test(trim)) {
               return text;
@@ -567,10 +566,10 @@
         updateProgress(30);
         return addAdditionalData(active, data, id, editable, shortcut, link, function() {
           updateProgress(40);
-          transformData(data);
-          $.extend(data, {
+          $.extend(true, data, {
             template: template
           });
+          transformData(data);
           log.debug("Using the following data to render " + template.title + "...", data);
           if (template.content) {
             output = Mustache.render(template.content, data);
@@ -583,13 +582,13 @@
           return done();
         });
       }, function(done) {
-        var info, match, placeholder, selectMap, shortenMap;
+        var expressionMap, info, match, placeholder, shortenMap;
 
         updateProgress(70);
         if (_.isEmpty(placeholders)) {
           return done();
         }
-        selectMap = {};
+        expressionMap = {};
         shortenMap = {};
         for (placeholder in placeholders) {
           if (!__hasProp.call(placeholders, placeholder)) continue;
@@ -597,31 +596,36 @@
           if (info.tag === 'shorten') {
             shortenMap[placeholder] = info.data;
           } else {
-            match = info.tag.match(R_SELECT_TAG);
-            selectMap[placeholder] = {
-              all: match[1] != null,
-              convertTo: match[2],
-              selector: info.data
-            };
+            match = info.tag.match(R_EXPRESSION_TAG);
+            if (match) {
+              expressionMap[placeholder] = {
+                all: match[2] != null,
+                convertTo: match[3],
+                expression: info.data,
+                type: match[1]
+              };
+            }
           }
         }
         return async.series([
           function(done) {
             updateProgress(80);
-            if (_.isEmpty(selectMap)) {
+            if (_.isEmpty(expressionMap)) {
               return done();
             }
-            return runSelectors(active, selectMap, function() {
+            return evaluateExpressions(active, expressionMap, function(err) {
               var value;
 
               updateProgress(85);
-              log.info("" + (_.size(selectMap)) + " selector(s) were executed");
-              for (placeholder in selectMap) {
-                if (!__hasProp.call(selectMap, placeholder)) continue;
-                value = selectMap[placeholder];
-                placeholders[placeholder] = value;
+              if (!err) {
+                log.info("" + (_.size(expressionMap)) + " expression(s) were evaluated");
+                for (placeholder in expressionMap) {
+                  if (!__hasProp.call(expressionMap, placeholder)) continue;
+                  value = expressionMap[placeholder];
+                  placeholders[placeholder] = value;
+                }
               }
-              return done();
+              return done(err);
             });
           }, function(done) {
             updateProgress(90);
@@ -659,7 +663,7 @@
       type = utils.capitalize(message.type);
       analytics.track('Requests', 'Processed', type, shortcut ? message.data.key.charCodeAt(0) : void 0);
       if (!err && !output) {
-        err = new Error(i18n.get('result_bad_empty_description', template.title));
+        err = new AppError('result_bad_empty_description', template.title);
       }
       notification = ext.notification;
       if (err) {
@@ -745,6 +749,16 @@
       ext.reset();
     }
     return updateProgress(null, false);
+  };
+
+  toMarkdown = function(html) {
+    var inline;
+
+    log.trace();
+    inline = store.get('markdown').inline;
+    return md(html, {
+      inline: inline
+    });
   };
 
   updateHotkeys = function() {
@@ -898,35 +912,21 @@
           });
         });
       }, function(done) {
-        var coords;
-
-        coords = {};
         return navigator.geolocation.getCurrentPosition(function(position) {
-          var prop, value, _ref;
-
           log.debug('Retrieved the following geolocation information...', position);
-          _ref = position.coords;
-          for (prop in _ref) {
-            if (!__hasProp.call(_ref, prop)) continue;
-            value = _ref[prop];
-            coords[prop.toLowerCase()] = value != null ? "" + value : '';
-          }
           return done(null, {
-            coords: coords
+            coords: transformData(position.coords, true)
           });
         }, function(err) {
           log.warn('Ingoring error thrown when calculating geolocation', err.message);
           return done(null, {
-            coords: coords
+            coords: {}
           });
         });
       }, function(done) {
         return chrome.cookies.getAll({
           url: data.url
         }, function(cookies) {
-          if (cookies == null) {
-            cookies = [];
-          }
           log.debug('Found the following cookies...', cookies);
           return done(null, {
             cookie: function() {
@@ -954,7 +954,7 @@
           shortcut: shortcut,
           url: data.url
         }, function(response) {
-          var lastModified, time, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
+          var lastModified, time, _ref, _ref1, _ref10, _ref11, _ref12, _ref13, _ref14, _ref15, _ref16, _ref17, _ref18, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8, _ref9;
 
           log.debug('The following data was retrieved from the content script...', response);
           if (response == null) {
@@ -977,18 +977,20 @@
             linkhtml: (_ref5 = response.linkHTML) != null ? _ref5 : '',
             links: (_ref6 = response.links) != null ? _ref6 : [],
             linktext: (_ref7 = response.linkText) != null ? _ref7 : '',
-            pageheight: (_ref8 = response.pageHeight) != null ? _ref8 : '',
-            pagewidth: (_ref9 = response.pageWidth) != null ? _ref9 : '',
-            referrer: (_ref10 = response.referrer) != null ? _ref10 : '',
-            scripts: (_ref11 = response.scripts) != null ? _ref11 : [],
-            selectedimages: (_ref12 = response.selectedImages) != null ? _ref12 : [],
-            selectedlinks: (_ref13 = response.selectedLinks) != null ? _ref13 : [],
-            selection: (_ref14 = response.selection) != null ? _ref14 : '',
-            selectionhtml: (_ref15 = response.selectionHTML) != null ? _ref15 : '',
+            localstorage: (_ref8 = response.localStorage) != null ? _ref8 : {},
+            pageheight: (_ref9 = response.pageHeight) != null ? _ref9 : '',
+            pagewidth: (_ref10 = response.pageWidth) != null ? _ref10 : '',
+            referrer: (_ref11 = response.referrer) != null ? _ref11 : '',
+            scripts: (_ref12 = response.scripts) != null ? _ref12 : [],
+            selectedimages: (_ref13 = response.selectedImages) != null ? _ref13 : [],
+            selectedlinks: (_ref14 = response.selectedLinks) != null ? _ref14 : [],
+            selection: (_ref15 = response.selection) != null ? _ref15 : '',
+            selectionhtml: (_ref16 = response.selectionHTML) != null ? _ref16 : '',
             selectionlinks: function() {
               return this.selectedlinks;
             },
-            stylesheets: (_ref16 = response.styleSheets) != null ? _ref16 : []
+            sessionstorage: (_ref17 = response.sessionStorage) != null ? _ref17 : {},
+            stylesheets: (_ref18 = response.styleSheets) != null ? _ref18 : []
           });
         });
       }
@@ -1028,7 +1030,7 @@
   };
 
   buildStandardData = function(tab, getCallback) {
-    var anchor, bitly, ctab, data, extension, googl, handler, menu, notifications, shortcuts, stats, toolbar, url, yourls;
+    var bitly, ctab, data, extension, googl, handler, links, markdown, menu, notifications, shortcuts, stats, toolbar, url, yourls;
 
     log.trace();
     ctab = $.extend({}, tab);
@@ -1046,9 +1048,10 @@
     }
     data = {};
     url = $.url(ctab.url);
-    anchor = store.get('anchor');
     bitly = store.get('bitly');
     googl = store.get('googl');
+    links = store.get('links');
+    markdown = store.get('markdown');
     menu = store.get('menu');
     notifications = store.get('notifications');
     shortcuts = store.get('shortcuts');
@@ -1056,8 +1059,12 @@
     toolbar = store.get('toolbar');
     yourls = store.get('yourls');
     $.extend(data, url.attr(), {
-      anchortarget: anchor.target,
-      anchortitle: anchor.title,
+      anchortarget: function() {
+        return this.linkstarget;
+      },
+      anchortitle: function() {
+        return this.linkstitle;
+      },
       bitly: bitly.enabled,
       bitlyaccount: function() {
         return _.findWhere(SHORTENERS, {
@@ -1096,10 +1103,10 @@
       },
       depth: screen.colorDepth,
       doanchortarget: function() {
-        return this.anchortarget;
+        return this.linkstarget;
       },
       doanchortitle: function() {
-        return this.anchortitle;
+        return this.linkstitle;
       },
       encode: function() {
         return function(text, render) {
@@ -1149,13 +1156,16 @@
         };
       },
       linkmarkdown: function() {
-        return md(this.linkhtml);
+        return toMarkdown(this.linkhtml);
       },
+      linkstarget: links.target,
+      linkstitle: links.title,
       lowercase: function() {
         return function(text, render) {
           return render(text).toLowerCase();
         };
       },
+      markdowninline: markdown.inline,
       menu: menu.enabled,
       menuoptions: menu.options,
       menupaste: menu.paste,
@@ -1177,9 +1187,9 @@
       },
       params: nullIfEmpty(url.param()),
       plugins: _.chain(navigator.plugins).pluck('name').uniq().value(),
-      popular: _.findWhere(ext.templates, {
+      popular: $.extend(true, {}, _.findWhere(ext.templates, {
         key: stats.popular
-      }),
+      })),
       screenheight: screen.height,
       screenwidth: screen.width,
       segment: function() {
@@ -1206,7 +1216,7 @@
         return getCallback('selecthtml');
       },
       selectionmarkdown: function() {
-        return md(this.selectionhtml);
+        return toMarkdown(this.selectionhtml);
       },
       selectmarkdown: function() {
         return getCallback('selectmarkdown');
@@ -1266,6 +1276,24 @@
       },
       url: url.attr('source'),
       version: ext.version,
+      xpath: function() {
+        return getCallback('xpath');
+      },
+      xpathall: function() {
+        return getCallback('xpathall');
+      },
+      xpathallhtml: function() {
+        return getCallback('xpathallhtml');
+      },
+      xpathallmarkdown: function() {
+        return getCallback('xpathallmarkdown');
+      },
+      xpathhtml: function() {
+        return getCallback('xpathhtml');
+      },
+      xpathmarkdown: function() {
+        return getCallback('xpathmarkdown');
+      },
       yourls: yourls.enabled,
       yourlsauthentication: yourls.authentication,
       yourlspassword: yourls.password,
@@ -1329,7 +1357,7 @@
     return template;
   };
 
-  runSelectors = function(tab, map, callback) {
+  evaluateExpressions = function(tab, map, callback) {
     var placeholder;
 
     log.trace();
@@ -1341,44 +1369,66 @@
       return callback();
     }
     return chrome.tabs.sendMessage(tab.id, {
-      selectors: map
+      expressions: map
     }, function(response) {
-      var result, selector, _ref;
+      var convertTo, error, expression, result, _ref;
 
       log.debug('The following response was returned by the content script...', response);
-      _ref = response.selectors;
+      if (response == null) {
+        response = {};
+      }
+      _ref = response.expressions;
       for (placeholder in _ref) {
         if (!__hasProp.call(_ref, placeholder)) continue;
-        selector = _ref[placeholder];
-        result = selector.result || '';
+        expression = _ref[placeholder];
+        convertTo = expression.convertTo, error = expression.error, result = expression.result;
+        if (error) {
+          break;
+        }
+        result || (result = '');
         if (_.isArray(result)) {
           result = result.join('\n');
         }
-        map[placeholder] = selector.convertTo === 'markdown' ? md(result) : result;
+        if (convertTo === 'markdown') {
+          result = toMarkdown(result);
+        }
+        map[placeholder] = result;
       }
-      return callback();
+      return callback(error ? new AppError('result_bad_expression_description') : void 0);
     });
   };
 
-  transformData = function(data, deleteOld) {
-    var prop, value, _results;
+  transformData = function(data, clone) {
+    var i, prop, result, transform, value, _i, _len;
 
     log.trace();
-    _results = [];
-    for (prop in data) {
-      if (!__hasProp.call(data, prop)) continue;
-      value = data[prop];
-      if (!(R_UPPER_CASE.test(prop))) {
-        continue;
-      }
-      data[prop.toLowerCase()] = value;
-      if (deleteOld) {
-        _results.push(delete data[prop]);
+    if (!data) {
+      return data;
+    }
+    result = clone ? _.isArray(data) ? [] : {} : data;
+    transform = function(value) {
+      if (_.isArray(value) || _.isObject(value)) {
+        return transformData(value, clone);
       } else {
-        _results.push(void 0);
+        return value;
+      }
+    };
+    if (_.isArray(result)) {
+      for (i = _i = 0, _len = data.length; _i < _len; i = ++_i) {
+        value = data[i];
+        result[i] = transform(value);
+      }
+    } else {
+      for (prop in data) {
+        if (!__hasProp.call(data, prop)) continue;
+        value = data[prop];
+        if (clone || R_UPPER_CASE.test(prop)) {
+          prop = prop.toLowerCase();
+        }
+        result[prop] = transform(value);
       }
     }
-    return _results;
+    return result;
   };
 
   buildConfig = function() {
@@ -1505,11 +1555,11 @@
           }
         })());
       }
-      store.modify('anchor', function(anchor) {
+      store.modify('links', function(links) {
         var _ref, _ref1;
 
-        anchor.target = (_ref = store.get('doAnchorTarget')) != null ? _ref : false;
-        return anchor.title = (_ref1 = store.get('doAnchorTitle')) != null ? _ref1 : false;
+        links.target = (_ref = store.get('doAnchorTarget')) != null ? _ref : false;
+        return links.title = (_ref1 = store.get('doAnchorTitle')) != null ? _ref1 : false;
       });
       store.remove('doAnchorTarget', 'doAnchorTitle');
       store.modify('menu', function(menu) {
@@ -1531,11 +1581,7 @@
         enabled: (_ref = store.get('shortcuts')) != null ? _ref : true
       });
     });
-    return updater.update('1.2.3', function() {
-      store.modify('anchor', function(anchor) {
-        delete anchor.Target;
-        return delete anchor.Title;
-      });
+    updater.update('1.2.3', function() {
       store.modify('logger', function(logger) {
         delete logger.Enabled;
         return delete logger.Level;
@@ -1558,6 +1604,16 @@
         delete toolbar.Key;
         return delete toolbar.Options;
       });
+    });
+    return updater.update('1.2.5', function() {
+      store.modify('links', function(links) {
+        var anchor, _ref, _ref1, _ref2;
+
+        anchor = (_ref = store.get('anchor')) != null ? _ref : {};
+        links.target = (_ref1 = anchor.target) != null ? _ref1 : false;
+        return links.title = (_ref2 = anchor.title) != null ? _ref2 : false;
+      });
+      return store.remove('anchor');
     });
   };
 
@@ -1992,7 +2048,7 @@
     oauth = false;
     title = service.title;
     if (!endpoint) {
-      return callback(new Error(i18n.get('shortener_config_error', title)));
+      return callback(new AppError('shortener_config_error', title));
     }
     tasks = [];
     _.each(map, function(url, placeholder) {
@@ -2030,7 +2086,7 @@
                   map[placeholder] = service.output(xhr.responseText);
                   return done();
                 } else {
-                  return done(new Error(i18n.get('shortener_detailed_error', [title, url])));
+                  return done(new AppError('shortener_detailed_error', title, url));
                 }
               }
             };
@@ -2164,7 +2220,8 @@
           shortener.oauth = typeof shortener.oauth === "function" ? shortener.oauth() : void 0;
         }
         store.init({
-          anchor: {},
+          links: {},
+          markdown: {},
           menu: {},
           notifications: {},
           shortcuts: {},
@@ -2173,13 +2230,18 @@
           toolbar: {}
         });
         init_update();
-        store.modify('anchor', function(anchor) {
+        store.modify('links', function(links) {
           var _ref1, _ref2;
 
-          if ((_ref1 = anchor.target) == null) {
-            anchor.target = false;
+          if ((_ref1 = links.target) == null) {
+            links.target = false;
           }
-          return (_ref2 = anchor.title) != null ? _ref2 : anchor.title = false;
+          return (_ref2 = links.title) != null ? _ref2 : links.title = false;
+        });
+        store.modify('markdown', function(markdown) {
+          var _ref1;
+
+          return (_ref1 = markdown.inline) != null ? _ref1 : markdown.inline = false;
         });
         store.modify('menu', function(menu) {
           var _ref1, _ref2, _ref3;
