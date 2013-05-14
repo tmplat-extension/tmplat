@@ -54,14 +54,14 @@ bindSaveEvent = (selector, type, option, evaluate, callback) ->
 load = ->
   log.trace()
 
-  anchor    = store.get 'anchor'
+  links     = store.get 'links'
   markdown  = store.get 'markdown'
   menu      = store.get 'menu'
   shortcuts = store.get 'shortcuts'
 
   $('#analytics').prop        'checked', store.get 'analytics'
-  $('#anchorTarget').prop     'checked', anchor.target
-  $('#anchorTitle').prop      'checked', anchor.title
+  $('#linksTarget').prop      'checked', links.target
+  $('#linksTitle').prop       'checked', links.title
   $('#markdownInline').prop   'checked', markdown.inline
   $('#menuEnabled').prop      'checked', menu.enabled
   $('#menuOptions').prop      'checked', menu.options
@@ -227,14 +227,14 @@ loadSaveEvents = ->
       chrome.extension.getBackgroundPage().analytics.remove()
       store.set 'analytics', no
 
-  bindSaveEvent '#anchorTarget, #anchorTitle', 'change', 'anchor', (key) ->
+  bindSaveEvent '#linksTarget, #linksTitle', 'change', 'links', (key) ->
     value = @is ':checked'
 
-    log.debug "Changing anchor #{key} to '#{value}'"
+    log.debug "Changing links #{key} to '#{value}'"
 
     value
   , (jel, key, value) ->
-    analytics.track 'Anchors', 'Changed', utils.capitalize(key), Number value
+    analytics.track 'Links', 'Changed', utils.capitalize(key), Number value
 
   bindSaveEvent '#markdownInline', 'change', 'markdown', (key) ->
     value = @is ':checked'

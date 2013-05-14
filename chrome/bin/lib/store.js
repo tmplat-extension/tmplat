@@ -65,7 +65,7 @@
       for (key in localStorage) {
         if (!__hasProp.call(localStorage, key)) continue;
         value = localStorage[key];
-        data[key] = value;
+        data[key] = JSON.parse(value);
       }
       return encodeURIComponent(JSON.stringify(data));
     };
@@ -175,7 +175,7 @@
       for (key in data) {
         if (!__hasProp.call(data, key)) continue;
         value = data[key];
-        _results.push(localStorage[key] = value);
+        _results.push(localStorage[key] = JSON.stringify(value));
       }
       return _results;
     };

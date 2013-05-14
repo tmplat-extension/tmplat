@@ -645,72 +645,6 @@
     "message": "Send anonymous usage statistics",
     "description": "Text for the Analytics field."
   },
-  "opt_anchor_header": {
-    "message": "Anchor Tags",
-    "description": "Header for the Anchor Tags section."
-  },
-  "opt_anchor_target_label": {
-    "message": "New Tab/Window",
-    "description": "Label for the New Tab/Window field."
-  },
-  "opt_anchor_target_text": {
-    "message": "Links open in a new browser tab/window when clicked",
-    "description": "Text for the New Tab/Window field."
-  },
-  "opt_anchor_target_sub_text": {
-    "message": "Anchor tags are rendered with the attribute $CODE$",
-    "description": "Help text for the New Tab/Window field.",
-    "placeholders": {
-      "code": {
-        "content": "<code>target=\"_blank\"</code>",
-        "example": "target=\"_blank\""
-      }
-    }
-  },
-  "opt_anchor_text": {
-    "message": "This section refers to $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ links that are rendered by the $O_EMPH$Anchor$C_EMPH$ template.",
-    "description": "Text for the Anchor Tags section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "c_emph": {
-        "content": "</em>",
-        "example": "</em>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      },
-      "o_emph": {
-        "content": "<em>",
-        "example": "<em>"
-      }
-    }
-  },
-  "opt_anchor_title_label": {
-    "message": "Hover Text",
-    "description": "Label for the Hover Text field."
-  },
-  "opt_anchor_title_sub_text": {
-    "message": "Anchor tags are rendered with the attribute $CODE$",
-    "description": "Help text for the Hover Text field.",
-    "placeholders": {
-      "code": {
-        "content": "<code>title=\"{{title}}\"</code>",
-        "example": "title=\"{{title}}\""
-      }
-    }
-  },
-  "opt_anchor_title_text": {
-    "message": "Links show the contextual title when hovered over",
-    "description": "Text for the Hover Text field."
-  },
   "opt_confirm_button": {
     "message": "Confirm",
     "description": "Text for a Confirm button."
@@ -2313,26 +2247,6 @@
     "message": "Options",
     "description": "Header for the Options section on the Guide tab of the Options page."
   },
-  "opt_guide_options_anchor_target_text": {
-    "message": "Whether or not the option to include the anchor tags $SYNTAX$ attribute is enabled",
-    "description": "Description of the anchorTarget variable on the Guide tab of the Options page under the Options section.",
-    "placeholders": {
-      "syntax": {
-        "content": "<em>target</em>",
-        "example": "target"
-      }
-    }
-  },
-  "opt_guide_options_anchor_title_text": {
-    "message": "Whether or not the option to include the anchor tags $SYNTAX$ attribute is enabled",
-    "description": "Description of the anchorTitle variable on the Guide tab of the Options page under the Options section.",
-    "placeholders": {
-      "syntax": {
-        "content": "<em>title</em>",
-        "example": "title"
-      }
-    }
-  },
   "opt_guide_options_bitly_account_text": {
     "message": "Whether or not you are currently logged in to your $O_LINK_BITLY$bit.ly$C_LINK$ account",
     "description": "Description of the bitlyAccount variable on the Guide tab of the Options page under the Options section.",
@@ -2388,8 +2302,8 @@
     "description": "Text for the 2nd code block in the Examples area on the Guide tab of the Options page under the Options section.",
     "placeholders": {
       "syntax_1": {
-        "content": "&lt;a href=&quot;{url}&quot;{#anchorTitle} title=&quot;{{title}}&quot;{/anchorTitle}&gt;",
-        "example": "<a href=\"{url}\"{#anchorTitle} title=\"{{title}}\"{/anchorTitle}>"
+        "content": "&lt;a href=&quot;{url}&quot;{#linksTitle} title=&quot;{{title}}&quot;{/linksTitle}&gt;",
+        "example": "<a href=\"{url}\"{#linksTitle} title=\"{{title}}\"{/linksTitle}>"
       },
       "syntax_2": {
         "content": "&lt;/a&gt;",
@@ -2504,6 +2418,14 @@
         "example": "<a href=\"http://goo.gl\">"
       }
     }
+  },
+  "opt_guide_options_links_target_text": {
+    "message": "Whether or not the option to render links with instructions to open them in a new tab/window is enabled",
+    "description": "Description of the linksTarget variable on the Guide tab of the Options page under the Options section."
+  },
+  "opt_guide_options_links_title_text": {
+    "message": "Whether or not the option to render links with hover text is enabled",
+    "description": "Description of the linksTitle variable on the Guide tab of the Options page under the Options section."
   },
   "opt_guide_options_markdown_inline_text": {
     "message": "Whether or not the option to render $O_LINK_MARKDOWN$Markdown$C_LINK$ links using the inline style is enabled",
@@ -3320,6 +3242,40 @@
   "opt_import_wizard_stage_2_text_2": {
     "message": "Select those to be imported;",
     "description": "2nd paragraph for the final successful step of the Import dialog."
+  },
+  "opt_links_header": {
+    "message": "Links",
+    "description": "Header for the Links section."
+  },
+  "opt_links_target_label": {
+    "message": "New Tab/Window",
+    "description": "Label for the New Tab/Window field."
+  },
+  "opt_links_target_text": {
+    "message": "Links open in a new browser tab/window when clicked",
+    "description": "Text for the New Tab/Window field."
+  },
+  "opt_links_text": {
+    "message": "This section refers to links that are rendered by the templates. These options only apply to templates that implement logic using the corresponding template options (see the $O_LINK_GUIDE$Guide$C_LINK$ for more information) and not all markup languages support the functionality that these options represent.",
+    "description": "Text for the Links section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_guide": {
+        "content": "<a tabify=\"#guide_tab\">",
+        "example": "<a tabify=\"#guide_tab\">"
+      }
+    }
+  },
+  "opt_links_title_label": {
+    "message": "Hover Text",
+    "description": "Label for the Hover Text field."
+  },
+  "opt_links_title_text": {
+    "message": "Links show the contextual title when hovered over",
+    "description": "Text for the Hover Text field."
   },
   "opt_logger_enabled_label": {
     "message": "Enabled",
