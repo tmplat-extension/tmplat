@@ -1,8 +1,7 @@
-# [Template](http://neocotic.com/template)  
+# [Template](http://template-extension.org)  
 # (c) 2013 Alasdair Mercer  
-# Freely distributable under the MIT license.  
-# For all details and documentation:  
-# <http://neocotic.com/template>
+# Freely distributable under the MIT license:  
+# <http://template-extension.org/license>
 
 # Private constants
 # -----------------
@@ -1802,7 +1801,7 @@ options = window.options = new class Options extends utils.Class
       false
 
     # Bind analytical tracking events to key footer buttons and links.
-    $('footer a[href*="neocotic.com"]').on 'click', ->
+    $('footer a[href*="template-extension.org"]').on 'click', ->
       analytics.track 'Footer', 'Clicked', 'Homepage'
 
     # Setup and configure the donation button in the footer.
