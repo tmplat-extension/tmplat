@@ -93,7 +93,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <p><a href="http://neocotic.com/template">Template</a><br>(c) 2013 Alasdair Mercer<br>Freely distributable under the MIT license.<br>For all details and documentation:<br><a href="http://neocotic.com/template">http://neocotic.com/template</a></p>
+              <p><a href="http://template-extension.org">Template</a><br>(c) 2013 Alasdair Mercer<br>Freely distributable under the MIT license:<br><a href="http://template-extension.org/license">http://template-extension.org/license</a></p>
 
             </div>
             
@@ -160,8 +160,8 @@ Template.</p>
   title:    i18n.get <span class="string">'default_template_short'</span>
   usage:    <span class="number">0</span>
 ,
-  content:  <span class="string">"&lt;a href=\"{url}\"{#anchorTarget} target=\"_blank\"{/anchorTarget}{#anchorTitle}
- title=\"{{title}}\"{/anchorTitle}&gt;{{title}}&lt;/a&gt;"</span>
+  content:  <span class="string">"&lt;a href=\"{url}\"{#linksTarget} target=\"_blank\"{/linksTarget}{#linksTitle}
+ title=\"{{title}}\"{/linksTitle}&gt;{{title}}&lt;/a&gt;"</span>
   enabled:  <span class="literal">yes</span>
   image:    <span class="string">'font'</span>
   index:    <span class="number">2</span>
@@ -191,7 +191,7 @@ Template.</p>
   title:    i18n.get <span class="string">'default_template_bbcode'</span>
   usage:    <span class="number">0</span>
 ,
-  content:  <span class="string">'[{title}]({url})'</span>
+  content:  <span class="string">'[{title}]({url}{#linksTitle} "{title}"{/linksTitle})'</span>
   enabled:  <span class="literal">no</span>
   image:    <span class="string">'asterisk'</span>
   index:    <span class="number">4</span>
@@ -240,7 +240,7 @@ Template.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>HOMEPAGE_DOMAIN   = <span class="string">'neocotic.com'</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>HOMEPAGE_DOMAIN   = <span class="string">'template-extension.org'</span></pre></div></div>
             
         </li>
         
@@ -290,11 +290,12 @@ Template.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-9">&#182;</a>
               </div>
-              <p>Regular expression used to extract useful information from <code>select</code> tag name variations.</p>
+              <p>Regular expression used to extract useful information from different variations of names for tags
+that are evaluated/executed later.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>R_SELECT_TAG      = <span class="regexp">/^select(all)?(\S*)?$/</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>R_EXPRESSION_TAG  = <span class="regexp">/^(select|xpath)(all)?(\S*)?$/</span></pre></div></div>
             
         </li>
         
@@ -1164,7 +1165,7 @@ final value.</p>
         (text, render) -&gt;
           text = render text <span class="keyword">if</span> text
           text = <span class="property">@url</span>        <span class="keyword">if</span> tag <span class="keyword">is</span> <span class="string">'shorten'</span> <span class="keyword">and</span> <span class="keyword">not</span> text
-          trim = text.trim()
+          trim = text?.trim() <span class="keyword">or</span> <span class="string">''</span>
           log.debug <span class="string">"Following is the contents of a <span class="subst">#{tag}</span> tag..."</span>, text</pre></div></div>
             
         </li>
@@ -1328,11 +1329,11 @@ final value.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-62">&#182;</a>
               </div>
-              <p>Ensure all properties of <code>data</code> are lower case.</p>
+              <p>To complete the data, simply extend it using <code>template</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        transformData data</pre></div></div>
+            <div class="content"><div class='highlight'><pre>        $.extend <span class="literal">yes</span>, data, {template}</pre></div></div>
             
         </li>
         
@@ -1343,11 +1344,11 @@ final value.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-63">&#182;</a>
               </div>
-              <p>To complete the data, simply extend it using <code>template</code>.</p>
+              <p>Ensure all properties of <code>data</code> are lower case.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        $.extend data, {template}
+            <div class="content"><div class='highlight'><pre>        transformData data
         log.debug <span class="string">"Using the following data to render <span class="subst">#{template.title}</span>..."</span>, data</pre></div></div>
             
         </li>
@@ -1404,18 +1405,20 @@ in order to replace any placeholders with their final values.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      selectMap  = {}
-      shortenMap = {}
+            <div class="content"><div class='highlight'><pre>      expressionMap = {}
+      shortenMap    = {}
 
       <span class="keyword">for</span> own placeholder, info <span class="keyword">of</span> placeholders
         <span class="keyword">if</span> info.tag <span class="keyword">is</span> <span class="string">'shorten'</span>
           shortenMap[placeholder] = info.data
         <span class="keyword">else</span>
-          match = info.tag.match R_SELECT_TAG
-          selectMap[placeholder] =
-            all:       match[<span class="number">1</span>]?
-            convertTo: match[<span class="number">2</span>]
-            selector:  info.data
+          match = info.tag.match R_EXPRESSION_TAG
+          <span class="keyword">if</span> match
+            expressionMap[placeholder] =
+              all:        match[<span class="number">2</span>]?
+              convertTo:  match[<span class="number">3</span>]
+              expression: info.data
+              type:       match[<span class="number">1</span>]
 
       async.series [
         (done) -&gt;
@@ -1430,11 +1433,11 @@ in order to replace any placeholders with their final values.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-67">&#182;</a>
               </div>
-              <p>Only proceed if any <em>select</em> placeholders were used.</p>
+              <p>Only proceed if any expression (e.g. <em>select</em>, <em>xpath</em>) placeholders were used.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>          <span class="keyword">return</span> <span class="keyword">do</span> done <span class="keyword">if</span> _.isEmpty selectMap</pre></div></div>
+            <div class="content"><div class='highlight'><pre>          <span class="keyword">return</span> <span class="keyword">do</span> done <span class="keyword">if</span> _.isEmpty expressionMap</pre></div></div>
             
         </li>
         
@@ -1445,14 +1448,16 @@ in order to replace any placeholders with their final values.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-68">&#182;</a>
               </div>
-              <p>Execute all selectors within the <code>active</code> tab and update <code>selectMap</code> with the results.</p>
+              <p>Evaluate all of the expressions within the <code>active</code> tab and update <code>expressionMap</code> with
+the results.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>          runSelectors active, selectMap, -&gt;
+            <div class="content"><div class='highlight'><pre>          evaluateExpressions active, expressionMap, (err) -&gt;
             updateProgress <span class="number">85</span>
 
-            log.info <span class="string">"<span class="subst">#{_.size selectMap}</span> selector(s) were executed"</span></pre></div></div>
+            <span class="keyword">unless</span> err
+              log.info <span class="string">"<span class="subst">#{_.size expressionMap}</span> expression(s) were evaluated"</span></pre></div></div>
             
         </li>
         
@@ -1467,9 +1472,9 @@ in order to replace any placeholders with their final values.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>            placeholders[placeholder] = value <span class="keyword">for</span> own placeholder, value <span class="keyword">of</span> selectMap
+            <div class="content"><div class='highlight'><pre>              placeholders[placeholder] = value <span class="keyword">for</span> own placeholder, value <span class="keyword">of</span> expressionMap
 
-            <span class="keyword">do</span> done
+            done err
 
         (done) -&gt;
           updateProgress <span class="number">90</span></pre></div></div>
@@ -1597,7 +1602,7 @@ clipboard.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> <span class="keyword">not</span> err <span class="keyword">and</span> <span class="keyword">not</span> output
-      err = <span class="keyword">new</span> Error i18n.get <span class="string">'result_bad_empty_description'</span>, template.title
+      err = <span class="keyword">new</span> AppError <span class="string">'result_bad_empty_description'</span>, template.title
 
     notification = ext.notification
 
@@ -1898,6 +1903,27 @@ the corresponding option (enabled by default).</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-93">&#182;</a>
               </div>
+              <p>Convert the <code>html</code> into Markdown using <a href="http://neocotic.com/html.md">html.md</a> while ensuring
+related options are used.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="function"><span class="title">toMarkdown</span></span> = (html) -&gt;
+  log.trace()
+
+  {inline} = store.get <span class="string">'markdown'</span>
+
+  md html, {inline}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-94">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-94">&#182;</a>
+              </div>
               <p>Update hotkeys stored by the <code>content.coffee</code> script within all of the tabs (where valid) of each
 Chrome window.</p>
 
@@ -1911,11 +1937,11 @@ Chrome window.</p>
         </li>
         
         
-        <li id="section-94">
+        <li id="section-95">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-94">&#182;</a>
+                <a class="pilcrow" href="#section-95">&#182;</a>
               </div>
               <p>Retrieve all open tabs (on all windows) and update their registered keyboard shortcuts.</p>
 
@@ -1927,11 +1953,11 @@ Chrome window.</p>
         </li>
         
         
-        <li id="section-95">
+        <li id="section-96">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-95">&#182;</a>
+                <a class="pilcrow" href="#section-96">&#182;</a>
               </div>
               <p>Check tabs are not displaying a <em>protected</em> page (i.e. one that will cause an error if an
 attempt is made to send a message to it).</p>
@@ -1944,11 +1970,11 @@ attempt is made to send a message to it).</p>
         </li>
         
         
-        <li id="section-96">
+        <li id="section-97">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-96">&#182;</a>
+                <a class="pilcrow" href="#section-97">&#182;</a>
               </div>
               <p>Update the popup UI state to reflect the progress of the current request.<br>Ignore <code>percent</code> if <code>toggle</code> is specified; otherwise update the percentage on the progress bar
 and reset the delay timer.<br><code>toggle</code> can be used to show the progress bar or reset/close the popup.</p>
@@ -1969,11 +1995,11 @@ and reset the delay timer.<br><code>toggle</code> can be used to show the progre
         </li>
         
         
-        <li id="section-97">
+        <li id="section-98">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-97">&#182;</a>
+                <a class="pilcrow" href="#section-98">&#182;</a>
               </div>
               <p>Reset the progress bar to zero and ensure it&#39;s visible while the templates are hidden.</p>
 
@@ -1989,11 +2015,11 @@ and reset the delay timer.<br><code>toggle</code> can be used to show the progre
         </li>
         
         
-        <li id="section-98">
+        <li id="section-99">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-98">&#182;</a>
+                <a class="pilcrow" href="#section-99">&#182;</a>
               </div>
               <p>Close the popup, where possible.</p>
 
@@ -2006,11 +2032,11 @@ and reset the delay timer.<br><code>toggle</code> can be used to show the progre
         </li>
         
         
-        <li id="section-99">
+        <li id="section-100">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-99">&#182;</a>
+                <a class="pilcrow" href="#section-100">&#182;</a>
               </div>
               <p>Reset the progress bar to zero and ensure it&#39;s hidden while the templates are visibile.</p>
 
@@ -2026,11 +2052,11 @@ and reset the delay timer.<br><code>toggle</code> can be used to show the progre
         </li>
         
         
-        <li id="section-100">
+        <li id="section-101">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-100">&#182;</a>
+                <a class="pilcrow" href="#section-101">&#182;</a>
               </div>
               <p>Update the progress bar to display the specified <code>percent</code>.</p>
 
@@ -2046,11 +2072,11 @@ and reset the delay timer.<br><code>toggle</code> can be used to show the progre
         </li>
         
         
-        <li id="section-101">
+        <li id="section-102">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-101">&#182;</a>
+                <a class="pilcrow" href="#section-102">&#182;</a>
               </div>
               <p>Update the statistical information.</p>
 
@@ -2067,11 +2093,11 @@ and reset the delay timer.<br><code>toggle</code> can be used to show the progre
         </li>
         
         
-        <li id="section-102">
+        <li id="section-103">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-102">&#182;</a>
+                <a class="pilcrow" href="#section-103">&#182;</a>
               </div>
               <p>Determine which template has the greatest usage.</p>
 
@@ -2083,11 +2109,11 @@ and reset the delay timer.<br><code>toggle</code> can be used to show the progre
         </li>
         
         
-        <li id="section-103">
+        <li id="section-104">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-103">&#182;</a>
+                <a class="pilcrow" href="#section-104">&#182;</a>
               </div>
               <p>Calculate the up-to-date statistical information.</p>
 
@@ -2100,11 +2126,11 @@ and reset the delay timer.<br><code>toggle</code> can be used to show the progre
         </li>
         
         
-        <li id="section-104">
+        <li id="section-105">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-104">&#182;</a>
+                <a class="pilcrow" href="#section-105">&#182;</a>
               </div>
               <p>Increment the usage for the template with the specified <code>key</code> and persist the changes.</p>
 
@@ -2125,11 +2151,11 @@ and reset the delay timer.<br><code>toggle</code> can be used to show the progre
         </li>
         
         
-        <li id="section-105">
+        <li id="section-106">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-105">&#182;</a>
+                <a class="pilcrow" href="#section-106">&#182;</a>
               </div>
               <p>Increment the usage for the URL shortener service with the specified <code>name</code> and persist the
 changes.</p>
@@ -2151,30 +2177,15 @@ changes.</p>
         </li>
         
         
-        <li id="section-106">
+        <li id="section-107">
             <div class="annotation">
               
               <div class="pilwrap for-h2">
-                <a class="pilcrow" href="#section-106">&#182;</a>
+                <a class="pilcrow" href="#section-107">&#182;</a>
               </div>
               <h2>Errors</h2>
 
             </div>
-            
-        </li>
-        
-        
-        <li id="section-107">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-107">&#182;</a>
-              </div>
-              <p><code>AppError</code> allows easy identification of internal errors.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">AppError</span> <span class="keyword">extends</span> <span class="title">Error</span></span></pre></div></div>
             
         </li>
         
@@ -2185,13 +2196,11 @@ changes.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-108">&#182;</a>
               </div>
-              <p>Create a new instance of <code>AppError</code> with a localized message.</p>
+              <p><code>AppError</code> allows easy identification of internal errors.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  constructor: (messageKey, substitutions...) -&gt;
-    <span class="keyword">if</span> messageKey
-      <span class="property">@message</span> = i18n.get messageKey, substitutions</pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="class"><span class="keyword">class</span> <span class="title">AppError</span> <span class="keyword">extends</span> <span class="title">Error</span></span></pre></div></div>
             
         </li>
         
@@ -2199,8 +2208,24 @@ changes.</p>
         <li id="section-109">
             <div class="annotation">
               
-              <div class="pilwrap for-h2">
+              <div class="pilwrap ">
                 <a class="pilcrow" href="#section-109">&#182;</a>
+              </div>
+              <p>Create a new instance of <code>AppError</code> with a localized message.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  constructor: (messageKey, substitutions...) -&gt;
+    <span class="property">@message</span> = i18n.get messageKey, substitutions <span class="keyword">if</span> messageKey</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-110">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h2">
+                <a class="pilcrow" href="#section-110">&#182;</a>
               </div>
               <h2>Data functions</h2>
 
@@ -2209,11 +2234,11 @@ changes.</p>
         </li>
         
         
-        <li id="section-110">
+        <li id="section-111">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-110">&#182;</a>
+                <a class="pilcrow" href="#section-111">&#182;</a>
               </div>
               <p>Extract additional information from <code>tab</code> and add it to <code>data</code>.</p>
 
@@ -2228,11 +2253,11 @@ changes.</p>
         </li>
         
         
-        <li id="section-111">
+        <li id="section-112">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-111">&#182;</a>
+                <a class="pilcrow" href="#section-112">&#182;</a>
               </div>
               <p>Retrieve all of the URLs from tabs contained in the same window as <code>tab</code>.</p>
 
@@ -2250,11 +2275,11 @@ changes.</p>
         </li>
         
         
-        <li id="section-112">
+        <li id="section-113">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-112">&#182;</a>
+                <a class="pilcrow" href="#section-113">&#182;</a>
               </div>
               <p>Allow Chrome to attemt automatic language detection on <code>tab</code>.</p>
 
@@ -2267,34 +2292,6 @@ changes.</p>
 
         done <span class="literal">null</span>, {locale}
 
-    (done) -&gt;
-      coords = {}</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-113">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-113">&#182;</a>
-              </div>
-              <p>Retrieve the geolocation from the client.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>      navigator.geolocation.getCurrentPosition (position) -&gt;
-        log.debug <span class="string">'Retrieved the following geolocation information...'</span>, position
-
-        <span class="keyword">for</span> own prop, value <span class="keyword">of</span> position.coords
-          coords[prop.toLowerCase()] = <span class="keyword">if</span> value? <span class="keyword">then</span> <span class="string">"<span class="subst">#{value}</span>"</span> <span class="keyword">else</span> <span class="string">''</span>
-
-        done <span class="literal">null</span>, {coords}
-      , (err) -&gt;
-        log.warn <span class="string">'Ingoring error thrown when calculating geolocation'</span>, err.message
-
-        done <span class="literal">null</span>, {coords}
-
     (done) -&gt;</pre></div></div>
             
         </li>
@@ -2306,16 +2303,20 @@ changes.</p>
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-114">&#182;</a>
               </div>
-              <p>Retrieve all of the cookies the client has stored for the contextual URL.</p>
+              <p>Retrieve the geolocation from the client.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      chrome.cookies.getAll url: data.url, (cookies = []) -&gt;
-        log.debug <span class="string">'Found the following cookies...'</span>, cookies
+            <div class="content"><div class='highlight'><pre>      navigator.geolocation.getCurrentPosition (position) -&gt;
+        log.debug <span class="string">'Retrieved the following geolocation information...'</span>, position
 
-        done <span class="literal">null</span>,
-          cookie: -&gt;
-            (text, render) -&gt;</pre></div></div>
+        done <span class="literal">null</span>, coords: transformData position.coords, <span class="literal">yes</span>
+      , (err) -&gt;
+        log.warn <span class="string">'Ingoring error thrown when calculating geolocation'</span>, err.message
+
+        done <span class="literal">null</span>, coords: {}
+
+    (done) -&gt;</pre></div></div>
             
         </li>
         
@@ -2325,6 +2326,26 @@ changes.</p>
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-115">&#182;</a>
+              </div>
+              <p>Retrieve all of the cookies the client has stored for the contextual URL.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      chrome.cookies.getAll url: data.url, (cookies) -&gt;
+        log.debug <span class="string">'Found the following cookies...'</span>, cookies
+
+        done <span class="literal">null</span>,
+          cookie: -&gt;
+            (text, render) -&gt;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-116">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-116">&#182;</a>
               </div>
               <p>Attempt to find the value for the cookie name.</p>
 
@@ -2341,11 +2362,11 @@ changes.</p>
         </li>
         
         
-        <li id="section-116">
+        <li id="section-117">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-116">&#182;</a>
+                <a class="pilcrow" href="#section-117">&#182;</a>
               </div>
               <p>Try to prevent pages hanging because content script should not have been executed.</p>
 
@@ -2356,11 +2377,11 @@ changes.</p>
         </li>
         
         
-        <li id="section-117">
+        <li id="section-118">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-117">&#182;</a>
+                <a class="pilcrow" href="#section-118">&#182;</a>
               </div>
               <p>Call the content script running within <code>tab</code> and request additional data to be extracted
 from the page&#39;s DOM.<br>The content script also takes this oppertunity to prepare for a second request that may
@@ -2375,11 +2396,11 @@ field within the context of the template&#39;s activation.</p>
         </li>
         
         
-        <li id="section-118">
+        <li id="section-119">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-118">&#182;</a>
+                <a class="pilcrow" href="#section-119">&#182;</a>
               </div>
               <p>Safety mechanism for when content scripts haven&#39;t been updated along with the extension
 so the request gets stuck. This is mainly an issue in development and not production.</p>
@@ -2391,11 +2412,11 @@ so the request gets stuck. This is mainly an issue in development and not produc
         </li>
         
         
-        <li id="section-119">
+        <li id="section-120">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-119">&#182;</a>
+                <a class="pilcrow" href="#section-120">&#182;</a>
               </div>
               <p>Attempt to transform <code>lastModified</code> into a usable date.</p>
 
@@ -2408,11 +2429,11 @@ so the request gets stuck. This is mainly an issue in development and not produc
         </li>
         
         
-        <li id="section-120">
+        <li id="section-121">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-120">&#182;</a>
+                <a class="pilcrow" href="#section-121">&#182;</a>
               </div>
               <p>Sanitize the <code>response</code> so that it&#39;s data can be cleanly integrated.</p>
 
@@ -2430,6 +2451,7 @@ so the request gets stuck. This is mainly an issue in development and not produc
           linkhtml:       response.linkHTML       ? <span class="string">''</span>
           links:          response.links          ? []
           linktext:       response.linkText       ? <span class="string">''</span>
+          localstorage:   response.localStorage   ? {}
           pageheight:     response.pageHeight     ? <span class="string">''</span>
           pagewidth:      response.pageWidth      ? <span class="string">''</span>
           referrer:       response.referrer       ? <span class="string">''</span>
@@ -2442,11 +2464,11 @@ so the request gets stuck. This is mainly an issue in development and not produc
         </li>
         
         
-        <li id="section-121">
+        <li id="section-122">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-121">&#182;</a>
+                <a class="pilcrow" href="#section-122">&#182;</a>
               </div>
               <p>Deprecated since 1.0.0, use <code>selectedLinks</code> instead.</p>
 
@@ -2454,6 +2476,7 @@ so the request gets stuck. This is mainly an issue in development and not produc
             
             <div class="content"><div class='highlight'><pre>          selectionlinks: -&gt;
             <span class="property">@selectedlinks</span>
+          sessionstorage: response.sessionStorage ? {}
           stylesheets:    response.styleSheets    ? []
 
   ], (err, results = []) -&gt;
@@ -2462,11 +2485,11 @@ so the request gets stuck. This is mainly an issue in development and not produc
         </li>
         
         
-        <li id="section-122">
+        <li id="section-123">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-122">&#182;</a>
+                <a class="pilcrow" href="#section-123">&#182;</a>
               </div>
               <p>Extend the original <code>data</code> with any additional data that was retrieved successfully.</p>
 
@@ -2479,11 +2502,11 @@ so the request gets stuck. This is mainly an issue in development and not produc
         </li>
         
         
-        <li id="section-123">
+        <li id="section-124">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-123">&#182;</a>
+                <a class="pilcrow" href="#section-124">&#182;</a>
               </div>
               <p>Creates an object containing data based on information derived from the specified tab and menu
 item data.</p>
@@ -2509,11 +2532,11 @@ item data.</p>
         </li>
         
         
-        <li id="section-124">
+        <li id="section-125">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-124">&#182;</a>
+                <a class="pilcrow" href="#section-125">&#182;</a>
               </div>
               <p>Construct a data object based on information extracted from <code>tab</code>.<br>The tab information is then merged with additional information relating to the URL of the tab.<br>If a tag requires further action (e.g. call a URL shortening service) when parsing the templates
 contents later, the callback method returned by <code>getCallback</code> is called to handle this as we
@@ -2527,11 +2550,11 @@ don&#39;t want to perform these expensive tasks unless it is actually required.<
         </li>
         
         
-        <li id="section-125">
+        <li id="section-126">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-125">&#182;</a>
+                <a class="pilcrow" href="#section-126">&#182;</a>
               </div>
               <p>Create a clone of the original tab of the tab to run the compatibility scripts on.</p>
 
@@ -2542,11 +2565,11 @@ don&#39;t want to perform these expensive tasks unless it is actually required.<
         </li>
         
         
-        <li id="section-126">
+        <li id="section-127">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-126">&#182;</a>
+                <a class="pilcrow" href="#section-127">&#182;</a>
               </div>
               <p>Check for any support extensions running on the current tab by simply checking the tabs URL.</p>
 
@@ -2561,11 +2584,11 @@ don&#39;t want to perform these expensive tasks unless it is actually required.<
         </li>
         
         
-        <li id="section-127">
+        <li id="section-128">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-127">&#182;</a>
+                <a class="pilcrow" href="#section-128">&#182;</a>
               </div>
               <p>Build the initial URL data.</p>
 
@@ -2577,19 +2600,20 @@ don&#39;t want to perform these expensive tasks unless it is actually required.<
         </li>
         
         
-        <li id="section-128">
+        <li id="section-129">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-128">&#182;</a>
+                <a class="pilcrow" href="#section-129">&#182;</a>
               </div>
               <p>Create references to the base of all grouped options to improve lookup performance.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  anchor        = store.get <span class="string">'anchor'</span>
-  bitly         = store.get <span class="string">'bitly'</span>
+            <div class="content"><div class='highlight'><pre>  bitly         = store.get <span class="string">'bitly'</span>
   googl         = store.get <span class="string">'googl'</span>
+  links         = store.get <span class="string">'links'</span>
+  markdown      = store.get <span class="string">'markdown'</span>
   menu          = store.get <span class="string">'menu'</span>
   notifications = store.get <span class="string">'notifications'</span>
   shortcuts     = store.get <span class="string">'shortcuts'</span>
@@ -2600,11 +2624,11 @@ don&#39;t want to perform these expensive tasks unless it is actually required.<
         </li>
         
         
-        <li id="section-129">
+        <li id="section-130">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-129">&#182;</a>
+                <a class="pilcrow" href="#section-130">&#182;</a>
               </div>
               <p>Merge the initial data with the attributes of the <a href="https://github.com/allmarkedup/jQuery-URL-Parser">URL
 parser</a> and all of the custom Template
@@ -2613,9 +2637,39 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $.extend data, url.attr(),
-    anchortarget:          anchor.target
-    anchortitle:           anchor.title
+            <div class="content"><div class='highlight'><pre>  $.extend data, url.attr(),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-131">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-131">&#182;</a>
+              </div>
+              <p>Deprecated since 1.2.5, use <code>linkstarget</code> instead.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    anchortarget:          -&gt;
+      <span class="property">@linkstarget</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-132">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-132">&#182;</a>
+              </div>
+              <p>Deprecated since 1.2.5, use <code>linkstitle</code> instead.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    anchortitle:           -&gt;
+      <span class="property">@linkstitle</span>
     bitly:                 bitly.enabled
     bitlyaccount:          -&gt;
       _.findWhere(SHORTENERS, name: <span class="string">'bitly'</span>).oauth.hasAccessToken()
@@ -2630,11 +2684,11 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
         </li>
         
         
-        <li id="section-130">
+        <li id="section-133">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-130">&#182;</a>
+                <a class="pilcrow" href="#section-133">&#182;</a>
               </div>
               <p>Deprecated since 1.0.0, use <code>menu</code> instead.</p>
 
@@ -2656,34 +2710,34 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
         </li>
         
         
-        <li id="section-131">
+        <li id="section-134">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-131">&#182;</a>
+                <a class="pilcrow" href="#section-134">&#182;</a>
               </div>
-              <p>Deprecated since 1.0.0, use <code>anchortarget</code> instead.</p>
+              <p>Deprecated since 1.0.0, use <code>linkstarget</code> instead.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>    doanchortarget:        -&gt;
-      <span class="property">@anchortarget</span></pre></div></div>
+      <span class="property">@linkstarget</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-132">
+        <li id="section-135">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-132">&#182;</a>
+                <a class="pilcrow" href="#section-135">&#182;</a>
               </div>
-              <p>Deprecated since 1.0.0, use <code>anchortitle</code> instead.</p>
+              <p>Deprecated since 1.0.0, use <code>linkstitle</code> instead.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>    doanchortitle:         -&gt;
-      <span class="property">@anchortitle</span>
+      <span class="property">@linkstitle</span>
     encode:                -&gt;
       (text, render) -&gt;
         encodeURIComponent(render text) ? <span class="string">''</span></pre></div></div>
@@ -2691,11 +2745,11 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
         </li>
         
         
-        <li id="section-133">
+        <li id="section-136">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-133">&#182;</a>
+                <a class="pilcrow" href="#section-136">&#182;</a>
               </div>
               <p>Deprecated since 0.1.0.2, use <code>encode</code> instead.</p>
 
@@ -2722,11 +2776,11 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
         </li>
         
         
-        <li id="section-134">
+        <li id="section-137">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-134">&#182;</a>
+                <a class="pilcrow" href="#section-137">&#182;</a>
               </div>
               <p>Deprecated since 1.0.0, use <code>googlaccount</code> instead.</p>
 
@@ -2739,10 +2793,13 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
       (text, render) -&gt;
         render(text).length
     linkmarkdown:          -&gt;
-      md <span class="property">@linkhtml</span>
+      toMarkdown <span class="property">@linkhtml</span>
+    linkstarget:           links.target
+    linkstitle:            links.title
     lowercase:             -&gt;
       (text, render) -&gt;
         render(text).toLowerCase()
+    markdowninline:        markdown.inline
     menu:                  menu.enabled
     menuoptions:           menu.options
     menupaste:             menu.paste
@@ -2753,11 +2810,11 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
         </li>
         
         
-        <li id="section-135">
+        <li id="section-138">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-135">&#182;</a>
+                <a class="pilcrow" href="#section-138">&#182;</a>
               </div>
               <p>Deprecated since 0.1.0.2, use <code>originalurl</code> instead.</p>
 
@@ -2773,7 +2830,7 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
         url.param(render text) ? <span class="string">''</span>
     params:                nullIfEmpty url.param()
     plugins:               _.chain(navigator.plugins).pluck(<span class="string">'name'</span>).uniq().value()
-    popular:               _.findWhere ext.templates, key: stats.popular
+    popular:               $.extend <span class="literal">yes</span>, {}, _.findWhere ext.templates, key: stats.popular
     screenheight:          screen.height
     screenwidth:           screen.width
     segment:               -&gt;
@@ -2791,18 +2848,18 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
     selecthtml:            -&gt;
       getCallback <span class="string">'selecthtml'</span>
     selectionmarkdown:     -&gt;
-      md <span class="property">@selectionhtml</span>
+      toMarkdown <span class="property">@selectionhtml</span>
     selectmarkdown:        -&gt;
       getCallback <span class="string">'selectmarkdown'</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-136">
+        <li id="section-139">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-136">&#182;</a>
+                <a class="pilcrow" href="#section-139">&#182;</a>
               </div>
               <p>Deprecated since 1.0.0, use <code>shorten</code> instead.</p>
 
@@ -2823,11 +2880,11 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
         </li>
         
         
-        <li id="section-137">
+        <li id="section-140">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-137">&#182;</a>
+                <a class="pilcrow" href="#section-140">&#182;</a>
               </div>
               <p>Deprecated since 1.0.0, use the inverse of <code>toolbarpopup</code> instead.</p>
 
@@ -2839,11 +2896,11 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
         </li>
         
         
-        <li id="section-138">
+        <li id="section-141">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-138">&#182;</a>
+                <a class="pilcrow" href="#section-141">&#182;</a>
               </div>
               <p>Deprecated since 1.0.0, use <code>toolbarstyle</code> instead.</p>
 
@@ -2855,11 +2912,11 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
         </li>
         
         
-        <li id="section-139">
+        <li id="section-142">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-139">&#182;</a>
+                <a class="pilcrow" href="#section-142">&#182;</a>
               </div>
               <p>Deprecated since 1.0.0, use <code>toolbarkey</code> instead.</p>
 
@@ -2874,11 +2931,11 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
         </li>
         
         
-        <li id="section-140">
+        <li id="section-143">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-140">&#182;</a>
+                <a class="pilcrow" href="#section-143">&#182;</a>
               </div>
               <p>Obsolete since 1.1.0, functionality has been removed.</p>
 
@@ -2902,6 +2959,18 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
         render(text).toUpperCase()
     url:                   url.attr <span class="string">'source'</span>
     version:               ext.version
+    xpath:                -&gt;
+      getCallback <span class="string">'xpath'</span>
+    xpathall:             -&gt;
+      getCallback <span class="string">'xpathall'</span>
+    xpathallhtml:         -&gt;
+      getCallback <span class="string">'xpathallhtml'</span>
+    xpathallmarkdown:     -&gt;
+      getCallback <span class="string">'xpathallmarkdown'</span>
+    xpathhtml:            -&gt;
+      getCallback <span class="string">'xpathhtml'</span>
+    xpathmarkdown:        -&gt;
+      getCallback <span class="string">'xpathmarkdown'</span>
     yourls:                yourls.enabled
     yourlsauthentication:  yourls.authentication
     yourlspassword:        yourls.password
@@ -2914,11 +2983,11 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
         </li>
         
         
-        <li id="section-141">
+        <li id="section-144">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-141">&#182;</a>
+                <a class="pilcrow" href="#section-144">&#182;</a>
               </div>
               <p>Derive the relevant information, including the template data, based on both <code>message</code> and <code>tab</code>.</p>
 
@@ -2947,11 +3016,11 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
         </li>
         
         
-        <li id="section-142">
+        <li id="section-145">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-142">&#182;</a>
+                <a class="pilcrow" href="#section-145">&#182;</a>
               </div>
               <p>Derive the relevant template based on the context of <code>message</code>.</p>
 
@@ -2972,28 +3041,29 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
         </li>
         
         
-        <li id="section-143">
+        <li id="section-146">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-143">&#182;</a>
+                <a class="pilcrow" href="#section-146">&#182;</a>
               </div>
-              <p>Run the selectors in <code>map</code> within the content scripts in <code>tab</code> in order to obtain their
-corresponding values.<br><code>callback</code> will be called with the result once all the selectors have been run.</p>
+              <p>Evaluate the expressions in <code>map</code> within the content scripts in <code>tab</code> in order to obtain their
+corresponding values.<br>Expressions can be of mixed type (i.e. CSS selector, XPath expression) and contain different
+instructions depending on the tag that was used by the user.<br><code>callback</code> will be called with the result once all of the expressions have been evaluated.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="function"><span class="title">runSelectors</span></span> = (tab, map, callback) -&gt;
+            <div class="content"><div class='highlight'><pre><span class="function"><span class="title">evaluateExpressions</span></span> = (tab, map, callback) -&gt;
   log.trace()</pre></div></div>
             
         </li>
         
         
-        <li id="section-144">
+        <li id="section-147">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-144">&#182;</a>
+                <a class="pilcrow" href="#section-147">&#182;</a>
               </div>
               <p>Since content scripts cannot be executed on <em>protected</em> pages attempting to send a message to
 one would result in background errors being thrown, so we&#39;ll just have to make sure the
@@ -3008,56 +3078,121 @@ placeholder is removed.</p>
         </li>
         
         
-        <li id="section-145">
+        <li id="section-148">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-145">&#182;</a>
+                <a class="pilcrow" href="#section-148">&#182;</a>
               </div>
-              <p>Tell the content script in <code>tab</code> to run all of the selectors in <code>map</code> and update it with their
-corresponding values.</p>
+              <p>Tell the content script in <code>tab</code> to evaluate all of the expressions in <code>map</code> and update it with
+their corresponding values.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  chrome.tabs.sendMessage tab.id, selectors: map, (response) -&gt;
+            <div class="content"><div class='highlight'><pre>  chrome.tabs.sendMessage tab.id, expressions: map, (response) -&gt;
     log.debug <span class="string">'The following response was returned by the content script...'</span>, response
 
-    <span class="keyword">for</span> own placeholder, selector <span class="keyword">of</span> response.selectors
-      result = selector.result <span class="keyword">or</span> <span class="string">''</span>
-      result = result.join <span class="string">'\n'</span> <span class="keyword">if</span> _.isArray result
-      map[placeholder] = <span class="keyword">if</span> selector.convertTo <span class="keyword">is</span> <span class="string">'markdown'</span> <span class="keyword">then</span> md result <span class="keyword">else</span> result
+    response ?= {}
 
-    <span class="keyword">do</span> callback</pre></div></div>
+    <span class="keyword">for</span> own placeholder, expression <span class="keyword">of</span> response.expressions
+      {convertTo, error, result} = expression
+
+      <span class="keyword">break</span> <span class="keyword">if</span> error
+
+      result <span class="keyword">or</span>= <span class="string">''</span>
+      result   = result.join <span class="string">'\n'</span> <span class="keyword">if</span> _.isArray result
+      result   = toMarkdown result <span class="keyword">if</span> convertTo <span class="keyword">is</span> <span class="string">'markdown'</span>
+
+      map[placeholder] = result
+
+    callback <span class="keyword">if</span> error <span class="keyword">then</span> <span class="keyword">new</span> AppError <span class="string">'result_bad_expression_description'</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-146">
+        <li id="section-149">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-146">&#182;</a>
+                <a class="pilcrow" href="#section-149">&#182;</a>
               </div>
-              <p>Ensure there is a lower case variant of all properties of <code>data</code>, optionally removing the
-original non-lower-case property.</p>
+              <p>Ensure there is a lower case variant of all properties of <code>data</code>, optionally only changing a
+clone of the specified <code>data</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="function"><span class="title">transformData</span></span> = (data, deleteOld) -&gt;
+            <div class="content"><div class='highlight'><pre><span class="function"><span class="title">transformData</span></span> = (data, clone) -&gt;
   log.trace()
 
-  <span class="keyword">for</span> own prop, value <span class="keyword">of</span> data <span class="keyword">when</span> R_UPPER_CASE.test prop
-    data[prop.toLowerCase()] = value
-    <span class="keyword">delete</span> data[prop] <span class="keyword">if</span> deleteOld</pre></div></div>
+  <span class="keyword">return</span> data <span class="keyword">unless</span> data</pre></div></div>
             
         </li>
         
         
-        <li id="section-147">
+        <li id="section-150">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-150">&#182;</a>
+              </div>
+              <p>Ensure that the <code>result</code> and <code>data</code> types match when cloning.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  result = <span class="keyword">if</span> clone
+    <span class="keyword">if</span> _.isArray data <span class="keyword">then</span> [] <span class="keyword">else</span> {}
+  <span class="keyword">else</span>
+    data
+
+  <span class="function"><span class="title">transform</span></span> = (value) -&gt;
+    <span class="keyword">if</span> _.isArray(value) <span class="keyword">or</span> _.isObject(value) <span class="keyword">then</span> transformData value, clone <span class="keyword">else</span> value
+
+  <span class="keyword">if</span> _.isArray result</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-151">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-151">&#182;</a>
+              </div>
+              <p>Also transform any nested objects deep within the array.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    result[i] = transform value <span class="keyword">for</span> value, i <span class="keyword">in</span> data
+  <span class="keyword">else</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-152">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-152">&#182;</a>
+              </div>
+              <p>Transform all properties of the object, included any deep nested objects.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">for</span> own prop, value <span class="keyword">of</span> data
+      prop = prop.toLowerCase() <span class="keyword">if</span> clone <span class="keyword">or</span> R_UPPER_CASE.test prop
+
+      result[prop] = transform value
+
+  result</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-153">
             <div class="annotation">
               
               <div class="pilwrap for-h2">
-                <a class="pilcrow" href="#section-147">&#182;</a>
+                <a class="pilcrow" href="#section-153">&#182;</a>
               </div>
               <h2>Configuration functions</h2>
 
@@ -3066,11 +3201,11 @@ original non-lower-case property.</p>
         </li>
         
         
-        <li id="section-148">
+        <li id="section-154">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-148">&#182;</a>
+                <a class="pilcrow" href="#section-154">&#182;</a>
               </div>
               <p>Transform specific sections of the data loaded from <code>configuration.json</code> so that they&#39;re more
 usable and localized.</p>
@@ -3085,11 +3220,11 @@ usable and localized.</p>
         </li>
         
         
-        <li id="section-149">
+        <li id="section-155">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-149">&#182;</a>
+                <a class="pilcrow" href="#section-155">&#182;</a>
               </div>
               <p>Transform the configuration icons into usable <code>Icon</code> instances.</p>
 
@@ -3104,11 +3239,11 @@ usable and localized.</p>
         </li>
         
         
-        <li id="section-150">
+        <li id="section-156">
             <div class="annotation">
               
               <div class="pilwrap for-h2">
-                <a class="pilcrow" href="#section-150">&#182;</a>
+                <a class="pilcrow" href="#section-156">&#182;</a>
               </div>
               <h2>HTML building functions</h2>
 
@@ -3117,11 +3252,11 @@ usable and localized.</p>
         </li>
         
         
-        <li id="section-151">
+        <li id="section-157">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-151">&#182;</a>
+                <a class="pilcrow" href="#section-157">&#182;</a>
               </div>
               <p>Build the HTML to populate the popup with to optimize popup loading times.</p>
 
@@ -3133,11 +3268,11 @@ usable and localized.</p>
         </li>
         
         
-        <li id="section-152">
+        <li id="section-158">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-152">&#182;</a>
+                <a class="pilcrow" href="#section-158">&#182;</a>
               </div>
               <p>Generate the HTML for each enabled template.</p>
 
@@ -3149,11 +3284,11 @@ usable and localized.</p>
         </li>
         
         
-        <li id="section-153">
+        <li id="section-159">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-153">&#182;</a>
+                <a class="pilcrow" href="#section-159">&#182;</a>
               </div>
               <p>Add a generic message to state the obvious... that the list is empty.</p>
 
@@ -3166,11 +3301,11 @@ usable and localized.</p>
         </li>
         
         
-        <li id="section-154">
+        <li id="section-160">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-154">&#182;</a>
+                <a class="pilcrow" href="#section-160">&#182;</a>
               </div>
               <p>Add a link to the options page if the user doesn&#39;t mind.</p>
 
@@ -3191,11 +3326,11 @@ usable and localized.</p>
         </li>
         
         
-        <li id="section-155">
+        <li id="section-161">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-155">&#182;</a>
+                <a class="pilcrow" href="#section-161">&#182;</a>
               </div>
               <p>Create an <code>li</code> element to represent <code>template</code>.<br>The element should then be inserted in to the <code>ul</code> element in the popup page but is created here
 to optimize display times for the popup.</p>
@@ -3214,11 +3349,11 @@ to optimize display times for the popup.</p>
         </li>
         
         
-        <li id="section-156">
+        <li id="section-162">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-156">&#182;</a>
+                <a class="pilcrow" href="#section-162">&#182;</a>
               </div>
               <p>Ensure keyboard shortcuts are displayed correctly, where appropriate.</p>
 
@@ -3237,11 +3372,11 @@ to optimize display times for the popup.</p>
         </li>
         
         
-        <li id="section-157">
+        <li id="section-163">
             <div class="annotation">
               
               <div class="pilwrap for-h2">
-                <a class="pilcrow" href="#section-157">&#182;</a>
+                <a class="pilcrow" href="#section-163">&#182;</a>
               </div>
               <h2>Initialization functions</h2>
 
@@ -3250,11 +3385,11 @@ to optimize display times for the popup.</p>
         </li>
         
         
-        <li id="section-158">
+        <li id="section-164">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-158">&#182;</a>
+                <a class="pilcrow" href="#section-164">&#182;</a>
               </div>
               <p>Handle the conversion/removal of older version of settings that may have been stored previously
 by <code>ext.init</code>.</p>
@@ -3267,11 +3402,11 @@ by <code>ext.init</code>.</p>
         </li>
         
         
-        <li id="section-159">
+        <li id="section-165">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-159">&#182;</a>
+                <a class="pilcrow" href="#section-165">&#182;</a>
               </div>
               <p>Update the update progress indicator itself.</p>
 
@@ -3285,11 +3420,11 @@ by <code>ext.init</code>.</p>
         </li>
         
         
-        <li id="section-160">
+        <li id="section-166">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-160">&#182;</a>
+                <a class="pilcrow" href="#section-166">&#182;</a>
               </div>
               <p>Create an updater for the <code>settings</code> namespace.</p>
 
@@ -3304,11 +3439,11 @@ by <code>ext.init</code>.</p>
         </li>
         
         
-        <li id="section-161">
+        <li id="section-167">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-161">&#182;</a>
+                <a class="pilcrow" href="#section-167">&#182;</a>
               </div>
               <p>Define the processes for all required updates to the <code>settings</code> namespace.</p>
 
@@ -3330,9 +3465,9 @@ by <code>ext.init</code>.</p>
         <span class="keyword">when</span> <span class="string">'toolbar_nav'</span> <span class="keyword">then</span> <span class="string">'general_nav'</span>
         <span class="keyword">else</span> optionsActiveTab
 
-    store.modify <span class="string">'anchor'</span>, (anchor) -&gt;
-      anchor.target = store.get(<span class="string">'doAnchorTarget'</span>) ? <span class="literal">off</span>
-      anchor.title  = store.get(<span class="string">'doAnchorTitle'</span>)  ? <span class="literal">off</span>
+    store.modify <span class="string">'links'</span>, (links) -&gt;
+      links.target = store.get(<span class="string">'doAnchorTarget'</span>) ? <span class="literal">off</span>
+      links.title  = store.get(<span class="string">'doAnchorTitle'</span>)  ? <span class="literal">off</span>
     store.remove <span class="string">'doAnchorTarget'</span>, <span class="string">'doAnchorTitle'</span>
 
     store.modify <span class="string">'menu'</span>, (menu) -&gt;
@@ -3348,10 +3483,6 @@ by <code>ext.init</code>.</p>
     store.set <span class="string">'shortcuts'</span>, enabled: store.get(<span class="string">'shortcuts'</span>) ? <span class="literal">yes</span>
 
   updater.update <span class="string">'1.2.3'</span>, -&gt;
-    store.modify <span class="string">'anchor'</span>, (anchor) -&gt;
-      <span class="keyword">delete</span> anchor.Target
-      <span class="keyword">delete</span> anchor.Title
-
     store.modify <span class="string">'logger'</span>, (logger) -&gt;
       <span class="keyword">delete</span> logger.Enabled
       <span class="keyword">delete</span> logger.Level
@@ -3372,16 +3503,23 @@ by <code>ext.init</code>.</p>
     store.modify <span class="string">'toolbar'</span>, (toolbar) -&gt;
       <span class="keyword">delete</span> toolbar.Close
       <span class="keyword">delete</span> toolbar.Key
-      <span class="keyword">delete</span> toolbar.Options</pre></div></div>
+      <span class="keyword">delete</span> toolbar.Options
+
+  updater.update <span class="string">'1.2.5'</span>, -&gt;
+    store.modify <span class="string">'links'</span>, (links) -&gt;
+      anchor = store.get(<span class="string">'anchor'</span>) ? {}
+      links.target = anchor.target ? <span class="literal">off</span>
+      links.title  = anchor.title  ? <span class="literal">off</span>
+    store.remove <span class="string">'anchor'</span></pre></div></div>
             
         </li>
         
         
-        <li id="section-162">
+        <li id="section-168">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-162">&#182;</a>
+                <a class="pilcrow" href="#section-168">&#182;</a>
               </div>
               <p>Initialize the settings related to statistical information.</p>
 
@@ -3395,11 +3533,11 @@ by <code>ext.init</code>.</p>
         </li>
         
         
-        <li id="section-163">
+        <li id="section-169">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-163">&#182;</a>
+                <a class="pilcrow" href="#section-169">&#182;</a>
               </div>
               <p>Initialize <code>template</code> and its properties, before adding it to <code>templates</code> to be persisted later.</p>
 
@@ -3411,11 +3549,11 @@ by <code>ext.init</code>.</p>
         </li>
         
         
-        <li id="section-164">
+        <li id="section-170">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-164">&#182;</a>
+                <a class="pilcrow" href="#section-170">&#182;</a>
               </div>
               <p>Derive the index of <code>template</code> to determine whether or not it already exists.</p>
 
@@ -3428,11 +3566,11 @@ by <code>ext.init</code>.</p>
         </li>
         
         
-        <li id="section-165">
+        <li id="section-171">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-165">&#182;</a>
+                <a class="pilcrow" href="#section-171">&#182;</a>
               </div>
               <p><code>template</code> doesn&#39;t already exist so add it now.</p>
 
@@ -3446,11 +3584,11 @@ by <code>ext.init</code>.</p>
         </li>
         
         
-        <li id="section-166">
+        <li id="section-172">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-166">&#182;</a>
+                <a class="pilcrow" href="#section-172">&#182;</a>
               </div>
               <p><code>template</code> exists so modify the properties to ensure they are reliable.</p>
 
@@ -3463,11 +3601,11 @@ by <code>ext.init</code>.</p>
         </li>
         
         
-        <li id="section-167">
+        <li id="section-173">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-167">&#182;</a>
+                <a class="pilcrow" href="#section-173">&#182;</a>
               </div>
               <p><code>template</code> is read-only so certain properties should always be overriden and others only
 when they are not already available.</p>
@@ -3488,11 +3626,11 @@ when they are not already available.</p>
         </li>
         
         
-        <li id="section-168">
+        <li id="section-174">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-168">&#182;</a>
+                <a class="pilcrow" href="#section-174">&#182;</a>
               </div>
               <p><code>template</code> is <em>not</em> read-only so set unavailable, but required, properties to their default
 value.</p>
@@ -3516,11 +3654,11 @@ value.</p>
         </li>
         
         
-        <li id="section-169">
+        <li id="section-175">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-169">&#182;</a>
+                <a class="pilcrow" href="#section-175">&#182;</a>
               </div>
               <p>Initialize the persisted managed templates.</p>
 
@@ -3536,11 +3674,11 @@ value.</p>
         </li>
         
         
-        <li id="section-170">
+        <li id="section-176">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-170">&#182;</a>
+                <a class="pilcrow" href="#section-176">&#182;</a>
               </div>
               <p>Initialize all default templates to ensure their properties are as expected.</p>
 
@@ -3551,11 +3689,11 @@ value.</p>
         </li>
         
         
-        <li id="section-171">
+        <li id="section-177">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-171">&#182;</a>
+                <a class="pilcrow" href="#section-177">&#182;</a>
               </div>
               <p>Now, initialize <em>all</em> templates to ensure their properties are valid.</p>
 
@@ -3568,11 +3706,11 @@ value.</p>
         </li>
         
         
-        <li id="section-172">
+        <li id="section-178">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-172">&#182;</a>
+                <a class="pilcrow" href="#section-178">&#182;</a>
               </div>
               <p>Handle the conversion/removal of older version of settings that may have been stored previously
 by <code>initTemplates</code>.</p>
@@ -3585,11 +3723,11 @@ by <code>initTemplates</code>.</p>
         </li>
         
         
-        <li id="section-173">
+        <li id="section-179">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-173">&#182;</a>
+                <a class="pilcrow" href="#section-179">&#182;</a>
               </div>
               <p>Create updater for the <code>features</code> namespace and then rename it to <code>templates</code>.</p>
 
@@ -3603,11 +3741,11 @@ by <code>initTemplates</code>.</p>
         </li>
         
         
-        <li id="section-174">
+        <li id="section-180">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-174">&#182;</a>
+                <a class="pilcrow" href="#section-180">&#182;</a>
               </div>
               <p>Define the processes for all required updates to the <code>templates</code> namespace.</p>
 
@@ -3712,11 +3850,11 @@ by <code>initTemplates</code>.</p>
         </li>
         
         
-        <li id="section-175">
+        <li id="section-181">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-175">&#182;</a>
+                <a class="pilcrow" href="#section-181">&#182;</a>
               </div>
               <p>Initialize the settings related to the toolbar/browser action.</p>
 
@@ -3738,11 +3876,11 @@ by <code>initTemplates</code>.</p>
         </li>
         
         
-        <li id="section-176">
+        <li id="section-182">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-176">&#182;</a>
+                <a class="pilcrow" href="#section-182">&#182;</a>
               </div>
               <p>Handle the conversion/removal of older version of settings that may have been stored previously
 by <code>initToolbar</code>.</p>
@@ -3755,11 +3893,11 @@ by <code>initToolbar</code>.</p>
         </li>
         
         
-        <li id="section-177">
+        <li id="section-183">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-177">&#182;</a>
+                <a class="pilcrow" href="#section-183">&#182;</a>
               </div>
               <p>Create updater for the <code>toolbar</code> namespace.</p>
 
@@ -3772,11 +3910,11 @@ by <code>initToolbar</code>.</p>
         </li>
         
         
-        <li id="section-178">
+        <li id="section-184">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-178">&#182;</a>
+                <a class="pilcrow" href="#section-184">&#182;</a>
               </div>
               <p>Define the processes for all required updates to the <code>toolbar</code> namespace.</p>
 
@@ -3795,11 +3933,11 @@ by <code>initToolbar</code>.</p>
         </li>
         
         
-        <li id="section-179">
+        <li id="section-185">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-179">&#182;</a>
+                <a class="pilcrow" href="#section-185">&#182;</a>
               </div>
               <p>Initialize the settings related to the supported URL Shortener services.</p>
 
@@ -3835,11 +3973,11 @@ by <code>initToolbar</code>.</p>
         </li>
         
         
-        <li id="section-180">
+        <li id="section-186">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-180">&#182;</a>
+                <a class="pilcrow" href="#section-186">&#182;</a>
               </div>
               <p>Handle the conversion/removal of older version of settings that may have been stored previously
 by <code>initUrlShorteners</code>.</p>
@@ -3852,11 +3990,11 @@ by <code>initUrlShorteners</code>.</p>
         </li>
         
         
-        <li id="section-181">
+        <li id="section-187">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-181">&#182;</a>
+                <a class="pilcrow" href="#section-187">&#182;</a>
               </div>
               <p>Create updater for the <code>shorteners</code> namespace.</p>
 
@@ -3869,11 +4007,11 @@ by <code>initUrlShorteners</code>.</p>
         </li>
         
         
-        <li id="section-182">
+        <li id="section-188">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-182">&#182;</a>
+                <a class="pilcrow" href="#section-188">&#182;</a>
               </div>
               <p>Define the processes for all required updates to the <code>shorteners</code> namespace.</p>
 
@@ -3930,11 +4068,11 @@ by <code>initUrlShorteners</code>.</p>
         </li>
         
         
-        <li id="section-183">
+        <li id="section-189">
             <div class="annotation">
               
               <div class="pilwrap for-h2">
-                <a class="pilcrow" href="#section-183">&#182;</a>
+                <a class="pilcrow" href="#section-189">&#182;</a>
               </div>
               <h2>URL shortener functions</h2>
 
@@ -3943,11 +4081,11 @@ by <code>initUrlShorteners</code>.</p>
         </li>
         
         
-        <li id="section-184">
+        <li id="section-190">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-184">&#182;</a>
+                <a class="pilcrow" href="#section-190">&#182;</a>
               </div>
               <p>Call the active URL shortener service for each URL in <code>map</code> in order to obtain their
 corresponding short URLs.<br><code>callback</code> will be called with the result once all URLs have been shortened or an error is
@@ -3966,17 +4104,17 @@ encountered.</p>
         </li>
         
         
-        <li id="section-185">
+        <li id="section-191">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-185">&#182;</a>
+                <a class="pilcrow" href="#section-191">&#182;</a>
               </div>
               <p>Ensure the service URL exists in case it is user-defined (e.g. YOURLS).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="keyword">return</span> callback <span class="keyword">new</span> Error i18n.get <span class="string">'shortener_config_error'</span>, title <span class="keyword">unless</span> endpoint
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">return</span> callback <span class="keyword">new</span> AppError <span class="string">'shortener_config_error'</span>, title <span class="keyword">unless</span> endpoint
 
   tasks = []
   _.each map, (url, placeholder) -&gt;
@@ -3989,11 +4127,11 @@ encountered.</p>
         </li>
         
         
-        <li id="section-186">
+        <li id="section-192">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-186">&#182;</a>
+                <a class="pilcrow" href="#section-192">&#182;</a>
               </div>
               <p>Ensure the OAuth adapter has been authorized.</p>
 
@@ -4012,11 +4150,11 @@ encountered.</p>
         </li>
         
         
-        <li id="section-187">
+        <li id="section-193">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-187">&#182;</a>
+                <a class="pilcrow" href="#section-193">&#182;</a>
               </div>
               <p>Build the HTTP asynchronous request for the URL shortener service.</p>
 
@@ -4028,11 +4166,11 @@ encountered.</p>
         </li>
         
         
-        <li id="section-188">
+        <li id="section-194">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-188">&#182;</a>
+                <a class="pilcrow" href="#section-194">&#182;</a>
               </div>
               <p>Allow service to populate request headers.</p>
 
@@ -4046,11 +4184,11 @@ encountered.</p>
         </li>
         
         
-        <li id="section-189">
+        <li id="section-195">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-189">&#182;</a>
+                <a class="pilcrow" href="#section-195">&#182;</a>
               </div>
               <p>Wait for the response and let the service handle it before passing the result back.</p>
 
@@ -4065,26 +4203,26 @@ encountered.</p>
         </li>
         
         
-        <li id="section-190">
+        <li id="section-196">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-190">&#182;</a>
+                <a class="pilcrow" href="#section-196">&#182;</a>
               </div>
               <p>Something went wrong so let&#39;s tell the user.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>                done <span class="keyword">new</span> Error i18n.get <span class="string">'shortener_detailed_error'</span>, [title, url]</pre></div></div>
+            <div class="content"><div class='highlight'><pre>                done <span class="keyword">new</span> AppError <span class="string">'shortener_detailed_error'</span>, title, url</pre></div></div>
             
         </li>
         
         
-        <li id="section-191">
+        <li id="section-197">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-191">&#182;</a>
+                <a class="pilcrow" href="#section-197">&#182;</a>
               </div>
               <p>Finally, send the HTTP request.</p>
 
@@ -4103,11 +4241,11 @@ encountered.</p>
         </li>
         
         
-        <li id="section-192">
+        <li id="section-198">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-192">&#182;</a>
+                <a class="pilcrow" href="#section-198">&#182;</a>
               </div>
               <p>Retrieve the active URL shortener service.</p>
 
@@ -4119,11 +4257,11 @@ encountered.</p>
         </li>
         
         
-        <li id="section-193">
+        <li id="section-199">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-193">&#182;</a>
+                <a class="pilcrow" href="#section-199">&#182;</a>
               </div>
               <p>Attempt to lookup enabled URL shortener service.</p>
 
@@ -4137,11 +4275,11 @@ encountered.</p>
         </li>
         
         
-        <li id="section-194">
+        <li id="section-200">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-194">&#182;</a>
+                <a class="pilcrow" href="#section-200">&#182;</a>
               </div>
               <p>Should never reach here but we&#39;ll return bit.ly service by default after ensuring it&#39;s the
 active URL shortener service from now on to save some time in the future.</p>
@@ -4159,11 +4297,11 @@ active URL shortener service from now on to save some time in the future.</p>
         </li>
         
         
-        <li id="section-195">
+        <li id="section-201">
             <div class="annotation">
               
               <div class="pilwrap for-h2">
-                <a class="pilcrow" href="#section-195">&#182;</a>
+                <a class="pilcrow" href="#section-201">&#182;</a>
               </div>
               <h2>Background page setup</h2>
 
@@ -4175,11 +4313,11 @@ ext = window.ext = <span class="keyword">new</span> <span class="class"><span cl
         </li>
         
         
-        <li id="section-196">
+        <li id="section-202">
             <div class="annotation">
               
               <div class="pilwrap for-h2">
-                <a class="pilcrow" href="#section-196">&#182;</a>
+                <a class="pilcrow" href="#section-202">&#182;</a>
               </div>
               <h2>Public constants</h2>
 
@@ -4188,11 +4326,11 @@ ext = window.ext = <span class="keyword">new</span> <span class="class"><span cl
         </li>
         
         
-        <li id="section-197">
+        <li id="section-203">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-197">&#182;</a>
+                <a class="pilcrow" href="#section-203">&#182;</a>
               </div>
               <p>String representation of the keyboard modifiers listened to by Template on Windows/Linux
 platforms.</p>
@@ -4204,11 +4342,11 @@ platforms.</p>
         </li>
         
         
-        <li id="section-198">
+        <li id="section-204">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-198">&#182;</a>
+                <a class="pilcrow" href="#section-204">&#182;</a>
               </div>
               <p>String representation of the keyboard modifiers listened to by Template on Mac platforms.</p>
 
@@ -4219,11 +4357,11 @@ platforms.</p>
         </li>
         
         
-        <li id="section-199">
+        <li id="section-205">
             <div class="annotation">
               
               <div class="pilwrap for-h2">
-                <a class="pilcrow" href="#section-199">&#182;</a>
+                <a class="pilcrow" href="#section-205">&#182;</a>
               </div>
               <h2>Public variables</h2>
 
@@ -4232,11 +4370,11 @@ platforms.</p>
         </li>
         
         
-        <li id="section-200">
+        <li id="section-206">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-200">&#182;</a>
+                <a class="pilcrow" href="#section-206">&#182;</a>
               </div>
               <p>Configuration data loaded at runtime.</p>
 
@@ -4247,11 +4385,11 @@ platforms.</p>
         </li>
         
         
-        <li id="section-201">
+        <li id="section-207">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-201">&#182;</a>
+                <a class="pilcrow" href="#section-207">&#182;</a>
               </div>
               <p>Information specifying what should be displaying in the notification.<br>This should be reset after every copy request.</p>
 
@@ -4269,11 +4407,11 @@ platforms.</p>
         </li>
         
         
-        <li id="section-202">
+        <li id="section-208">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-202">&#182;</a>
+                <a class="pilcrow" href="#section-208">&#182;</a>
               </div>
               <p>Reference to supported URL shortener services.</p>
 
@@ -4284,11 +4422,11 @@ platforms.</p>
         </li>
         
         
-        <li id="section-203">
+        <li id="section-209">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-203">&#182;</a>
+                <a class="pilcrow" href="#section-209">&#182;</a>
               </div>
               <p>Local copy of templates being used, ordered to match that specified by the user.</p>
 
@@ -4299,11 +4437,11 @@ platforms.</p>
         </li>
         
         
-        <li id="section-204">
+        <li id="section-210">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-204">&#182;</a>
+                <a class="pilcrow" href="#section-210">&#182;</a>
               </div>
               <p>Pre-prepared HTML for the popup to be populated using.<br>This should be updated whenever templates are changed/updated in any way as this is generated
 to improve performance and load times of the popup frame.</p>
@@ -4315,11 +4453,11 @@ to improve performance and load times of the popup frame.</p>
         </li>
         
         
-        <li id="section-205">
+        <li id="section-211">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-205">&#182;</a>
+                <a class="pilcrow" href="#section-211">&#182;</a>
               </div>
               <p>Current version of Template.</p>
 
@@ -4330,11 +4468,11 @@ to improve performance and load times of the popup frame.</p>
         </li>
         
         
-        <li id="section-206">
+        <li id="section-212">
             <div class="annotation">
               
               <div class="pilwrap for-h2">
-                <a class="pilcrow" href="#section-206">&#182;</a>
+                <a class="pilcrow" href="#section-212">&#182;</a>
               </div>
               <h2>Public functions</h2>
 
@@ -4343,11 +4481,11 @@ to improve performance and load times of the popup frame.</p>
         </li>
         
         
-        <li id="section-207">
+        <li id="section-213">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-207">&#182;</a>
+                <a class="pilcrow" href="#section-213">&#182;</a>
               </div>
               <p>Add <code>str</code> to the system clipboard.<br>All successful copy requests should, at some point, call this function.<br>If <code>str</code> is empty the contents of the system clipboard will not change.</p>
 
@@ -4366,11 +4504,11 @@ to improve performance and load times of the popup frame.</p>
         </li>
         
         
-        <li id="section-208">
+        <li id="section-214">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-208">&#182;</a>
+                <a class="pilcrow" href="#section-214">&#182;</a>
               </div>
               <p>Attempt to retrieve the key of the template with the specified <code>name</code>.<br>Since only the names of predefined templates are known, return a newly generated key if it does
 not match any of their names.</p>
@@ -4396,11 +4534,11 @@ not match any of their names.</p>
         </li>
         
         
-        <li id="section-209">
+        <li id="section-215">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-209">&#182;</a>
+                <a class="pilcrow" href="#section-215">&#182;</a>
               </div>
               <p>Initialize the background page.<br>This will involve initializing the settings and adding the message listeners.</p>
 
@@ -4414,11 +4552,11 @@ not match any of their names.</p>
         </li>
         
         
-        <li id="section-210">
+        <li id="section-216">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-210">&#182;</a>
+                <a class="pilcrow" href="#section-216">&#182;</a>
               </div>
               <p>Add support for analytics if the user hasn&#39;t opted out.</p>
 
@@ -4429,11 +4567,11 @@ not match any of their names.</p>
         </li>
         
         
-        <li id="section-211">
+        <li id="section-217">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-211">&#182;</a>
+                <a class="pilcrow" href="#section-217">&#182;</a>
               </div>
               <p>Load the configuration data from the file.</p>
 
@@ -4444,11 +4582,11 @@ not match any of their names.</p>
         </li>
         
         
-        <li id="section-212">
+        <li id="section-218">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-212">&#182;</a>
+                <a class="pilcrow" href="#section-218">&#182;</a>
               </div>
               <p>Store the configuration data and then ensure it&#39;s data is in the most usable format.</p>
 
@@ -4460,11 +4598,11 @@ not match any of their names.</p>
         </li>
         
         
-        <li id="section-213">
+        <li id="section-219">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-213">&#182;</a>
+                <a class="pilcrow" href="#section-219">&#182;</a>
               </div>
               <p>It&#39;s nice knowing what version is running.</p>
 
@@ -4475,11 +4613,11 @@ not match any of their names.</p>
         </li>
         
         
-        <li id="section-214">
+        <li id="section-220">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-214">&#182;</a>
+                <a class="pilcrow" href="#section-220">&#182;</a>
               </div>
               <p>Initiate OAuth for each of the applicable URL shortener services.</p>
 
@@ -4490,18 +4628,19 @@ not match any of their names.</p>
         </li>
         
         
-        <li id="section-215">
+        <li id="section-221">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-215">&#182;</a>
+                <a class="pilcrow" href="#section-221">&#182;</a>
               </div>
               <p>Begin initialization.</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>      store.init
-        anchor:        {}
+        links:         {}
+        markdown:      {}
         menu:          {}
         notifications: {}
         shortcuts:     {}
@@ -4511,9 +4650,12 @@ not match any of their names.</p>
 
       <span class="keyword">do</span> init_update
 
-      store.modify <span class="string">'anchor'</span>, (anchor) -&gt;
-        anchor.target ?= <span class="literal">off</span>
-        anchor.title  ?= <span class="literal">off</span>
+      store.modify <span class="string">'links'</span>, (links) -&gt;
+        links.target ?= <span class="literal">off</span>
+        links.title  ?= <span class="literal">off</span>
+
+      store.modify <span class="string">'markdown'</span>, (markdown) -&gt;
+        markdown.inline ?= <span class="literal">no</span>
 
       store.modify <span class="string">'menu'</span>, (menu) -&gt;
         menu.enabled ?= <span class="literal">yes</span>
@@ -4536,11 +4678,11 @@ not match any of their names.</p>
         </li>
         
         
-        <li id="section-216">
+        <li id="section-222">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-216">&#182;</a>
+                <a class="pilcrow" href="#section-222">&#182;</a>
               </div>
               <p>Add listener for toolbar/browser action clicks.<br>This listener will be ignored whenever the popup is enabled.</p>
 
@@ -4554,11 +4696,11 @@ not match any of their names.</p>
         </li>
         
         
-        <li id="section-217">
+        <li id="section-223">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-217">&#182;</a>
+                <a class="pilcrow" href="#section-223">&#182;</a>
               </div>
               <p>Add listeners for internal and external messages.</p>
 
@@ -4570,11 +4712,11 @@ not match any of their names.</p>
         </li>
         
         
-        <li id="section-218">
+        <li id="section-224">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-218">&#182;</a>
+                <a class="pilcrow" href="#section-224">&#182;</a>
               </div>
               <p>Derive the browser and OS information.</p>
 
@@ -4587,11 +4729,11 @@ not match any of their names.</p>
         </li>
         
         
-        <li id="section-219">
+        <li id="section-225">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-219">&#182;</a>
+                <a class="pilcrow" href="#section-225">&#182;</a>
               </div>
               <p>Execute content scripts now that we know the version.</p>
 
@@ -4602,11 +4744,11 @@ not match any of their names.</p>
         </li>
         
         
-        <li id="section-220">
+        <li id="section-226">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-220">&#182;</a>
+                <a class="pilcrow" href="#section-226">&#182;</a>
               </div>
               <p>Determine whether or not <code>os</code> matches the user&#39;s operating system.</p>
 
@@ -4620,11 +4762,11 @@ not match any of their names.</p>
         </li>
         
         
-        <li id="section-221">
+        <li id="section-227">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-221">&#182;</a>
+                <a class="pilcrow" href="#section-227">&#182;</a>
               </div>
               <p>Retrieve the correct string representation of the keyboard modifiers for the user&#39;s operating
 system.</p>
@@ -4639,11 +4781,11 @@ system.</p>
         </li>
         
         
-        <li id="section-222">
+        <li id="section-228">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-222">&#182;</a>
+                <a class="pilcrow" href="#section-228">&#182;</a>
               </div>
               <p>Attempt to retrieve the contents of the system clipboard as a string.</p>
 
@@ -4663,11 +4805,11 @@ system.</p>
         </li>
         
         
-        <li id="section-223">
+        <li id="section-229">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-223">&#182;</a>
+                <a class="pilcrow" href="#section-229">&#182;</a>
               </div>
               <p>Reset the notification information associated with the current copy request.<br>This should be called when a copy request is completed regardless of its outcome.</p>
 
@@ -4688,11 +4830,11 @@ system.</p>
         </li>
         
         
-        <li id="section-224">
+        <li id="section-230">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-224">&#182;</a>
+                <a class="pilcrow" href="#section-230">&#182;</a>
               </div>
               <p>Update the context menu items to reflect the currently enabled templates.<br>If the context menu option has been disabled by the user, just remove all of the existing menu
 items.</p>
@@ -4705,11 +4847,11 @@ items.</p>
         </li>
         
         
-        <li id="section-225">
+        <li id="section-231">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-225">&#182;</a>
+                <a class="pilcrow" href="#section-231">&#182;</a>
               </div>
               <p>Ensure that any previously added context menu items are removed.</p>
 
@@ -4720,11 +4862,11 @@ items.</p>
         </li>
         
         
-        <li id="section-226">
+        <li id="section-232">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-226">&#182;</a>
+                <a class="pilcrow" href="#section-232">&#182;</a>
               </div>
               <p>Called whenever a template menu item is clicked.<br>Message self, passing along the available information.</p>
 
@@ -4738,11 +4880,11 @@ items.</p>
         </li>
         
         
-        <li id="section-227">
+        <li id="section-233">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-227">&#182;</a>
+                <a class="pilcrow" href="#section-233">&#182;</a>
               </div>
               <p>Stop now if the context menu is disabled.</p>
 
@@ -4753,11 +4895,11 @@ items.</p>
         </li>
         
         
-        <li id="section-228">
+        <li id="section-234">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-228">&#182;</a>
+                <a class="pilcrow" href="#section-234">&#182;</a>
               </div>
               <p>Create and add the top-level Template menu.</p>
 
@@ -4770,11 +4912,11 @@ items.</p>
         </li>
         
         
-        <li id="section-229">
+        <li id="section-235">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-229">&#182;</a>
+                <a class="pilcrow" href="#section-235">&#182;</a>
               </div>
               <p>Create and add a sub-menu item for each enabled template.</p>
 
@@ -4792,11 +4934,11 @@ items.</p>
         </li>
         
         
-        <li id="section-230">
+        <li id="section-236">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-230">&#182;</a>
+                <a class="pilcrow" href="#section-236">&#182;</a>
               </div>
               <p>Indicate that no templates have been enabled.</p>
 
@@ -4811,11 +4953,11 @@ items.</p>
         </li>
         
         
-        <li id="section-231">
+        <li id="section-237">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-231">&#182;</a>
+                <a class="pilcrow" href="#section-237">&#182;</a>
               </div>
               <p>Add an item to open the options page if the user doesn&#39;t mind.</p>
 
@@ -4837,11 +4979,11 @@ items.</p>
         </li>
         
         
-        <li id="section-232">
+        <li id="section-238">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-232">&#182;</a>
+                <a class="pilcrow" href="#section-238">&#182;</a>
               </div>
               <p>Update the local list of templates to reflect those persisted.<br>It is very important that this is called whenever templates may have been changed in order to
 prepare the popup HTML and optimize performance.</p>
@@ -4861,11 +5003,11 @@ prepare the popup HTML and optimize performance.</p>
         </li>
         
         
-        <li id="section-233">
+        <li id="section-239">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-233">&#182;</a>
+                <a class="pilcrow" href="#section-239">&#182;</a>
               </div>
               <p>Update the toolbar/browser action depending on the current settings.</p>
 
@@ -4885,11 +5027,11 @@ prepare the popup HTML and optimize performance.</p>
         </li>
         
         
-        <li id="section-234">
+        <li id="section-240">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-234">&#182;</a>
+                <a class="pilcrow" href="#section-240">&#182;</a>
               </div>
               <p>Show the popup when the browser action is clicked.</p>
 
@@ -4902,11 +5044,11 @@ prepare the popup HTML and optimize performance.</p>
         </li>
         
         
-        <li id="section-235">
+        <li id="section-241">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-235">&#182;</a>
+                <a class="pilcrow" href="#section-241">&#182;</a>
               </div>
               <p>Disable the popup, effectively enabling the listener for <code>chrome.browserAction.onClicked</code>.</p>
 
@@ -4917,11 +5059,11 @@ prepare the popup HTML and optimize performance.</p>
         </li>
         
         
-        <li id="section-236">
+        <li id="section-242">
             <div class="annotation">
               
               <div class="pilwrap for-h2">
-                <a class="pilcrow" href="#section-236">&#182;</a>
+                <a class="pilcrow" href="#section-242">&#182;</a>
               </div>
               <h2>Public classes</h2>
 
@@ -4930,11 +5072,11 @@ prepare the popup HTML and optimize performance.</p>
         </li>
         
         
-        <li id="section-237">
+        <li id="section-243">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-237">&#182;</a>
+                <a class="pilcrow" href="#section-243">&#182;</a>
               </div>
               <p><code>Icon</code> provides common functionality for using icons throughout the extension.</p>
 
@@ -4945,11 +5087,11 @@ prepare the popup HTML and optimize performance.</p>
         </li>
         
         
-        <li id="section-238">
+        <li id="section-244">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-238">&#182;</a>
+                <a class="pilcrow" href="#section-244">&#182;</a>
               </div>
               <p>Create a new instance of <code>Icon</code> with the specified <code>name</code>.<br>An appropriate localized message and CSS style is also derived.</p>
 
@@ -4962,11 +5104,11 @@ prepare the popup HTML and optimize performance.</p>
         </li>
         
         
-        <li id="section-239">
+        <li id="section-245">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-239">&#182;</a>
+                <a class="pilcrow" href="#section-245">&#182;</a>
               </div>
               <p>Determine whether an <code>Icon</code> with the given <code>name</code> exists.</p>
 
@@ -4978,11 +5120,11 @@ prepare the popup HTML and optimize performance.</p>
         </li>
         
         
-        <li id="section-240">
+        <li id="section-246">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-240">&#182;</a>
+                <a class="pilcrow" href="#section-246">&#182;</a>
               </div>
               <p>Retrieve the <code>Icon</code> with the given <code>name</code>.<br><code>safe</code> can be used to ensure that an <code>Icon</code> is always returned, although this will be <em>empty</em> (no
 name) if none had a matching <code>name</code>.</p>
@@ -4997,11 +5139,11 @@ name) if none had a matching <code>name</code>.</p>
         </li>
         
         
-        <li id="section-241">
+        <li id="section-247">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-241">&#182;</a>
+                <a class="pilcrow" href="#section-247">&#182;</a>
               </div>
               <p>Attempt to retrieve the replacement for the legacy icon with the given <code>name</code>.<br>If <code>name</code> is a number it will be treated as an index of the legacy icon; otherwise a simple
 lookup is performed.</p>
@@ -5018,11 +5160,11 @@ lookup is performed.</p>
         </li>
         
         
-        <li id="section-242">
+        <li id="section-248">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-242">&#182;</a>
+                <a class="pilcrow" href="#section-248">&#182;</a>
               </div>
               <p>Initialize <code>ext</code> when the DOM is ready.</p>
 
