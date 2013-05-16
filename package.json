@@ -1,10 +1,10 @@
 {
-    "name": "Template"
-  , "description": "Browser extension that quickly and easily copies info on the current page using a simple and unique template system"
+    "name": "template-chrome"
+  , "description": "Google Chrome extension that quickly and easily copies info on the current page using a simple and unique template system"
   , "version": "1.2.5"
   , "homepage": "http://template-extension.org"
   , "bugs": {
-      "url": "https://github.com/neocotic/template/issues"
+      "url": "https://github.com/template-extension/template-chrome/issues"
     }
   , "author": {
         "name": "Alasdair Mercer"
@@ -14,9 +14,10 @@
   , "licenses": [
       {
           "type": "MIT"
-        , "url": "https://github.com/neocotic/template/raw/master/LICENSE.md"
+        , "url": "http://template-extension.org/license"
       }
     ]
+  , "private": true
   , "keywords": [
         "template"
       , "browser"
@@ -33,7 +34,7 @@
     ]
   , "repository": {
         "type": "git"
-      , "url": "git://github.com/neocotic/template.git"
+      , "url": "git://github.com/template-extension/template-chrome.git"
     }
   , "devDependencies": {
         "async": "~0.2.8"
