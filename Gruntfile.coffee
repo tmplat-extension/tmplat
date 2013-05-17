@@ -8,14 +8,31 @@ module.exports = (grunt) ->
   # Configuration
   # -------------
 
-  grunt.initConfig
+  pkg = grunt.file.readJSON 'package.json'
 
-    pkg: grunt.file.readJSON 'package.json'
+  grunt.initConfig {
+
+    pkg
 
     clean:
       build:     'bin/*'
-      dist:      ['dist/*', 'docs/*']
+
+      # TODO: dist:      ['dist/*', 'docs/*']
+      dist:      'dist/*'
       distAfter: 'dist/temp/'
+
+    compress:
+      dist:
+        files: [
+          expand: true
+          cwd:    'dist/temp/'
+          src:    '**'
+          dest:   'dist/'
+        ]
+        options:
+          archive: 'dist/Template.zip'
+          level:   9
+          pretty:  yes
 
     concat:
       build:
@@ -38,12 +55,13 @@ module.exports = (grunt) ->
       build:
         expand: yes
         cwd:    'src/'
-        src:    ['**', '!lib/**']
+        src:    ['**', '!lib/*']
         dest:   'bin/'
+
       dist:
         expand: yes
         cwd:    'bin/'
-        src:    ['**', '!lib/**', '!vendor/**/*.js', 'vendor/**/*.min.js']
+        src:    ['**', '!lib/*', '!vendor/**/*.js', 'vendor/**/*.min.js']
         dest:   'dist/temp/'
 
     coffee:
@@ -60,15 +78,21 @@ module.exports = (grunt) ->
         options:
           output: 'docs/'
 
-    # TODO: Complete & test
-    uglify:
+    'json-minify':
       dist:
+        files: 'dist/temp/**/*.json'
+
+    'locale-prepare':
+      dist:
+        files: 'dist/temp/_locales/**/*.json'
+
+    uglify:
+      distLib:
         files: [
           expand: yes
-          cwd:    'dist/temp/lib/'
-          src:    '**/*.js'
+          cwd:    'bin/lib/'
+          src:    '*.js'
           dest:   'dist/temp/lib/'
-          ext:    '.js'
         ]
         options:
           banner: """
@@ -76,14 +100,45 @@ module.exports = (grunt) ->
 
           """
 
+      distVendor:
+        files: [
+          expand: yes
+          cwd:    'bin/vendor/'
+          src:    ['**/*.js', '!**/*.min.js']
+          dest:   'dist/temp/vendor/'
+        ]
+        options:
+          preserveComments: 'some'
+
+  }
+
   # Tasks
   # -----
 
-  for dependency of grunt.config.data.pkg.devDependencies when ~dependency.indexOf 'grunt-'
+  for dependency of pkg.devDependencies when ~dependency.indexOf 'grunt-'
     grunt.loadNpmTasks dependency
 
-  # TODO: Complete & test
   grunt.registerTask 'build',   ['clean:build', 'copy:build', 'coffee', 'concat']
   grunt.registerTask 'default', ['build']
-  # TODO: grunt.registerTask 'dist',    ['build', 'clean:dist', 'docco', 'copy:dist', 'uglify', 'clean:distAfter']
-  grunt.registerTask 'dist',    ['build', 'clean:dist', 'copy:dist']
+  # TODO: grunt.registerTask 'dist',    ['build', 'clean:dist', 'docco', 'copy:dist', 'json-minify', 'uglify', 'compress', 'clean:distAfter']
+  grunt.registerTask 'dist',    ['build', 'clean:dist', 'copy:dist', 'locale-prepare', 'json-minify', 'uglify', 'compress', 'clean:distAfter']
+
+  # Remove all of the long message descriptions and placeholder examples as they're not required by
+  # users and Chrome Web Store has a size limit for locale files.
+  grunt.registerMultiTask 'locale-prepare', 'Locale JSON preparation task', ->
+    files = grunt.file.expand @data.files
+
+    files.forEach (file) ->
+      grunt.log.write "Preparing \"#{file}\"..."
+
+      messages = grunt.file.readJSON file
+
+      for name, message of messages
+        delete message.description
+
+        if message.placeholders
+          delete placeholder.example for key, placeholder of message.placeholders
+
+      grunt.file.write file, JSON.stringify messages
+
+      grunt.log.ok()
