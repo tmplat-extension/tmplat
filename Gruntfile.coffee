@@ -13,30 +13,52 @@ module.exports = (grunt) ->
     pkg: grunt.file.readJSON 'package.json'
 
     clean:
-      build: ['bin/*']
-      dist:  ['dist/*', 'docs/*']
+      build:     'bin/*'
+      dist:      ['dist/*', 'docs/*']
+      distAfter: 'dist/temp/'
 
-    # TODO: Copy non-src/lib files to `bin` directory
-    copy:
+    concat:
       build:
         files: [
-          src:  ['src/**', '!src/lib/']
-          dest: ['bin/']
+          expand: yes
+          cwd:    'bin/lib/'
+          src:    '*.js'
+          dest:   'bin/lib/'
         ]
+        options:
+          banner: """
+            // [Template](http://template-extension.org)
+            // (c) <%= grunt.template.today("yyyy") %> Alasdair Mercer
+            // Freely distributable under the MIT license:
+            // <http://template-extension.org/license>
 
-    # TODO: Complete & test
+          """
+
+    copy:
+      build:
+        expand: yes
+        cwd:    'src/'
+        src:    ['**', '!lib/**']
+        dest:   'bin/'
+      dist:
+        expand: yes
+        cwd:    'bin/'
+        src:    ['**', '!lib/**', '!vendor/**/*.js', 'vendor/**/*.min.js']
+        dest:   'dist/temp/'
+
     coffee:
       build:
         expand: yes
         cwd:    'src/lib/'
-        src:    '**/*.coffee'
+        src:    '*.coffee'
         dest:   'bin/lib/'
         ext:    '.js'
 
     docco:
       dist:
-        options: output: 'docs/'
-        src:     ['src/lib/**/*.coffee']
+        src: 'src/lib/**/*.coffee'
+        options:
+          output: 'docs/'
 
     # TODO: Complete & test
     uglify:
@@ -44,14 +66,15 @@ module.exports = (grunt) ->
         files: [
           expand: yes
           cwd:    'dist/temp/lib/'
-          src:    ['**/*.js']
+          src:    '**/*.js'
           dest:   'dist/temp/lib/'
           ext:    '.js'
         ]
-        options: banner: """
-          /*! Template v<%= pkg.version %> | (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %> | <%= pkg.licenses[0].url %> */
+        options:
+          banner: """
+            /*! Template v<%= pkg.version %> | (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %> | <%= pkg.licenses[0].url %> */
 
-        """
+          """
 
   # Tasks
   # -----
@@ -60,6 +83,7 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks dependency
 
   # TODO: Complete & test
-  grunt.registerTask 'build',   ['clean:build', 'copy:build', 'coffee']
+  grunt.registerTask 'build',   ['clean:build', 'copy:build', 'coffee', 'concat']
   grunt.registerTask 'default', ['build']
-  grunt.registerTask 'dist',    ['build', 'clean:dist', 'docco', 'copy', 'uglify']
+  # TODO: grunt.registerTask 'dist',    ['build', 'clean:dist', 'docco', 'copy:dist', 'uglify', 'clean:distAfter']
+  grunt.registerTask 'dist',    ['build', 'clean:dist', 'copy:dist']
