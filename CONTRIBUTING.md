@@ -10,6 +10,7 @@ keeping things right.
   * Clearly describe the issue including steps to reproduce when it is a bug
   * Include the earliest version that you know has the issue
 * Fork the repository on GitHub
+* Read the `INSTALL.md` file
 
 ## Making Changes
 
@@ -23,6 +24,7 @@ keeping things right.
 * Make commits of logical units
 * Check for unnecessary whitespace with `git diff --check` before committing
 * Make sure your commit messages are in the proper format
+* Avoid updating the distributable file or annotated source code documentation
 
 ```
 (#99999) Make the example in CONTRIBUTING imperative and concrete
