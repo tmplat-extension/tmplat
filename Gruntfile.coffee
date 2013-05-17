@@ -22,8 +22,7 @@ module.exports = (grunt) ->
         files: [
           expand: true
           cwd:    'dist/temp/'
-          src:    '**'
-          dest:   'dist/'
+          src:    '**/*'
         ]
         options:
           archive: 'dist/Template.zip'
