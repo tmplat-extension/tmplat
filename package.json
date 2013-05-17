@@ -37,11 +37,14 @@
       , "url": "git://github.com/template-extension/template-chrome.git"
     }
   , "devDependencies": {
-        "async": "~0.2.8"
-      , "coffee-script": "~1.6.2"
-      , "docco": "~0.6.2"
-	    , "uglify-js": "~2.3.3"
-      , "wrench": "~1.5.1"
+        "grunt": "~0.4.1"
+      , "grunt-contrib-clean": "~0.4.1"
+      , "grunt-contrib-compress": "~0.5.0"
+      , "grunt-contrib-copy": "~0.4.1"
+      , "grunt-contrib-coffee": "~0.7.0"
+      , "grunt-contrib-uglify": "~0.2.0"
+      , "grunt-docco": "~0.2.0"
+      , "grunt-json-minify": "~0.4.0"
 	  }
   , "engines": {
       "node": "~0.8.0"
