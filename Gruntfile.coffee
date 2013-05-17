@@ -13,42 +13,45 @@ module.exports = (grunt) ->
     pkg: grunt.file.readJSON 'package.json'
 
     clean:
-      bin: ['bin/*']
-      dist: ['dist/*']
-      docs: ['docs/*']
+      build: ['bin/*']
+      dist:  ['dist/*', 'docs/*']
 
     # TODO: Copy non-src/lib files to `bin` directory
-    copy: {}
+    copy:
+      build:
+        files: [
+          src:  ['src/**', '!src/lib/']
+          dest: ['bin/']
+        ]
 
     # TODO: Complete & test
     coffee:
-      all:
+      build:
         expand: yes
-        cwd:    'src/lib'
+        cwd:    'src/lib/'
         src:    '**/*.coffee'
-        dest:   'bin/lib'
+        dest:   'bin/lib/'
         ext:    '.js'
 
     docco:
-      all:
-        options: output: 'docs'
+      dist:
+        options: output: 'docs/'
         src:     ['src/lib/**/*.coffee']
 
     # TODO: Complete & test
     uglify:
-      all:
-        files: [{
+      dist:
+        files: [
           expand: yes
-          cwd:    'dist/temp/lib'
+          cwd:    'dist/temp/lib/'
           src:    ['**/*.js']
-          dest:   'dist/temp/lib'
+          dest:   'dist/temp/lib/'
           ext:    '.js'
-        }]
-        options:
-            banner: """
-              /*! Template v<%= pkg.version %> | (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %> | <%= pkg.licenses[0].url %> */
+        ]
+        options: banner: """
+          /*! Template v<%= pkg.version %> | (c) <%= grunt.template.today("yyyy") %> <%= pkg.author.name %> | <%= pkg.licenses[0].url %> */
 
-            """
+        """
 
   # Tasks
   # -----
@@ -57,6 +60,6 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks dependency
 
   # TODO: Complete & test
-  grunt.registerTask 'build',   ['clean', 'coffee']
+  grunt.registerTask 'build',   ['clean:build', 'copy:build', 'coffee']
   grunt.registerTask 'default', ['build']
-  grunt.registerTask 'dist',    ['build', 'docco', 'copy', 'uglify']
+  grunt.registerTask 'dist',    ['build', 'clean:dist', 'docco', 'copy', 'uglify']
