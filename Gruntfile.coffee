@@ -17,8 +17,7 @@ module.exports = (grunt) ->
     clean:
       build:     'bin/*'
 
-      # TODO: dist:      ['dist/*', 'docs/*']
-      dist:      'dist/*'
+      dist:      ['dist/*', 'docs/*']
       distAfter: 'dist/temp/'
 
     compress:
@@ -118,10 +117,26 @@ module.exports = (grunt) ->
   for dependency of pkg.devDependencies when ~dependency.indexOf 'grunt-'
     grunt.loadNpmTasks dependency
 
-  grunt.registerTask 'build',   ['clean:build', 'copy:build', 'coffee', 'concat']
+  grunt.registerTask 'build', [
+    'clean:build'
+    'copy:build'
+    'coffee'
+    'concat'
+  ]
+
+  grunt.registerTask 'dist', [
+    'build'
+    'clean:dist'
+    'docco'
+    'copy:dist'
+    'locale-prepare'
+    'json-minify'
+    'uglify'
+    'compress'
+    'clean:distAfter'
+  ]
+
   grunt.registerTask 'default', ['build']
-  # TODO: grunt.registerTask 'dist',    ['build', 'clean:dist', 'docco', 'copy:dist', 'json-minify', 'uglify', 'compress', 'clean:distAfter']
-  grunt.registerTask 'dist',    ['build', 'clean:dist', 'copy:dist', 'locale-prepare', 'json-minify', 'uglify', 'compress', 'clean:distAfter']
 
   # Remove all of the long message descriptions and placeholder examples as they're not required by
   # users and Chrome Web Store has a size limit for locale files.
