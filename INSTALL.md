@@ -21,6 +21,7 @@ Follow these steps to build [Template][];
 5. To update the compiled and runnable version enter `grunt build` (**Pro Tip:** Entering just `grunt` does exactly the same thing in this case)
    * Outputs to the `bin` directory
 6. To update the optimized distributable file enter `grunt dist`
+   * Requires the previous step to have been run previously (i.e. the `bin` directory must exist)
    * Outputs to the `dist` directory
 7. To update the documentation enter `grunt docs`
    * Outputs to the `docs` directory

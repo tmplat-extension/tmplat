@@ -30,23 +30,6 @@ module.exports = (grunt) ->
           level:   9
           pretty:  yes
 
-    concat:
-      build:
-        files: [
-          expand: yes
-          cwd:    'bin/lib/'
-          src:    '*.js'
-          dest:   'bin/lib/'
-        ]
-        options:
-          banner: """
-            // [Template](http://template-extension.org)
-            // (c) <%= grunt.template.today("yyyy") %> Alasdair Mercer
-            // Freely distributable under the MIT license:
-            // <http://template-extension.org/license>
-
-          """
-
     copy:
       build:
         expand: yes
@@ -118,7 +101,6 @@ module.exports = (grunt) ->
     'clean:build'
     'copy:build'
     'coffee'
-    'concat'
   ]
 
   grunt.registerTask 'dist', [
