@@ -1,8 +1,3 @@
-# [Template](http://template-extension.org)  
-# (c) 2013 Alasdair Mercer  
-# Freely distributable under the MIT license:  
-# <http://template-extension.org/license>
-
 module.exports = (grunt) ->
 
   # Configuration
@@ -15,10 +10,12 @@ module.exports = (grunt) ->
     pkg
 
     clean:
-      build:     'bin/*'
+      build: 'bin/*'
 
-      dist:      ['dist/*', 'docs/*']
+      dist:      'dist/*'
       distAfter: 'dist/temp/'
+
+      docs: 'docs/*'
 
     compress:
       dist:
@@ -125,15 +122,18 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask 'dist', [
-    'build'
     'clean:dist'
-    'docco'
     'copy:dist'
     'locale-prepare'
     'json-minify'
     'uglify'
     'compress'
     'clean:distAfter'
+  ]
+
+  grunt.registerTask 'docs', [
+    'clean:docs'
+    'docco'
   ]
 
   grunt.registerTask 'default', ['build']
