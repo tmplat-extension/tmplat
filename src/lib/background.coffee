@@ -368,7 +368,8 @@ isProtectedPage = (tab) ->
 isSpecialPage = (tab) ->
   log.trace()
 
-  not tab.url.indexOf 'chrome'
+  return yes for protocol in ['chrome', 'view-source'] when not tab.url.indexOf protocol
+  no
 
 # Determine whether or not `tab` is currently displaying a page on the Chrome Web Store.
 isWebStore = (tab) ->
@@ -882,20 +883,35 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
           time = Date.parse response.lastModified
           new Date time unless isNaN time
 
+        # Provide an empty map of meta data if the content script failed to return one.
+        metaMap = response.metaMap ? {}
+
+        # Attempt to lookup the value of the meta data with the specified `name`.  
+        # If `csv` is enabled, separate the contents by commas and return each unique value in an
+        # array.
+        getMeta = (name, csv) ->
+          value = metaMap[name]
+          if csv and value
+            _.chain(value.split ',').compact().uniq().value()
+          else
+            value or ''
+
         # Sanitize the `response` so that it's data can be cleanly integrated.
         done null,
-          author:         response.author         ? ''
+          author:         getMeta 'author'
           characterset:   response.characterSet   ? ''
-          description:    response.description    ? ''
+          description:    getMeta 'description'
           html:           response.html           ? ''
           images:         response.images         ? []
-          keywords:       response.keywords       ? []
+          keywords:       getMeta 'keywords', yes
           lastmodified:   rendered (text) ->
             lastModified?.format if text then text
           linkhtml:       response.linkHTML       ? ''
           links:          response.links          ? []
           linktext:       response.linkText       ? ''
           localstorage:   response.localStorage   ? {}
+          meta:           rendered (text) ->
+            metaMap[text]
           pageheight:     response.pageHeight     ? ''
           pagewidth:      response.pageWidth      ? ''
           referrer:       response.referrer       ? ''
