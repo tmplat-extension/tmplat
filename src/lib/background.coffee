@@ -882,6 +882,9 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
           time = Date.parse response.lastModified
           new Date time unless isNaN time
 
+        # Provide an empty map of meta data if the content script failed to return one.
+        metaMap = response.metaMap ? {}
+
         # Sanitize the `response` so that it's data can be cleanly integrated.
         done null,
           author:         response.author         ? ''
@@ -896,6 +899,8 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
           links:          response.links          ? []
           linktext:       response.linkText       ? ''
           localstorage:   response.localStorage   ? {}
+          meta:           rendered (text) ->
+            metaMap[text]
           pageheight:     response.pageHeight     ? ''
           pagewidth:      response.pageWidth      ? ''
           referrer:       response.referrer       ? ''
@@ -984,6 +989,16 @@ buildStandardData = (tab, getCallback) ->
 
     contents
 
+  # Attempt to lookup the value of the meta data with the specified `name`.  
+  # If `csv` is enabled, separate the contents by commas and return each unique value in an array.
+  getMeta = (lookup, name, csv) ->
+    value = lookup? name
+
+    if csv and value
+      _.chain(value.split ',').compact().uniq().value()
+    else
+      value or ''
+
   # Merge the initial data with the attributes of the [URL
   # parser](https://github.com/allmarkedup/jQuery-URL-Parser) and all of the custom Template
   # properties.  
@@ -994,6 +1009,8 @@ buildStandardData = (tab, getCallback) ->
     anchortarget:          -> @linkstarget
     # Deprecated since 1.2.5, use `linkstitle` instead.
     anchortitle:           -> @linkstitle
+    author:                ->
+      getMeta @meta, 'author'
     bitly:                 bitly.enabled
     bitlyaccount:          ->
       _.findWhere(SHORTENERS, name: 'bitly').oauth.hasAccessToken()
@@ -1012,6 +1029,8 @@ buildStandardData = (tab, getCallback) ->
     decode:                rendered (text) ->
       decodeURIComponent text
     depth:                 screen.colorDepth
+    description:           ->
+      getMeta @meta, 'description'
     # Deprecated since 1.0.0, use `linkstarget` instead.
     doanchortarget:        -> @linkstarget
     # Deprecated since 1.0.0, use `linkstitle` instead.
@@ -1036,6 +1055,8 @@ buildStandardData = (tab, getCallback) ->
     # Deprecated since 1.0.0, use `googlaccount` instead.
     googloauth:            -> do @googlaccount
     java:                  navigator.javaEnabled()
+    keywords:              ->
+      getMeta @meta, 'keywords', yes
     length:                rendered (text) ->
       text.length
     linkmarkdown:          ->

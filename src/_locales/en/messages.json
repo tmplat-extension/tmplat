@@ -1957,6 +1957,10 @@
     "message": "Transform the text provided into lower case",
     "description": "Description of the lowerCase variable on the Guide tab of the Options page under the Operations section."
   },
+  "opt_guide_operations_meta_text": {
+    "message": "Get the content of the page's meta information with the text provided",
+    "description": "Description of the meta variable on the Guide tab of the Options page under the Operations section."
+  },
   "opt_guide_operations_notes_text_1": {
     "message": "The following notes only apply to $SEGMENT_LABEL$ and $FSEGMENT_LABEL$ operations;",
     "description": "1st paragraph for the Notes area on the Guide tab of the Options page under the Operations section.",
