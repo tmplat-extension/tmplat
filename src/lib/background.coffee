@@ -368,7 +368,8 @@ isProtectedPage = (tab) ->
 isSpecialPage = (tab) ->
   log.trace()
 
-  not tab.url.indexOf 'chrome'
+  return yes for protocol in ['chrome', 'view-source'] when not tab.url.indexOf protocol
+  no
 
 # Determine whether or not `tab` is currently displaying a page on the Chrome Web Store.
 isWebStore = (tab) ->
