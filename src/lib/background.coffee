@@ -648,6 +648,11 @@ onMessageExternal = (message, sender, sendResponse) ->
   # Route message as if it was sent internally.
   onMessage message, sender, sendResponse
 
+# Avoid repetitive calls to render the text contents of a Mustache section by passed `callback` the
+# pre-rendered text and safely handling bad returns.
+rendered = (callback) ->
+  -> (text, render) -> callback(render text) ? ''
+
 # Attempt to select a tab in the current window displaying a page whose location begins with
 # `url`.  
 # If no existing tab exists a new one is created.
@@ -851,13 +856,9 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
         log.debug 'Found the following cookies...', cookies
 
         done null,
-          cookie: ->
-            (text, render) ->
-              # Attempt to find the value for the cookie name.
-              name   = render text
-              cookie = _.findWhere cookies, {name}
-
-              cookie?.value or ''
+          cookie: rendered (text) ->
+            # Attempt to find the value for the cookie name.
+            _.findWhere(cookies, name: text)?.value
           cookies: _.chain(cookies).pluck('name').uniq().value()
 
     (done) ->
@@ -888,9 +889,8 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
           description:    response.description    ? ''
           images:         response.images         ? []
           keywords:       response.keywords       ? []
-          lastmodified:   ->
-            (text, render) ->
-              lastModified?.format(render(text) or undefined) ? ''
+          lastmodified:   rendered (text) ->
+            lastModified?.format if text then text
           linkhtml:       response.linkHTML       ? ''
           links:          response.links          ? []
           linktext:       response.linkText       ? ''
@@ -975,75 +975,59 @@ buildStandardData = (tab, getCallback) ->
   # modified version of [mustache.js](https://github.com/janl/mustache.js).
   $.extend data, url.attr(),
     # Deprecated since 1.2.5, use `linkstarget` instead.
-    anchortarget:          ->
-      @linkstarget
+    anchortarget:          -> @linkstarget
     # Deprecated since 1.2.5, use `linkstitle` instead.
-    anchortitle:           ->
-      @linkstitle
+    anchortitle:           -> @linkstitle
     bitly:                 bitly.enabled
     bitlyaccount:          ->
       _.findWhere(SHORTENERS, name: 'bitly').oauth.hasAccessToken()
     browser:               browser.title
     browserversion:        browser.version
-    capitalise:            ->
-      do @capitalize
-    capitalize:            ->
-      (text, render) ->
-        utils.capitalize render text
+    capitalise:            -> do @capitalize
+    capitalize:            rendered (text) ->
+      utils.capitalize text
     # Deprecated since 1.0.0, use `menu` instead.
-    contextmenu:           ->
-      @menu
+    contextmenu:           -> @menu
     cookiesenabled:        navigator.cookieEnabled
     count:                 stats.count
     customcount:           stats.customCount
-    datetime:              ->
-      (text, render) ->
-        new Date().format(render(text) or undefined) ? ''
-    decode:                ->
-      (text, render) ->
-        decodeURIComponent(render text) ? ''
+    datetime:              rendered (text) ->
+      new Date().format if text then text
+    decode:                rendered (text) ->
+      decodeURIComponent text
     depth:                 screen.colorDepth
     # Deprecated since 1.0.0, use `linkstarget` instead.
-    doanchortarget:        ->
-      @linkstarget
+    doanchortarget:        -> @linkstarget
     # Deprecated since 1.0.0, use `linkstitle` instead.
-    doanchortitle:         ->
-      @linkstitle
-    encode:                ->
-      (text, render) ->
-        encodeURIComponent(render text) ? ''
+    doanchortitle:         -> @linkstitle
+    encode:                rendered (text) ->
+      encodeURIComponent text
     # Deprecated since 0.1.0.2, use `encode` instead.
     encoded:               ->
       encodeURIComponent @url
-    escape:                ->
-      (text, render) ->
-        _.escape render text
+    escape:                rendered (text) ->
+      _.escape text
     favicon:               ctab.favIconUrl
-    fparam:                ->
-      (text, render) ->
-        url.fparam(render text) ? ''
+    fparam:                rendered (text) ->
+      url.fparam text
     fparams:               nullIfEmpty url.fparam()
-    fsegment:              ->
-      (text, render) ->
-        url.fsegment(parseInt render(text), 10) ? ''
+    fsegment:              rendered (text) ->
+      url.fsegment parseInt text, 10
     fsegments:             url.fsegment()
     googl:                 googl.enabled
     googlaccount:          ->
       _.findWhere(SHORTENERS, name: 'googl').oauth.hasAccessToken()
     # Deprecated since 1.0.0, use `googlaccount` instead.
-    googloauth:            ->
-      do @googlaccount
+    googloauth:            -> do @googlaccount
     java:                  navigator.javaEnabled()
-    length:                ->
-      (text, render) ->
-        render(text).length
+    length:                rendered (text) ->
+      text.length
     linkmarkdown:          ->
       toMarkdown @linkhtml
     linkstarget:           links.target
     linkstitle:            links.title
-    lowercase:             ->
-      (text, render) ->
-        render(text).toLowerCase()
+    lowercase:             rendered (text) ->
+      text.toLowerCase()
     markdowninline:        markdown.inline
     menu:                  menu.enabled
     menuoptions:           menu.options
@@ -1052,22 +1036,19 @@ buildStandardData = (tab, getCallback) ->
     notificationduration:  notifications.duration * .001
     offline:               not navigator.onLine
     # Deprecated since 0.1.0.2, use `originalurl` instead.
-    originalsource:        ->
-      @originalurl
+    originalsource:        -> @originalurl
     originaltitle:         tab.title or url.attr 'source'
     originalurl:           tab.url
     os:                    operatingSystem
-    param:                 ->
-      (text, render) ->
-        url.param(render text) ? ''
+    param:                 rendered (text) ->
+      url.param text
     params:                nullIfEmpty url.param()
     plugins:               _.chain(navigator.plugins).pluck('name').uniq().value()
     popular:               $.extend yes, {}, _.findWhere ext.templates, key: stats.popular
     screenheight:          screen.height
     screenwidth:           screen.width
-    segment:               ->
-      (text, render) ->
-        url.segment(parseInt render(text), 10) ? ''
+    segment:               rendered (text) ->
+      url.segment parseInt text, 10
     segments:              url.segment()
     select:                ->
       getCallback 'select'
@@ -1084,48 +1065,49 @@ buildStandardData = (tab, getCallback) ->
     selectmarkdown:        ->
       getCallback 'selectmarkdown'
     # Deprecated since 1.0.0, use `shorten` instead.
-    short:                 ->
-      do @shorten
+    short:                 -> do @shorten
     shortcuts:             shortcuts.enabled
     shortcutspaste:        shortcuts.paste
     shorten:               ->
       getCallback 'shorten'
-    tidy:                  ->
-      (text, render) ->
-        render(text).replace(/([ \t]+)/g, ' ').trim()
+    tidy:                  rendered (text) ->
+      text.replace(/([ \t]+)/g, ' ').trim()
     title:                 ctab.title or url.attr 'source'
     toolbarclose:          toolbar.close
     # Deprecated since 1.0.0, use the inverse of `toolbarpopup` instead.
-    toolbarfeature:        ->
-      not @toolbarpopup
+    toolbarfeature:        -> not @toolbarpopup
     # Deprecated since 1.0.0, use `toolbarstyle` instead.
-    toolbarfeaturedetails: ->
-      @toolbarstyle
+    toolbarfeaturedetails: -> @toolbarstyle
     # Deprecated since 1.0.0, use `toolbarkey` instead.
-    toolbarfeaturename:    ->
-      @toolbarkey
+    toolbarfeaturename:    -> @toolbarkey
     toolbarkey:            toolbar.key
     toolbaroptions:        toolbar.options
     toolbarpopup:          toolbar.popup
     # Obsolete since 1.1.0, functionality has been removed.
     toolbarstyle:          no
-    trim:                  ->
-      (text, render) ->
-        render(text).trim()
-    trimleft:              ->
-      (text, render) ->
-        render(text).trimLeft()
-    trimright:             ->
-      (text, render) ->
-        render(text).trimRight()
-    unescape:              ->
-      (text, render) ->
-        _.unescape render text
-    uppercase:             ->
-      (text, render) ->
-        render(text).toUpperCase()
+    trim:                  rendered (text) ->
+      text.trim()
+    trimleft:              rendered (text) ->
+      text.trimLeft()
+    trimright:             rendered (text) ->
+      text.trimRight()
+    unescape:              rendered (text) ->
+      _.unescape text
+    uppercase:             rendered (text) ->
+      text.toUpperCase()
     url:                   url.attr 'source'
     version:               ext.version
+    wordcount:             rendered (text) ->
+      # Oddly, this is the optimal method to calculate the word count on WebKit browsers.
+      count   = 0
+      text    = text.trim()
+      matches = text.match /\s+/g
+
+      if text
+        count++
+        count+= matches.length if matches
+
+      count
     xpath:                ->
       getCallback 'xpath'
     xpathall:             ->

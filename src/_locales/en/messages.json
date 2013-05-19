@@ -2127,6 +2127,10 @@
     "message": "Transform the text provided into upper case",
     "description": "Description of the upperCase variable on the Guide tab of the Options page under the Operations section."
   },
+  "opt_guide_operations_word_count_text": {
+    "message": "Get the number of words in the text provided",
+    "description": "Description of the wordCount variable on the Guide tab of the Options page under the Operations section."
+  },
   "opt_guide_operations_xpath_all_html_text": {
     "message": "Concatenate the $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of all results for the $O_LINK_XPATH$XPath$C_LINK$ expression",
     "description": "Description of the xpathAllHTML variable on the Guide tab of the Options page under the Operations section.",
