@@ -257,6 +257,7 @@ chrome.extension.sendMessage type: 'info', (data) ->
       author:         getMeta 'author'
       characterSet:   document.characterSet
       description:    getMeta 'description'
+      html:           document.documentElement.outerHTML
       images:         extractAll document.images, 'src'
       keywords:       getMeta 'keywords', yes
       lastModified:   document.lastModified

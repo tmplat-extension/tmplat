@@ -2877,6 +2877,24 @@
       }
     }
   },
+  "opt_guide_standard_html_text": {
+    "message": "The entire $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of the page",
+    "description": "Description of the html variable on the Guide tab of the Options page under the Standard section.",
+    "placeholders": {
+      "c_abbr": {
+        "content": "</abbr>",
+        "example": "</abbr>"
+      },
+      "o_abbr_1": {
+        "content": "<abbr title=\"",
+        "example": "<abbr title=\""
+      },
+      "o_abbr_2": {
+        "content": "\">",
+        "example": "\">"
+      }
+    }
+  },
   "opt_guide_standard_java_text": {
     "message": "Whether or not $O_LINK_JAVA$Java$C_LINK$ is enabled",
     "description": "Description of the java variable on the Guide tab of the Options page under the Standard section.",
@@ -2952,6 +2970,20 @@
       "o_link_iso_639": {
         "content": "<a href=\"http://en.wikipedia.org/wiki/ISO_639_macrolanguage\" target=\"_blank\">",
         "example": "<a href=\"http://en.wikipedia.org/wiki/ISO_639_macrolanguage\">"
+      }
+    }
+  },
+  "opt_guide_standard_markdown_text": {
+    "message": "The entire contents of the page as $O_LINK_MARKDOWN$Markdown$C_LINK$",
+    "description": "Description of the markdown variable on the Guide tab of the Options page under the Standard section.",
+    "placeholders": {
+      "c_link": {
+        "content": "</a>",
+        "example": "</a>"
+      },
+      "o_link_markdown": {
+        "content": "<a href=\"http://en.wikipedia.org/wiki/Markdown\" target=\"_blank\">",
+        "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\">"
       }
     }
   },
@@ -3150,6 +3182,10 @@
         "example": "<strong>"
       }
     }
+  },
+  "opt_guide_standard_text_text": {
+    "message": "The entire text of the page",
+    "description": "Description of the text variable on the Guide tab of the Options page under the Standard section."
   },
   "opt_guide_standard_title_text": {
     "message": "The title of the page or $URL_LABEL$ if the title could not be detected (e.g. page had not finished loading)",
