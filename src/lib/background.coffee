@@ -887,6 +887,7 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
           author:         response.author         ? ''
           characterset:   response.characterSet   ? ''
           description:    response.description    ? ''
+          html:           response.html           ? ''
           images:         response.images         ? []
           keywords:       response.keywords       ? []
           lastmodified:   rendered (text) ->
@@ -904,8 +905,7 @@ addAdditionalData = (tab, data, id, editable, shortcut, link, callback) ->
           selection:      response.selection      ? ''
           selectionhtml:  response.selectionHTML  ? ''
           # Deprecated since 1.0.0, use `selectedLinks` instead.
-          selectionlinks: ->
-            @selectedlinks
+          selectionlinks: -> @selectedlinks
           sessionstorage: response.sessionStorage ? {}
           stylesheets:    response.styleSheets    ? []
 
@@ -968,6 +968,22 @@ buildStandardData = (tab, getCallback) ->
   toolbar       = store.get 'toolbar'
   yourls        = store.get 'yourls'
 
+  # Attempt to extract the contents from the page source in the specified type (i.e. `html` or
+  # `text`).
+  getFromPage = (source, contentType) ->
+    contents = ''
+
+    if source
+      html = document.createElement 'html'
+      html.innerHTML = source
+
+      $html = $ html
+      $body = $html.find 'body'
+
+      contents = if $body.length then do $body[contentType] else do $html[contentType]
+
+    contents
+
   # Merge the initial data with the attributes of the [URL
   # parser](https://github.com/allmarkedup/jQuery-URL-Parser) and all of the custom Template
   # properties.  
@@ -1028,6 +1044,8 @@ buildStandardData = (tab, getCallback) ->
     linkstitle:            links.title
     lowercase:             rendered (text) ->
       text.toLowerCase()
+    markdown:              ->
+      toMarkdown getFromPage @html, 'html'
     markdowninline:        markdown.inline
     menu:                  menu.enabled
     menuoptions:           menu.options
@@ -1070,6 +1088,8 @@ buildStandardData = (tab, getCallback) ->
     shortcutspaste:        shortcuts.paste
     shorten:               ->
       getCallback 'shorten'
+    text:                  ->
+      getFromPage @html, 'text'
     tidy:                  rendered (text) ->
       text.replace(/([ \t]+)/g, ' ').trim()
     title:                 ctab.title or url.attr 'source'
