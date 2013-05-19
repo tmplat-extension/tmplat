@@ -324,10 +324,15 @@ loadTemplate = (template, modifiers) ->
 loadTemplateControlEvents = ->
   log.trace()
 
+  # Ensure saved templates are properly validated before being persisted.
+  validationErrors = []
+
   # Ensure template wizard is closed if/when tabify links are clicked within it.
   $('#template_wizard [tabify], #template_cancel_btn').on 'click', ->
     do closeWizard
   $('#template_reset_btn').on 'click', ->
+    error.hide() for error in validationErrors
+
     do resetWizard
 
   # Support search functionality for templates.
@@ -380,9 +385,6 @@ loadTemplateControlEvents = ->
     $('#template_delete_btn').show()
     deleteTemplates [activeTemplate]
     do closeWizard
-
-  # Ensure saved templates are properly validated before being persisted.
-  validationErrors = []
 
   # Clear all existing validation errors when the wizard is closed.
   $('#template_wizard').on 'hide', ->
