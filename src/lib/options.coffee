@@ -373,7 +373,11 @@ loadTemplateControlEvents = ->
 
   # Ensure user confirms deletion of template.
   $('#template_delete_btn').on 'click', ->
-    $(this).hide()
+    $this = $ this
+
+    return if $this.hasClass 'disabled'
+
+    $this.hide()
     $('#template_confirm_delete').css 'display', 'inline-block'
 
   $('#template_undo_delete_btn').on 'click', ->
@@ -414,10 +418,16 @@ loadTemplateControlEvents = ->
 
   # Enable/disable all selected templates when the corresponding buttons are clicked.
   $('#disable_btn, #enable_btn').on 'click', ->
-    enableTemplates do getSelectedTemplates, $(this).is '#enable_btn'
+    $this = $ this
+
+    return if $this.hasClass 'disabled'
+
+    enableTemplates do getSelectedTemplates, $this.is '#enable_btn'
 
   # Open the template wizard without any context when creating a new template.
   $('#add_btn').on 'click', ->
+    return if $(this).hasClass 'disabled'
+
     openWizard null
 
   # Ensure confirmation is granted before deleting any templates and that no predefined templates
@@ -434,6 +444,8 @@ loadTemplateControlEvents = ->
 
   # Prompt the user to confirm removal of the selected template(s).
   $('#delete_btn').on 'click', ->
+    return if $(this).hasClass 'disabled'
+
     warningMsg?.hide()
 
     deleteItems         = $ '#delete_items'
@@ -495,6 +507,8 @@ loadTemplateExportEvents = ->
 
   # Show the export wizard and create the exported data based on the selected templates.
   $('#export_btn').on 'click', ->
+    return if $(this).hasClass 'disabled'
+
     selectedTemplates = do getSelectedTemplates
 
     if selectedTemplates.length
@@ -550,6 +564,8 @@ loadTemplateImportEvents = ->
 
   # Show the import wizard to prompt the user to input/load the data to be imported.
   $('#import_btn').on 'click', ->
+    return if $(this).hasClass 'disabled'
+
     log.info 'Launching import wizard'
 
     $('#import_wizard').modal 'show'
@@ -703,6 +719,10 @@ loadTemplateRows = (templates = ext.templates, pagination = yes) ->
     table.find('tbody').append $('<tr/>').append $ '<td/>',
       colspan: table.find('thead th').length
       html:    i18n.get 'opt_no_templates_found_text'
+
+  # Uncheck the "Select All" checkbox before (re-)binding the click events for all "Select"
+  # checkboxes.
+  table.find('thead :checkbox').prop 'checked', no
 
   do activateSelections
 
@@ -1645,8 +1665,16 @@ refreshSelectButtons = ->
 
   templates = do getSelectedTemplates
 
+  # Update the visual state of `buttons`.
+  updateButton = (buttons, disabled, titleKey) ->
+    buttons[if disabled then 'addClass' else 'removeClass'] 'disabled'
+    buttons.attr 'data-original-title', i18n.get titleKey
+
   # Export button can simply be enabled when any templates have been selected.
-  $('#delete_btn, #export_btn').prop 'disabled', not templates.length
+  updateButton $('#export_btn'), not templates.length, if templates.length
+    'opt_export_button_title'
+  else
+    'opt_template_none_selected_title'
 
   # Determine whether all selections share the same enabled state and if any are predefined.
   allEnabled    = yes
@@ -1660,17 +1688,30 @@ refreshSelectButtons = ->
 
   unless templates.length
     # Doesn't matter as no templates have been selected.
-    $('#disable_btn, #enable_btn').prop 'disabled', yes
+    updateButton $('#disable_btn, #enable_btn'), yes, 'opt_template_none_selected_title'
   else if allEnabled or allDisabled
     # Templates are either all enabled or disabled so only enable the relevant button.
-    $('#disable_btn').prop 'disabled', allDisabled
-    $('#enable_btn').prop  'disabled', allEnabled
+    updateButton $('#disable_btn'), allDisabled, if allDisabled
+      'opt_template_disabled_selected_title'
+    else
+      'opt_disable_button_title'
+
+    updateButton $('#enable_btn'), allEnabled, if allEnabled
+      'opt_template_enabled_selected_title'
+    else
+      'opt_enable_button_title'
   else
     # Templates have a mixed enabled state so enable both buttons.
-    $('#disable_btn, #enable_btn').prop 'disabled', no
+    updateButton $('#enable_btn'), no, 'opt_enable_button_title'
+    updateButton $('#disable_btn'), no, 'opt_disable_button_title'
 
   # Delete button should only be enabled when *only* user-created templates have been selected.
-  $('#delete_btn').prop 'disabled', not templates.length or hasPredefined
+  unless templates.length
+    updateButton $('#delete_btn'), yes, 'opt_template_none_selected_title'
+  else if hasPredefined
+    updateButton $('#delete_btn'), yes, 'opt_template_no_predefined_delete_title'
+  else
+    updateButton $('#delete_btn'), no, 'opt_delete_button_title'
 
 # Reset the wizard field values based on the current context.
 resetWizard = ->
@@ -1701,8 +1742,12 @@ resetWizard = ->
   $('#template_content, #template_title').prop 'disabled', !!activeTemplate.readOnly
   $('#template_delete_btn').each ->
     $this = $ this
+    $this[if activeTemplate.readOnly then 'addClass' else 'removeClass'] 'disabled'
+    $this.attr 'data-original-title', i18n.get if activeTemplate.readOnly
+      'opt_template_no_predefined_delete_title'
+    else
+      'opt_wizard_delete_button_title'
 
-    $this.prop 'disabled', !!activeTemplate.readOnly
     if activeTemplate.key? then $this.show() else $this.hide()
 
 # Search the templates for the specified `query` and filter those displayed.

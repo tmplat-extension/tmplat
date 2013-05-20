@@ -623,7 +623,7 @@
     "message": "Template",
     "description": "Name of the extension."
   },
-  "opt_add_button": {
+  "opt_add_button_text": {
     "message": "$ICON$ Add",
     "description": "Text of button used to add templates.",
     "placeholders": {
@@ -632,6 +632,10 @@
         "example": "<i class=\"icon-plus icon-white\"></i>"
       }
     }
+  },
+  "opt_add_button_title": {
+    "message": "Create a new template",
+    "description": "Hover text of button used to add templates."
   },
   "opt_analytics_label": {
     "message": "Analytics",
@@ -649,7 +653,7 @@
     "message": "Confirm",
     "description": "Text for a Confirm button."
   },
-  "opt_delete_button": {
+  "opt_delete_button_text": {
     "message": "$ICON$ Delete",
     "description": "Text for the Delete button.",
     "placeholders": {
@@ -658,6 +662,10 @@
         "example": "<i class=\"icon-trash icon-white\"></i>"
       }
     }
+  },
+  "opt_delete_button_title": {
+    "message": "Delete all selected templates",
+    "description": "Hover text for the Delete button."
   },
   "opt_delete_wizard_header": {
     "message": "Confirm Deletion",
@@ -681,7 +689,7 @@
     "message": "Do you want to continue anyway?",
     "description": "2nd paragraph for the confirmation dialog displayed when deleting a template."
   },
-  "opt_disable_button": {
+  "opt_disable_button_text": {
     "message": "$ICON$ Disable",
     "description": "Text of button used to disable templates.",
     "placeholders": {
@@ -690,6 +698,10 @@
         "example": "<i class=\"icon-remove\"></i>"
       }
     }
+  },
+  "opt_disable_button_title": {
+    "message": "Disable all selected templates",
+    "description": "Hover text of button used to disable templates."
   },
   "opt_donate_button": {
     "message": "$ICON$ Donate",
@@ -705,7 +717,7 @@
     "message": "Share the love!",
     "description": "Hover text for the Donate button."
   },
-  "opt_enable_button": {
+  "opt_enable_button_text": {
     "message": "$ICON$ Enable",
     "description": "Text of button used to enable templates.",
     "placeholders": {
@@ -715,11 +727,15 @@
       }
     }
   },
+  "opt_enable_button_title": {
+    "message": "Enable all selected templates",
+    "description": "Hover text of button used to enable templates."
+  },
   "opt_errors_header": {
     "message": "The following problem(s) need to be corrected;",
     "description": "Preceding text for any errors on the Templates tab."
   },
-  "opt_export_button": {
+  "opt_export_button_text": {
     "message": "$ICON$ Export",
     "description": "Text for the Export button.",
     "placeholders": {
@@ -728,6 +744,10 @@
         "example": "<i class=\"icon-upload\"></i>"
       }
     }
+  },
+  "opt_export_button_title": {
+    "message": "Export all selected templates",
+    "description": "Hover text for the Export button."
   },
   "opt_export_wizard_copy_alt_button": {
     "message": "Copied!",
@@ -3249,7 +3269,7 @@
     "message": "Object",
     "description": "Text displayed for objects in the Type column on the Guide tab of the Options page under the Lists & Objects section."
   },
-  "opt_import_button": {
+  "opt_import_button_text": {
     "message": "$ICON$ Import",
     "description": "Text for the Import button on the Templates tab of the Options page.",
     "placeholders": {
@@ -3258,6 +3278,10 @@
         "example": "<i class=\"icon-download\"></i>"
       }
     }
+  },
+  "opt_import_button_title": {
+    "message": "Import templates into your browser",
+    "description": "Hover text for the Import button on the Templates tab of the Options page."
   },
   "opt_import_wizard_header": {
     "message": "Import",
@@ -3689,6 +3713,22 @@
     "message": "New Template",
     "description": "Header for the template wizard when creating a new template."
   },
+  "opt_template_disabled_selected_title": {
+    "message": "Selected templates are already disabled",
+    "description": "Hover text for dynamic buttons when only disabled templates are selected."
+  },
+  "opt_template_enabled_selected_title": {
+    "message": "Selected templates are already enabled",
+    "description": "Hover text for dynamic buttons when only enabled templates are selected."
+  },
+  "opt_template_no_predefined_delete_title": {
+    "message": "Predefined templates cannot be deleted",
+    "description": "Hover text for dynamic Delete buttons when predefined templates are selected or in context."
+  },
+  "opt_template_none_selected_title": {
+    "message": "One or more templates must be selected",
+    "description": "Hover text for dynamic buttons when no templates are selected."
+  },
   "opt_template_shortcut_help": {
     "message": "$O_PARA$The following rules apply to this field;$C_PARA$$O_LIST$$O_ITEM$Must be an alphanumeric key$C_ITEM$$O_ITEM$Where duplicated, the first template will be activated$C_ITEM$$O_ITEM$When blank, the template cannot be activated using keyboard shortcuts$C_ITEM$$C_LIST$",
     "description": "Help text for the Shortcut field on the Templates tab of the Options page.",
@@ -4005,9 +4045,13 @@
     "message": "Continue",
     "description": "Text for Continue buttons commonly found in dialogs."
   },
-  "opt_wizard_delete_button": {
+  "opt_wizard_delete_button_text": {
     "message": "Delete",
     "description": "Text for Delete buttons commonly found in dialogs."
+  },
+  "opt_wizard_delete_button_title": {
+    "message": "Permanently delete this template",
+    "description": "Hover text for Delete buttons commonly found in dialogs."
   },
   "opt_wizard_no_button": {
     "message": "No",

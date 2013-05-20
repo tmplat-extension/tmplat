@@ -264,16 +264,16 @@
                 </div>
                 <div class="form-actions">
                   <div class="btn-group">
-                    <button id="import_btn" type="button" class="btn" i18n-content="opt_import_button"></button>
-                    <button id="export_btn" type="button" class="btn" disabled i18n-content="opt_export_button"></button>
+                    <a id="import_btn" class="btn" i18n-values=".innerHTML:opt_import_button_text;title:opt_import_button_title"></a>
+                    <a id="export_btn" class="btn disabled" i18n-values=".innerHTML:opt_export_button_text;title:opt_template_none_selected_title"></a>
                   </div>
                   <div class="btn-group">
-                    <button id="enable_btn" type="button" class="btn" disabled i18n-content="opt_enable_button"></button>
-                    <button id="disable_btn" type="button" class="btn" disabled i18n-content="opt_disable_button"></button>
+                    <a id="enable_btn" class="btn disabled" i18n-values=".innerHTML:opt_enable_button_text;title:opt_template_none_selected_title"></a>
+                    <a id="disable_btn" class="btn disabled" i18n-values=".innerHTML:opt_disable_button_text;title:opt_template_none_selected_title"></a>
                   </div>
                   <div class="btn-group">
-                    <button id="add_btn" type="button" class="btn btn-success" i18n-content="opt_add_button"></button>
-                    <button id="delete_btn" type="button" class="btn btn-danger" disabled i18n-content="opt_delete_button"></button>
+                    <a id="add_btn" class="btn btn-success" i18n-values=".innerHTML:opt_add_button_text;title:opt_add_button_title"></a>
+                    <a id="delete_btn" class="btn btn-danger disabled" i18n-values=".innerHTML:opt_delete_button_text;title:opt_template_none_selected_title"></a>
                   </div>
                 </div>
               </fieldset>
@@ -336,7 +336,7 @@
                     <button id="template_undo_delete_btn" class="btn" i18n-content="opt_undo_button"></button>
                     <button id="template_confirm_delete_btn" class="btn btn-danger" i18n-content="opt_confirm_button"></button>
                   </div>
-                  <button id="template_delete_btn" class="btn btn-danger" i18n-content="opt_wizard_delete_button"></button>
+                  <a id="template_delete_btn" class="btn btn-danger" data-container="#template_wizard" i18n-values=".innerHTML:opt_wizard_delete_button_text;title:opt_wizard_delete_button_title"></a>
                   <button id="template_save_btn" class="btn btn-primary" i18n-content="opt_wizard_save_button"></button>
                 </div>
               </div>
