@@ -264,16 +264,16 @@
                 </div>
                 <div class="form-actions">
                   <div class="btn-group">
-                    <button id="import_btn" type="button" class="btn" i18n-content="opt_import_button"></button>
-                    <button id="export_btn" type="button" class="btn" disabled i18n-content="opt_export_button"></button>
+                    <a id="import_btn" class="btn" i18n-values=".innerHTML:opt_import_button_text;title:opt_import_button_title"></a>
+                    <a id="export_btn" class="btn disabled" i18n-values=".innerHTML:opt_export_button_text;title:opt_template_none_selected_title"></a>
                   </div>
                   <div class="btn-group">
-                    <button id="enable_btn" type="button" class="btn" disabled i18n-content="opt_enable_button"></button>
-                    <button id="disable_btn" type="button" class="btn" disabled i18n-content="opt_disable_button"></button>
+                    <a id="enable_btn" class="btn disabled" i18n-values=".innerHTML:opt_enable_button_text;title:opt_template_none_selected_title"></a>
+                    <a id="disable_btn" class="btn disabled" i18n-values=".innerHTML:opt_disable_button_text;title:opt_template_none_selected_title"></a>
                   </div>
                   <div class="btn-group">
-                    <button id="add_btn" type="button" class="btn btn-success" i18n-content="opt_add_button"></button>
-                    <button id="delete_btn" type="button" class="btn btn-danger" disabled i18n-content="opt_delete_button"></button>
+                    <a id="add_btn" class="btn btn-success" i18n-values=".innerHTML:opt_add_button_text;title:opt_add_button_title"></a>
+                    <a id="delete_btn" class="btn btn-danger disabled" i18n-values=".innerHTML:opt_delete_button_text;title:opt_template_none_selected_title"></a>
                   </div>
                 </div>
               </fieldset>
@@ -336,7 +336,7 @@
                     <button id="template_undo_delete_btn" class="btn" i18n-content="opt_undo_button"></button>
                     <button id="template_confirm_delete_btn" class="btn btn-danger" i18n-content="opt_confirm_button"></button>
                   </div>
-                  <button id="template_delete_btn" class="btn btn-danger" i18n-content="opt_wizard_delete_button"></button>
+                  <a id="template_delete_btn" class="btn btn-danger" data-container="#template_wizard" i18n-values=".innerHTML:opt_wizard_delete_button_text;title:opt_wizard_delete_button_title"></a>
                   <button id="template_save_btn" class="btn btn-primary" i18n-content="opt_wizard_save_button"></button>
                 </div>
               </div>
@@ -658,6 +658,10 @@
                             <td i18n-content="opt_guide_standard_host_text"></td>
                           </tr>
                           <tr>
+                            <td>html <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_html_text"></td>
+                          </tr>
+                          <tr>
                             <td>java</td>
                             <td i18n-content="opt_guide_standard_java_text"></td>
                           </tr>
@@ -680,6 +684,10 @@
                           <tr>
                             <td>locale <span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
                             <td i18n-content="opt_guide_standard_locale_text"></td>
+                          </tr>
+                          <tr>
+                            <td>markdown <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_markdown_text"></td>
                           </tr>
                           <tr>
                             <td>offline</td>
@@ -748,6 +756,10 @@
                           <tr>
                             <td>selectionMarkdown <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a></td>
                             <td i18n-content="opt_guide_standard_selection_markdown_text"></td>
+                          </tr>
+                          <tr>
+                            <td>text <a data-goto="#guide_standard_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_standard_text_text"></td>
                           </tr>
                           <tr>
                             <td>title</td>
@@ -1095,11 +1107,6 @@
                             <td i18n-content="opt_guide_operations_cookie_text"></td>
                           </tr>
                           <tr>
-                            <td>cookie</td>
-                            <td i18n-content="opt_guide_argument_text_text"></td>
-                            <td i18n-content="opt_guide_operations_cookie_text"></td>
-                          </tr>
-                          <tr>
                             <td>dateTime</td>
                             <td i18n-content="opt_guide_argument_text_text"></td>
                             <td>
@@ -1151,6 +1158,11 @@
                             <td>lowerCase</td>
                             <td i18n-content="opt_guide_argument_text_text"></td>
                             <td i18n-content="opt_guide_operations_lower_case_text"></td>
+                          </tr>
+                          <tr>
+                            <td>meta <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_argument_text_text"></td>
+                            <td i18n-content="opt_guide_operations_meta_text"></td>
                           </tr>
                           <tr>
                             <td>param</td>
@@ -1244,6 +1256,11 @@
                             <td>upperCase</td>
                             <td i18n-content="opt_guide_argument_text_text"></td>
                             <td i18n-content="opt_guide_operations_upper_case_text"></td>
+                          </tr>
+                          <tr>
+                            <td>wordCount <span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
+                            <td i18n-content="opt_guide_argument_text_text"></td>
+                            <td i18n-content="opt_guide_operations_word_count_text"></td>
                           </tr>
                           <tr>
                             <td>xpath <a data-goto="#guide_operations_ref_1" class="ref-link">&sup1;</a><span class="label label-success pull-right" i18n-content="opt_guide_new_text"></span></td>
@@ -1352,7 +1369,7 @@
       <hr>
       <footer class="footer">
         <p class="pull-right"><a data-goto="#top" i18n-content="opt_top_button"></a></p>
-        &copy;<span class="year-repl"></span> <a href="http://template-extension.org" target="_blank">Alasdair Mercer</a>
+        &copy;<span class="year-repl"></span> <a href="http://template-extension.org" target="_blank" i18n-content="name"></a>
         <form id="donation" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
           <input type="hidden" name="cmd" value="_s-xclick">
           <input type="hidden" name="hosted_button_id" value="">

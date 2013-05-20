@@ -55,18 +55,18 @@ getLink = (id, url) ->
   if elementBackups[id].link?.href is url then elementBackups[id].link
   else parentLink elementBackups[id].other
 
-# Attempt to extract the contents of the meta element with the specified `name`.  
-# If `csv` is enabled, separate the contents by commas and return each unique value in an array.
-getMeta = (name, csv) ->
-  content = document.querySelector("meta[name='#{name}']")?.content?.trim()
+# Create a map of key/value pairs based on all of the pages meta elements.
+getMetaMap = ->
+  map   = {}
+  nodes = document.querySelectorAll 'meta[content]'
 
-  if csv and content?
-    results = []
-    for value in content.split /\s*,\s*/ when value.length
-      results.push value if value not in results
-    results
-  else
-    content
+  for node in nodes
+    key   = node.name or node['http-equiv'] or node.property
+    value = node.content
+
+    map[key] = value if key and value
+
+  map
 
 # Determine whether or not `node` is editable.
 isEditable = (node) ->
@@ -251,19 +251,19 @@ chrome.extension.sendMessage type: 'info', (data) ->
         links  = extractAll container.querySelectorAll('a[href]'),  'href'
 
     link = getLink message.id, message.url
+    meta = do getMetaMap
 
     # Build response with values derived from the DOM.
     callback
-      author:         getMeta 'author'
       characterSet:   document.characterSet
-      description:    getMeta 'description'
+      html:           document.documentElement.outerHTML
       images:         extractAll document.images, 'src'
-      keywords:       getMeta 'keywords', yes
       lastModified:   document.lastModified
       linkHTML:       link?.innerHTML
       linkText:       link?.textContent
       links:          extractAll document.links, 'href'
       localStorage:   copyStorage localStorage
+      metaMap:        meta
       pageHeight:     innerHeight
       pageWidth:      innerWidth
       referrer:       document.referrer
