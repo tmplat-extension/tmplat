@@ -1,3 +1,13 @@
+## Version 1.2.6, 2013.05.20
+
+* [#170](https://github.com/emplate-extension/template-chrome/issues/170): Add tooltips to explain button states
+* [#193](https://github.com/emplate-extension/template-chrome/issues/193): Add new **wordCount** operation to count the words in a string
+* [#198](https://github.com/emplate-extension/template-chrome/issues/198): Add new **meta** operation to access specific meta information
+* [#199](https://github.com/emplate-extension/template-chrome/issues/199): Add new **html** standard variable to enable access to the entire pages HTML
+* [#199](https://github.com/emplate-extension/template-chrome/issues/199): Add new **markdown** standard variable to enable access to the entire contents of a page as [Markdown][]
+* [#199](https://github.com/emplate-extension/template-chrome/issues/199): Add new **text** standard variable to enable access to the entire pages text
+* Minor bug fixes and tweaks
+
 ## Version 1.2.5, 2013.05.14
 
 * [#181](https://github.com/template-extension/template-chrome/issues/181): Add new operations for evaluating [XPath][] expressions

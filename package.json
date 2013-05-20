@@ -1,7 +1,7 @@
 {
     "name": "template-chrome"
   , "description": "Google Chrome extension that quickly and easily copies info on the current page using a simple and unique template system"
-  , "version": "1.2.5"
+  , "version": "1.2.6"
   , "homepage": "http://template-extension.org"
   , "bugs": {
       "url": "https://github.com/template-extension/template-chrome/issues"
