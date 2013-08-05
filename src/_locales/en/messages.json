@@ -3988,8 +3988,8 @@
         "example": "</a>"
       },
       "o_link_api_docs": {
-        "content": "<a href=\"http://code.google.com/p/yourls/wiki/PasswordlessAPI\" target=\"_blank\">",
-        "example": "<a href=\"http://code.google.com/p/yourls/wiki/PasswordlessAPI\">"
+        "content": "<a href=\"http://yourls.org/passwordlessapi\" target=\"_blank\">",
+        "example": "<a href=\"http://yourls.org/passwordlessapi\">"
       }
     }
   },
