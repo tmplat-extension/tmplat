@@ -88,7 +88,7 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <p><a href="http://template-extension.org">Template</a><br>(c) 2013 Alasdair Mercer<br>Freely distributable under the MIT license:<br><a href="http://template-extension.org/license">http://template-extension.org/license</a></p>
+              <p><a href="http://template-extension.org">Template</a><br>(c) 2014 Alasdair Mercer<br>Freely distributable under the MIT license:<br><a href="http://template-extension.org/license">http://template-extension.org/license</a></p>
 
             </div>
             
@@ -3405,6 +3405,7 @@ usable and localized.</p>
     anchor = $ '&lt;a/&gt;',
       class:       'options'
       'data-type': 'options'
+
     anchor.append $ '&lt;i/&gt;', class: Icon.get('cog').style
     anchor.append " #{i18n.get 'options'}"
 
@@ -3451,7 +3452,7 @@ to optimize display times for the popup.</p>
             
             <div class="content"><div class='highlight'><pre>  if template.shortcut and store.get 'shortcuts.enabled'
     anchor.append $ '&lt;span/&gt;',
-      class: 'pull-right',
+      class: 'pull-right muted shortcut',
       html:  "#{ext.modifiers()}#{template.shortcut}"
 
   anchor.append $ '&lt;i/&gt;', class: Icon.get(template.image, yes).style
