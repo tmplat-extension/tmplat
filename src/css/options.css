@@ -40,6 +40,7 @@ pre {overflow: auto; white-space: pre; word-wrap: normal;}
 #template_wizard .modal-body {position: static;}
 #donation {display: inline; margin: 0;}
 #donation .btn {margin: -4px 0 0 12px;}
+.shortcut {font-family: Consolas, "Liberation Mono", Courier, monospace; font-size: 12px;}
 .help {cursor: help;}
 .tight {margin: 0;}
 .tight-top {margin-top: 0;}

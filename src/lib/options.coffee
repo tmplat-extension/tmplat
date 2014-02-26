@@ -1,5 +1,5 @@
 # [Template](http://template-extension.org)  
-# (c) 2013 Alasdair Mercer  
+# (c) 2014 Alasdair Mercer  
 # Freely distributable under the MIT license:  
 # <http://template-extension.org/license>
 
@@ -172,27 +172,15 @@ loadLoggerSaveEvents = ->
 loadNotifications = ->
   log.trace()
 
-  {duration, enabled} = store.get 'notifications'
+  {enabled} = store.get 'notifications'
 
   $('#notifications').prop 'checked', enabled
-  $('#notificationDuration').val if duration > 0 then duration * .001 else 0
 
   do loadNotificationSaveEvents
 
 # Bind the event handlers required for persisting notification changes.
 loadNotificationSaveEvents = ->
   log.trace()
-
-  $('#notificationDuration').on 'input', ->
-    ms = $(this).val()
-    ms = if ms? then parseInt(ms, 10) * 1000 else 0
-
-    log.debug "Changing notification duration to #{ms} milliseconds"
-
-    store.modify 'notifications', (notifications) ->
-      notifications.duration = ms
-
-      analytics.track 'Notifications', 'Changed', 'Duration', ms
 
   $('#notifications').on 'change', ->
     enabled = $(this).is ':checked'
@@ -262,6 +250,8 @@ loadSaveEvents = ->
 
     value
   , (jel, key, value) ->
+    ext.updateToolbar() if key is 'enabled'
+
     analytics.track 'Keyboard Shortcuts', 'Changed', utils.capitalize(key), Number value
 
 # Update the templates section of the options page with the current settings.
@@ -301,7 +291,8 @@ loadTemplate = (template, modifiers) ->
 
   # Add a column to indicate the keyboard shortcut, if specified.
   row.append $ '<td/>',
-    html: if template.shortcut then "#{modifiers}#{template.shortcut}" else '&nbsp;'
+    class: 'shortcut'
+    html:  if template.shortcut then "#{modifiers}#{template.shortcut}" else '&nbsp;'
 
   # Add a column to clearly indicate whether the template is enabled.
   row.append $('<td/>', alignCenter).append $ '<i/>',

@@ -1,49 +1,494 @@
-<!DOCTYPE html>  <html> <head>   <title>utils.coffee</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="analytics.html">                 analytics.coffee               </a>                                           <a class="source" href="background.html">                 background.coffee               </a>                                           <a class="source" href="content.html">                 content.coffee               </a>                                           <a class="source" href="i18n.html">                 i18n.coffee               </a>                                           <a class="source" href="install.html">                 install.coffee               </a>                                           <a class="source" href="log.html">                 log.coffee               </a>                                           <a class="source" href="notification.html">                 notification.coffee               </a>                                           <a class="source" href="options.html">                 options.coffee               </a>                                           <a class="source" href="popup.html">                 popup.coffee               </a>                                           <a class="source" href="store.html">                 store.coffee               </a>                                           <a class="source" href="utils.html">                 utils.coffee               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               utils.coffee             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>               <p><a href="http://template-extension.org">Template</a> <br />
-(c) 2013 Alasdair Mercer <br />
-Freely distributable under the MIT license: <br />
-<a href="http://template-extension.org/license">http://template-extension.org/license</a></p>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <h2>Private classes</h2>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p><code>Class</code> makes for more readable logs etc. as it overrides <code>toString</code> to output the name of the
-implementing class.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="k">class</span> <span class="nx">Class</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Override the default <code>toString</code> implementation to provide a cleaner output.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">toString: </span><span class="o">-&gt;</span>
-    <span class="nx">@constructor</span><span class="p">.</span><span class="nx">name</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <h2>Private variables</h2>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Mapping of all timers currently being managed.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">timings = </span><span class="p">{}</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <h2>Utilities setup</h2>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">utils = </span><span class="nb">window</span><span class="p">.</span><span class="nv">utils = </span><span class="k">new</span> <span class="k">class</span> <span class="nx">Utils</span> <span class="k">extends</span> <span class="nx">Class</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <h2>Public functions</h2>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Create a safe wrapper for the callback specified function.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">callback: </span><span class="nf">(fn) -&gt;</span>
-    <span class="nf">(args...) -&gt;</span>
-      <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">isFunction</span> <span class="nx">fn</span>
-        <span class="nx">fn</span> <span class="nx">args</span><span class="p">...</span>
-        <span class="kc">true</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Transform the given string into title case.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">capitalize: </span><span class="nf">(str) -&gt;</span>
-    <span class="k">return</span> <span class="nx">str</span> <span class="nx">unless</span> <span class="nx">str</span>
+<!DOCTYPE html>
 
-    <span class="nx">str</span><span class="p">.</span><span class="nx">replace</span> <span class="sr">/\w+/g</span><span class="p">,</span> <span class="nf">(word) -&gt;</span>
-      <span class="nx">word</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">toUpperCase</span><span class="p">()</span> <span class="o">+</span> <span class="nx">word</span><span class="p">[</span><span class="mi">1</span><span class="p">..].</span><span class="nx">toLowerCase</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Generate a unique key based on the current time and using a randomly generated hexadecimal
-number of the specified length.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">keyGen: </span><span class="nf">(separator = &#39;.&#39;, length = 5, prefix = &#39;&#39;, upperCase = yes) -&gt;</span>
-    <span class="nv">parts = </span><span class="p">[]</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>Populate the segment(s) to attempt uniquity.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">parts</span><span class="p">.</span><span class="nx">push</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span>
-    <span class="k">if</span> <span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span>
-      <span class="nv">min = </span><span class="nx">@repeat</span> <span class="s">&#39;1&#39;</span><span class="p">,</span> <span class="s">&#39;0&#39;</span><span class="p">,</span> <span class="k">if</span> <span class="nx">length</span> <span class="o">is</span> <span class="mi">1</span> <span class="k">then</span> <span class="mi">1</span> <span class="k">else</span> <span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span>
-      <span class="nv">max = </span><span class="nx">@repeat</span> <span class="s">&#39;f&#39;</span><span class="p">,</span> <span class="s">&#39;f&#39;</span><span class="p">,</span> <span class="k">if</span> <span class="nx">length</span> <span class="o">is</span> <span class="mi">1</span> <span class="k">then</span> <span class="mi">1</span> <span class="k">else</span> <span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span>
-      <span class="nv">min = </span><span class="nb">parseInt</span> <span class="nx">min</span><span class="p">,</span> <span class="mi">16</span>
-      <span class="nv">max = </span><span class="nb">parseInt</span> <span class="nx">max</span><span class="p">,</span> <span class="mi">16</span>
-      <span class="nx">parts</span><span class="p">.</span><span class="nx">push</span> <span class="nx">_</span><span class="p">.</span><span class="nx">random</span> <span class="nx">min</span><span class="p">,</span> <span class="nx">max</span></pre></div>             </td>           </tr>                               <tr id="section-13">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-13">&#182;</a>               </div>               <p>Convert segments to their hexadecimal (base 16) forms.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">parts</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">=</span> <span class="nx">part</span><span class="p">.</span><span class="nx">toString</span> <span class="mi">16</span> <span class="k">for</span> <span class="nx">part</span><span class="p">,</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">parts</span></pre></div>             </td>           </tr>                               <tr id="section-14">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-14">&#182;</a>               </div>               <p>Join all segments using <code>separator</code> and append to the <code>prefix</code> before potentially
-transforming it to upper case.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nv">key = </span><span class="nx">prefix</span> <span class="o">+</span> <span class="nx">parts</span><span class="p">.</span><span class="nx">join</span> <span class="nx">separator</span>
+<html>
+<head>
+  <title>utils.coffee</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="analytics.html">
+                analytics.coffee
+              </a>
+            
+              
+              <a class="source" href="background.html">
+                background.coffee
+              </a>
+            
+              
+              <a class="source" href="content.html">
+                content.coffee
+              </a>
+            
+              
+              <a class="source" href="i18n.html">
+                i18n.coffee
+              </a>
+            
+              
+              <a class="source" href="install.html">
+                install.coffee
+              </a>
+            
+              
+              <a class="source" href="log.html">
+                log.coffee
+              </a>
+            
+              
+              <a class="source" href="options.html">
+                options.coffee
+              </a>
+            
+              
+              <a class="source" href="popup.html">
+                popup.coffee
+              </a>
+            
+              
+              <a class="source" href="store.html">
+                store.coffee
+              </a>
+            
+              
+              <a class="source" href="utils.html">
+                utils.coffee
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>utils.coffee</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p><a href="http://template-extension.org">Template</a><br>(c) 2014 Alasdair Mercer<br>Freely distributable under the MIT license:<br><a href="http://template-extension.org/license">http://template-extension.org/license</a></p>
 
-    <span class="k">if</span> <span class="nx">upperCase</span> <span class="k">then</span> <span class="nx">key</span><span class="p">.</span><span class="nx">toUpperCase</span><span class="p">()</span> <span class="k">else</span> <span class="nx">key</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-15">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-15">&#182;</a>               </div>               <p>Bind <code>handler</code> to event indicating that the DOM is ready.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">ready: </span><span class="nf">(context, handler) -&gt;</span>
-    <span class="nx">unless</span> <span class="nx">handler</span><span class="o">?</span>
-      <span class="nv">handler = </span><span class="nx">context</span>
-      <span class="nv">context = </span><span class="nb">window</span>
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h2 id="private-classes">Private classes</h2>
 
-    <span class="k">if</span> <span class="nx">context</span><span class="p">.</span><span class="nx">jQuery</span><span class="o">?</span> <span class="k">then</span> <span class="nx">context</span><span class="p">.</span><span class="nx">jQuery</span> <span class="nx">handler</span>
-    <span class="k">else</span> <span class="nx">context</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span> <span class="s">&#39;DOMContentLoaded&#39;</span><span class="p">,</span> <span class="nx">handler</span></pre></div>             </td>           </tr>                               <tr id="section-16">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-16">&#182;</a>               </div>               <p>Repeat the string provided the specified number of times.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">repeat: </span><span class="nf">(str = &#39;&#39;, repeatStr = str, count = 1) -&gt;</span>
-    <span class="k">if</span> <span class="nx">count</span> <span class="o">isnt</span> <span class="mi">0</span></pre></div>             </td>           </tr>                               <tr id="section-17">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-17">&#182;</a>               </div>               <p>Repeat to the right if <code>count</code> is positive.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">str</span> <span class="o">+=</span> <span class="nx">repeatStr</span> <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="nx">count</span><span class="p">]</span> <span class="k">if</span> <span class="nx">count</span> <span class="o">&gt;</span> <span class="mi">0</span></pre></div>             </td>           </tr>                               <tr id="section-18">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-18">&#182;</a>               </div>               <p>Repeat to the left if <code>count</code> is negative.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nv">str  = </span><span class="nx">repeatStr</span> <span class="o">+</span> <span class="nx">str</span> <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">..</span><span class="nx">count</span><span class="o">*-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="nx">count</span> <span class="o">&lt;</span> <span class="mi">0</span>
-    <span class="nx">str</span></pre></div>             </td>           </tr>                               <tr id="section-19">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-19">&#182;</a>               </div>               <p>Start a new timer for the specified <code>key</code>. <br />
-If a timer already exists for <code>key</code>, return the time difference in milliseconds.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">time: </span><span class="nf">(key) -&gt;</span>
-    <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">has</span> <span class="nx">timings</span><span class="p">,</span> <span class="nx">key</span> <span class="k">then</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">-</span> <span class="nx">timings</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
-    <span class="k">else</span> <span class="nx">timings</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-20">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-20">&#182;</a>               </div>               <p>End the timer for the specified <code>key</code> and return the time difference in milliseconds and remove
-the timer. <br />
-If no timer exists for <code>key</code>, simply return `0'.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">timeEnd: </span><span class="nf">(key) -&gt;</span>
-    <span class="k">if</span> <span class="nx">_</span><span class="p">.</span><span class="nx">has</span> <span class="nx">timings</span><span class="p">,</span> <span class="nx">key</span>
-      <span class="nv">start = </span><span class="nx">timings</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
-      <span class="k">delete</span> <span class="nx">timings</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
-      <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">-</span> <span class="nx">start</span>
-    <span class="k">else</span>
-      <span class="mi">0</span></pre></div>             </td>           </tr>                               <tr id="section-21">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-21">&#182;</a>               </div>               <p>Convenient shorthand for safely trimming a string to lower case.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">trimToLower: </span><span class="nf">(str = &#39;&#39;) -&gt;</span>
-    <span class="nx">str</span><span class="p">.</span><span class="nx">trim</span><span class="p">().</span><span class="nx">toLowerCase</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-22">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-22">&#182;</a>               </div>               <p>Convenient shorthand for safely trimming a string to upper case.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">trimToUpper: </span><span class="nf">(str = &#39;&#39;) -&gt;</span>
-    <span class="nx">str</span><span class="p">.</span><span class="nx">trim</span><span class="p">().</span><span class="nx">toUpperCase</span><span class="p">()</span></pre></div>             </td>           </tr>                               <tr id="section-23">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-23">&#182;</a>               </div>               <p>Convenient shorthand for <code>chrome.extension.getURL</code>.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nv">url: </span><span class="o">-&gt;</span>
-    <span class="nx">chrome</span><span class="p">.</span><span class="nx">extension</span><span class="p">.</span><span class="nx">getURL</span> <span class="nx">arguments</span><span class="p">...</span></pre></div>             </td>           </tr>                               <tr id="section-24">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-24">&#182;</a>               </div>               <h2>Public classes</h2>             </td>             <td class="code">               <div class="highlight"><pre></pre></div>             </td>           </tr>                               <tr id="section-25">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-25">&#182;</a>               </div>               <p>Objects within the extension should extend this class wherever possible.</p>             </td>             <td class="code">               <div class="highlight"><pre><span class="nv">utils.Class = </span><span class="nx">Class</span>
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p><code>Class</code> makes for more readable logs etc. as it overrides <code>toString</code> to output the name of the
+implementing class.</p>
 
-</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Class</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Override the default <code>toString</code> implementation to provide a cleaner output.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">toString</span>:<span class="hljs-function"> -&gt;</span>
+    <span class="hljs-property">@constructor</span>.name</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <h2 id="private-variables">Private variables</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Mapping of all timers currently being managed.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>timings = {}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h2 id="utilities-setup">Utilities setup</h2>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+utils = <span class="hljs-built_in">window</span>.utils = <span class="hljs-keyword">new</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Utils</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Class</span></span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h2 id="public-functions">Public functions</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Create a safe wrapper for the callback specified function.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">callback</span>: <span class="hljs-function"><span class="hljs-params">(fn)</span> -&gt;</span>
+    <span class="hljs-function"><span class="hljs-params">(args...)</span> -&gt;</span>
+      <span class="hljs-keyword">if</span> _.isFunction fn
+        fn args...
+        <span class="hljs-literal">true</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Transform the given string into title case.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">capitalize</span>: <span class="hljs-function"><span class="hljs-params">(str)</span> -&gt;</span>
+    <span class="hljs-keyword">return</span> str <span class="hljs-keyword">unless</span> str
+
+    str.replace <span class="hljs-regexp">/\w+/g</span>, <span class="hljs-function"><span class="hljs-params">(word)</span> -&gt;</span>
+      word[<span class="hljs-number">0</span>].toUpperCase() + word[<span class="hljs-number">1.</span>.].toLowerCase()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Generate a unique key based on the current time and using a randomly generated hexadecimal
+number of the specified length.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">keyGen</span>: <span class="hljs-function"><span class="hljs-params">(separator = <span class="hljs-string">'.'</span>, length = <span class="hljs-number">5</span>, prefix = <span class="hljs-string">''</span>, upperCase = <span class="hljs-literal">yes</span>)</span> -&gt;</span>
+    parts = []</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p>Populate the segment(s) to attempt uniquity.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    parts.push <span class="hljs-keyword">new</span> Date().getTime()
+    <span class="hljs-keyword">if</span> length &gt; <span class="hljs-number">0</span>
+      min = <span class="hljs-property">@repeat</span> <span class="hljs-string">'1'</span>, <span class="hljs-string">'0'</span>, <span class="hljs-keyword">if</span> length <span class="hljs-keyword">is</span> <span class="hljs-number">1</span> <span class="hljs-keyword">then</span> <span class="hljs-number">1</span> <span class="hljs-keyword">else</span> length - <span class="hljs-number">1</span>
+      max = <span class="hljs-property">@repeat</span> <span class="hljs-string">'f'</span>, <span class="hljs-string">'f'</span>, <span class="hljs-keyword">if</span> length <span class="hljs-keyword">is</span> <span class="hljs-number">1</span> <span class="hljs-keyword">then</span> <span class="hljs-number">1</span> <span class="hljs-keyword">else</span> length - <span class="hljs-number">1</span>
+      min = parseInt min, <span class="hljs-number">16</span>
+      max = parseInt max, <span class="hljs-number">16</span>
+      parts.push _.random min, max</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Convert segments to their hexadecimal (base 16) forms.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    parts[i] = part.toString <span class="hljs-number">16</span> <span class="hljs-keyword">for</span> part, i <span class="hljs-keyword">in</span> parts</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Join all segments using <code>separator</code> and append to the <code>prefix</code> before potentially
+transforming it to upper case.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    key = prefix + parts.join separator
+
+    <span class="hljs-keyword">if</span> upperCase <span class="hljs-keyword">then</span> key.toUpperCase() <span class="hljs-keyword">else</span> key.toLowerCase()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Bind <code>handler</code> to event indicating that the DOM is ready.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">ready</span>: <span class="hljs-function"><span class="hljs-params">(context, handler)</span> -&gt;</span>
+    <span class="hljs-keyword">unless</span> handler?
+      handler = context
+      context = <span class="hljs-built_in">window</span>
+
+    <span class="hljs-keyword">if</span> context.jQuery? <span class="hljs-keyword">then</span> context.jQuery handler
+    <span class="hljs-keyword">else</span> context.<span class="hljs-built_in">document</span>.addEventListener <span class="hljs-string">'DOMContentLoaded'</span>, handler</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>Repeat the string provided the specified number of times.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">repeat</span>: <span class="hljs-function"><span class="hljs-params">(str = <span class="hljs-string">''</span>, repeatStr = str, count = <span class="hljs-number">1</span>)</span> -&gt;</span>
+    <span class="hljs-keyword">if</span> count <span class="hljs-keyword">isnt</span> <span class="hljs-number">0</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Repeat to the right if <code>count</code> is positive.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      str += repeatStr <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> [<span class="hljs-number">1.</span>.count] <span class="hljs-keyword">if</span> count &gt; <span class="hljs-number">0</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Repeat to the left if <code>count</code> is negative.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      str  = repeatStr + str <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> [<span class="hljs-number">1.</span>.count*-<span class="hljs-number">1</span>] <span class="hljs-keyword">if</span> count &lt; <span class="hljs-number">0</span>
+    str</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>Start a new timer for the specified <code>key</code>.<br>If a timer already exists for <code>key</code>, return the time difference in milliseconds.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">time</span>: <span class="hljs-function"><span class="hljs-params">(key)</span> -&gt;</span>
+    <span class="hljs-keyword">if</span> _.has timings, key <span class="hljs-keyword">then</span> <span class="hljs-keyword">new</span> Date().getTime() - timings[key]
+    <span class="hljs-keyword">else</span> timings[key] = <span class="hljs-keyword">new</span> Date().getTime()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>End the timer for the specified <code>key</code> and return the time difference in milliseconds and remove
+the timer.<br>If no timer exists for <code>key</code>, simply return `0’.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">timeEnd</span>: <span class="hljs-function"><span class="hljs-params">(key)</span> -&gt;</span>
+    <span class="hljs-keyword">if</span> _.has timings, key
+      start = timings[key]
+      <span class="hljs-keyword">delete</span> timings[key]
+      <span class="hljs-keyword">new</span> Date().getTime() - start
+    <span class="hljs-keyword">else</span>
+      <span class="hljs-number">0</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Convenient shorthand for safely trimming a string to lower case.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">trimToLower</span>: <span class="hljs-function"><span class="hljs-params">(str = <span class="hljs-string">''</span>)</span> -&gt;</span>
+    str.trim().toLowerCase()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>Convenient shorthand for safely trimming a string to upper case.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">trimToUpper</span>: <span class="hljs-function"><span class="hljs-params">(str = <span class="hljs-string">''</span>)</span> -&gt;</span>
+    str.trim().toUpperCase()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>Convenient shorthand for <code>chrome.extension.getURL</code>.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">url</span>:<span class="hljs-function"> -&gt;</span>
+    chrome.extension.getURL arguments...</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <h2 id="public-classes">Public classes</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>Objects within the extension should extend this class wherever possible.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>utils.Class = Class</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

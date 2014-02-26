@@ -1,3 +1,12 @@
+## Version 1.2.7, 2014.02.26
+
+* [#201](https://github.com/emplate-extension/template-chrome/issues/201): Restyle keyboard shortcuts in popup and options page
+* [#204](https://github.com/emplate-extension/template-chrome/issues/204): Use rich desktop notifications
+* [#206](https://github.com/emplate-extension/template-chrome/issues/206): Update a [YOURLS][] Wiki link
+* [#208](https://github.com/emplate-extension/template-chrome/issues/208): Fix overlapping UI bug in popup
+* [#209](https://github.com/emplate-extension/template-chrome/issues/209): Fix bug preventing OAuth flow completing
+* Update build dependencies
+
 ## Version 1.2.6, 2013.05.20
 
 * [#170](https://github.com/emplate-extension/template-chrome/issues/170): Add tooltips to explain button states
