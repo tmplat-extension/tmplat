@@ -32,6 +32,9 @@
           , "run_at": "document_start"
         }
     ]
+  ,  "web_accessible_resources": [
+        "pages/oauth2.html"
+    ]
   , "content_security_policy": "script-src 'self' 'unsafe-eval' https://ssl.google-analytics.com https://*.uservoice.com; object-src 'self'"
   , "default_locale": "en"
   , "description": "__MSG_description__"
