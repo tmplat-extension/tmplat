@@ -172,27 +172,15 @@ loadLoggerSaveEvents = ->
 loadNotifications = ->
   log.trace()
 
-  {duration, enabled} = store.get 'notifications'
+  {enabled} = store.get 'notifications'
 
   $('#notifications').prop 'checked', enabled
-  $('#notificationDuration').val if duration > 0 then duration * .001 else 0
 
   do loadNotificationSaveEvents
 
 # Bind the event handlers required for persisting notification changes.
 loadNotificationSaveEvents = ->
   log.trace()
-
-  $('#notificationDuration').on 'input', ->
-    ms = $(this).val()
-    ms = if ms? then parseInt(ms, 10) * 1000 else 0
-
-    log.debug "Changing notification duration to #{ms} milliseconds"
-
-    store.modify 'notifications', (notifications) ->
-      notifications.duration = ms
-
-      analytics.track 'Notifications', 'Changed', 'Duration', ms
 
   $('#notifications').on 'change', ->
     enabled = $(this).is ':checked'

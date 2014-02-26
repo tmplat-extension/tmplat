@@ -2491,10 +2491,6 @@
     "message": "Whether or not the Template output is automatically pasted into the field where the context (right-click) menu was activated",
     "description": "Description of the menuPaste variable on the Guide tab of the Options page under the Options section."
   },
-  "opt_guide_options_notification_duration_text": {
-    "message": "The number of seconds desktop notifications are displayed for",
-    "description": "Description of the notificationDuration variable on the Guide tab of the Options page under the Options section."
-  },
   "opt_guide_options_notifications_text": {
     "message": "Whether or not the option to show desktop notifications is enabled",
     "description": "Description of the notifications variable on the Guide tab of the Options page under the Options section."
@@ -3550,28 +3546,6 @@
   "opt_notification_text": {
     "message": "Show desktop notifications to display the outcome of using a template",
     "description": "Text for the Notifications field on the General tab of the Options page under the Desktop Notifications section."
-  },
-  "opt_notification_duration_add_on_text": {
-    "message": "seconds",
-    "description": "Text appended to the Notification Duration field on the General tab of the Options page under the Desktop Notifications section."
-  },
-  "opt_notification_duration_label": {
-    "message": "Notification Duration",
-    "description": "Label for the Notification Duration field on the General tab of the Options page under the Desktop Notifications section."
-  },
-  "opt_notification_duration_sub_text": {
-    "message": "Enter $ZERO$ to stop automatic hiding",
-    "description": "Help text for the Notification Duration field on the General tab of the Options page under the Desktop Notifications section.",
-    "placeholders": {
-      "zero": {
-        "content": "<code>0</code>",
-        "example": "0"
-      }
-    }
-  },
-  "opt_notification_duration_text": {
-    "message": "Automatically hide desktop notifications after this time",
-    "description": "Text for the Notification Duration field on the General tab of the Options page under the Desktop Notifications section."
   },
   "opt_protected_sub_text": {
     "message": "This is not available on internal Chrome pages or the $O_LINK_WEBSTORE$Chrome Web Store$C_LINK$",

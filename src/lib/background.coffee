@@ -600,9 +600,8 @@ onMessage = (message, sender, sendResponse) ->
       # Notify the user that an error occurred while processing the copy request.
       log.warn err.message
 
-      notification.title       = i18n.get 'result_bad_title'
-      notification.titleStyle  = 'color: #B94A48'
-      notification.description = err.message ? i18n.get 'result_bad_description', template.title
+      notification.message = err.message ? i18n.get 'result_bad_description', template.title
+      notification.title   = i18n.get 'result_bad_title'
 
       do showNotification
     else
@@ -611,9 +610,8 @@ onMessage = (message, sender, sendResponse) ->
       do updateStatistics
 
       # Notify the user that the copy request was successful once it has been completed.
-      notification.title       = i18n.get 'result_good_title'
-      notification.titleStyle  = 'color: #468847'
-      notification.description = i18n.get 'result_good_description', template.title
+      notification.message = i18n.get 'result_good_description', template.title
+      notification.title   = i18n.get 'result_good_title'
 
       ext.copy output
 
@@ -689,7 +687,12 @@ showNotification = ->
   # Ensure that `ext` is *reset* and that a notification is only displayed if the user has enabled
   # the corresponding option (enabled by default).
   if store.get 'notifications.enabled'
-    webkitNotifications.createHTMLNotification(utils.url 'pages/notification.html').show()
+    analytics.track 'Frames', 'Displayed', 'Notification'
+
+    chrome.notifications.create '', ext.notification, (id) ->
+      log.debug "Opened desktop notification: #{id}"
+
+      ext.reset()
   else
     ext.reset()
 
@@ -1067,7 +1070,8 @@ buildStandardData = (tab, getCallback) ->
     menuoptions:           menu.options
     menupaste:             menu.paste
     notifications:         notifications.enabled
-    notificationduration:  notifications.duration * .001
+    # Deprecated since 1.2.7
+    notificationduration:  0
     offline:               not navigator.onLine
     # Deprecated since 0.1.0.2, use `originalurl` instead.
     originalsource:        -> @originalurl
@@ -1415,6 +1419,10 @@ init_update = ->
       links.target = anchor.target ? off
       links.title  = anchor.title  ? off
     store.remove 'anchor'
+
+  updater.update '1.2.7', ->
+    store.modify 'notifications', (notifications) ->
+      delete notifications.duration
 
 # Initialize the settings related to statistical information.
 initStatistics = ->
@@ -1819,13 +1827,10 @@ ext = window.ext = new class Extension extends utils.Class
   # Information specifying what should be displaying in the notification.  
   # This should be reset after every copy request.
   notification:
-    description:      ''
-    descriptionStyle: ''
-    html:             ''
-    icon:             utils.url '../images/icon_48.png'
-    iconStyle:        ''
-    title:            ''
-    titleStyle:       ''
+    iconUrl: utils.url '../images/icon_64.png'
+    message: ''
+    title:   ''
+    type:    'basic'
 
   # Reference to supported URL shortener services.
   shorteners: SHORTENERS
@@ -1923,8 +1928,7 @@ ext = window.ext = new class Extension extends utils.Class
         menu.paste   ?= no
 
       store.modify 'notifications', (notifications) ->
-        notifications.duration ?= 3000
-        notifications.enabled  ?= yes
+        notifications.enabled ?= yes
 
       store.modify 'shortcuts', (shortcuts) ->
         shortcuts.enabled ?= yes
@@ -1984,13 +1988,10 @@ ext = window.ext = new class Extension extends utils.Class
     log.trace()
 
     @notification =
-      description:      ''
-      descriptionStyle: ''
-      html:             ''
-      icon:             utils.url '../images/icon_48.png'
-      iconStyle:        ''
-      title:            ''
-      titleStyle:       ''
+      iconUrl: utils.url '../images/icon_64.png'
+      message: ''
+      title:   ''
+      type:    'basic'
 
   # Update the context menu items to reflect the currently enabled templates.  
   # If the context menu option has been disabled by the user, just remove all of the existing menu
