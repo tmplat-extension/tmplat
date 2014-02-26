@@ -250,6 +250,8 @@ loadSaveEvents = ->
 
     value
   , (jel, key, value) ->
+    ext.updateToolbar() if key is 'enabled'
+
     analytics.track 'Keyboard Shortcuts', 'Changed', utils.capitalize(key), Number value
 
 # Update the templates section of the options page with the current settings.
@@ -289,7 +291,8 @@ loadTemplate = (template, modifiers) ->
 
   # Add a column to indicate the keyboard shortcut, if specified.
   row.append $ '<td/>',
-    html: if template.shortcut then "#{modifiers}#{template.shortcut}" else '&nbsp;'
+    class: 'shortcut'
+    html:  if template.shortcut then "#{modifiers}#{template.shortcut}" else '&nbsp;'
 
   # Add a column to clearly indicate whether the template is enabled.
   row.append $('<td/>', alignCenter).append $ '<i/>',
