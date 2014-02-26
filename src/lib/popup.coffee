@@ -46,7 +46,7 @@ popup = window.popup = new class Popup extends utils.Class
     log.info 'Initializing the popup'
     analytics.track 'Frames', 'Displayed', 'Popup'
 
-    # Insert the prepared HTML in to the popup's body
+    # Insert the prepared HTML in to the popup's body.
     document.getElementById('templates').innerHTML = ext.templatesHtml
 
     # Find the required elements.
