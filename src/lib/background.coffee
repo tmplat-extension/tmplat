@@ -1304,6 +1304,7 @@ buildPopup = ->
     anchor = $ '<a/>',
       class:       'options'
       'data-type': 'options'
+
     anchor.append $ '<i/>', class: Icon.get('cog').style
     anchor.append " #{i18n.get 'options'}"
 
@@ -1327,7 +1328,7 @@ buildTemplate = (template) ->
   # Ensure keyboard shortcuts are displayed correctly, where appropriate.
   if template.shortcut and store.get 'shortcuts.enabled'
     anchor.append $ '<span/>',
-      class: 'pull-right',
+      class: 'pull-right muted shortcut',
       html:  "#{ext.modifiers()}#{template.shortcut}"
 
   anchor.append $ '<i/>', class: Icon.get(template.image, yes).style

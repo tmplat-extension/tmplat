@@ -5,7 +5,8 @@ body {padding: 0;}
 #templates .divider {*width: 100%; height: 1px; margin: 8px 1px; *margin: -5px 0 5px; overflow: hidden; background-color: #E5E5E5; border-bottom: 1px solid #FFF;}
 #templates a {cursor: pointer; display: block; padding: 3px 15px; clear: both; font-weight: normal; line-height: 18px; color: #333; white-space: nowrap;}
 #templates .empty {font-style: italic; padding: 3px 15px;}
-#templates li > a .pull-right {color: #999;}
+#templates li > a .shortcut {font-family: Consolas, "Liberation Mono", Courier, monospace; font-size: 12px;}
 #templates li > a:hover, #templates .active > a, #templates .active > a:hover {color: #FFF; text-decoration: none; background-color: #08C;}
-#templates li > a:hover .pull-right {color: #FFF;}
+#templates li > a:hover .shortcut, #templates .active > a .shortcut, #templates .active > a:hover .shortcut {color: #FFF;}
 #templates li:hover [class^="icon-"], #templates li:hover [class*=" icon-"], #templates .active [class^="icon-"], #templates .active [class*=" icon-"] {background-image: url("../images/glyphicons-halflings-white.png");}
+#templates li > a .shortcut {font-family: Consolas, "Liberation Mono", Courier, monospace; font-size: 12px;}

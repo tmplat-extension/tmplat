@@ -12,6 +12,14 @@
 # Private functions
 # -----------------
 
+# Calculate the *widest* of the specified `elements`.
+getMaxWidth = (elements) ->
+  log.trace()
+
+  width = 0
+  width = element.scrollWidth for element in elements when element.scrollWidth > width
+  width
+
 # Send a message to the background page using the information provided.
 sendMessage = ->
   log.trace()
@@ -38,17 +46,27 @@ popup = window.popup = new class Popup extends utils.Class
     log.info 'Initializing the popup'
     analytics.track 'Frames', 'Displayed', 'Popup'
 
-    # Insert the prepared HTML in to the popup's body and bind click events.
+    # Insert the prepared HTML in to the popup's body
     document.getElementById('templates').innerHTML = ext.templatesHtml
-    items = document.querySelectorAll '#templates li > a'
-    item.addEventListener 'click', sendMessage for item in items
 
-    # Calculate the widest text used by the elements in the popup and assign it to all of the
-    # others along with the loading bar.
-    for item in items when not width? or item.scrollWidth > width
-      width = item.scrollWidth
-    item.style.width = "#{width}px" for item in items
-    log.debug "Widest textual item in popup is #{width}px"
+    # Find the required elements.
+    items     = document.querySelectorAll '#templates li > a'
+    shortcuts = document.querySelectorAll '#templates li > a .shortcut'
+
+    # Determine the maximum width for items.
+    maxItemWidth     = getMaxWidth items
+    maxShortcutWidth = getMaxWidth shortcuts
+    maxWidth         = maxItemWidth + maxShortcutWidth
+
+    # Bind click event and apply maximum width to all items.
+    for item in items
+      item.addEventListener 'click', sendMessage
+
+      item.style.width = "#{maxWidth}px"
+
+    log.debug "Widest textual item in popup is #{maxWidth}px"
+
+    # Ensure that the loading bar matches the preferred width.
     width = document.querySelector('#templates li').scrollWidth
     document.getElementById('loading').style.width = "#{width + 2}px"
 
