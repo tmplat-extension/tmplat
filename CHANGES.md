@@ -1,3 +1,7 @@
+## Version 1.2.8, 2014.05.11
+
+* [#217](https://github.com/emplate-extension/template-chrome/issues/217): Update [bit.ly][] configuration due to recent security breach
+
 ## Version 1.2.7, 2014.02.26
 
 * [#201](https://github.com/emplate-extension/template-chrome/issues/201): Restyle keyboard shortcuts in popup and options page
