@@ -14,9 +14,9 @@
     }
   , "services": {
         "bitly": {
-            "api_key": "R_91eabef2f32d88c07b197c9d69eed516"
+            "api_key": "R_3d329d57204e4d01a0b7634a021d7006"
           , "client_id": "deb9b5c6c0c5928674a0601691e404b1de021f0f"
-          , "client_secret": "d864c9a5ba89e1fc7af5d1c500a63c9232dca331"
+          , "client_secret": "9f0352d25dabc8bf4e087fccda40d6b2971e7ae7"
           , "login": "templateextension"
           , "url": "https://api-ssl.bitly.com/v3/shorten"
         }
