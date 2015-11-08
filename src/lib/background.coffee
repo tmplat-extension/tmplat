@@ -650,7 +650,9 @@ onMessageExternal = (message, sender, sendResponse) ->
 # Avoid repetitive calls to render the text contents of a Mustache section by passed `callback` the
 # pre-rendered text and safely handling bad returns.
 rendered = (callback) ->
-  -> (text, render) -> callback(render text) ? ''
+  -> (text, render) ->
+    result = if arguments.length then callback(render text) else do callback
+    result ? ''
 
 # Attempt to select a tab in the current window displaying a page whose location begins with
 # `url`.  
@@ -1029,14 +1031,14 @@ buildStandardData = (tab, getCallback) ->
     datetime:              rendered (text) ->
       new Date().format if text then text
     decode:                rendered (text) ->
-      decodeURIComponent text
+      if text then decodeURIComponent text
     depth:                 screen.colorDepth
     # Deprecated since 1.0.0, use `linkstarget` instead.
     doanchortarget:        -> @linkstarget
     # Deprecated since 1.0.0, use `linkstitle` instead.
     doanchortitle:         -> @linkstitle
     encode:                rendered (text) ->
-      encodeURIComponent text
+      if text then encodeURIComponent text
     # Deprecated since 0.1.0.2, use `encode` instead.
     encoded:               ->
       encodeURIComponent @url
@@ -1044,10 +1046,10 @@ buildStandardData = (tab, getCallback) ->
       _.escape text
     favicon:               ctab.favIconUrl
     fparam:                rendered (text) ->
-      url.fparam text
+      if text then url.fparam text
     fparams:               nullIfEmpty url.fparam()
     fsegment:              rendered (text) ->
-      url.fsegment parseInt text, 10
+      if text then url.fsegment parseInt text, 10
     fsegments:             url.fsegment()
     googl:                 googl.enabled
     googlaccount:          ->
@@ -1056,13 +1058,13 @@ buildStandardData = (tab, getCallback) ->
     googloauth:            -> do @googlaccount
     java:                  navigator.javaEnabled()
     length:                rendered (text) ->
-      text.length
+      text?.length
     linkmarkdown:          ->
       toMarkdown @linkhtml
     linkstarget:           links.target
     linkstitle:            links.title
     lowercase:             rendered (text) ->
-      text.toLowerCase()
+      text?.toLowerCase()
     markdown:              ->
       toMarkdown getFromPage @html, 'html'
     markdowninline:        markdown.inline
@@ -1079,14 +1081,14 @@ buildStandardData = (tab, getCallback) ->
     originalurl:           tab.url
     os:                    operatingSystem
     param:                 rendered (text) ->
-      url.param text
+      if text then url.param text
     params:                nullIfEmpty url.param()
     plugins:               _.chain(navigator.plugins).pluck('name').uniq().value()
     popular:               $.extend yes, {}, _.findWhere ext.templates, key: stats.popular
     screenheight:          screen.height
     screenwidth:           screen.width
     segment:               rendered (text) ->
-      url.segment parseInt text, 10
+      if text then url.segment parseInt text, 10
     segments:              url.segment()
     select:                ->
       getCallback 'select'
@@ -1111,7 +1113,7 @@ buildStandardData = (tab, getCallback) ->
     text:                  ->
       getFromPage @html, 'text'
     tidy:                  rendered (text) ->
-      text.replace(/([ \t]+)/g, ' ').trim()
+      if text then text.replace(/([ \t]+)/g, ' ').trim()
     title:                 ctab.title or url.attr 'source'
     toolbarclose:          toolbar.close
     # Deprecated since 1.0.0, use the inverse of `toolbarpopup` instead.
@@ -1126,18 +1128,20 @@ buildStandardData = (tab, getCallback) ->
     # Obsolete since 1.1.0, functionality has been removed.
     toolbarstyle:          no
     trim:                  rendered (text) ->
-      text.trim()
+      text?.trim()
     trimleft:              rendered (text) ->
-      text.trimLeft()
+      text?.trimLeft()
     trimright:             rendered (text) ->
-      text.trimRight()
+      text?.trimRight()
     unescape:              rendered (text) ->
       _.unescape text
     uppercase:             rendered (text) ->
-      text.toUpperCase()
+      text?.toUpperCase()
     url:                   url.attr 'source'
     version:               ext.version
     wordcount:             rendered (text) ->
+      return unless text
+
       # Oddly, this is the optimal method to calculate the word count on WebKit browsers.
       count   = 0
       text    = text.trim()
