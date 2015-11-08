@@ -369,7 +369,7 @@ that are evaluated/executed later.</p>
   <span class="hljs-attribute">title</span>: i18n.get <span class="hljs-string">'shortener_bitly'</span>
   <span class="hljs-attribute">method</span>: <span class="hljs-string">'GET'</span>
 
-  <span class="hljs-attribute">getHeaders</span>:<span class="hljs-function"> -&gt;</span>
+  <span class="hljs-attribute">getHeaders</span>: <span class="hljs-function">-&gt;</span>
     <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/x-www-form-urlencoded'</span>
 
   <span class="hljs-attribute">getParameters</span>: <span class="hljs-function"><span class="hljs-params">(url)</span> -&gt;</span>
@@ -383,23 +383,23 @@ that are evaluated/executed later.</p>
       params.login  = ext.config.services.bitly.login
     params
 
-  <span class="hljs-attribute">getUsage</span>:<span class="hljs-function"> -&gt;</span>
+  <span class="hljs-attribute">getUsage</span>: <span class="hljs-function">-&gt;</span>
     store.get <span class="hljs-string">'bitly.usage'</span>
 
-  <span class="hljs-attribute">input</span>:<span class="hljs-function"> -&gt;</span>
+  <span class="hljs-attribute">input</span>: <span class="hljs-function">-&gt;</span>
     <span class="hljs-literal">null</span>
 
-  <span class="hljs-attribute">isEnabled</span>:<span class="hljs-function"> -&gt;</span>
+  <span class="hljs-attribute">isEnabled</span>: <span class="hljs-function">-&gt;</span>
     store.get <span class="hljs-string">'bitly.enabled'</span>
 
-  <span class="hljs-attribute">oauth</span>:<span class="hljs-function"> -&gt;</span>
+  <span class="hljs-attribute">oauth</span>: <span class="hljs-function">-&gt;</span>
     options = _.pick ext.config.services.bitly, <span class="hljs-string">'client_id'</span>, <span class="hljs-string">'client_secret'</span>
     <span class="hljs-keyword">new</span> OAuth2 <span class="hljs-string">'bitly'</span>, options
 
   <span class="hljs-attribute">output</span>: <span class="hljs-function"><span class="hljs-params">(resp)</span> -&gt;</span>
     JSON.parse(resp).data.url
 
-  <span class="hljs-attribute">url</span>:<span class="hljs-function"> -&gt;</span>
+  <span class="hljs-attribute">url</span>: <span class="hljs-function">-&gt;</span>
     ext.config.services.bitly.url
 ,</pre></div></div>
             
@@ -420,32 +420,32 @@ that are evaluated/executed later.</p>
   <span class="hljs-attribute">title</span>: i18n.get <span class="hljs-string">'shortener_googl'</span>
   <span class="hljs-attribute">method</span>: <span class="hljs-string">'POST'</span>
 
-  <span class="hljs-attribute">getHeaders</span>:<span class="hljs-function"> -&gt;</span>
+  <span class="hljs-attribute">getHeaders</span>: <span class="hljs-function">-&gt;</span>
     headers = <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/json'</span>
     headers.Authorization = <span class="hljs-string">"OAuth <span class="hljs-subst">#{<span class="hljs-property">@oauth</span>.getAccessToken()}</span>"</span> <span class="hljs-keyword">if</span> <span class="hljs-property">@oauth</span>.hasAccessToken()
     headers
 
-  <span class="hljs-attribute">getParameters</span>:<span class="hljs-function"> -&gt;</span>
+  <span class="hljs-attribute">getParameters</span>: <span class="hljs-function">-&gt;</span>
     <span class="hljs-keyword">unless</span> <span class="hljs-property">@oauth</span>.hasAccessToken()
       <span class="hljs-attribute">key</span>: ext.config.services.googl.api_key
 
-  <span class="hljs-attribute">getUsage</span>:<span class="hljs-function"> -&gt;</span>
+  <span class="hljs-attribute">getUsage</span>: <span class="hljs-function">-&gt;</span>
     store.get <span class="hljs-string">'googl.usage'</span>
 
   <span class="hljs-attribute">input</span>: <span class="hljs-function"><span class="hljs-params">(url)</span> -&gt;</span>
     JSON.stringify <span class="hljs-attribute">longUrl</span>: url
 
-  <span class="hljs-attribute">isEnabled</span>:<span class="hljs-function"> -&gt;</span>
+  <span class="hljs-attribute">isEnabled</span>: <span class="hljs-function">-&gt;</span>
     store.get <span class="hljs-string">'googl.enabled'</span>
 
-  <span class="hljs-attribute">oauth</span>:<span class="hljs-function"> -&gt;</span>
+  <span class="hljs-attribute">oauth</span>: <span class="hljs-function">-&gt;</span>
     options = _.pick ext.config.services.googl, <span class="hljs-string">'api_scope'</span>, <span class="hljs-string">'client_id'</span>, <span class="hljs-string">'client_secret'</span>
     <span class="hljs-keyword">new</span> OAuth2 <span class="hljs-string">'google'</span>, options
 
   <span class="hljs-attribute">output</span>: <span class="hljs-function"><span class="hljs-params">(resp)</span> -&gt;</span>
     JSON.parse(resp).id
 
-  <span class="hljs-attribute">url</span>:<span class="hljs-function"> -&gt;</span>
+  <span class="hljs-attribute">url</span>: <span class="hljs-function">-&gt;</span>
     ext.config.services.googl.url
 ,</pre></div></div>
             
@@ -466,7 +466,7 @@ that are evaluated/executed later.</p>
   <span class="hljs-attribute">title</span>: i18n.get <span class="hljs-string">'shortener_yourls'</span>
   <span class="hljs-attribute">method</span>: <span class="hljs-string">'POST'</span>
 
-  <span class="hljs-attribute">getHeaders</span>:<span class="hljs-function"> -&gt;</span>
+  <span class="hljs-attribute">getHeaders</span>: <span class="hljs-function">-&gt;</span>
     <span class="hljs-string">'Content-Type'</span>: <span class="hljs-string">'application/json'</span>
 
   <span class="hljs-attribute">getParameters</span>: <span class="hljs-function"><span class="hljs-params">(url)</span> -&gt;</span>
@@ -485,19 +485,19 @@ that are evaluated/executed later.</p>
 
     params
 
-  <span class="hljs-attribute">getUsage</span>:<span class="hljs-function"> -&gt;</span>
+  <span class="hljs-attribute">getUsage</span>: <span class="hljs-function">-&gt;</span>
     store.get <span class="hljs-string">'yourls.usage'</span>
 
-  <span class="hljs-attribute">input</span>:<span class="hljs-function"> -&gt;</span>
+  <span class="hljs-attribute">input</span>: <span class="hljs-function">-&gt;</span>
     <span class="hljs-literal">null</span>
 
-  <span class="hljs-attribute">isEnabled</span>:<span class="hljs-function"> -&gt;</span>
+  <span class="hljs-attribute">isEnabled</span>: <span class="hljs-function">-&gt;</span>
     store.get <span class="hljs-string">'yourls.enabled'</span>
 
   <span class="hljs-attribute">output</span>: <span class="hljs-function"><span class="hljs-params">(resp)</span> -&gt;</span>
     JSON.parse(resp).shorturl
 
-  <span class="hljs-attribute">url</span>:<span class="hljs-function"> -&gt;</span>
+  <span class="hljs-attribute">url</span>: <span class="hljs-function">-&gt;</span>
     store.get <span class="hljs-string">'yourls.url'</span>
 ]</pre></div></div>
             
@@ -1120,7 +1120,7 @@ ensure consistency.</p>
   placeholders = {}
 
   async.series [
-    <span class="hljs-function"><span class="hljs-params">(done)</span> -&gt;</span></pre></div></div>
+    (done) -&gt;</pre></div></div>
             
         </li>
         
@@ -1140,7 +1140,7 @@ ensure consistency.</p>
         active = _.first tabs
         <span class="hljs-keyword">do</span> done
 
-    <span class="hljs-function"><span class="hljs-params">(done)</span> -&gt;</span></pre></div></div>
+    (done) -&gt;</pre></div></div>
             
         </li>
         
@@ -1157,8 +1157,8 @@ final value.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-function"><span class="hljs-title">getCallback</span> = <span class="hljs-params">(tag)</span> -&gt;</span>
-        <span class="hljs-function"><span class="hljs-params">(text, render)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">      <span class="hljs-title">getCallback</span> = <span class="hljs-params">(tag)</span> -&gt;</span>
+        (text, render) -&gt;
           text = render text <span class="hljs-keyword">if</span> text
           text = <span class="hljs-property">@url</span>        <span class="hljs-keyword">if</span> tag <span class="hljs-keyword">is</span> <span class="hljs-string">'shorten'</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> text
           trim = text?.trim() <span class="hljs-keyword">or</span> <span class="hljs-string">''</span>
@@ -1297,7 +1297,7 @@ final value.</p>
           <span class="hljs-keyword">else</span>
             <span class="hljs-string">'result_bad_error_description'</span>
 
-    <span class="hljs-function"><span class="hljs-params">(done)</span> -&gt;</span>
+    (done) -&gt;
       updateProgress <span class="hljs-number">30</span></pre></div></div>
             
         </li>
@@ -1313,7 +1313,7 @@ final value.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      addAdditionalData active, data, id, editable, shortcut, link,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>      addAdditionalData active, data, id, editable, shortcut, link, <span class="hljs-function">-&gt;</span>
         updateProgress <span class="hljs-number">40</span></pre></div></div>
             
         </li>
@@ -1369,7 +1369,7 @@ final value.</p>
 
         <span class="hljs-keyword">do</span> done
 
-    <span class="hljs-function"><span class="hljs-params">(done)</span> -&gt;</span>
+    (done) -&gt;
       updateProgress <span class="hljs-number">70</span></pre></div></div>
             
         </li>
@@ -1417,7 +1417,7 @@ in order to replace any placeholders with their final values.</p>
               <span class="hljs-attribute">type</span>:       match[<span class="hljs-number">1</span>]
 
       async.series [
-        <span class="hljs-function"><span class="hljs-params">(done)</span> -&gt;</span>
+        (done) -&gt;
           updateProgress <span class="hljs-number">80</span></pre></div></div>
             
         </li>
@@ -1472,7 +1472,7 @@ the results.</p>
 
             done err
 
-        <span class="hljs-function"><span class="hljs-params">(done)</span> -&gt;</span>
+        (done) -&gt;
           updateProgress <span class="hljs-number">90</span></pre></div></div>
             
         </li>
@@ -1763,8 +1763,10 @@ pre-rendered text and safely handling bad returns.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">rendered</span> = <span class="hljs-params">(callback)</span> -&gt;</span><span class="hljs-function">
-  -&gt;</span> <span class="hljs-function"><span class="hljs-params">(text, render)</span> -&gt;</span> callback(render text) ? <span class="hljs-string">''</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">rendered</span> = <span class="hljs-params">(callback)</span> -&gt;</span>
+  -&gt; (text, render) -&gt;
+    result = <span class="hljs-keyword">if</span> arguments.length <span class="hljs-keyword">then</span> callback(render text) <span class="hljs-keyword">else</span> <span class="hljs-keyword">do</span> callback
+    result ? <span class="hljs-string">''</span></pre></div></div>
             
         </li>
         
@@ -2041,7 +2043,7 @@ and reset the delay timer.<br><code>toggle</code> can be used to show the progre
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        popup.queue<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>        popup.queue -&gt;
           popup.dequeue()[<span class="hljs-number">0</span>]?.close()
       <span class="hljs-keyword">else</span></pre></div></div>
             
@@ -2058,10 +2060,10 @@ and reset the delay timer.<br><code>toggle</code> can be used to show the progre
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        loading.queue<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>        loading.queue -&gt;
           loading.hide().dequeue()
           progressBar.css <span class="hljs-string">'width'</span>, <span class="hljs-string">'0%'</span>
-        templates.queue<span class="hljs-function"> -&gt;</span>
+        templates.queue -&gt;
           templates.show().dequeue()
   <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> percent?</pre></div></div>
             
@@ -2264,7 +2266,7 @@ changes.</p>
   log.trace()
 
   async.parallel [
-    <span class="hljs-function"><span class="hljs-params">(done)</span> -&gt;</span></pre></div></div>
+    (done) -&gt;</pre></div></div>
             
         </li>
         
@@ -2286,7 +2288,7 @@ changes.</p>
 
         done <span class="hljs-literal">null</span>, {tabs}
 
-    <span class="hljs-function"><span class="hljs-params">(done)</span> -&gt;</span></pre></div></div>
+    (done) -&gt;</pre></div></div>
             
         </li>
         
@@ -2308,7 +2310,7 @@ changes.</p>
 
         done <span class="hljs-literal">null</span>, {locale}
 
-    <span class="hljs-function"><span class="hljs-params">(done)</span> -&gt;</span></pre></div></div>
+    (done) -&gt;</pre></div></div>
             
         </li>
         
@@ -2323,7 +2325,7 @@ changes.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      navigator.geolocation.getCurrentPosition <span class="hljs-function"><span class="hljs-params">(position)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>      navigator.geolocation.getCurrentPosition (position) -&gt;
         log.debug <span class="hljs-string">'Retrieved the following geolocation information...'</span>, position
 
         done <span class="hljs-literal">null</span>, <span class="hljs-attribute">coords</span>: transformData position.coords, <span class="hljs-literal">yes</span>
@@ -2332,7 +2334,7 @@ changes.</p>
 
         done <span class="hljs-literal">null</span>, <span class="hljs-attribute">coords</span>: {}
 
-    <span class="hljs-function"><span class="hljs-params">(done)</span> -&gt;</span></pre></div></div>
+    (done) -&gt;</pre></div></div>
             
         </li>
         
@@ -2351,7 +2353,7 @@ changes.</p>
         log.debug <span class="hljs-string">'Found the following cookies...'</span>, cookies
 
         done <span class="hljs-literal">null</span>,
-          <span class="hljs-attribute">cookie</span>: rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span></pre></div></div>
+          <span class="hljs-attribute">cookie</span>: rendered (text) -&gt;</pre></div></div>
             
         </li>
         
@@ -2369,7 +2371,7 @@ changes.</p>
             <div class="content"><div class='highlight'><pre>            _.findWhere(cookies, <span class="hljs-attribute">name</span>: text)?.value
           <span class="hljs-attribute">cookies</span>: _.chain(cookies).pluck(<span class="hljs-string">'name'</span>).uniq().value()
 
-    <span class="hljs-function"><span class="hljs-params">(done)</span> -&gt;</span></pre></div></div>
+    (done) -&gt;</pre></div></div>
             
         </li>
         
@@ -2467,7 +2469,7 @@ array.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="hljs-function"><span class="hljs-title">getMeta</span> = <span class="hljs-params">(name, csv)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">        <span class="hljs-title">getMeta</span> = <span class="hljs-params">(name, csv)</span> -&gt;</span>
           value = metaMap[name]
           <span class="hljs-keyword">if</span> csv <span class="hljs-keyword">and</span> value
             _.chain(value.split <span class="hljs-string">','</span>).compact().uniq().value()
@@ -2494,13 +2496,13 @@ array.</p>
           <span class="hljs-attribute">html</span>:           response.html           ? <span class="hljs-string">''</span>
           <span class="hljs-attribute">images</span>:         response.images         ? []
           <span class="hljs-attribute">keywords</span>:       getMeta <span class="hljs-string">'keywords'</span>, <span class="hljs-literal">yes</span>
-          <span class="hljs-attribute">lastmodified</span>:   rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
+          <span class="hljs-attribute">lastmodified</span>:   rendered (text) -&gt;
             lastModified?.format <span class="hljs-keyword">if</span> text <span class="hljs-keyword">then</span> text
           <span class="hljs-attribute">linkhtml</span>:       response.linkHTML       ? <span class="hljs-string">''</span>
           <span class="hljs-attribute">links</span>:          response.links          ? []
           <span class="hljs-attribute">linktext</span>:       response.linkText       ? <span class="hljs-string">''</span>
           <span class="hljs-attribute">localstorage</span>:   response.localStorage   ? {}
-          <span class="hljs-attribute">meta</span>:           rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
+          <span class="hljs-attribute">meta</span>:           rendered (text) -&gt;
             metaMap[text]
           <span class="hljs-attribute">pageheight</span>:     response.pageHeight     ? <span class="hljs-string">''</span>
           <span class="hljs-attribute">pagewidth</span>:      response.pageWidth      ? <span class="hljs-string">''</span>
@@ -2524,7 +2526,7 @@ array.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>          <span class="hljs-attribute">selectionlinks</span>:<span class="hljs-function"> -&gt;</span> <span class="hljs-property">@selectedlinks</span>
+            <div class="content"><div class='highlight'><pre>          <span class="hljs-attribute">selectionlinks</span>: <span class="hljs-function">-&gt;</span> <span class="hljs-property">@selectedlinks</span>
           <span class="hljs-attribute">sessionstorage</span>: response.sessionStorage ? {}
           <span class="hljs-attribute">stylesheets</span>:    response.styleSheets    ? []
 
@@ -2684,7 +2686,7 @@ don’t want to perform these expensive tasks unless it is actually required.</p
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-function"><span class="hljs-title">getFromPage</span> = <span class="hljs-params">(source, contentType)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">  <span class="hljs-title">getFromPage</span> = <span class="hljs-params">(source, contentType)</span> -&gt;</span>
     contents = <span class="hljs-string">''</span>
 
     <span class="hljs-keyword">if</span> source
@@ -2729,7 +2731,7 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">anchortarget</span>:<span class="hljs-function">          -&gt;</span> <span class="hljs-property">@linkstarget</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">anchortarget</span>:          <span class="hljs-function">-&gt;</span> <span class="hljs-property">@linkstarget</span></pre></div></div>
             
         </li>
         
@@ -2744,14 +2746,14 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">anchortitle</span>:<span class="hljs-function">           -&gt;</span> <span class="hljs-property">@linkstitle</span>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">anchortitle</span>:           <span class="hljs-function">-&gt;</span> <span class="hljs-property">@linkstitle</span>
     <span class="hljs-attribute">bitly</span>:                 bitly.enabled
-    <span class="hljs-attribute">bitlyaccount</span>:<span class="hljs-function">          -&gt;</span>
+    <span class="hljs-attribute">bitlyaccount</span>:          <span class="hljs-function">-&gt;</span>
       _.findWhere(SHORTENERS, <span class="hljs-attribute">name</span>: <span class="hljs-string">'bitly'</span>).oauth.hasAccessToken()
     <span class="hljs-attribute">browser</span>:               browser.title
     <span class="hljs-attribute">browserversion</span>:        browser.version
-    <span class="hljs-attribute">capitalise</span>:<span class="hljs-function">            -&gt;</span> <span class="hljs-keyword">do</span> <span class="hljs-property">@capitalize</span>
-    <span class="hljs-attribute">capitalize</span>:            rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
+    <span class="hljs-attribute">capitalise</span>:            <span class="hljs-function">-&gt;</span> <span class="hljs-keyword">do</span> <span class="hljs-property">@capitalize</span>
+    <span class="hljs-attribute">capitalize</span>:            rendered (text) -&gt;
       utils.capitalize text</pre></div></div>
             
         </li>
@@ -2767,14 +2769,14 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">contextmenu</span>:<span class="hljs-function">           -&gt;</span> <span class="hljs-property">@menu</span>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">contextmenu</span>:           <span class="hljs-function">-&gt;</span> <span class="hljs-property">@menu</span>
     <span class="hljs-attribute">cookiesenabled</span>:        navigator.cookieEnabled
     <span class="hljs-attribute">count</span>:                 stats.count
     <span class="hljs-attribute">customcount</span>:           stats.customCount
-    <span class="hljs-attribute">datetime</span>:              rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
+    <span class="hljs-attribute">datetime</span>:              rendered (text) -&gt;
       <span class="hljs-keyword">new</span> Date().format <span class="hljs-keyword">if</span> text <span class="hljs-keyword">then</span> text
-    <span class="hljs-attribute">decode</span>:                rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
-      decodeURIComponent text
+    <span class="hljs-attribute">decode</span>:                rendered (text) -&gt;
+      <span class="hljs-keyword">if</span> text <span class="hljs-keyword">then</span> decodeURIComponent text
     <span class="hljs-attribute">depth</span>:                 screen.colorDepth</pre></div></div>
             
         </li>
@@ -2790,7 +2792,7 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">doanchortarget</span>:<span class="hljs-function">        -&gt;</span> <span class="hljs-property">@linkstarget</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">doanchortarget</span>:        <span class="hljs-function">-&gt;</span> <span class="hljs-property">@linkstarget</span></pre></div></div>
             
         </li>
         
@@ -2805,9 +2807,9 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">doanchortitle</span>:<span class="hljs-function">         -&gt;</span> <span class="hljs-property">@linkstitle</span>
-    <span class="hljs-attribute">encode</span>:                rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
-      encodeURIComponent text</pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">doanchortitle</span>:         <span class="hljs-function">-&gt;</span> <span class="hljs-property">@linkstitle</span>
+    <span class="hljs-attribute">encode</span>:                rendered (text) -&gt;
+      <span class="hljs-keyword">if</span> text <span class="hljs-keyword">then</span> encodeURIComponent text</pre></div></div>
             
         </li>
         
@@ -2822,19 +2824,19 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">encoded</span>:<span class="hljs-function">               -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">encoded</span>:               <span class="hljs-function">-&gt;</span>
       encodeURIComponent <span class="hljs-property">@url</span>
-    <span class="hljs-attribute">escape</span>:                rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
+    <span class="hljs-attribute">escape</span>:                rendered (text) -&gt;
       _.escape text
     <span class="hljs-attribute">favicon</span>:               ctab.favIconUrl
-    <span class="hljs-attribute">fparam</span>:                rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
-      url.fparam text
+    <span class="hljs-attribute">fparam</span>:                rendered (text) -&gt;
+      <span class="hljs-keyword">if</span> text <span class="hljs-keyword">then</span> url.fparam text
     <span class="hljs-attribute">fparams</span>:               nullIfEmpty url.fparam()
-    <span class="hljs-attribute">fsegment</span>:              rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
-      url.fsegment parseInt text, <span class="hljs-number">10</span>
+    <span class="hljs-attribute">fsegment</span>:              rendered (text) -&gt;
+      <span class="hljs-keyword">if</span> text <span class="hljs-keyword">then</span> url.fsegment parseInt text, <span class="hljs-number">10</span>
     <span class="hljs-attribute">fsegments</span>:             url.fsegment()
     <span class="hljs-attribute">googl</span>:                 googl.enabled
-    <span class="hljs-attribute">googlaccount</span>:<span class="hljs-function">          -&gt;</span>
+    <span class="hljs-attribute">googlaccount</span>:          <span class="hljs-function">-&gt;</span>
       _.findWhere(SHORTENERS, <span class="hljs-attribute">name</span>: <span class="hljs-string">'googl'</span>).oauth.hasAccessToken()</pre></div></div>
             
         </li>
@@ -2850,17 +2852,17 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">googloauth</span>:<span class="hljs-function">            -&gt;</span> <span class="hljs-keyword">do</span> <span class="hljs-property">@googlaccount</span>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">googloauth</span>:            <span class="hljs-function">-&gt;</span> <span class="hljs-keyword">do</span> <span class="hljs-property">@googlaccount</span>
     <span class="hljs-attribute">java</span>:                  navigator.javaEnabled()
-    <span class="hljs-attribute">length</span>:                rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
-      text.length
-    <span class="hljs-attribute">linkmarkdown</span>:<span class="hljs-function">          -&gt;</span>
+    <span class="hljs-attribute">length</span>:                rendered (text) -&gt;
+      text?.length
+    <span class="hljs-attribute">linkmarkdown</span>:          <span class="hljs-function">-&gt;</span>
       toMarkdown <span class="hljs-property">@linkhtml</span>
     <span class="hljs-attribute">linkstarget</span>:           links.target
     <span class="hljs-attribute">linkstitle</span>:            links.title
-    <span class="hljs-attribute">lowercase</span>:             rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
-      text.toLowerCase()
-    <span class="hljs-attribute">markdown</span>:<span class="hljs-function">              -&gt;</span>
+    <span class="hljs-attribute">lowercase</span>:             rendered (text) -&gt;
+      text?.toLowerCase()
+    <span class="hljs-attribute">markdown</span>:              <span class="hljs-function">-&gt;</span>
       toMarkdown getFromPage <span class="hljs-property">@html</span>, <span class="hljs-string">'html'</span>
     <span class="hljs-attribute">markdowninline</span>:        markdown.inline
     <span class="hljs-attribute">menu</span>:                  menu.enabled
@@ -2897,33 +2899,33 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">originalsource</span>:<span class="hljs-function">        -&gt;</span> <span class="hljs-property">@originalurl</span>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">originalsource</span>:        <span class="hljs-function">-&gt;</span> <span class="hljs-property">@originalurl</span>
     <span class="hljs-attribute">originaltitle</span>:         tab.title <span class="hljs-keyword">or</span> url.attr <span class="hljs-string">'source'</span>
     <span class="hljs-attribute">originalurl</span>:           tab.url
     <span class="hljs-attribute">os</span>:                    operatingSystem
-    <span class="hljs-attribute">param</span>:                 rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
-      url.param text
+    <span class="hljs-attribute">param</span>:                 rendered (text) -&gt;
+      <span class="hljs-keyword">if</span> text <span class="hljs-keyword">then</span> url.param text
     <span class="hljs-attribute">params</span>:                nullIfEmpty url.param()
     <span class="hljs-attribute">plugins</span>:               _.chain(navigator.plugins).pluck(<span class="hljs-string">'name'</span>).uniq().value()
     <span class="hljs-attribute">popular</span>:               $.extend <span class="hljs-literal">yes</span>, {}, _.findWhere ext.templates, <span class="hljs-attribute">key</span>: stats.popular
     <span class="hljs-attribute">screenheight</span>:          screen.height
     <span class="hljs-attribute">screenwidth</span>:           screen.width
-    <span class="hljs-attribute">segment</span>:               rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
-      url.segment parseInt text, <span class="hljs-number">10</span>
+    <span class="hljs-attribute">segment</span>:               rendered (text) -&gt;
+      <span class="hljs-keyword">if</span> text <span class="hljs-keyword">then</span> url.segment parseInt text, <span class="hljs-number">10</span>
     <span class="hljs-attribute">segments</span>:              url.segment()
-    <span class="hljs-attribute">select</span>:<span class="hljs-function">                -&gt;</span>
+    <span class="hljs-attribute">select</span>:                <span class="hljs-function">-&gt;</span>
       getCallback <span class="hljs-string">'select'</span>
-    <span class="hljs-attribute">selectall</span>:<span class="hljs-function">             -&gt;</span>
+    <span class="hljs-attribute">selectall</span>:             <span class="hljs-function">-&gt;</span>
       getCallback <span class="hljs-string">'selectall'</span>
-    <span class="hljs-attribute">selectallhtml</span>:<span class="hljs-function">         -&gt;</span>
+    <span class="hljs-attribute">selectallhtml</span>:         <span class="hljs-function">-&gt;</span>
       getCallback <span class="hljs-string">'selectallhtml'</span>
-    <span class="hljs-attribute">selectallmarkdown</span>:<span class="hljs-function">     -&gt;</span>
+    <span class="hljs-attribute">selectallmarkdown</span>:     <span class="hljs-function">-&gt;</span>
       getCallback <span class="hljs-string">'selectallmarkdown'</span>
-    <span class="hljs-attribute">selecthtml</span>:<span class="hljs-function">            -&gt;</span>
+    <span class="hljs-attribute">selecthtml</span>:            <span class="hljs-function">-&gt;</span>
       getCallback <span class="hljs-string">'selecthtml'</span>
-    <span class="hljs-attribute">selectionmarkdown</span>:<span class="hljs-function">     -&gt;</span>
+    <span class="hljs-attribute">selectionmarkdown</span>:     <span class="hljs-function">-&gt;</span>
       toMarkdown <span class="hljs-property">@selectionhtml</span>
-    <span class="hljs-attribute">selectmarkdown</span>:<span class="hljs-function">        -&gt;</span>
+    <span class="hljs-attribute">selectmarkdown</span>:        <span class="hljs-function">-&gt;</span>
       getCallback <span class="hljs-string">'selectmarkdown'</span></pre></div></div>
             
         </li>
@@ -2939,15 +2941,15 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">short</span>:<span class="hljs-function">                 -&gt;</span> <span class="hljs-keyword">do</span> <span class="hljs-property">@shorten</span>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">short</span>:                 <span class="hljs-function">-&gt;</span> <span class="hljs-keyword">do</span> <span class="hljs-property">@shorten</span>
     <span class="hljs-attribute">shortcuts</span>:             shortcuts.enabled
     <span class="hljs-attribute">shortcutspaste</span>:        shortcuts.paste
-    <span class="hljs-attribute">shorten</span>:<span class="hljs-function">               -&gt;</span>
+    <span class="hljs-attribute">shorten</span>:               <span class="hljs-function">-&gt;</span>
       getCallback <span class="hljs-string">'shorten'</span>
-    <span class="hljs-attribute">text</span>:<span class="hljs-function">                  -&gt;</span>
+    <span class="hljs-attribute">text</span>:                  <span class="hljs-function">-&gt;</span>
       getFromPage <span class="hljs-property">@html</span>, <span class="hljs-string">'text'</span>
-    <span class="hljs-attribute">tidy</span>:                  rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
-      text.replace(<span class="hljs-regexp">/([ \t]+)/g</span>, <span class="hljs-string">' '</span>).trim()
+    <span class="hljs-attribute">tidy</span>:                  rendered (text) -&gt;
+      <span class="hljs-keyword">if</span> text <span class="hljs-keyword">then</span> text.replace(<span class="hljs-regexp">/([ \t]+)/g</span>, <span class="hljs-string">' '</span>).trim()
     <span class="hljs-attribute">title</span>:                 ctab.title <span class="hljs-keyword">or</span> url.attr <span class="hljs-string">'source'</span>
     <span class="hljs-attribute">toolbarclose</span>:          toolbar.close</pre></div></div>
             
@@ -2964,7 +2966,7 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">toolbarfeature</span>:<span class="hljs-function">        -&gt;</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@toolbarpopup</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">toolbarfeature</span>:        <span class="hljs-function">-&gt;</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@toolbarpopup</span></pre></div></div>
             
         </li>
         
@@ -2979,7 +2981,7 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">toolbarfeaturedetails</span>:<span class="hljs-function"> -&gt;</span> <span class="hljs-property">@toolbarstyle</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">toolbarfeaturedetails</span>: <span class="hljs-function">-&gt;</span> <span class="hljs-property">@toolbarstyle</span></pre></div></div>
             
         </li>
         
@@ -2994,7 +2996,7 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">toolbarfeaturename</span>:<span class="hljs-function">    -&gt;</span> <span class="hljs-property">@toolbarkey</span>
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">toolbarfeaturename</span>:    <span class="hljs-function">-&gt;</span> <span class="hljs-property">@toolbarkey</span>
     <span class="hljs-attribute">toolbarkey</span>:            toolbar.key
     <span class="hljs-attribute">toolbaroptions</span>:        toolbar.options
     <span class="hljs-attribute">toolbarpopup</span>:          toolbar.popup</pre></div></div>
@@ -3013,19 +3015,20 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
             </div>
             
             <div class="content"><div class='highlight'><pre>    <span class="hljs-attribute">toolbarstyle</span>:          <span class="hljs-literal">no</span>
-    <span class="hljs-attribute">trim</span>:                  rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
-      text.trim()
-    <span class="hljs-attribute">trimleft</span>:              rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
-      text.trimLeft()
-    <span class="hljs-attribute">trimright</span>:             rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
-      text.trimRight()
-    <span class="hljs-attribute">unescape</span>:              rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
+    <span class="hljs-attribute">trim</span>:                  rendered (text) -&gt;
+      text?.trim()
+    <span class="hljs-attribute">trimleft</span>:              rendered (text) -&gt;
+      text?.trimLeft()
+    <span class="hljs-attribute">trimright</span>:             rendered (text) -&gt;
+      text?.trimRight()
+    <span class="hljs-attribute">unescape</span>:              rendered (text) -&gt;
       _.unescape text
-    <span class="hljs-attribute">uppercase</span>:             rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span>
-      text.toUpperCase()
+    <span class="hljs-attribute">uppercase</span>:             rendered (text) -&gt;
+      text?.toUpperCase()
     <span class="hljs-attribute">url</span>:                   url.attr <span class="hljs-string">'source'</span>
     <span class="hljs-attribute">version</span>:               ext.version
-    <span class="hljs-attribute">wordcount</span>:             rendered <span class="hljs-function"><span class="hljs-params">(text)</span> -&gt;</span></pre></div></div>
+    <span class="hljs-attribute">wordcount</span>:             rendered (text) -&gt;
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">unless</span> text</pre></div></div>
             
         </li>
         
@@ -3049,17 +3052,17 @@ modified version of <a href="https://github.com/janl/mustache.js">mustache.js</a
         count+= matches.length <span class="hljs-keyword">if</span> matches
 
       count
-    <span class="hljs-attribute">xpath</span>:<span class="hljs-function">                -&gt;</span>
+    <span class="hljs-attribute">xpath</span>:                <span class="hljs-function">-&gt;</span>
       getCallback <span class="hljs-string">'xpath'</span>
-    <span class="hljs-attribute">xpathall</span>:<span class="hljs-function">             -&gt;</span>
+    <span class="hljs-attribute">xpathall</span>:             <span class="hljs-function">-&gt;</span>
       getCallback <span class="hljs-string">'xpathall'</span>
-    <span class="hljs-attribute">xpathallhtml</span>:<span class="hljs-function">         -&gt;</span>
+    <span class="hljs-attribute">xpathallhtml</span>:         <span class="hljs-function">-&gt;</span>
       getCallback <span class="hljs-string">'xpathallhtml'</span>
-    <span class="hljs-attribute">xpathallmarkdown</span>:<span class="hljs-function">     -&gt;</span>
+    <span class="hljs-attribute">xpathallmarkdown</span>:     <span class="hljs-function">-&gt;</span>
       getCallback <span class="hljs-string">'xpathallmarkdown'</span>
-    <span class="hljs-attribute">xpathhtml</span>:<span class="hljs-function">            -&gt;</span>
+    <span class="hljs-attribute">xpathhtml</span>:            <span class="hljs-function">-&gt;</span>
       getCallback <span class="hljs-string">'xpathhtml'</span>
-    <span class="hljs-attribute">xpathmarkdown</span>:<span class="hljs-function">        -&gt;</span>
+    <span class="hljs-attribute">xpathmarkdown</span>:        <span class="hljs-function">-&gt;</span>
       getCallback <span class="hljs-string">'xpathmarkdown'</span>
     <span class="hljs-attribute">yourls</span>:                yourls.enabled
     <span class="hljs-attribute">yourlsauthentication</span>:  yourls.authentication
@@ -3232,9 +3235,9 @@ clone of the specified <code>data</code>.</p>
             <div class="content"><div class='highlight'><pre>  result = <span class="hljs-keyword">if</span> clone
     <span class="hljs-keyword">if</span> _.isArray data <span class="hljs-keyword">then</span> [] <span class="hljs-keyword">else</span> {}
   <span class="hljs-keyword">else</span>
-    data
+    data<span class="hljs-function">
 
-  <span class="hljs-function"><span class="hljs-title">transform</span> = <span class="hljs-params">(value)</span> -&gt;</span>
+  <span class="hljs-title">transform</span> = <span class="hljs-params">(value)</span> -&gt;</span>
     <span class="hljs-keyword">if</span> _.isArray(value) <span class="hljs-keyword">or</span> _.isObject(value) <span class="hljs-keyword">then</span> transformData value, clone <span class="hljs-keyword">else</span> value
 
   <span class="hljs-keyword">if</span> _.isArray result</pre></div></div>
@@ -3540,7 +3543,7 @@ by <code>ext.init</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  updater.update <span class="hljs-string">'0.1.0.0'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  updater.update <span class="hljs-string">'0.1.0.0'</span>, <span class="hljs-function">-&gt;</span>
     store.rename <span class="hljs-string">'settingNotification'</span>,      <span class="hljs-string">'notifications'</span>,        <span class="hljs-literal">on</span>
     store.rename <span class="hljs-string">'settingNotificationTimer'</span>, <span class="hljs-string">'notificationDuration'</span>, <span class="hljs-number">3000</span>
     store.rename <span class="hljs-string">'settingShortcut'</span>,          <span class="hljs-string">'shortcuts'</span>,            <span class="hljs-literal">on</span>
@@ -3548,7 +3551,7 @@ by <code>ext.init</code>.</p>
     store.rename <span class="hljs-string">'settingTitleAttr'</span>,         <span class="hljs-string">'doAnchorTitle'</span>,        <span class="hljs-literal">off</span>
     store.remove <span class="hljs-string">'settingIeTabExtract'</span>,      <span class="hljs-string">'settingIeTabTitle'</span>
 
-  updater.update <span class="hljs-string">'1.0.0'</span>,<span class="hljs-function"> -&gt;</span>
+  updater.update <span class="hljs-string">'1.0.0'</span>, <span class="hljs-function">-&gt;</span>
     <span class="hljs-keyword">if</span> store.exists <span class="hljs-string">'options_active_tab'</span>
       optionsActiveTab = store.get <span class="hljs-string">'options_active_tab'</span>
       store.set <span class="hljs-string">'options_active_tab'</span>, <span class="hljs-keyword">switch</span> optionsActiveTab
@@ -3570,10 +3573,10 @@ by <code>ext.init</code>.</p>
       <span class="hljs-attribute">enabled</span>:  store.get(<span class="hljs-string">'notifications'</span>)        ? <span class="hljs-literal">yes</span>
     store.remove <span class="hljs-string">'notificationDuration'</span>
 
-  updater.update <span class="hljs-string">'1.1.0'</span>,<span class="hljs-function"> -&gt;</span>
+  updater.update <span class="hljs-string">'1.1.0'</span>, <span class="hljs-function">-&gt;</span>
     store.set <span class="hljs-string">'shortcuts'</span>, <span class="hljs-attribute">enabled</span>: store.get(<span class="hljs-string">'shortcuts'</span>) ? <span class="hljs-literal">yes</span>
 
-  updater.update <span class="hljs-string">'1.2.3'</span>,<span class="hljs-function"> -&gt;</span>
+  updater.update <span class="hljs-string">'1.2.3'</span>, <span class="hljs-function">-&gt;</span>
     store.modify <span class="hljs-string">'logger'</span>, <span class="hljs-function"><span class="hljs-params">(logger)</span> -&gt;</span>
       <span class="hljs-keyword">delete</span> logger.Enabled
       <span class="hljs-keyword">delete</span> logger.Level
@@ -3596,14 +3599,14 @@ by <code>ext.init</code>.</p>
       <span class="hljs-keyword">delete</span> toolbar.Key
       <span class="hljs-keyword">delete</span> toolbar.Options
 
-  updater.update <span class="hljs-string">'1.2.5'</span>,<span class="hljs-function"> -&gt;</span>
+  updater.update <span class="hljs-string">'1.2.5'</span>, <span class="hljs-function">-&gt;</span>
     store.modify <span class="hljs-string">'links'</span>, <span class="hljs-function"><span class="hljs-params">(links)</span> -&gt;</span>
       anchor = store.get(<span class="hljs-string">'anchor'</span>) ? {}
       links.target = anchor.target ? <span class="hljs-literal">off</span>
       links.title  = anchor.title  ? <span class="hljs-literal">off</span>
     store.remove <span class="hljs-string">'anchor'</span>
 
-  updater.update <span class="hljs-string">'1.2.7'</span>,<span class="hljs-function"> -&gt;</span>
+  updater.update <span class="hljs-string">'1.2.7'</span>, <span class="hljs-function">-&gt;</span>
     store.modify <span class="hljs-string">'notifications'</span>, <span class="hljs-function"><span class="hljs-params">(notifications)</span> -&gt;</span>
       <span class="hljs-keyword">delete</span> notifications.duration</pre></div></div>
             
@@ -3846,7 +3849,7 @@ by <code>initTemplates</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  updater.update <span class="hljs-string">'0.1.0.0'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  updater.update <span class="hljs-string">'0.1.0.0'</span>, <span class="hljs-function">-&gt;</span>
     store.rename <span class="hljs-string">'copyAnchorEnabled'</span>,  <span class="hljs-string">'feat__anchor_enabled'</span>,  <span class="hljs-literal">yes</span>
     store.rename <span class="hljs-string">'copyAnchorOrder'</span>,    <span class="hljs-string">'feat__anchor_index'</span>,    <span class="hljs-number">2</span>
     store.rename <span class="hljs-string">'copyBBCodeEnabled'</span>,  <span class="hljs-string">'feat__bbcode_enabled'</span>,  <span class="hljs-literal">no</span>
@@ -3858,7 +3861,7 @@ by <code>initTemplates</code>.</p>
     store.rename <span class="hljs-string">'copyUrlEnabled'</span>,     <span class="hljs-string">'feat__url_enabled'</span>,     <span class="hljs-literal">yes</span>
     store.rename <span class="hljs-string">'copyUrlOrder'</span>,       <span class="hljs-string">'feat__url_index'</span>,       <span class="hljs-number">0</span>
 
-  updater.update <span class="hljs-string">'0.2.0.0'</span>,<span class="hljs-function"> -&gt;</span>
+  updater.update <span class="hljs-string">'0.2.0.0'</span>, <span class="hljs-function">-&gt;</span>
     names = store.get(<span class="hljs-string">'features'</span>) ? []
 
     <span class="hljs-keyword">for</span> name <span class="hljs-keyword">in</span> names <span class="hljs-keyword">when</span> _.isString name
@@ -3877,7 +3880,7 @@ by <code>initTemplates</code>.</p>
       <span class="hljs-keyword">else</span>
         store.set <span class="hljs-string">"feat_<span class="hljs-subst">#{name}</span>_image"</span>, <span class="hljs-number">0</span>
 
-  updater.update <span class="hljs-string">'1.0.0'</span>,<span class="hljs-function"> -&gt;</span>
+  updater.update <span class="hljs-string">'1.0.0'</span>, <span class="hljs-function">-&gt;</span>
     names              = store.remove(<span class="hljs-string">'features'</span>) ? []
     templates          = []
 
@@ -3910,7 +3913,7 @@ by <code>initTemplates</code>.</p>
     store.set <span class="hljs-string">'templates'</span>, templates
     store.remove store.search(<span class="hljs-regexp">/^feat_.*_(content|enabled|image|index|readonly|shortcut|title)$/</span>)...
 
-  updater.update <span class="hljs-string">'1.1.0'</span>,<span class="hljs-function"> -&gt;</span>
+  updater.update <span class="hljs-string">'1.1.0'</span>, <span class="hljs-function">-&gt;</span>
     store.modify <span class="hljs-string">'templates'</span>, <span class="hljs-function"><span class="hljs-params">(templates)</span> -&gt;</span>
       <span class="hljs-keyword">for</span> template <span class="hljs-keyword">in</span> templates
         <span class="hljs-keyword">if</span> template.readOnly
@@ -4015,13 +4018,13 @@ by <code>initToolbar</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  updater.update <span class="hljs-string">'1.0.0'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  updater.update <span class="hljs-string">'1.0.0'</span>, <span class="hljs-function">-&gt;</span>
     store.modify <span class="hljs-string">'toolbar'</span>, <span class="hljs-function"><span class="hljs-params">(toolbar)</span> -&gt;</span>
       toolbar.popup = store.get(<span class="hljs-string">'toolbarPopup'</span>) ? <span class="hljs-literal">yes</span>
       toolbar.style = store.get(<span class="hljs-string">'toolbarFeatureDetails'</span>) ? <span class="hljs-literal">no</span>
     store.remove <span class="hljs-string">'toolbarFeature'</span>, <span class="hljs-string">'toolbarFeatureDetails'</span>, <span class="hljs-string">'toolbarFeatureName'</span>, <span class="hljs-string">'toolbarPopup'</span>
 
-  updater.update <span class="hljs-string">'1.1.0'</span>,<span class="hljs-function"> -&gt;</span>
+  updater.update <span class="hljs-string">'1.1.0'</span>, <span class="hljs-function">-&gt;</span>
     store.modify <span class="hljs-string">'toolbar'</span>, <span class="hljs-function"><span class="hljs-params">(toolbar)</span> -&gt;</span>
       <span class="hljs-keyword">delete</span> toolbar.style</pre></div></div>
             
@@ -4112,14 +4115,14 @@ by <code>initUrlShorteners</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  updater.update <span class="hljs-string">'0.1.0.0'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  updater.update <span class="hljs-string">'0.1.0.0'</span>, <span class="hljs-function">-&gt;</span>
     store.rename <span class="hljs-string">'bitlyEnabled'</span>,       <span class="hljs-string">'bitly'</span>,         <span class="hljs-literal">yes</span>
     store.rename <span class="hljs-string">'bitlyXApiKey'</span>,       <span class="hljs-string">'bitlyApiKey'</span>,   <span class="hljs-string">''</span>
     store.rename <span class="hljs-string">'bitlyXLogin'</span>,        <span class="hljs-string">'bitlyUsername'</span>, <span class="hljs-string">''</span>
     store.rename <span class="hljs-string">'googleEnabled'</span>,      <span class="hljs-string">'googl'</span>,         <span class="hljs-literal">no</span>
     store.rename <span class="hljs-string">'googleOAuthEnabled'</span>, <span class="hljs-string">'googlOAuth'</span>,    <span class="hljs-literal">yes</span>
 
-  updater.update <span class="hljs-string">'1.0.0'</span>,<span class="hljs-function"> -&gt;</span>
+  updater.update <span class="hljs-string">'1.0.0'</span>, <span class="hljs-function">-&gt;</span>
     bitly = store.get <span class="hljs-string">'bitly'</span>
     store.set <span class="hljs-string">'bitly'</span>,
       <span class="hljs-attribute">apiKey</span>:    store.get(<span class="hljs-string">'bitlyApiKey'</span>)   ? <span class="hljs-string">''</span>
@@ -4141,7 +4144,7 @@ by <code>initUrlShorteners</code>.</p>
       <span class="hljs-attribute">username</span>:  store.get(<span class="hljs-string">'yourlsUsername'</span>)  ? <span class="hljs-string">''</span>
     store.remove <span class="hljs-string">'yourlsPassword'</span>, <span class="hljs-string">'yourlsSignature'</span>, <span class="hljs-string">'yourlsUrl'</span>, <span class="hljs-string">'yourlsUsername'</span>
 
-  updater.update <span class="hljs-string">'1.0.1'</span>,<span class="hljs-function"> -&gt;</span>
+  updater.update <span class="hljs-string">'1.0.1'</span>, <span class="hljs-function">-&gt;</span>
     store.modify <span class="hljs-string">'bitly'</span>, <span class="hljs-function"><span class="hljs-params">(bitly)</span> -&gt;</span>
       <span class="hljs-keyword">delete</span> bitly.apiKey
       <span class="hljs-keyword">delete</span> bitly.username
@@ -4153,7 +4156,7 @@ by <code>initUrlShorteners</code>.</p>
 
     store.remove store.search(<span class="hljs-regexp">/^oauth_token.*/</span>)...
 
-  updater.update <span class="hljs-string">'1.2.3'</span>,<span class="hljs-function"> -&gt;</span>
+  updater.update <span class="hljs-string">'1.2.3'</span>, <span class="hljs-function">-&gt;</span>
     store.modify <span class="hljs-string">'yourls'</span>, <span class="hljs-function"><span class="hljs-params">(yourls)</span> -&gt;</span>
       <span class="hljs-keyword">delete</span> yourls.Password
       <span class="hljs-keyword">delete</span> yourls.Signature
@@ -4215,9 +4218,9 @@ encountered.</p>
   _.each map, <span class="hljs-function"><span class="hljs-params">(url, placeholder)</span> -&gt;</span>
     oauth = !!service.oauth?.hasAccessToken()
 
-    tasks.push <span class="hljs-function"><span class="hljs-params">(done)</span> -&gt;</span>
+    tasks.push (done) -&gt;
       async.series [
-        <span class="hljs-function"><span class="hljs-params">(done)</span> -&gt;</span></pre></div></div>
+        (done) -&gt;</pre></div></div>
             
         </li>
         
@@ -4233,12 +4236,12 @@ encountered.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">if</span> oauth
-            service.oauth.authorize<span class="hljs-function"> -&gt;</span>
+            service.oauth.authorize -&gt;
               <span class="hljs-keyword">do</span> done
           <span class="hljs-keyword">else</span>
             <span class="hljs-keyword">do</span> done
 
-        <span class="hljs-function"><span class="hljs-params">(done)</span> -&gt;</span>
+        (done) -&gt;
           params    = service.getParameters url
           endpoint += <span class="hljs-string">"?<span class="hljs-subst">#{$.param params}</span>"</span> <span class="hljs-keyword">if</span> params?</pre></div></div>
             
@@ -4274,7 +4277,7 @@ encountered.</p>
             <div class="content"><div class='highlight'><pre>          <span class="hljs-keyword">for</span> own header, value <span class="hljs-keyword">of</span> service.getHeaders() ? {}
             xhr.setRequestHeader header, value
 
-          xhr.<span class="hljs-function"><span class="hljs-title">onreadystatechange</span> = -&gt;</span></pre></div></div>
+          xhr.onreadystatechange = <span class="hljs-function">-&gt;</span></pre></div></div>
             
         </li>
         
@@ -4636,7 +4639,7 @@ not match any of their names.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">init</span>:<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">init</span>: <span class="hljs-function">-&gt;</span>
     log.trace()
 
     log.info <span class="hljs-string">'Initializing extension controller'</span></pre></div></div>
@@ -4669,7 +4672,7 @@ not match any of their names.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    $.getJSON utils.url<span class="hljs-function"><span class="hljs-params">(<span class="hljs-string">'configuration.json'</span>)</span>, <span class="hljs-params">(data)</span> =&gt;</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    $.getJSON utils.url(<span class="hljs-string">'configuration.json'</span>), <span class="hljs-function"><span class="hljs-params">(data)</span> =&gt;</span></pre></div></div>
             
         </li>
         
@@ -4779,7 +4782,7 @@ not match any of their names.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      chrome.browserAction.onClicked.addListener <span class="hljs-function"><span class="hljs-params">(tab)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>      chrome.browserAction.onClicked.addListener (tab) -&gt;
         onMessage
           <span class="hljs-attribute">data</span>: <span class="hljs-attribute">key</span>: store.get <span class="hljs-string">'toolbar.key'</span>
           <span class="hljs-attribute">type</span>: <span class="hljs-string">'toolbar'</span></pre></div></div>
@@ -4864,7 +4867,7 @@ system.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">modifiers</span>:<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">modifiers</span>: <span class="hljs-function">-&gt;</span>
     log.trace()
 
     <span class="hljs-keyword">if</span> <span class="hljs-property">@isThisPlatform</span> <span class="hljs-string">'mac'</span> <span class="hljs-keyword">then</span> <span class="hljs-property">@SHORTCUT_MAC_MODIFIERS</span> <span class="hljs-keyword">else</span> <span class="hljs-property">@SHORTCUT_MODIFIERS</span></pre></div></div>
@@ -4882,7 +4885,7 @@ system.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">paste</span>:<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">paste</span>: <span class="hljs-function">-&gt;</span>
     log.trace()
 
     result  = <span class="hljs-string">''</span>
@@ -4906,7 +4909,7 @@ system.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">reset</span>:<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">reset</span>: <span class="hljs-function">-&gt;</span>
     log.trace()
 
     <span class="hljs-property">@notification</span> =
@@ -4929,7 +4932,7 @@ items.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">updateContextMenu</span>:<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">updateContextMenu</span>: <span class="hljs-function">-&gt;</span>
     log.trace()</pre></div></div>
             
         </li>
@@ -4945,7 +4948,7 @@ items.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    chrome.contextMenus.removeAll<span class="hljs-function"> =&gt;</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    chrome.contextMenus.removeAll =&gt;</pre></div></div>
             
         </li>
         
@@ -4960,7 +4963,7 @@ items.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      <span class="hljs-function"><span class="hljs-title">onMenuClick</span> = <span class="hljs-params">(info, tab)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">      <span class="hljs-title">onMenuClick</span> = <span class="hljs-params">(info, tab)</span> -&gt;</span>
         onMessage <span class="hljs-attribute">data</span>: info, <span class="hljs-attribute">type</span>: <span class="hljs-string">'menu'</span>
 
       menu = store.get <span class="hljs-string">'menu'</span></pre></div></div>
@@ -5078,7 +5081,7 @@ prepare the popup HTML and optimize performance.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">updateTemplates</span>:<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">updateTemplates</span>: <span class="hljs-function">-&gt;</span>
     log.trace()
 
     <span class="hljs-property">@templates</span> = _.sortBy store.get(<span class="hljs-string">'templates'</span>), <span class="hljs-string">'index'</span>
@@ -5101,7 +5104,7 @@ prepare the popup HTML and optimize performance.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">updateToolbar</span>:<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">updateToolbar</span>: <span class="hljs-function">-&gt;</span>
     log.trace()
 
     key      = store.get <span class="hljs-string">'toolbar.key'</span>
@@ -5202,7 +5205,7 @@ prepare the popup HTML and optimize performance.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Icon.<span class="hljs-function"><span class="hljs-title">exists</span> = <span class="hljs-params">(name)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>Icon.exists = <span class="hljs-function"><span class="hljs-params">(name)</span> -&gt;</span>
   Icon.get(name)?</pre></div></div>
             
         </li>
@@ -5219,7 +5222,7 @@ name) if none had a matching <code>name</code>.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Icon.<span class="hljs-function"><span class="hljs-title">get</span> = <span class="hljs-params">(name, safe)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>Icon.get = <span class="hljs-function"><span class="hljs-params">(name, safe)</span> -&gt;</span>
   icon = _.findWhere ext.config.icons.current, {name}
 
   <span class="hljs-keyword">if</span> <span class="hljs-keyword">not</span> icon? <span class="hljs-keyword">and</span> safe <span class="hljs-keyword">then</span> <span class="hljs-keyword">new</span> Icon() <span class="hljs-keyword">else</span> icon</pre></div></div>
@@ -5238,7 +5241,7 @@ lookup is performed.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>Icon.<span class="hljs-function"><span class="hljs-title">fromLegacy</span> = <span class="hljs-params">(name)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>Icon.fromLegacy = <span class="hljs-function"><span class="hljs-params">(name)</span> -&gt;</span>
   legacy = <span class="hljs-keyword">switch</span> <span class="hljs-keyword">typeof</span> name
     <span class="hljs-keyword">when</span> <span class="hljs-string">'number'</span> <span class="hljs-keyword">then</span> ext.config.icons.legacy[name]
     <span class="hljs-keyword">when</span> <span class="hljs-string">'string'</span> <span class="hljs-keyword">then</span> _.findWhere ext.config.icons.legacy, {name}
@@ -5258,7 +5261,7 @@ lookup is performed.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>utils.ready<span class="hljs-function"> -&gt;</span> ext.init()</pre></div></div>
+            <div class="content"><div class='highlight'><pre>utils.ready -&gt; ext.init()</pre></div></div>
             
         </li>
         

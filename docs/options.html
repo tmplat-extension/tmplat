@@ -269,7 +269,7 @@ triggered, modifies the underlying <code>option</code> with the value returned b
             <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">bindSaveEvent</span> = <span class="hljs-params">(selector, type, option, evaluate, callback)</span> -&gt;</span>
   log.trace()
 
-  $(selector).<span class="hljs-literal">on</span> type,<span class="hljs-function"> -&gt;</span>
+  $(selector).<span class="hljs-literal">on</span> type, <span class="hljs-function">-&gt;</span>
     $<span class="hljs-keyword">this</span> = $ <span class="hljs-keyword">this</span>
     key   = <span class="hljs-string">''</span>
     value = <span class="hljs-literal">null</span>
@@ -338,14 +338,14 @@ triggered, modifies the underlying <code>option</code> with the value returned b
             <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">loadControlEvents</span> = -&gt;</span>
   log.trace()
 
-  $(<span class="hljs-string">'#menuEnabled'</span>).<span class="hljs-literal">on</span>(<span class="hljs-string">'change'</span>,<span class="hljs-function"> -&gt;</span>
+  $(<span class="hljs-string">'#menuEnabled'</span>).<span class="hljs-literal">on</span>(<span class="hljs-string">'change'</span>, <span class="hljs-function">-&gt;</span>
     groups = $(<span class="hljs-string">'#menuOptions'</span>).parents(<span class="hljs-string">'.control-group'</span>).first()
     groups = groups.add $(<span class="hljs-string">'#menuPaste'</span>).parents(<span class="hljs-string">'.control-group'</span>).first()
 
     <span class="hljs-keyword">if</span> $(<span class="hljs-keyword">this</span>).<span class="hljs-keyword">is</span> <span class="hljs-string">':checked'</span> <span class="hljs-keyword">then</span> groups.slideDown() <span class="hljs-keyword">else</span> groups.slideUp()
   ).trigger <span class="hljs-string">'change'</span>
 
-  $(<span class="hljs-string">'#shortcutsEnabled'</span>).<span class="hljs-literal">on</span>(<span class="hljs-string">'change'</span>,<span class="hljs-function"> -&gt;</span>
+  $(<span class="hljs-string">'#shortcutsEnabled'</span>).<span class="hljs-literal">on</span>(<span class="hljs-string">'change'</span>, <span class="hljs-function">-&gt;</span>
     groups = $(<span class="hljs-string">'#shortcutsPaste'</span>).parents(<span class="hljs-string">'.control-group'</span>).first()
 
     <span class="hljs-keyword">if</span> $(<span class="hljs-keyword">this</span>).<span class="hljs-keyword">is</span> <span class="hljs-string">':checked'</span> <span class="hljs-keyword">then</span> groups.slideDown() <span class="hljs-keyword">else</span> groups.slideUp()
@@ -440,7 +440,7 @@ page.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  images.<span class="hljs-literal">on</span>(<span class="hljs-string">'change'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  images.<span class="hljs-literal">on</span>(<span class="hljs-string">'change'</span>, <span class="hljs-function">-&gt;</span>
     selectedIcon = Icon.get $(<span class="hljs-keyword">this</span>).find(<span class="hljs-string">'option:selected'</span>).val(), <span class="hljs-literal">yes</span>
 
     $(<span class="hljs-string">'#template_image_preview'</span>).attr <span class="hljs-string">'class'</span>, selectedIcon.style
@@ -570,7 +570,7 @@ page.</p>
             <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">loadNotificationSaveEvents</span> = -&gt;</span>
   log.trace()
 
-  $(<span class="hljs-string">'#notifications'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>,<span class="hljs-function"> -&gt;</span>
+  $(<span class="hljs-string">'#notifications'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>, <span class="hljs-function">-&gt;</span>
     enabled = $(<span class="hljs-keyword">this</span>).<span class="hljs-keyword">is</span> <span class="hljs-string">':checked'</span>
 
     log.debug <span class="hljs-string">"Changing notifications to '<span class="hljs-subst">#{enabled}</span>'"</span>
@@ -596,7 +596,7 @@ page.</p>
             <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">loadSaveEvents</span> = -&gt;</span>
   log.trace()
 
-  $(<span class="hljs-string">'#analytics'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>,<span class="hljs-function"> -&gt;</span>
+  $(<span class="hljs-string">'#analytics'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>, <span class="hljs-function">-&gt;</span>
     enabled = $(<span class="hljs-keyword">this</span>).<span class="hljs-keyword">is</span> <span class="hljs-string">':checked'</span>
 
     log.debug <span class="hljs-string">"Changing analytics to '<span class="hljs-subst">#{enabled}</span>'"</span>
@@ -875,9 +875,9 @@ reordering the templates.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#template_wizard [tabify], #template_cancel_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#template_wizard [tabify], #template_cancel_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     <span class="hljs-keyword">do</span> closeWizard
-  $(<span class="hljs-string">'#template_reset_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+  $(<span class="hljs-string">'#template_reset_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     error.hide() <span class="hljs-keyword">for</span> error <span class="hljs-keyword">in</span> validationErrors
 
     <span class="hljs-keyword">do</span> resetWizard</pre></div></div>
@@ -924,7 +924,7 @@ reordering the templates.</p>
             
             <div class="content"><div class='highlight'><pre>  store.init <span class="hljs-string">'options_limit'</span>, parseInt $(<span class="hljs-string">'#template_filter'</span>).val()
   limit = store.get <span class="hljs-string">'options_limit'</span>
-  $(<span class="hljs-string">'#template_filter option'</span>).each<span class="hljs-function"> -&gt;</span>
+  $(<span class="hljs-string">'#template_filter option'</span>).each -&gt;
     $<span class="hljs-keyword">this</span> = $ <span class="hljs-keyword">this</span>
     $<span class="hljs-keyword">this</span>.prop <span class="hljs-string">'selected'</span>, limit <span class="hljs-keyword">is</span> parseInt $<span class="hljs-keyword">this</span>.val()</pre></div></div>
             
@@ -941,7 +941,7 @@ reordering the templates.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#template_filter'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#template_filter'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>, <span class="hljs-function">-&gt;</span>
     store.set <span class="hljs-string">'options_limit'</span>, parseInt $(<span class="hljs-keyword">this</span>).val()
     loadTemplateRows searchResults ? ext.templates</pre></div></div>
             
@@ -958,7 +958,7 @@ reordering the templates.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#template_search :reset'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#template_search :reset'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     $(<span class="hljs-string">'#template_search :text'</span>).val <span class="hljs-string">''</span>
     <span class="hljs-keyword">do</span> searchTemplates</pre></div></div>
             
@@ -975,7 +975,7 @@ reordering the templates.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#template_controls'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'submit'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#template_controls'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'submit'</span>, <span class="hljs-function">-&gt;</span>
     searchTemplates $(<span class="hljs-string">'#template_search :text'</span>).val()</pre></div></div>
             
         </li>
@@ -991,7 +991,7 @@ reordering the templates.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#template_delete_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#template_delete_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     $<span class="hljs-keyword">this</span> = $ <span class="hljs-keyword">this</span>
 
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> $<span class="hljs-keyword">this</span>.hasClass <span class="hljs-string">'disabled'</span>
@@ -999,11 +999,11 @@ reordering the templates.</p>
     $<span class="hljs-keyword">this</span>.hide()
     $(<span class="hljs-string">'#template_confirm_delete'</span>).css <span class="hljs-string">'display'</span>, <span class="hljs-string">'inline-block'</span>
 
-  $(<span class="hljs-string">'#template_undo_delete_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+  $(<span class="hljs-string">'#template_undo_delete_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     $(<span class="hljs-string">'#template_confirm_delete'</span>).hide()
     $(<span class="hljs-string">'#template_delete_btn'</span>).show()
 
-  $(<span class="hljs-string">'#template_confirm_delete_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+  $(<span class="hljs-string">'#template_confirm_delete_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     $(<span class="hljs-string">'#template_confirm_delete'</span>).hide()
     $(<span class="hljs-string">'#template_delete_btn'</span>).show()
     deleteTemplates [activeTemplate]
@@ -1022,7 +1022,7 @@ reordering the templates.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#template_wizard'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'hide'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#template_wizard'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'hide'</span>, <span class="hljs-function">-&gt;</span>
     error.hide() <span class="hljs-keyword">for</span> error <span class="hljs-keyword">in</span> validationErrors</pre></div></div>
             
         </li>
@@ -1038,7 +1038,7 @@ reordering the templates.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#template_save_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#template_save_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span></pre></div></div>
             
         </li>
         
@@ -1135,7 +1135,7 @@ displayed in the table.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#disable_btn, #enable_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#disable_btn, #enable_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     $<span class="hljs-keyword">this</span> = $ <span class="hljs-keyword">this</span>
 
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> $<span class="hljs-keyword">this</span>.hasClass <span class="hljs-string">'disabled'</span>
@@ -1155,7 +1155,7 @@ displayed in the table.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#add_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#add_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> $(<span class="hljs-keyword">this</span>).hasClass <span class="hljs-string">'disabled'</span>
 
     openWizard <span class="hljs-literal">null</span></pre></div></div>
@@ -1189,7 +1189,7 @@ are deleted at all.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#delete_wizard'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'hide'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#delete_wizard'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'hide'</span>, <span class="hljs-function">-&gt;</span>
     selectedTemplates = []
     $(<span class="hljs-string">'#delete_items li'</span>).remove()</pre></div></div>
             
@@ -1221,7 +1221,7 @@ are deleted at all.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#delete_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#delete_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> $(<span class="hljs-keyword">this</span>).hasClass <span class="hljs-string">'disabled'</span>
 
     warningMsg?.hide()
@@ -1310,7 +1310,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#delete_cancel_btn, #delete_no_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#delete_cancel_btn, #delete_no_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     $(<span class="hljs-string">'#delete_wizard'</span>).modal <span class="hljs-string">'hide'</span></pre></div></div>
             
         </li>
@@ -1326,7 +1326,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#delete_yes_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#delete_yes_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     deleteTemplates selectedTemplates
 
     $(<span class="hljs-string">'#delete_wizard'</span>).modal <span class="hljs-string">'hide'</span></pre></div></div>
@@ -1360,7 +1360,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#export_error .close'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#export_error .close'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     $(<span class="hljs-keyword">this</span>).next().html(<span class="hljs-string">'&amp;nbsp'</span>).parent().hide()</pre></div></div>
             
         </li>
@@ -1376,7 +1376,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#export_wizard'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'hide'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#export_wizard'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'hide'</span>, <span class="hljs-function">-&gt;</span>
     $(<span class="hljs-string">'#export_content'</span>).val <span class="hljs-string">''</span>
     $(<span class="hljs-string">'#export_save_btn'</span>).attr <span class="hljs-string">'href'</span>, <span class="hljs-string">'#'</span>
     $(<span class="hljs-string">'#export_error'</span>).find(<span class="hljs-string">'span'</span>).html(<span class="hljs-string">'&amp;nbsp;'</span>).end().hide()</pre></div></div>
@@ -1394,7 +1394,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#export_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#export_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> $(<span class="hljs-keyword">this</span>).hasClass <span class="hljs-string">'disabled'</span>
 
     selectedTemplates = <span class="hljs-keyword">do</span> getSelectedTemplates
@@ -1424,7 +1424,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#export_close_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#export_close_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     $(<span class="hljs-string">'#export_wizard'</span>).modal <span class="hljs-string">'hide'</span></pre></div></div>
             
         </li>
@@ -1440,7 +1440,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#export_copy_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#export_copy_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     ext.copy $(<span class="hljs-string">'#export_content'</span>).val(), <span class="hljs-literal">yes</span></pre></div></div>
             
         </li>
@@ -1456,7 +1456,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-keyword">this</span>).text(i18n.get <span class="hljs-string">'opt_export_wizard_copy_alt_button'</span>).delay(<span class="hljs-number">800</span>).queue<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-keyword">this</span>).text(i18n.get <span class="hljs-string">'opt_export_wizard_copy_alt_button'</span>).delay(<span class="hljs-number">800</span>).queue -&gt;
       $(<span class="hljs-keyword">this</span>).text(i18n.get <span class="hljs-string">'opt_export_wizard_copy_button'</span>).dequeue()</pre></div></div>
             
         </li>
@@ -1490,7 +1490,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_error .close'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_error .close'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     $(<span class="hljs-keyword">this</span>).next().html(<span class="hljs-string">'&amp;nbsp'</span>).parent().hide()</pre></div></div>
             
         </li>
@@ -1506,7 +1506,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_wizard'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'hide'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_wizard'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'hide'</span>, <span class="hljs-function">-&gt;</span>
     data = <span class="hljs-literal">null</span>
     $(<span class="hljs-string">'#import_final_btn'</span>).prop <span class="hljs-string">'disabled'</span>, <span class="hljs-literal">yes</span>
     $(<span class="hljs-string">'#import_wizard_stage2, #import_back_btn, #import_final_btn'</span>).hide()
@@ -1528,7 +1528,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_back_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_back_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     log.info <span class="hljs-string">'Going back to previous import stage'</span>
 
     $(<span class="hljs-string">'#import_wizard_stage2, #import_back_btn, #import_final_btn'</span>).hide()
@@ -1547,7 +1547,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">if</span> $(<span class="hljs-keyword">this</span>).hasClass <span class="hljs-string">'disabled'</span>
 
     log.info <span class="hljs-string">'Launching import wizard'</span>
@@ -1567,7 +1567,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_items'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_items'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>, <span class="hljs-function">-&gt;</span>
     $(<span class="hljs-string">'#import_final_btn'</span>).prop <span class="hljs-string">'disabled'</span>, <span class="hljs-keyword">not</span> $(<span class="hljs-keyword">this</span>).find(<span class="hljs-string">':selected'</span>).length</pre></div></div>
             
         </li>
@@ -1583,7 +1583,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_select_all_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_select_all_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     $(<span class="hljs-string">'#import_items option'</span>).prop(<span class="hljs-string">'selected'</span>, <span class="hljs-literal">yes</span>).parent().focus()
     $(<span class="hljs-string">'#import_final_btn'</span>).prop <span class="hljs-string">'disabled'</span>, <span class="hljs-literal">no</span></pre></div></div>
             
@@ -1600,7 +1600,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_deselect_all_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_deselect_all_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     $(<span class="hljs-string">'#import_items option'</span>).prop(<span class="hljs-string">'selected'</span>, <span class="hljs-literal">no</span>).parent().focus()
     $(<span class="hljs-string">'#import_final_btn'</span>).prop <span class="hljs-string">'disabled'</span>, <span class="hljs-literal">yes</span></pre></div></div>
             
@@ -1617,7 +1617,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $<span class="hljs-function"><span class="hljs-params">(<span class="hljs-string">'#import_file_btn'</span>)</span>.<span class="hljs-title">on</span> '<span class="hljs-title">change</span>', <span class="hljs-params">(e)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_file_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>, <span class="hljs-function"><span class="hljs-params">(e)</span> -&gt;</span>
     file   = e.target.files[<span class="hljs-number">0</span>]
     reader = <span class="hljs-keyword">new</span> FileReader()</pre></div></div>
             
@@ -1634,7 +1634,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    reader.<span class="hljs-function"><span class="hljs-title">onerror</span> = <span class="hljs-params">(err)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    reader.onerror = <span class="hljs-function"><span class="hljs-params">(err)</span> -&gt;</span>
       message = i18n.get <span class="hljs-keyword">switch</span> err.code
         <span class="hljs-keyword">when</span> FileError.NOT_FOUND_ERR <span class="hljs-keyword">then</span> <span class="hljs-string">'error_file_not_found'</span>
         <span class="hljs-keyword">when</span> FileError.ABORT_ERR <span class="hljs-keyword">then</span> <span class="hljs-string">'error_file_aborted'</span>
@@ -1657,7 +1657,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    reader.<span class="hljs-function"><span class="hljs-title">onload</span> = <span class="hljs-params">(e)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    reader.onload = <span class="hljs-function"><span class="hljs-params">(e)</span> -&gt;</span>
       result = e.target.result
 
       log.debug <span class="hljs-string">'The following contents were read from the file...'</span>, result
@@ -1693,7 +1693,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_final_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_final_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">unless</span> data?</pre></div></div>
             
         </li>
@@ -1760,7 +1760,7 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_close_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_close_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     $(<span class="hljs-string">'#import_wizard'</span>).modal <span class="hljs-string">'hide'</span></pre></div></div>
             
         </li>
@@ -1776,11 +1776,11 @@ template(s).</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_paste_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_paste_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     $(<span class="hljs-string">'#import_file_btn'</span>).val <span class="hljs-string">''</span>
     $(<span class="hljs-string">'#import_content'</span>).val ext.paste()
 
-    $(<span class="hljs-keyword">this</span>).text(i18n.get <span class="hljs-string">'opt_import_wizard_paste_alt_button'</span>).delay(<span class="hljs-number">800</span>).queue<span class="hljs-function"> -&gt;</span>
+    $(<span class="hljs-keyword">this</span>).text(i18n.get <span class="hljs-string">'opt_import_wizard_paste_alt_button'</span>).delay(<span class="hljs-number">800</span>).queue -&gt;
       $(<span class="hljs-keyword">this</span>).text(i18n.get <span class="hljs-string">'opt_import_wizard_paste_button'</span>).dequeue()</pre></div></div>
             
         </li>
@@ -1797,7 +1797,7 @@ for them to check and finalize.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_continue_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#import_continue_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     $<span class="hljs-keyword">this</span> = $(<span class="hljs-keyword">this</span>).prop <span class="hljs-string">'disabled'</span>, <span class="hljs-literal">yes</span>
     data  = <span class="hljs-literal">null</span>
     list  = $ <span class="hljs-string">'#import_items'</span>
@@ -2033,7 +2033,7 @@ checkboxes.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#toolbarPopup .btn'</span>).<span class="hljs-literal">on</span>(<span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#toolbarPopup .btn'</span>).<span class="hljs-literal">on</span>(<span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     $(<span class="hljs-string">".<span class="hljs-subst">#{$(<span class="hljs-keyword">this</span>).attr <span class="hljs-string">'id'</span>}</span>"</span>).show().siblings().hide()
   ).filter(<span class="hljs-string">'.active'</span>).trigger <span class="hljs-string">'click'</span></pre></div></div>
             
@@ -2053,7 +2053,7 @@ checkboxes.</p>
             <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">loadToolbarSaveEvents</span> = -&gt;</span>
   log.trace()
 
-  $(<span class="hljs-string">'#toolbarPopup .btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+  $(<span class="hljs-string">'#toolbarPopup .btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     popup = <span class="hljs-keyword">not</span> $(<span class="hljs-string">'#toolbarPopupYes'</span>).hasClass <span class="hljs-string">'active'</span>
 
     store.modify <span class="hljs-string">'toolbar'</span>, <span class="hljs-function"><span class="hljs-params">(toolbar)</span> -&gt;</span> toolbar.popup = popup
@@ -2102,7 +2102,7 @@ checkboxes.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'input[name="enabled_shortener"]'</span>).each<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'input[name="enabled_shortener"]'</span>).each -&gt;
     $<span class="hljs-keyword">this</span> = $ <span class="hljs-keyword">this</span>
     $<span class="hljs-keyword">this</span>.prop <span class="hljs-string">'checked'</span>, store.get <span class="hljs-string">"<span class="hljs-subst">#{$<span class="hljs-keyword">this</span>.attr <span class="hljs-string">'id'</span>}</span>.enabled"</span></pre></div></div>
             
@@ -2184,7 +2184,7 @@ their OAuth objects.</p>
     shortener.oauth?
 
   <span class="hljs-keyword">for</span> shortener <span class="hljs-keyword">in</span> shorteners
-    <span class="hljs-keyword">do</span> <span class="hljs-function"><span class="hljs-params">(shortener)</span> -&gt;</span>
+    <span class="hljs-keyword">do</span> (shortener) -&gt;
       button = $ <span class="hljs-string">"#<span class="hljs-subst">#{shortener.name}</span>Account"</span></pre></div></div>
             
         </li>
@@ -2201,7 +2201,7 @@ current login state in the button.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      button.<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>      button.<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
         $<span class="hljs-keyword">this</span> = $(<span class="hljs-keyword">this</span>).blur()
 
         <span class="hljs-keyword">if</span> $<span class="hljs-keyword">this</span>.data(<span class="hljs-string">'oauth'</span>) <span class="hljs-keyword">isnt</span> <span class="hljs-string">'true'</span></pre></div></div>
@@ -2238,7 +2238,7 @@ redirect them to the OAuth permissions page - after authenticating themselves).<
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>          shortener.oauth.authorize<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>          shortener.oauth.authorize -&gt;
             log.debug <span class="hljs-string">"Authorization response for <span class="hljs-subst">#{shortener.name}</span>..."</span>, arguments
 
             success = shortener.oauth.hasAccessToken()
@@ -2371,7 +2371,7 @@ undo this, on this end at least.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#yourlsAuthentication button'</span>).<span class="hljs-literal">on</span>(<span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#yourlsAuthentication button'</span>).<span class="hljs-literal">on</span>(<span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     $(<span class="hljs-string">".<span class="hljs-subst">#{$(<span class="hljs-keyword">this</span>).attr <span class="hljs-string">'id'</span>}</span>"</span>).show().siblings().hide()
   ).filter(<span class="hljs-string">'.active'</span>).trigger <span class="hljs-string">'click'</span></pre></div></div>
             
@@ -2404,7 +2404,7 @@ undo this, on this end at least.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'input[name="enabled_shortener"]'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'input[name="enabled_shortener"]'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>, <span class="hljs-function">-&gt;</span>
     store.modify <span class="hljs-string">'bitly'</span>, <span class="hljs-string">'googl'</span>, <span class="hljs-string">'yourls'</span>, <span class="hljs-function"><span class="hljs-params">(data, key)</span> -&gt;</span>
       enabled = data.enabled = $(<span class="hljs-string">"#<span class="hljs-subst">#{key}</span>"</span>).<span class="hljs-keyword">is</span> <span class="hljs-string">':checked'</span>
 
@@ -2428,7 +2428,7 @@ undo this, on this end at least.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#yourlsAuthentication button'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#yourlsAuthentication button'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     $<span class="hljs-keyword">this</span> = $ <span class="hljs-keyword">this</span>
     auth  = $<span class="hljs-keyword">this</span>.attr(<span class="hljs-string">'id'</span>).match(<span class="hljs-regexp">/yourlsAuthentication(.*)/</span>)[<span class="hljs-number">1</span>]
 
@@ -2452,7 +2452,7 @@ undo this, on this end at least.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>  yourlsFields = <span class="hljs-string">'#yourlsPassword, #yourlsSignature, #yourlsUrl, #yourlsUsername'</span>
-  bindSaveEvent yourlsFields, <span class="hljs-string">'input'</span>, <span class="hljs-string">'yourls'</span>,<span class="hljs-function"> -&gt;</span>
+  bindSaveEvent yourlsFields, <span class="hljs-string">'input'</span>, <span class="hljs-string">'yourls'</span>, <span class="hljs-function">-&gt;</span>
     <span class="hljs-property">@val</span>().trim()</pre></div></div>
             
         </li>
@@ -2886,7 +2886,7 @@ associated with specific fields.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">hide</span>:<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">hide</span>: <span class="hljs-function">-&gt;</span>
     field = $ <span class="hljs-string">"#<span class="hljs-subst">#{<span class="hljs-property">@id</span>}</span>"</span>
 
     field.parents(<span class="hljs-string">'.control-group:first'</span>).removeClass <span class="hljs-property">@className</span>
@@ -3137,7 +3137,7 @@ existence.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">hide</span>:<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">hide</span>: <span class="hljs-function">-&gt;</span>
     <span class="hljs-property">@alert</span>?.alert <span class="hljs-string">'close'</span></pre></div></div>
             
         </li>
@@ -3153,7 +3153,7 @@ existence.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">show</span>:<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">show</span>: <span class="hljs-function">-&gt;</span>
     <span class="hljs-property">@header</span>  = i18n.get <span class="hljs-property">@headerKey</span>  <span class="hljs-keyword">if</span> <span class="hljs-property">@headerKey</span>  <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@header</span>?
     <span class="hljs-property">@message</span> = i18n.get <span class="hljs-property">@messageKey</span> <span class="hljs-keyword">if</span> <span class="hljs-property">@messageKey</span> <span class="hljs-keyword">and</span> <span class="hljs-keyword">not</span> <span class="hljs-property">@message</span>?</pre></div></div>
             
@@ -3506,7 +3506,7 @@ use the preferred default value for those fields.</p>
             <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">activateModifications</span> = -&gt;</span>
   log.trace()
 
-  $(<span class="hljs-string">'#templates tbody tr td:not(:first-child)'</span>).<span class="hljs-literal">off</span>(<span class="hljs-string">'click'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+  $(<span class="hljs-string">'#templates tbody tr td:not(:first-child)'</span>).<span class="hljs-literal">off</span>(<span class="hljs-string">'click'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
     key = $(<span class="hljs-keyword">this</span>).parents(<span class="hljs-string">'tr:first'</span>).find(<span class="hljs-string">':checkbox'</span>).val()
 
     openWizard _.findWhere ext.templates, {key}</pre></div></div>
@@ -3543,7 +3543,7 @@ use the preferred default value for those fields.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  selectBoxes.<span class="hljs-literal">off</span>(<span class="hljs-string">'change'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  selectBoxes.<span class="hljs-literal">off</span>(<span class="hljs-string">'change'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>, <span class="hljs-function">-&gt;</span>
     $<span class="hljs-keyword">this</span>       = $ <span class="hljs-keyword">this</span>
     messageKey  = <span class="hljs-string">'opt_select_box'</span>
     messageKey += <span class="hljs-string">'_checked'</span> <span class="hljs-keyword">if</span> $<span class="hljs-keyword">this</span>.<span class="hljs-keyword">is</span> <span class="hljs-string">':checked'</span>
@@ -3565,7 +3565,7 @@ their state to all individual row select boxes.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  table.find(<span class="hljs-string">'thead :checkbox'</span>).<span class="hljs-literal">off</span>(<span class="hljs-string">'change'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  table.find(<span class="hljs-string">'thead :checkbox'</span>).<span class="hljs-literal">off</span>(<span class="hljs-string">'change'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'change'</span>, <span class="hljs-function">-&gt;</span>
     $<span class="hljs-keyword">this</span>       = $ <span class="hljs-keyword">this</span>
     checked     = $<span class="hljs-keyword">this</span>.<span class="hljs-keyword">is</span> <span class="hljs-string">':checked'</span>
     messageKey  = <span class="hljs-string">'opt_select_all_box'</span>
@@ -3608,7 +3608,7 @@ their state to all individual row select boxes.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  base.find(<span class="hljs-string">'[data-original-title]'</span>).each<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  base.find(<span class="hljs-string">'[data-original-title]'</span>).each -&gt;
     $<span class="hljs-keyword">this</span> = $ <span class="hljs-keyword">this</span>
 
     $<span class="hljs-keyword">this</span>.tooltip <span class="hljs-string">'destroy'</span>
@@ -3628,7 +3628,7 @@ their state to all individual row select boxes.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  base.find(<span class="hljs-string">'[title]'</span>).each<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  base.find(<span class="hljs-string">'[title]'</span>).each -&gt;
     $<span class="hljs-keyword">this</span>     = $ <span class="hljs-keyword">this</span>
     placement = $<span class="hljs-keyword">this</span>.attr <span class="hljs-string">'data-placement'</span>
     placement = <span class="hljs-keyword">if</span> placement? <span class="hljs-keyword">then</span> utils.trimToLower placement <span class="hljs-keyword">else</span> <span class="hljs-string">'top'</span>
@@ -3903,7 +3903,7 @@ fields.</p>
   log.trace()
 
   keys = []
-  $(<span class="hljs-string">'#templates tbody :checkbox:checked'</span>).each<span class="hljs-function"> -&gt;</span>
+  $(<span class="hljs-string">'#templates tbody :checkbox:checked'</span>).each -&gt;
     keys.push $(<span class="hljs-keyword">this</span>).val()
 
   _.filter ext.templates, <span class="hljs-function"><span class="hljs-params">(template)</span> -&gt;</span>
@@ -3979,7 +3979,7 @@ fields.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="hljs-function"><span class="hljs-title">refreshPagination</span> = <span class="hljs-params">(page = <span class="hljs-number">1</span>)</span> -&gt;</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">    <span class="hljs-title">refreshPagination</span> = <span class="hljs-params">(page = <span class="hljs-number">1</span>)</span> -&gt;</span></pre></div></div>
             
         </li>
         
@@ -4011,7 +4011,7 @@ fields.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      pagination.find(<span class="hljs-string">'ul li:first-child'</span>).each<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>      pagination.find(<span class="hljs-string">'ul li:first-child'</span>).each -&gt;
         <span class="hljs-keyword">if</span> page <span class="hljs-keyword">is</span> <span class="hljs-number">1</span>
           $(<span class="hljs-keyword">this</span>).addClass <span class="hljs-string">'disabled'</span>
         <span class="hljs-keyword">else</span>
@@ -4030,7 +4030,7 @@ fields.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      pagination.find(<span class="hljs-string">'ul li:not(:first-child, :last-child)'</span>).each<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>      pagination.find(<span class="hljs-string">'ul li:not(:first-child, :last-child)'</span>).each -&gt;
         $<span class="hljs-keyword">this</span> = $ <span class="hljs-keyword">this</span>
 
         <span class="hljs-keyword">if</span> page <span class="hljs-keyword">is</span> parseInt $<span class="hljs-keyword">this</span>.text()
@@ -4051,7 +4051,7 @@ fields.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>      pagination.find(<span class="hljs-string">'ul li:last-child'</span>).each<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>      pagination.find(<span class="hljs-string">'ul li:last-child'</span>).each -&gt;
         $<span class="hljs-keyword">this</span> = $ <span class="hljs-keyword">this</span>
         <span class="hljs-keyword">if</span> page <span class="hljs-keyword">is</span> pages
           $<span class="hljs-keyword">this</span>.addClass <span class="hljs-string">'disabled'</span>
@@ -4093,15 +4093,15 @@ fields.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    pagination.find(<span class="hljs-string">'ul li'</span>).<span class="hljs-literal">off</span> <span class="hljs-string">'click'</span>
-    pagination.find(<span class="hljs-string">'ul li:first-child'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+    pagination.find(<span class="hljs-string">'ul li:first-child'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
       <span class="hljs-keyword">unless</span> $(<span class="hljs-keyword">this</span>).hasClass <span class="hljs-string">'disabled'</span>
         refreshPagination pagination.find(<span class="hljs-string">'ul li.active'</span>).index() - <span class="hljs-number">1</span>
 
-    pagination.find(<span class="hljs-string">'ul li:not(:first-child, :last-child)'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+    pagination.find(<span class="hljs-string">'ul li:not(:first-child, :last-child)'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
       $<span class="hljs-keyword">this</span> = $ <span class="hljs-keyword">this</span>
       refreshPagination $<span class="hljs-keyword">this</span>.index() <span class="hljs-keyword">unless</span> $<span class="hljs-keyword">this</span>.hasClass <span class="hljs-string">'active'</span>
 
-    pagination.find(<span class="hljs-string">'ul li:last-child'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+    pagination.find(<span class="hljs-string">'ul li:last-child'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
       <span class="hljs-keyword">unless</span> $(<span class="hljs-keyword">this</span>).hasClass <span class="hljs-string">'disabled'</span>
         refreshPagination pagination.find(<span class="hljs-string">'ul li.active'</span>).index() + <span class="hljs-number">1</span>
 
@@ -4327,7 +4327,7 @@ the template stored. Try to locate the stored template and create a clone of it.
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-function"><span class="hljs-title">updateButton</span> = <span class="hljs-params">(buttons, disabled, titleKey)</span> -&gt;</span>
+            <div class="content"><div class='highlight'><pre><span class="hljs-function">  <span class="hljs-title">updateButton</span> = <span class="hljs-params">(buttons, disabled, titleKey)</span> -&gt;</span>
     buttons[<span class="hljs-keyword">if</span> disabled <span class="hljs-keyword">then</span> <span class="hljs-string">'addClass'</span> <span class="hljs-keyword">else</span> <span class="hljs-string">'removeClass'</span>] <span class="hljs-string">'disabled'</span>
     buttons.attr <span class="hljs-string">'data-original-title'</span>, i18n.get titleKey</pre></div></div>
             
@@ -4536,7 +4536,7 @@ the template stored. Try to locate the stored template and create a clone of it.
             </div>
             
             <div class="content"><div class='highlight'><pre>  $(<span class="hljs-string">'#template_content, #template_title'</span>).prop <span class="hljs-string">'disabled'</span>, !!activeTemplate.readOnly
-  $(<span class="hljs-string">'#template_delete_btn'</span>).each<span class="hljs-function"> -&gt;</span>
+  $(<span class="hljs-string">'#template_delete_btn'</span>).each -&gt;
     $<span class="hljs-keyword">this</span> = $ <span class="hljs-keyword">this</span>
     $<span class="hljs-keyword">this</span>[<span class="hljs-keyword">if</span> activeTemplate.readOnly <span class="hljs-keyword">then</span> <span class="hljs-string">'addClass'</span> <span class="hljs-keyword">else</span> <span class="hljs-string">'removeClass'</span>] <span class="hljs-string">'disabled'</span>
     $<span class="hljs-keyword">this</span>.attr <span class="hljs-string">'data-original-title'</span>, i18n.get <span class="hljs-keyword">if</span> activeTemplate.readOnly
@@ -4638,7 +4638,7 @@ settings.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">init</span>:<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-attribute">init</span>: <span class="hljs-function">-&gt;</span>
     log.trace()
 
     log.info <span class="hljs-string">'Initializing the options page'</span></pre></div></div>
@@ -4720,7 +4720,7 @@ settings.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    initialTabChange = <span class="hljs-literal">yes</span>
-    $(<span class="hljs-string">'a[tabify]'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+    $(<span class="hljs-string">'a[tabify]'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
       target  = $(<span class="hljs-keyword">this</span>).attr <span class="hljs-string">'tabify'</span>
       nav     = $ <span class="hljs-string">"#navigation a[tabify='<span class="hljs-subst">#{target}</span>']"</span>
       parent  = nav.parent <span class="hljs-string">'li'</span>
@@ -4772,10 +4772,10 @@ settings.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">'#tools_nav'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">'#tools_nav'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
       $(<span class="hljs-string">'#tools_wizard'</span>).modal <span class="hljs-string">'show'</span>
 
-    $(<span class="hljs-string">'.tools_close_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+    $(<span class="hljs-string">'.tools_close_btn'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
       $(<span class="hljs-string">'#tools_wizard'</span>).modal <span class="hljs-string">'hide'</span></pre></div></div>
             
         </li>
@@ -4791,7 +4791,7 @@ settings.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">'form:not([target="_blank"])'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'submit'</span>,<span class="hljs-function"> -&gt;</span></pre></div></div>
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">'form:not([target="_blank"])'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'submit'</span>, <span class="hljs-function">-&gt;</span></pre></div></div>
             
         </li>
         
@@ -4821,7 +4821,7 @@ settings.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">'footer a[href*="template-extension.org"]'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">'footer a[href*="template-extension.org"]'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
       analytics.track <span class="hljs-string">'Footer'</span>, <span class="hljs-string">'Clicked'</span>, <span class="hljs-string">'Homepage'</span></pre></div></div>
             
         </li>
@@ -4838,7 +4838,7 @@ settings.</p>
             </div>
             
             <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">'#donation input[name="hosted_button_id"]'</span>).val ext.config.options.payPal
-    $(<span class="hljs-string">'#donation'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'submit'</span>,<span class="hljs-function"> -&gt;</span>
+    $(<span class="hljs-string">'#donation'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'submit'</span>, <span class="hljs-function">-&gt;</span>
       analytics.track <span class="hljs-string">'Footer'</span>, <span class="hljs-string">'Clicked'</span>, <span class="hljs-string">'Donate'</span></pre></div></div>
             
         </li>
@@ -4869,7 +4869,7 @@ settings.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">'.modal'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'shown'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">'.modal'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'shown'</span>, <span class="hljs-function">-&gt;</span>
       $(<span class="hljs-keyword">this</span>).find(<span class="hljs-string">':input:enabled:first'</span>).focus()</pre></div></div>
             
         </li>
@@ -4900,7 +4900,7 @@ settings.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">'[popover]'</span>).each<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">'[popover]'</span>).each -&gt;
       $<span class="hljs-keyword">this</span>     = $ <span class="hljs-keyword">this</span>
 
       placement = $<span class="hljs-keyword">this</span>.attr <span class="hljs-string">'data-placement'</span>
@@ -4913,12 +4913,12 @@ settings.</p>
         placement
         trigger
         <span class="hljs-attribute">html</span>:      <span class="hljs-literal">yes</span>
-        <span class="hljs-attribute">content</span>:<span class="hljs-function">   -&gt;</span>
+        <span class="hljs-attribute">content</span>:   <span class="hljs-function">-&gt;</span>
           i18n.get $<span class="hljs-keyword">this</span>.attr <span class="hljs-string">'popover'</span>
       }
 
       <span class="hljs-keyword">if</span> trigger <span class="hljs-keyword">is</span> <span class="hljs-string">'manual'</span>
-        $<span class="hljs-keyword">this</span>.<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+        $<span class="hljs-keyword">this</span>.<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
           $<span class="hljs-keyword">this</span>.popover <span class="hljs-string">'toggle'</span>
 
     <span class="hljs-keyword">do</span> activateTooltips</pre></div></div>
@@ -4952,7 +4952,7 @@ so that the relevant content isn’t hidden.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">'[data-goto]'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>,<span class="hljs-function"> -&gt;</span>
+            <div class="content"><div class='highlight'><pre>    $(<span class="hljs-string">'[data-goto]'</span>).<span class="hljs-literal">on</span> <span class="hljs-string">'click'</span>, <span class="hljs-function">-&gt;</span>
       goto = $ $(<span class="hljs-keyword">this</span>).attr <span class="hljs-string">'data-goto'</span>
       pos  = goto.position()?.top <span class="hljs-keyword">or</span> <span class="hljs-number">0</span>
       pos -= navHeight <span class="hljs-keyword">if</span> pos <span class="hljs-keyword">and</span> pos &gt;= navHeight
@@ -4974,7 +4974,7 @@ so that the relevant content isn’t hidden.</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>utils.ready<span class="hljs-function"> -&gt;</span> options.init()</pre></div></div>
+            <div class="content"><div class='highlight'><pre>utils.ready -&gt; options.init()</pre></div></div>
             
         </li>
         
