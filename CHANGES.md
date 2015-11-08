@@ -1,3 +1,7 @@
+## Version 1.2.9, 2015.11.08
+
+* [#222](https://github.com/emplate-extension/template-chrome/issues/222): Fix bug where **dateTime** standard variable failed to render correctly
+
 ## Version 1.2.8, 2014.05.11
 
 * [#217](https://github.com/emplate-extension/template-chrome/issues/217): Update [bit.ly][] configuration due to recent security breach
