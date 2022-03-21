@@ -1,52 +1,101 @@
 {
-    "name": "template-chrome"
-  , "description": "Google Chrome extension that quickly and easily copies info on the current page using a simple and unique template system"
-  , "version": "1.2.9"
-  , "homepage": "http://template-extension.org"
-  , "bugs": {
-      "url": "https://github.com/template-extension/template-chrome/issues"
-    }
-  , "author": {
-        "name": "Alasdair Mercer"
-      , "email": "mercer.alasdair@gmail.com"
-      , "url": "http://neocotic.com"
-    }
-  , "licenses": [
-      {
-          "type": "MIT"
-        , "url": "http://template-extension.org/license"
-      }
-    ]
-  , "private": true
-  , "keywords": [
-        "template"
-      , "browser"
-      , "chrome"
-      , "extension"
-      , "clipboard"
-      , "shortener"
-      , "clipboard"
-      , "shortener"
-      , "markdown"
-      , "bbcode"
-      , "html"
-      , "social"
-    ]
-  , "repository": {
-        "type": "git"
-      , "url": "git://github.com/template-extension/template-chrome.git"
-    }
-  , "devDependencies": {
-        "grunt": "~0.4.1"
-      , "grunt-contrib-clean": "~0.5.0"
-      , "grunt-contrib-compress": "~0.7.0"
-      , "grunt-contrib-copy": "~0.5.0"
-      , "grunt-contrib-coffee": "~0.10.1"
-      , "grunt-contrib-uglify": "~0.3.2"
-      , "grunt-docco": "~0.3.3"
-      , "grunt-json-minify": "~0.4.0"
-    }
-  , "engines": {
-      "node": "~0.10.0"
-    }
+  "name": "tmplat",
+  "version": "2.0.0",
+  "description": "Google Chrome extension that quickly and easily copies info on the current page using a simple and unique template system",
+  "private": true,
+  "keywords": [
+    "template",
+    "browser",
+    "chrome",
+    "extension",
+    "clipboard",
+    "shortener",
+    "clipboard",
+    "shortener",
+    "markdown",
+    "bbcode",
+    "html",
+    "social"
+  ],
+  "homepage": "https://tmplat.com",
+  "bugs": {
+    "url": "https://github.com/tmplat-extension/tmplat/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "neocotic",
+    "url": "https://github.com/neocotic"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tmplat-extension/tmplat.git"
+  },
+  "scripts": {
+    "build": "npm run build:dev",
+    "build:dev": "npm run build:css && npm run build:html && npm run build:images && npm run build:json && npm run build:lib:dev && npm run build:locales && npm run build:vendor",
+    "build:prod": "npm run build:css && npm run build:images && npm run build:json && npm run build:lib:prod && npm run build:locales && npm run build:pages && npm run build:vendor && npm run compress",
+    "build:css": "rimraf dist/temp/css && cpy \"src/css/**/*\" dist/temp/css && sass --style=compressed src/scss:dist/temp/css",
+    "build:html": "rimraf \"dist/temp/*.html\" && cpy \"src/*.html\" dist/temp",
+    "build:images": "rimraf dist/temp/images && cpy \"src/images/**/*\" dist/temp/images",
+    "build:json": "rimraf \"dist/temp/*.json\" && cpy \"src/*.json\" dist/temp && node scripts/inject-manifest-version dist/temp/manifest.json && node scripts/minify-json \"dist/temp/*.json\"",
+    "build:lib:dev": "rimraf dist/temp/lib && webpack --mode=development",
+    "build:lib:prod": "rimraf dist/temp/lib && webpack --mode=production",
+    "build:locales": "rimraf dist/temp/_locales && cpy \"src/_locales/**/*\" dist/temp/_locales && node scripts/minify-locale \"dist/temp/_locales/**/messages.json\"",
+    "build:vendor": "rimraf dist/temp/vendor && cpy \"src/vendor/**/*\" dist/temp/vendor",
+    "compress": "rimraf dist/tmplat.zip && bestzip dist/tmplat.zip \"dist/temp/*\"",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "eslint \"src/**/*.ts\" --fix",
+    "test": "npm run lint"
+  },
+  "devDependencies": {
+    "@emotion/react": "^11.9.0",
+    "@emotion/styled": "^11.8.1",
+    "@mui/icons-material": "^5.6.2",
+    "@mui/material": "^5.6.2",
+    "@types/chrome": "^0.0.181",
+    "@types/lodash-es": "^4.17.6",
+    "@types/luxon": "^2.3.1",
+    "@types/react": "^18.0.6",
+    "@types/react-dom": "^18.0.2",
+    "@typescript-eslint/eslint-plugin": "^5.20.0",
+    "@typescript-eslint/parser": "^5.20.0",
+    "acorn": "^8.7.0",
+    "bestzip": "^2.2.1",
+    "chalk": "^4.1.2",
+    "clipboard": "^2.0.10",
+    "cpy-cli": "^4.1.0",
+    "css-loader": "^6.7.1",
+    "eslint": "^8.14.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-import-resolver-typescript": "^2.7.1",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "glob": "^8.0.1",
+    "inversify": "^6.0.1",
+    "joi": "^17.6.0",
+    "lodash-es": "^4.17.21",
+    "lodash.get": "^4.4.2",
+    "luxon": "^2.3.2",
+    "numeral": "^2.0.6",
+    "prettier": "^2.6.2",
+    "react": "^18.0.0",
+    "react-async": "^10.0.1",
+    "react-dom": "^18.0.0",
+    "reflect-metadata": "^0.1.13",
+    "rimraf": "^3.0.2",
+    "sass": "^1.50.1",
+    "sass-loader": "^12.6.0",
+    "style-loader": "^3.3.1",
+    "tmplat-mustache": "^2.5.0",
+    "ts-loader": "^9.2.8",
+    "ts-node": "^10.7.0",
+    "tsconfig-paths": "^3.14.1",
+    "tsconfig-paths-webpack-plugin": "^3.5.2",
+    "typescript": "^4.6.3",
+    "typescript-transform-paths": "^3.3.1",
+    "user-agent-data-types": "^0.2.0",
+    "webpack": "^5.72.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-merge": "^5.8.0"
+  }
 }

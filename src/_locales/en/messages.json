@@ -1,40 +1,581 @@
 {
-  "default_template_anchor": {
-    "message": "Anchor",
-    "description": "Title of the Anchor template."
+  "context_author_standard_description": {
+    "message": "The author from the page's meta information",
+    "description": "Description of the 'author' standard template context entry"
   },
-  "default_template_bbcode": {
-    "message": "BBCode",
-    "description": "Title of the BBCode template."
+  "context_browser_full_version_standard_description": {
+    "message": "The full version of the browser (e.g. $EXAMPLE$)",
+    "description": "Description of the 'browserFullVersion' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "100.0.1234.567",
+        "example": "100.0.1234.567"
+      }
+    }
   },
-  "default_template_encoded": {
-    "message": "Encoded",
-    "description": "Title of the Encoded template."
+  "context_browser_major_version_standard_description": {
+    "message": "The major version of the browser (e.g. $EXAMPLE$)",
+    "description": "Description of the 'browserMajorVersion' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "100",
+        "example": "100"
+      }
+    }
   },
-  "default_template_markdown": {
-    "message": "Markdown",
-    "description": "Title of the Markdown template."
+  "context_browser_name_standard_description": {
+    "message": "The name of the browser (i.e. $EXAMPLE$)",
+    "description": "Description of the 'browserName' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "Google Chrome",
+        "example": "Google Chrome"
+      }
+    }
   },
-  "default_template_markdown_selection": {
-    "message": "Selection in Markdown",
-    "description": "Title of the Selection in Markdown template."
+  "context_camel_case_operation_description": {
+    "message": "Transform the text provided, as space separated words, into camel case",
+    "description": "Description of the 'camelCase' operation template context entry"
   },
-  "default_template_short": {
-    "message": "Short",
-    "description": "Title of the Short template."
+  "context_capitalize_operation_description": {
+    "message": "Transform the first character of the text provided into upper case and the remaining to lower case",
+    "description": "Description of the 'capitalize' operation template context entry"
   },
-  "default_template_url": {
-    "message": "URL",
-    "description": "Title of the URL template."
+  "context_category_link_iana_character_sets_text": {
+    "message": "IANA Character Sets",
+    "description": "Text of the IANA Character Sets link"
+  },
+  "context_category_link_luxon_formatting_tokens_text": {
+    "message": "Luxon Formatting Tokens",
+    "description": "Text of the Luxon Formatting Tokens link"
+  },
+  "context_category_link_wikipedia_camel_case_text": {
+    "message": "Camel Case",
+    "description": "Text of the Camel Case link"
+  },
+  "context_category_link_wikipedia_kebab_case_text": {
+    "message": "Kebab Case",
+    "description": "Text of the Kebab Case link"
+  },
+  "context_category_link_wikipedia_latin_1_supplement_text": {
+    "message": "Latin-1 Supplement",
+    "description": "Text of the Latin-1 Supplement link"
+  },
+  "context_category_link_wikipedia_latin_extended_a_text": {
+    "message": "Latin Extended-A",
+    "description": "Text of the Latin Extended-A link"
+  },
+  "context_category_link_wikipedia_snake_case_text": {
+    "message": "Snake Case",
+    "description": "Text of the Snake Case link"
+  },
+  "context_category_link_wikipedia_start_case_text": {
+    "message": "Start Case",
+    "description": "Text of the Start Case link"
+  },
+  "context_character_set_standard_description": {
+    "message": "The character set used by the page (e.g. $EXAMPLE$)",
+    "description": "Description of the 'characterSet' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "UTF-8",
+        "example": "UTF-8"
+      }
+    }
+  },
+  "context_cookie_names_collection_description": {
+    "message": "The names of all cookies associated with the URL",
+    "description": "Description of the 'cookieNames' collection template context entry"
+  },
+  "context_cookie_operation_description": {
+    "message": "Get the value for the cookie with the name provided",
+    "description": "Description of the 'cookie' operation template context entry"
+  },
+  "context_cookies_collection_description": {
+    "message": "The key/value pairs of all cookies associated with the URL",
+    "description": "Description of the 'cookies' collection template context entry"
+  },
+  "context_cookies_enabled_standard_description": {
+    "message": "Whether or not cookies are enabled",
+    "description": "Description of the 'cookiesEnabled' standard template context entry"
+  },
+  "context_date_time_operation_description": {
+    "message": "Format the current date & time of the page using the pattern provided",
+    "description": "Description of the 'dateTime' operation template context entry"
+  },
+  "context_date_time_standard_description": {
+    "message": "The current date & time in ISO 8601 format",
+    "description": "Description of the 'dateTime' standard template context entry"
+  },
+  "context_deburr_operation_description": {
+    "message": "Deburrs the text provided by transforming all Latin-1 Supplement and Latin Extended-A characters to basic Latin characters",
+    "description": "Description of the 'deburr' operation template context entry"
+  },
+  "context_decode_base64_operation_description": {
+    "message": "Decode the previously Base64-encoded text provided",
+    "description": "Description of the 'decodeBase64' operation template context entry"
+  },
+  "context_decode_uri_component_operation_description": {
+    "message": "Decode the previously encoded text provided",
+    "description": "Description of the 'decodeUriComponent' operation template context entry"
+  },
+  "context_deprecated_bitly_account_standard_description": {
+    "message": "Whether or not you are currently logged in to your Bitly account",
+    "description": "Description of the deprecated 'bitlyAccount' standard template context entry"
+  },
+  "context_deprecated_bitly_standard_description": {
+    "message": "Whether or not Bitly is the enabled URL shortener",
+    "description": "Description of the deprecated 'bitly' standard template context entry"
+  },
+  "context_deprecated_encoded_standard_description": {
+    "message": "The encoded URL so that it can be safely used in a query string",
+    "description": "Description of the deprecated 'encoded' standard template context entry"
+  },
+  "context_deprecated_googl_account_standard_description": {
+    "message": "Whether or not you are currently logged in to your Google account",
+    "description": "Description of the deprecated 'googlAccount' standard template context entry"
+  },
+  "context_deprecated_googl_standard_description": {
+    "message": "Whether or not Google is the enabled URL shortener",
+    "description": "Description of the deprecated 'googl' standard template context entry"
+  },
+  "context_deprecated_java_standard_description": {
+    "message": "Whether or not Java is enabled",
+    "description": "Description of the deprecated 'java' standard template context entry"
+  },
+  "context_deprecated_links_target_standard_description": {
+    "message": "Whether or not the option to render links with instructions to open them in a new tab/window is enabled",
+    "description": "Description of the deprecated 'linksTarget' standard template context entry"
+  },
+  "context_deprecated_links_title_standard_description": {
+    "message": "Whether or not the option to render links with hover text is enabled",
+    "description": "Description of the deprecated 'linksTitle' standard template context entry"
+  },
+  "context_deprecated_menu_standard_description": {
+    "message": "Whether or not the option to show the context (right-click) menu is enabled",
+    "description": "Description of the deprecated 'menu' standard template context entry"
+  },
+  "context_description_standard_description": {
+    "message": "The description from the page's meta information",
+    "description": "Description of the 'description' standard template context entry"
+  },
+  "context_directory_standard_description": {
+    "message": "The directory part of the path (e.g. $EXAMPLE$)",
+    "description": "Description of the 'directory' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "/folder/dir/",
+        "example": "/folder/dir/"
+      }
+    }
+  },
+  "context_encode_base64_operation_description": {
+    "message": "Encode the text provided to Base64",
+    "description": "Description of the 'encodeBase64' operation template context entry"
+  },
+  "context_encode_uri_component_operation_description": {
+    "message": "Encode the text provided so that it can be safely used in a query string",
+    "description": "Description of the 'encodeUriComponent' operation template context entry"
+  },
+  "context_escape_html_operation_description": {
+    "message": "Converts certain characters within the text provided into their corresponding HTML entities",
+    "description": "Description of the 'escapeHtml' operation template context entry"
+  },
+  "context_favicon_url_standard_description": {
+    "message": "The URL of the page's favicon",
+    "description": "Description of the 'faviconUrl' standard template context entry"
+  },
+  "context_file_standard_description": {
+    "message": "The basename of the file (e.g. $EXAMPLE$)",
+    "description": "Description of the 'file' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "index.html",
+        "example": "index.html"
+      }
+    }
+  },
+  "context_hash_search_param_operation_description": {
+    "message": "Get the value of the parameter provided from within the hash",
+    "description": "Description of the 'hashSearchParam' operation template context entry"
+  },
+  "context_hash_search_params_collection_description": {
+    "message": "Get the value of the parameter provided from within the hash (e.g. hash $EXAMPLE_1$ contains $EXAMPLE_2$ and $EXAMPLE_3$)",
+    "description": "Description of the 'hashSearchParams' collection template context entry",
+    "placeholders": {
+      "example_1": {
+        "content": "#foo=bar&fu=baz",
+        "example": "#foo=bar&fu=baz"
+      },
+      "example_2": {
+        "content": "foo",
+        "example": "foo"
+      },
+      "example_3": {
+        "content": "fu",
+        "example": "fu"
+      }
+    }
+  },
+  "context_hash_segment_operation_description": {
+    "message": "Get the path segment at the index provided from within the hash",
+    "description": "Description of the 'hashSegment' operation template context entry"
+  },
+  "context_hash_segments_collection_description": {
+    "message": "The segments from the hash's path",
+    "description": "Description of the 'hashSegments' collection template context entry"
+  },
+  "context_hash_standard_description": {
+    "message": "The entire string after the hash (#) symbol in the URL",
+    "description": "Description of the 'hash' standard template context entry"
+  },
+  "context_height_standard_description": {
+    "message": "The height of the page",
+    "description": "Description of the 'height' standard template context entry"
+  },
+  "context_host_standard_description": {
+    "message": "For example; $EXAMPLE_1$, $EXAMPLE_2$",
+    "description": "Description of the 'host' standard template context entry",
+    "placeholders": {
+      "example_1": {
+        "content": "www.example.com",
+        "example": "www.example.com"
+      },
+      "example_2": {
+        "content": "localhost",
+        "example": "localhost"
+      }
+    }
+  },
+  "context_html_standard_description": {
+    "message": "The entire HTML contents of the page",
+    "description": "Description of the 'html' standard template context entry"
+  },
+  "context_image_operation_description": {
+    "message": "Get the URL of the image on the page at the index provided",
+    "description": "Description of the 'images' collection template context entry"
+  },
+  "context_images_collection_description": {
+    "message": "The URLs of all images on the page",
+    "description": "Description of the 'images' collection template context entry"
+  },
+  "context_kebab_case_operation_description": {
+    "message": "Transform the text provided, as space separated words, into kebab case",
+    "description": "Description of the 'kebabCase' operation template context entry"
+  },
+  "context_keyword_operation_description": {
+    "message": "Get the keyword from the page's meta information at the index provided",
+    "description": "Description of the 'keyword' operation template context entry"
+  },
+  "context_keywords_collection_description": {
+    "message": "The keywords from the page's meta information",
+    "description": "Description of the 'keywords' collection template context entry"
+  },
+  "context_last_modified_operation_description": {
+    "message": "Format the last modified date & time of the page using the pattern provided",
+    "description": "Description of the 'lastModified' operation template context entry"
+  },
+  "context_last_modified_standard_description": {
+    "message": "The last modified date & time of the page in ISO 8601 format",
+    "description": "Description of the 'lastModified' standard template context entry"
+  },
+  "context_length_operation_description": {
+    "message": "Get the character length of the text provided",
+    "description": "Description of the 'length' operation template context entry"
+  },
+  "context_lower_operation_description": {
+    "message": "Transform the text provided into lower case",
+    "description": "Description of the 'lower' operation template context entry"
+  },
+  "context_lower_case_operation_description": {
+    "message": "Transform the text provided, as space separated words, into lower case",
+    "description": "Description of the 'lowerCase' operation template context entry"
+  },
+  "context_origin_standard_description": {
+    "message": "The origin of the URL (e.g. $EXAMPLE$)",
+    "description": "Description of the 'origin' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "https://www.example.com:443",
+        "example": "https://www.example.com:443"
+      }
+    }
+  },
+  "context_path_standard_description": {
+    "message": "The path to the file (e.g. $EXAMPLE$)",
+    "description": "Description of the 'path' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "/folder/dir/index.html",
+        "example": "/folder/dir/index.html"
+      }
+    }
+  },
+  "context_pop_url_operation_description": {
+    "message": "Removes the URL from the top of the URL stack",
+    "description": "Description of the 'popUrl' operation template context entry"
+  },
+  "context_port_standard_description": {
+    "message": "For example; $EXAMPLE_1$, $EXAMPLE_2$",
+    "description": "Description of the 'port' standard template context entry",
+    "placeholders": {
+      "example_1": {
+        "content": "80",
+        "example": "80"
+      },
+      "example_2": {
+        "content": "443",
+        "example": "443"
+      }
+    }
+  },
+  "context_protocol_standard_description": {
+    "message": "For example; $EXAMPLE_1$, $EXAMPLE_2$",
+    "description": "Description of the 'protocol' standard template context entry",
+    "placeholders": {
+      "example_1": {
+        "content": "http",
+        "example": "http"
+      },
+      "example_2": {
+        "content": "https",
+        "example": "https"
+      }
+    }
+  },
+  "context_push_url_operation_description": {
+    "message": "Pushes a URL built from the text provided to the top of the URL stack",
+    "description": "Description of the 'pushUrl' operation template context entry"
+  },
+  "context_relative_standard_description": {
+    "message": "The relative path to the file including the query string (e.g. $EXAMPLE$)",
+    "description": "Description of the 'relative' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "/folder/dir/index.html?item=value",
+        "example": "/folder/dir/index.html?item=value"
+      }
+    }
+  },
+  "context_screen_color_depth_standard_description": {
+    "message": "The colour depth in bits (e.g. $EXAMPLE$)",
+    "description": "Description of the 'screenColorDepth' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "24",
+        "example": "24"
+      }
+    }
+  },
+  "context_search_param_operation_description": {
+    "message": "Get the value of the query string parameter provided",
+    "description": "Description of the 'searchParam' operation template context entry"
+  },
+  "context_search_params_collection_description": {
+    "message": "The key/value pairs of all query string parameters (e.g. query string $EXAMPLE_1$ contains $EXAMPLE_2$ and $EXAMPLE_3$)",
+    "description": "Description of the 'searchParams' collection template context entry",
+    "placeholders": {
+      "example_1": {
+        "content": "foo=bar&fu=baz",
+        "example": "foo=bar&fu=baz"
+      },
+      "example_2": {
+        "content": "foo",
+        "example": "foo"
+      },
+      "example_3": {
+        "content": "fu",
+        "example": "fu"
+      }
+    }
+  },
+  "context_search_standard_description": {
+    "message": "The entire query string if it exists (e.g. $EXAMPLE$)",
+    "description": "Description of the 'search' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "item=value&item2=value2",
+        "example": "item=value&item2=value2"
+      }
+    }
+  },
+  "context_segment_operation_description": {
+    "message": "Get the path segment at the index provided",
+    "description": "Description of the 'segment' operation template context entry"
+  },
+  "context_segments_collection_description": {
+    "message": "The segments from the path of the URL",
+    "description": "Description of the 'segments' collection template context entry"
+  },
+  "context_shorten_operation_description": {
+    "message": "Shorten the URL provided using the active URL shortener",
+    "description": "Description of the 'shorten' operation template context entry"
+  },
+  "context_shorten_standard_description": {
+    "message": "Shorten the URL using the active URL shortener",
+    "description": "Description of the 'shorten' standard template context entry"
+  },
+  "context_snake_case_operation_description": {
+    "message": "Transform the text provided, as space separated words, into snake case",
+    "description": "Description of the 'snakeCase' operation template context entry"
+  },
+  "context_start_case_operation_description": {
+    "message": "Transform the text provided, as space separated words, into start case",
+    "description": "Description of the 'startCase' operation template context entry"
+  },
+  "context_template_count_standard_description": {
+    "message": "The total number of templates",
+    "description": "Description of the 'templateCount' standard template context entry"
+  },
+  "context_template_custom_count_standard_description": {
+    "message": "The total number of user-defined templates",
+    "description": "Description of the 'templateCustomCount' standard template context entry"
+  },
+  "context_tidy_operation_description": {
+    "message": "Reduce all of the joined spaces and tabs into single spaces within the text provided before removing all leading and trailing whitespace",
+    "description": "Description of the 'tidy' operation template context entry"
+  },
+  "context_title_standard_description": {
+    "message": "The title of the page or it's URL if the title could not be detected (e.g. page had not finished loading)",
+    "description": "Description of the 'title' standard template context entry"
+  },
+  "context_trim_operation_description": {
+    "message": "Remove all leading and trailing whitespace from the text provided",
+    "description": "Description of the 'trim' operation template context entry"
+  },
+  "context_trim_end_operation_description": {
+    "message": "Remove all trailing whitespace from the text provided",
+    "description": "Description of the 'trimEnd' operation template context entry"
+  },
+  "context_trim_start_operation_description": {
+    "message": "Remove all leading whitespace from the text provided",
+    "description": "Description of the 'trimStart' operation template context entry"
+  },
+  "context_unescape_html_operation_description": {
+    "message": "Converts certain HTML entities within the text provided into their corresponding characters",
+    "description": "Description of the 'unescapeHtml' operation template context entry"
+  },
+  "context_upper_operation_description": {
+    "message": "Transform the text provided into upper case",
+    "description": "Description of the 'upper' operation template context entry"
+  },
+  "context_upper_case_operation_description": {
+    "message": "Transform the text provided, as space separated words, into upper case",
+    "description": "Description of the 'upperCase' operation template context entry"
+  },
+  "context_url_standard_description": {
+    "message": "The whole URL being parsed",
+    "description": "Description of the 'url' standard template context entry"
+  },
+  "context_uuid_standard_description": {
+    "message": "A universally unique identifier (UUID)",
+    "description": "Description of the 'uuid' standard template context entry"
+  },
+  "context_version_standard_description": {
+    "message": "The current version of this extension (e.g. $EXAMPLE$)",
+    "description": "Description of the 'version' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "1.2.3",
+        "example": "1.2.3"
+      }
+    }
+  },
+  "context_width_standard_description": {
+    "message": "The width of the page",
+    "description": "Description of the 'width' standard template context entry"
+  },
+  "context_word_count_operation_description": {
+    "message": "Get the number of words in the text provided",
+    "description": "Description of the 'wordCount' operation template context entry"
   },
   "description": {
     "message": "Quickly and easily copies info on the current page using a simple and unique template system",
-    "description": "Brief description of the extension."
+    "description": "Brief description of the extension"
   },
-  "empty": {
-    "message": "Empty",
-    "description": "Popup/menu text where no Templates are active."
+  "error": {
+    "message": "Error",
+    "description": "Title for an error alert"
   },
+  "menu_empty": {
+    "message": "No templates enabled",
+    "description": "Context menu and popup text when no templates are enabled"
+  },
+  "name": {
+    "message": "tmplat",
+    "description": "Name of the extension"
+  },
+  "popup_error": {
+    "message": "Templates could not be loaded.",
+    "description": "Popup text when templates fail to load"
+  },
+  "predefined_template_anchor": {
+    "message": "Anchor",
+    "description": "Title of the Anchor predefined template"
+  },
+  "predefined_template_bbcode": {
+    "message": "BBCode",
+    "description": "Title of the BBCode predefined template"
+  },
+  "predefined_template_encoded": {
+    "message": "Encoded",
+    "description": "Title of the Encoded predefined template"
+  },
+  "predefined_template_markdown": {
+    "message": "Markdown",
+    "description": "Title of the Markdown predefined template"
+  },
+  "predefined_template_markdown_selection": {
+    "message": "Selection in Markdown",
+    "description": "Title of the Selection in Markdown predefined template"
+  },
+  "predefined_template_short": {
+    "message": "Short",
+    "description": "Title of the Short predefined template"
+  },
+  "predefined_template_url": {
+    "message": "URL",
+    "description": "Title of the URL predefined template"
+  },
+  "template_execution_fail_empty_description": {
+    "message": "$TEMPLATE$ output was empty",
+    "description": "Notification message for when the outcome of executing a template is an empty string",
+    "placeholders": {
+      "template": {
+        "content": "$1",
+        "example": "URL"
+      }
+    }
+  },
+  "template_execution_fail_general_description": {
+    "message": "$TEMPLATE$ could not be copied",
+    "description": "Notification message for when something unknown went wrong while executing a template",
+    "placeholders": {
+      "template": {
+        "content": "$1",
+        "example": "URL"
+      }
+    }
+  },
+  "template_execution_fail_title": {
+    "message": "Sorry!",
+    "description": "Notification title for when something bad happened while executing a template"
+  },
+  "template_execution_success_description": {
+    "message": "$TEMPLATE$ has been copied",
+    "description": "Notification message for when a template is executed successfully",
+    "placeholders": {
+      "template": {
+        "content": "$1",
+        "example": "URL"
+      }
+    }
+  },
+  "template_execution_success_title": {
+    "message": "Success!",
+    "description": "Notification title for when a template is executed successfully"
+  },
+
   "error_file_aborted": {
     "message": "Aborted!",
     "description": "Error message for when a file upload is aborted."
@@ -54,574 +595,6 @@
   "error_import_invalid": {
     "message": "Some values are missing or corrupt!",
     "description": "Error message for when imported data isn't structured correctly."
-  },
-  "icon_adjust": {
-    "message": "Adjust",
-    "description": "Adjust icon caption."
-  },
-  "icon_align_center": {
-    "message": "Align Centre",
-    "description": "Align Centre icon caption."
-  },
-  "icon_align_justify": {
-    "message": "Align Justify",
-    "description": "Align Justify icon caption."
-  },
-  "icon_align_left": {
-    "message": "Align Left",
-    "description": "Align Left icon caption."
-  },
-  "icon_align_right": {
-    "message": "Align Right",
-    "description": "Align Right icon caption."
-  },
-  "icon_arrow_down": {
-    "message": "Arrow Down",
-    "description": "Arrow Down icon caption."
-  },
-  "icon_arrow_left": {
-    "message": "Arrow Left",
-    "description": "Arrow Left icon caption."
-  },
-  "icon_arrow_right": {
-    "message": "Arrow Right",
-    "description": "Arrow Right icon caption."
-  },
-  "icon_arrow_up": {
-    "message": "Arrow Up",
-    "description": "Arrow Up icon caption."
-  },
-  "icon_asterisk": {
-    "message": "Asterisk",
-    "description": "Asterisk icon caption."
-  },
-  "icon_backward": {
-    "message": "Backward",
-    "description": "Backward icon caption."
-  },
-  "icon_ban_circle": {
-    "message": "Ban Circle",
-    "description": "Ban Circle icon caption."
-  },
-  "icon_barcode": {
-    "message": "Barcode",
-    "description": "Barcode icon caption."
-  },
-  "icon_bell": {
-    "message": "Bell",
-    "description": "Bell icon caption."
-  },
-  "icon_bold": {
-    "message": "Bold",
-    "description": "Bold icon caption."
-  },
-  "icon_book": {
-    "message": "Book",
-    "description": "Book icon caption."
-  },
-  "icon_bookmark": {
-    "message": "Bookmark",
-    "description": "Bookmark icon caption."
-  },
-  "icon_briefcase": {
-    "message": "Briefcase",
-    "description": "Briefcase icon caption."
-  },
-  "icon_bullhorn": {
-    "message": "Bullhorn",
-    "description": "Bullhorn icon caption."
-  },
-  "icon_calendar": {
-    "message": "Calendar",
-    "description": "Calendar icon caption."
-  },
-  "icon_camera": {
-    "message": "Camera",
-    "description": "Camera icon caption."
-  },
-  "icon_certificate": {
-    "message": "Certificate",
-    "description": "Certificate icon caption."
-  },
-  "icon_check": {
-    "message": "Check",
-    "description": "Check icon caption."
-  },
-  "icon_chevron_down": {
-    "message": "Chevron Down",
-    "description": "Chevron Down icon caption."
-  },
-  "icon_chevron_left": {
-    "message": "Chevron Left",
-    "description": "Chevron Left icon caption."
-  },
-  "icon_chevron_right": {
-    "message": "Chevron Right",
-    "description": "Chevron Right icon caption."
-  },
-  "icon_chevron_up": {
-    "message": "Chevron Up",
-    "description": "Chevron Up icon caption."
-  },
-  "icon_circle_arrow_down": {
-    "message": "Circle Arrow Down",
-    "description": "Circle Arrow Down icon caption."
-  },
-  "icon_circle_arrow_left": {
-    "message": "Circle Arrow Left",
-    "description": "Circle Arrow Left icon caption."
-  },
-  "icon_circle_arrow_right": {
-    "message": "Circle Arrow Right",
-    "description": "Circle Arrow Right icon caption."
-  },
-  "icon_circle_arrow_up": {
-    "message": "Circle Arrow Up",
-    "description": "Circle Arrow Up icon caption."
-  },
-  "icon_cog": {
-    "message": "Cog",
-    "description": "Cog icon caption."
-  },
-  "icon_comment": {
-    "message": "Comment",
-    "description": "Comment icon caption."
-  },
-  "icon_download": {
-    "message": "Download",
-    "description": "Download icon caption."
-  },
-  "icon_download_alt": {
-    "message": "Download (alt)",
-    "description": "Download (alt) icon caption."
-  },
-  "icon_edit": {
-    "message": "Edit",
-    "description": "Edit icon caption."
-  },
-  "icon_eject": {
-    "message": "Eject",
-    "description": "Eject icon caption."
-  },
-  "icon_envelope": {
-    "message": "Envelope",
-    "description": "Envelope icon caption."
-  },
-  "icon_exclamation_sign": {
-    "message": "Exclamation Sign",
-    "description": "Exclamation Sign icon caption."
-  },
-  "icon_eye_close": {
-    "message": "Eye Closed",
-    "description": "Eye Closed icon caption."
-  },
-  "icon_eye_open": {
-    "message": "Eye Open",
-    "description": "Eye Open icon caption."
-  },
-  "icon_facetime_video": {
-    "message": "Facetime Video",
-    "description": "Facetime Video icon caption."
-  },
-  "icon_fast_backward": {
-    "message": "Fast Backward",
-    "description": "Fast Backward icon caption."
-  },
-  "icon_fast_forward": {
-    "message": "Fast Forward",
-    "description": "Fast Forward icon caption."
-  },
-  "icon_file": {
-    "message": "File",
-    "description": "File icon caption."
-  },
-  "icon_film": {
-    "message": "Film",
-    "description": "Film icon caption."
-  },
-  "icon_filter": {
-    "message": "Filter",
-    "description": "Filter icon caption."
-  },
-  "icon_fire": {
-    "message": "Fire",
-    "description": "Fire icon caption."
-  },
-  "icon_flag": {
-    "message": "Flag",
-    "description": "Flag icon caption."
-  },
-  "icon_folder_close": {
-    "message": "Folder Closed",
-    "description": "Folder Closed icon caption."
-  },
-  "icon_folder_open": {
-    "message": "Folder Open",
-    "description": "Folder Open icon caption."
-  },
-  "icon_font": {
-    "message": "Font",
-    "description": "Font icon caption."
-  },
-  "icon_forward": {
-    "message": "Forward",
-    "description": "Forward icon caption."
-  },
-  "icon_fullscreen": {
-    "message": "Fullscreen",
-    "description": "Fullscreen icon caption."
-  },
-  "icon_gift": {
-    "message": "Gift",
-    "description": "Gift icon caption."
-  },
-  "icon_glass": {
-    "message": "Glass",
-    "description": "Glass icon caption."
-  },
-  "icon_globe": {
-    "message": "Globe",
-    "description": "Globe icon caption."
-  },
-  "icon_hand_down": {
-    "message": "Hand Down",
-    "description": "Hand Down icon caption."
-  },
-  "icon_hand_left": {
-    "message": "Hand Left",
-    "description": "Hand Left icon caption."
-  },
-  "icon_hand_right": {
-    "message": "Hand Right",
-    "description": "Hand Right icon caption."
-  },
-  "icon_hand_up": {
-    "message": "Hand Up",
-    "description": "Hand Up icon caption."
-  },
-  "icon_hdd": {
-    "message": "HDD",
-    "description": "HDD icon caption."
-  },
-  "icon_headphones": {
-    "message": "Headphones",
-    "description": "Headphones icon caption."
-  },
-  "icon_heart": {
-    "message": "Heart",
-    "description": "Heart icon caption."
-  },
-  "icon_home": {
-    "message": "Home",
-    "description": "Home icon caption."
-  },
-  "icon_inbox": {
-    "message": "Inbox",
-    "description": "Inbox icon caption."
-  },
-  "icon_indent_left": {
-    "message": "Indent Left",
-    "description": "Indent Left icon caption."
-  },
-  "icon_indent_right": {
-    "message": "Indent Right",
-    "description": "Indent Right icon caption."
-  },
-  "icon_info_sign": {
-    "message": "Info Sign",
-    "description": "Info Sign icon caption."
-  },
-  "icon_italic": {
-    "message": "Italic",
-    "description": "Italic icon caption."
-  },
-  "icon_leaf": {
-    "message": "Leaf",
-    "description": "Leaf icon caption."
-  },
-  "icon_list": {
-    "message": "List",
-    "description": "List icon caption."
-  },
-  "icon_list_alt": {
-    "message": "List (alt)",
-    "description": "List (alt) icon caption."
-  },
-  "icon_lock": {
-    "message": "Lock",
-    "description": "Lock icon caption."
-  },
-  "icon_magnet": {
-    "message": "Magnet",
-    "description": "Magnet icon caption."
-  },
-  "icon_map_marker": {
-    "message": "Map Marker",
-    "description": "Map Marker icon caption."
-  },
-  "icon_minus": {
-    "message": "Minus",
-    "description": "Minus icon caption."
-  },
-  "icon_minus_sign": {
-    "message": "Minus Sign",
-    "description": "Minus Sign icon caption."
-  },
-  "icon_move": {
-    "message": "Move",
-    "description": "Move icon caption."
-  },
-  "icon_music": {
-    "message": "Music",
-    "description": "Music icon caption."
-  },
-  "icon_none": {
-    "message": "None",
-    "description": "None icon caption."
-  },
-  "icon_off": {
-    "message": "Off",
-    "description": "Off icon caption."
-  },
-  "icon_ok": {
-    "message": "OK",
-    "description": "OK icon caption."
-  },
-  "icon_ok_circle": {
-    "message": "OK Circle",
-    "description": "OK Circle icon caption."
-  },
-  "icon_ok_sign": {
-    "message": "OK Sign",
-    "description": "OK Sign icon caption."
-  },
-  "icon_pause": {
-    "message": "Pause",
-    "description": "Pause icon caption."
-  },
-  "icon_pencil": {
-    "message": "Pencil",
-    "description": "Pencil icon caption."
-  },
-  "icon_picture": {
-    "message": "Picture",
-    "description": "Picture icon caption."
-  },
-  "icon_plane": {
-    "message": "Plane",
-    "description": "Plane icon caption."
-  },
-  "icon_play": {
-    "message": "Play",
-    "description": "Play icon caption."
-  },
-  "icon_play_circle": {
-    "message": "Play Circle",
-    "description": "Play Circle icon caption."
-  },
-  "icon_plus": {
-    "message": "Plus",
-    "description": "Plus icon caption."
-  },
-  "icon_plus_sign": {
-    "message": "Plus Sign",
-    "description": "Plus Sign icon caption."
-  },
-  "icon_print": {
-    "message": "Print",
-    "description": "Print icon caption."
-  },
-  "icon_qrcode": {
-    "message": "QR Code",
-    "description": "QR Code icon caption."
-  },
-  "icon_question_sign": {
-    "message": "Question Sign",
-    "description": "Question Sign icon caption."
-  },
-  "icon_random": {
-    "message": "Random",
-    "description": "Random icon caption."
-  },
-  "icon_refresh": {
-    "message": "Refresh",
-    "description": "Refresh icon caption."
-  },
-  "icon_remove": {
-    "message": "Remove",
-    "description": "Remove icon caption."
-  },
-  "icon_remove_circle": {
-    "message": "Remove Circle",
-    "description": "Remove Circle icon caption."
-  },
-  "icon_remove_sign": {
-    "message": "Remove Sign",
-    "description": "Remove Sign icon caption."
-  },
-  "icon_repeat": {
-    "message": "Repeat",
-    "description": "Repeat icon caption."
-  },
-  "icon_resize_full": {
-    "message": "Resize Full",
-    "description": "Resize Full icon caption."
-  },
-  "icon_resize_horizontal": {
-    "message": "Resize Horizontal",
-    "description": "Resize Horizontal icon caption."
-  },
-  "icon_resize_small": {
-    "message": "Resize Small",
-    "description": "Resize Small icon caption."
-  },
-  "icon_resize_vertical": {
-    "message": "Resize Vertical",
-    "description": "Resize Vertical icon caption."
-  },
-  "icon_retweet": {
-    "message": "Retweet",
-    "description": "Retweet icon caption."
-  },
-  "icon_road": {
-    "message": "Road",
-    "description": "Road icon caption."
-  },
-  "icon_screenshot": {
-    "message": "Screenshot",
-    "description": "Screenshot icon caption."
-  },
-  "icon_search": {
-    "message": "Search",
-    "description": "Search icon caption."
-  },
-  "icon_share": {
-    "message": "Share",
-    "description": "Share icon caption."
-  },
-  "icon_share_alt": {
-    "message": "Share (alt)",
-    "description": "Share (alt) icon caption."
-  },
-  "icon_shopping_cart": {
-    "message": "Shopping Cart",
-    "description": "Shopping Cart icon caption."
-  },
-  "icon_signal": {
-    "message": "Signal",
-    "description": "Signal icon caption."
-  },
-  "icon_star": {
-    "message": "Star",
-    "description": "Star icon caption."
-  },
-  "icon_star_empty": {
-    "message": "Star Empty",
-    "description": "Star Empty icon caption."
-  },
-  "icon_step_backward": {
-    "message": "Step Backward",
-    "description": "Step Backward icon caption."
-  },
-  "icon_step_forward": {
-    "message": "Step Forward",
-    "description": "Step Forward icon caption."
-  },
-  "icon_stop": {
-    "message": "Stop",
-    "description": "Stop icon caption."
-  },
-  "icon_tag": {
-    "message": "Tag",
-    "description": "Tag icon caption."
-  },
-  "icon_tags": {
-    "message": "Tags",
-    "description": "Tags icon caption."
-  },
-  "icon_tasks": {
-    "message": "Tasks",
-    "description": "Tasks icon caption."
-  },
-  "icon_text_height": {
-    "message": "Text Height",
-    "description": "Text Height icon caption."
-  },
-  "icon_text_width": {
-    "message": "Text Width",
-    "description": "Text Width icon caption."
-  },
-  "icon_th": {
-    "message": "Thumbnails",
-    "description": "Thumbnails icon caption."
-  },
-  "icon_th_large": {
-    "message": "Thumbnails Large",
-    "description": "Thumbnails Large icon caption."
-  },
-  "icon_th_list": {
-    "message": "Thumbnails List",
-    "description": "Thumbnails List icon caption."
-  },
-  "icon_thumbs_down": {
-    "message": "Thumbs Down",
-    "description": "Thumbs Down icon caption."
-  },
-  "icon_thumbs_up": {
-    "message": "Thumbs Up",
-    "description": "Thumbs Up icon caption."
-  },
-  "icon_time": {
-    "message": "Time",
-    "description": "Time icon caption."
-  },
-  "icon_tint": {
-    "message": "Tint",
-    "description": "Tint icon caption."
-  },
-  "icon_trash": {
-    "message": "Trash",
-    "description": "Trash icon caption."
-  },
-  "icon_upload": {
-    "message": "Upload",
-    "description": "Upload icon caption."
-  },
-  "icon_user": {
-    "message": "User",
-    "description": "User icon caption."
-  },
-  "icon_volume_down": {
-    "message": "Volume Down",
-    "description": "Volume Down icon caption."
-  },
-  "icon_volume_off": {
-    "message": "Volume Off",
-    "description": "Volume Off icon caption."
-  },
-  "icon_volume_up": {
-    "message": "Volume Up",
-    "description": "Volume Up icon caption."
-  },
-  "icon_warning_sign": {
-    "message": "Warning Sign",
-    "description": "Warning Sign icon caption."
-  },
-  "icon_wrench": {
-    "message": "Wrench",
-    "description": "Wrench icon caption."
-  },
-  "icon_zoom_in": {
-    "message": "Zoom In",
-    "description": "Zoom In icon caption."
-  },
-  "icon_zoom_out": {
-    "message": "Zoom Out",
-    "description": "Zoom Out icon caption."
-  },
-  "name": {
-    "message": "Template",
-    "description": "Name of the extension."
   },
   "opt_add_button_text": {
     "message": "$ICON$ Add",
@@ -1147,10 +1120,6 @@
       }
     }
   },
-  "opt_guide_lists_objects_cookies_text": {
-    "message": "The names of all cookies associated with the page",
-    "description": "Description of the cookies variable on the Guide tab of the Options page under the Lists & Objects section."
-  },
   "opt_guide_lists_objects_coords_text": {
     "message": "The properties of your current physical location (e.g. $EXAMPLE_1$, $EXAMPLE_2$ and many more)",
     "description": "Description of the coords variable on the Guide tab of the Options page under the Lists & Objects section.",
@@ -1359,53 +1328,9 @@
     "message": "If you would like to embed a map of your current location (e.g. in a blog post) try the following snippet;",
     "description": "Text for the 10th paragraph in the Examples area on the Guide tab of the Options page under the Lists & Objects section."
   },
-  "opt_guide_lists_objects_fparams_text": {
-    "message": "The key/value pairs of all parameters within the hash fragment (e.g. fragment $EXAMPLE_1$ contains $EXAMPLE_2$ and $EXAMPLE_3$)",
-    "description": "Description of the fparams variable on the Guide tab of the Options page under the Lists & Objects section.",
-    "placeholders": {
-      "example_1": {
-        "content": "<code>foo=bar&amp;fu=baz</code>",
-        "example": "foo=bar&fu=baz"
-      },
-      "example_2": {
-        "content": "<em>foo</em>",
-        "example": "foo"
-      },
-      "example_3": {
-        "content": "<em>fu</em>",
-        "example": "fu"
-      }
-    }
-  },
-  "opt_guide_lists_objects_fsegments_text": {
-    "message": "The segments from the hash fragment's path",
-    "description": "Description of the fsegments variable on the Guide tab of the Options page under the Lists & Objects section."
-  },
   "opt_guide_lists_objects_header": {
     "message": "Lists &amp; Objects",
     "description": "Header for the Lists & Objects section on the Guide tab of the Options page."
-  },
-  "opt_guide_lists_objects_images_text": {
-    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all images on the page",
-    "description": "Description of the images variable on the Guide tab of the Options page under the Lists & Objects section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      }
-    }
-  },
-  "opt_guide_lists_objects_keywords_text": {
-    "message": "The keywords from the page's meta information",
-    "description": "Description of the keywords variable on the Guide tab of the Options page under the Lists & Objects section."
   },
   "opt_guide_lists_objects_links_text": {
     "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all links on the page",
@@ -1432,24 +1357,6 @@
       "local_storage": {
         "content": "<code>localStorage</code>",
         "example": "localStorage"
-      }
-    }
-  },
-  "opt_guide_lists_objects_params_text": {
-    "message": "The key/value pairs of all parameters (e.g. query $EXAMPLE_1$ contains $EXAMPLE_2$ and $EXAMPLE_3$)",
-    "description": "Description of the params variable on the Guide tab of the Options page under the Lists & Objects section.",
-    "placeholders": {
-      "example_1": {
-        "content": "<code>foo=bar&amp;fu=baz</code>",
-        "example": "foo=bar&fu=baz"
-      },
-      "example_2": {
-        "content": "<em>foo</em>",
-        "example": "foo"
-      },
-      "example_3": {
-        "content": "<em>fu</em>",
-        "example": "fu"
       }
     }
   },
@@ -1655,74 +1562,6 @@
     "message": "Notes",
     "description": "Header for the Notes area on the Guide tab of the Options page under some sections."
   },
-  "opt_guide_operations_capitalise_name": {
-    "message": "capitalise",
-    "description": "Name of the capitalise variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_capitalise_text": {
-    "message": "Transform the text provided into title case",
-    "description": "Description of the capitalise variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_cookie_text": {
-    "message": "Get the value for the cookie with the name provided",
-    "description": "Description of the cookie variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_date_time_text_1": {
-    "message": "Format the current date &amp; time using the pattern provided",
-    "description": "1st line of the description of the dateTime variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_date_time_text_2": {
-    "message": "(see $O_LINK_PHP_DATE$$O_ABBR_1$Hypertext Preprocessor$O_ABBR_2$PHP$C_ABBR$s date$C_LINK$ for more details)",
-    "description": "2nd line of the description of the dateTime variable on the Guide tab of the Options page under the Operations section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      },
-      "o_link_php_date": {
-        "content": "<a href=\"http://php.net/manual/en/function.date.php#refsect1-function.date-parameters\" target=\"_blank\">",
-        "example": "<a href=\"http://php.net/manual/en/function.date.php#refsect1-function.date-parameters\">"
-      }
-    }
-  },
-  "opt_guide_operations_decode_text": {
-    "message": "Decode the previously encoded text provided",
-    "description": "Description of the decode variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_encode_text": {
-    "message": "Encode the text provided so that it can be safely used in a query string",
-    "description": "Description of the encode variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_escape_text": {
-    "message": "Escape the text provided so that it can be safely inserted into $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$",
-    "description": "Description of the escape variable on the Guide tab of the Options page under the Operations section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      }
-    }
-  },
   "opt_guide_operations_examples_code_1": {
     "message": "$URL$",
     "description": "Text for the 1st code block in the Examples area on the Guide tab of the Options page under the Operations section.",
@@ -1927,55 +1766,9 @@
     "message": "This would cause the following output to be rendered;",
     "description": "Text for the 8th paragraph in the Examples area on the Guide tab of the Options page under the Operations section."
   },
-  "opt_guide_operations_fparam_text": {
-    "message": "Get the value of the parameter provided from within the hash fragment",
-    "description": "Description of the fparam variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_fsegment_text": {
-    "message": "Get the segment at the index provided from within the hash fragment",
-    "description": "Description of the fsegment variable on the Guide tab of the Options page under the Operations section."
-  },
   "opt_guide_operations_header": {
     "message": "Operations",
     "description": "Header for the Operations section on the Guide tab of the Options page."
-  },
-  "opt_guide_operations_last_modified_text_1": {
-    "message": "Format the last modified date &amp; time of the page using the pattern provided",
-    "description": "1st line of the description of the lastModified variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_last_modified_text_2": {
-    "message": "(see $O_LINK_PHP_DATE$$O_ABBR_1$Hypertext Preprocessor$O_ABBR_2$PHP$C_ABBR$s date$C_LINK$ for more details)",
-    "description": "2nd line of the description of the lastModified variable on the Guide tab of the Options page under the Operations section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      },
-      "o_link_php_date": {
-        "content": "<a href=\"http://php.net/manual/en/function.date.php#refsect1-function.date-parameters\" target=\"_blank\">",
-        "example": "<a href=\"http://php.net/manual/en/function.date.php#refsect1-function.date-parameters\">"
-      }
-    }
-  },
-  "opt_guide_operations_length_text": {
-    "message": "Get the character length of the text provided",
-    "description": "Description of the length variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_lower_case_text": {
-    "message": "Transform the text provided into lower case",
-    "description": "Description of the lowerCase variable on the Guide tab of the Options page under the Operations section."
   },
   "opt_guide_operations_meta_text": {
     "message": "Get the content of the page's meta information with the text provided",
@@ -2008,14 +1801,6 @@
   "opt_guide_operations_notes_text_3": {
     "message": "The argument can be negative values, in which case it will count back from the end of the path rather than forwards from the start",
     "description": "Text for the 2nd list item in the Notes area on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_param_text": {
-    "message": "Get the value of the parameter provided",
-    "description": "Description of the param variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_segment_text": {
-    "message": "Get the segment at the index provided",
-    "description": "Description of the segment variable on the Guide tab of the Options page under the Operations section."
   },
   "opt_guide_operations_select_all_html_text": {
     "message": "Concatenate the $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of all matching elements",
@@ -2089,24 +1874,6 @@
     "message": "Get the text of first matching element",
     "description": "Description of the select variable on the Guide tab of the Options page under the Operations section."
   },
-  "opt_guide_operations_shorten_text": {
-    "message": "Shorten the $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ provided using the active $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ shortener",
-    "description": "Description of the shorten variable on the Guide tab of the Options page under the Operations section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      }
-    }
-  },
   "opt_guide_operations_text": {
     "message": "$O_BOLD$Operations$C_BOLD$ are performed using sections, accepting its rendered contents as an argument.",
     "description": "Text for the Operations section on the Guide tab of the Options page.",
@@ -2120,40 +1887,6 @@
         "example": "<strong>"
       }
     }
-  },
-  "opt_guide_operations_tidy_text": {
-    "message": "Reduce all of the joined spaces and tabs into single spaces within the text provided before removing all leading and trailing whitespace",
-    "description": "Description of the tidy variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_trim_text": {
-    "message": "Remove all leading and trailing whitespace from the text provided",
-    "description": "Description of the trim variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_trim_left_text": {
-    "message": "Remove all leading whitespace from the text provided",
-    "description": "Description of the trimLeft variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_trim_right_text": {
-    "message": "Remove all trailing whitespace from the text provided",
-    "description": "Description of the trimRight variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_unescape_text": {
-    "message": "The opposite of $ESCAPE_LABEL$; Replace escaped characters in text provided with their unescaped counterparts",
-    "description": "Description of the unescape variable on the Guide tab of the Options page under the Operations section.",
-    "placeholders": {
-      "escape_label": {
-        "content": "<span class=\"label\">escape</span>",
-        "example": "escape"
-      }
-    }
-  },
-  "opt_guide_operations_upper_case_text": {
-    "message": "Transform the text provided into upper case",
-    "description": "Description of the upperCase variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_word_count_text": {
-    "message": "Get the number of words in the text provided",
-    "description": "Description of the wordCount variable on the Guide tab of the Options page under the Operations section."
   },
   "opt_guide_operations_xpath_all_html_text": {
     "message": "Concatenate the $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of all results for the $O_LINK_XPATH$XPath$C_LINK$ expression",
@@ -2275,46 +2008,6 @@
     "message": "Options",
     "description": "Header for the Options section on the Guide tab of the Options page."
   },
-  "opt_guide_options_bitly_account_text": {
-    "message": "Whether or not you are currently logged in to your $O_LINK_BITLY$bit.ly$C_LINK$ account",
-    "description": "Description of the bitlyAccount variable on the Guide tab of the Options page under the Options section.",
-    "placeholders": {
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_link_bitly": {
-        "content": "<a href=\"http://bit.ly\" target=\"_blank\">",
-        "example": "<a href=\"http://bit.ly\">"
-      }
-    }
-  },
-  "opt_guide_options_bitly_text": {
-    "message": "Whether or not $O_LINK_BITLY$bit.ly$C_LINK$ is the enabled $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ shortener",
-    "description": "Description of the bitly variable on the Guide tab of the Options page under the Options section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      },
-      "o_link_bitly": {
-        "content": "<a href=\"http://bit.ly\" target=\"_blank\">",
-        "example": "<a href=\"http://bit.ly\">"
-      }
-    }
-  },
   "opt_guide_options_examples_code_1": {
     "message": "$URL$",
     "description": "Text for the 1st code block in the Examples area on the Guide tab of the Options page under the Options section.",
@@ -2406,54 +2099,6 @@
   "opt_guide_options_examples_text_4": {
     "message": "However, if you have disabled the option it will output this;",
     "description": "Text for the 4th paragraph in the Examples area on the Guide tab of the Options page under the Options section."
-  },
-  "opt_guide_options_googl_account_text": {
-    "message": "Whether or not you are currently logged in to your $O_LINK_GOOGL$goo.gl$C_LINK$ account",
-    "description": "Description of the googlAccount variable on the Guide tab of the Options page under the Options section.",
-    "placeholders": {
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_link_googl": {
-        "content": "<a href=\"http://goo.gl\" target=\"_blank\">",
-        "example": "<a href=\"http://goo.gl\">"
-      }
-    }
-  },
-  "opt_guide_options_googl_text": {
-    "message": "Whether or not $O_LINK_GOOGL$goo.gl$C_LINK$ is the enabled $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ shortener",
-    "description": "Description of the googl variable on the Guide tab of the Options page under the Options section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      },
-      "o_link_googl": {
-        "content": "<a href=\"http://goo.gl\" target=\"_blank\">",
-        "example": "<a href=\"http://goo.gl\">"
-      }
-    }
-  },
-  "opt_guide_options_links_target_text": {
-    "message": "Whether or not the option to render links with instructions to open them in a new tab/window is enabled",
-    "description": "Description of the linksTarget variable on the Guide tab of the Options page under the Options section."
-  },
-  "opt_guide_options_links_title_text": {
-    "message": "Whether or not the option to render links with hover text is enabled",
-    "description": "Description of the linksTitle variable on the Guide tab of the Options page under the Options section."
   },
   "opt_guide_options_markdown_inline_text": {
     "message": "Whether or not the option to render $O_LINK_MARKDOWN$Markdown$C_LINK$ links using the inline style is enabled",
@@ -2671,112 +2316,6 @@
       }
     }
   },
-  "opt_guide_standard_author_text": {
-    "message": "The author from the page's meta information",
-    "description": "Description of the author variable on the Guide tab of the Options page under the Standard section."
-  },
-  "opt_guide_standard_base_text": {
-    "message": "The base domain (e.g. $EXAMPLE$)",
-    "description": "Description of the base variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example": {
-        "content": "<em>https://www.example.com:443</em>",
-        "example": "https://www.example.com:443"
-      }
-    }
-  },
-  "opt_guide_standard_browser_text": {
-    "message": "The name of the browser (i.e. $O_EMPH$Chrome$C_EMPH$)",
-    "description": "Description of the browser variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_emph": {
-        "content": "</em>",
-        "example": "</em>"
-      },
-      "o_emph": {
-        "content": "<em>",
-        "example": "<em>"
-      }
-    }
-  },
-  "opt_guide_standard_browser_version_text": {
-    "message": "The current version of the browser (e.g. $EXAMPLE$)",
-    "description": "Description of the browserVersion variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example": {
-        "content": "<em>16.0.912.77</em>",
-        "example": "16.0.912.77"
-      }
-    }
-  },
-  "opt_guide_standard_character_set_text": {
-    "message": "The $O_LINK_CHAR_SET$character set$C_LINK$ used by the page (e.g. $EXAMPLE$)",
-    "description": "Description of the characterSet variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "example": {
-        "content": "<em>UTF-8</em>",
-        "example": "UTF-8"
-      },
-      "o_link_char_set": {
-        "content": "<a href=\"http://www.iana.org/assignments/character-sets\" target=\"_blank\">",
-        "example": "<a href=\"http://www.iana.org/assignments/character-sets\">"
-      }
-    }
-  },
-  "opt_guide_standard_cookies_enabled_text": {
-    "message": "Whether or not cookies are enabled",
-    "description": "Description of the cookiesEnabled variable on the Guide tab of the Options page under the Standard section."
-  },
-  "opt_guide_standard_count_text": {
-    "message": "The total number of templates",
-    "description": "Description of the count variable on the Guide tab of the Options page under the Standard section."
-  },
-  "opt_guide_standard_custom_count_text": {
-    "message": "The total number of user-defined templates",
-    "description": "Description of the customCount variable on the Guide tab of the Options page under the Standard section."
-  },
-  "opt_guide_standard_date_time_text": {
-    "message": "The current date &amp; time in $O_LINK_RFC_2822$RFC 2822$C_LINK$ format",
-    "description": "Description of the dateTime variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_link_rfc_2822": {
-        "content": "<a href=\"http://www.faqs.org/rfcs/rfc2822.html\" target=\"_blank\">",
-        "example": "<a href=\"http://www.faqs.org/rfcs/rfc2822.html\">"
-      }
-    }
-  },
-  "opt_guide_standard_depth_text": {
-    "message": "The colour depth in bits (e.g. $EXAMPLE$)",
-    "description": "Description of the depth variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example": {
-        "content": "<em>24</em>",
-        "example": "24"
-      }
-    }
-  },
-  "opt_guide_standard_description_text": {
-    "message": "The description from the page's meta information",
-    "description": "Description of the description variable on the Guide tab of the Options page under the Standard section."
-  },
-  "opt_guide_standard_directory_text": {
-    "message": "The directory part of the path (e.g. $EXAMPLE$)",
-    "description": "Description of the directory variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example": {
-        "content": "<em>/folder/dir/</em>",
-        "example": "/folder/dir/"
-      }
-    }
-  },
   "opt_guide_standard_examples_code_1": {
     "message": "$URL$",
     "description": "Text for the 1st code block in the Examples area on the Guide tab of the Options page under the Standard section.",
@@ -2847,101 +2386,9 @@
     "message": "Otherwise, you can expect to the see the following;",
     "description": "Text for the 4th paragraph in the Examples area on the Guide tab of the Options page under the Standard section."
   },
-  "opt_guide_standard_favicon_text": {
-    "message": "The whole $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ of the page's favicon",
-    "description": "Description of the favicon variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      }
-    }
-  },
-  "opt_guide_standard_file_text": {
-    "message": "The basename of the file (e.g. $EXAMPLE$)",
-    "description": "Description of the file variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example": {
-        "content": "<em>index.html</em>",
-        "example": "index.html"
-      }
-    }
-  },
-  "opt_guide_standard_fragment_anchor_text": {
-    "message": "The entire string after the hash (#) symbol",
-    "description": "Description of the fragment and anchor variables on the Guide tab of the Options page under the Standard section."
-  },
   "opt_guide_standard_header": {
     "message": "Standard",
     "description": "Header for the Standard section on the Guide tab of the Options page."
-  },
-  "opt_guide_standard_host_text": {
-    "message": "For example; $EXAMPLE_1$, $EXAMPLE_2$",
-    "description": "Description of the host variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example_1": {
-        "content": "<em>www.example.com</em>",
-        "example": "www.example.com"
-      },
-      "example_2": {
-        "content": "<em>localhost</em>",
-        "example": "localhost"
-      }
-    }
-  },
-  "opt_guide_standard_html_text": {
-    "message": "The entire $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of the page",
-    "description": "Description of the html variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      }
-    }
-  },
-  "opt_guide_standard_java_text": {
-    "message": "Whether or not $O_LINK_JAVA$Java$C_LINK$ is enabled",
-    "description": "Description of the java variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_link_java": {
-        "content": "<a href=\"http://www.java.com\" target=\"_blank\">",
-        "example": "<a href=\"http://www.java.com\">"
-      }
-    }
-  },
-  "opt_guide_standard_last_modified_text": {
-    "message": "The last modified date &amp; time of the page in $O_LINK_RFC_2822$RFC 2822$C_LINK$ format",
-    "description": "Description of the lastModified variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_link_rfc_2822": {
-        "content": "<a href=\"http://www.faqs.org/rfcs/rfc2822.html\" target=\"_blank\">",
-        "example": "<a href=\"http://www.faqs.org/rfcs/rfc2822.html\">"
-      }
-    }
   },
   "opt_guide_standard_link_html_text": {
     "message": "The $O_ABBR_1$Hypertext Markup Language$O_ABBR_2$HTML$C_ABBR$ behind the contextual (right-clicked) link",
@@ -3057,66 +2504,6 @@
       }
     }
   },
-  "opt_guide_standard_page_height_text": {
-    "message": "The height of the page",
-    "description": "Description of the pageHeight variable on the Guide tab of the Options page under the Standard section."
-  },
-  "opt_guide_standard_page_width_text": {
-    "message": "The width of the page",
-    "description": "Description of the pageWidth variable on the Guide tab of the Options page under the Standard section."
-  },
-  "opt_guide_standard_path_text": {
-    "message": "The path to the file (e.g. $EXAMPLE$)",
-    "description": "Description of the path variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example": {
-        "content": "<em>/folder/dir/index.html</em>",
-        "example": "/folder/dir/index.html"
-      }
-    }
-  },
-  "opt_guide_standard_port_text": {
-    "message": "For example; $EXAMPLE_1$, $EXAMPLE_2$",
-    "description": "Description of the port variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example_1": {
-        "content": "<em>80</em>",
-        "example": "80"
-      },
-      "example_2": {
-        "content": "<em>443</em>",
-        "example": "443"
-      }
-    }
-  },
-  "opt_guide_standard_protocol_text": {
-    "message": "For example; $EXAMPLE_1$, $EXAMPLE_2$, $EXAMPLE_3$",
-    "description": "Description of the protocol variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example_1": {
-        "content": "<em>http</em>",
-        "example": "http"
-      },
-      "example_2": {
-        "content": "<em>https</em>",
-        "example": "https"
-      },
-      "example_3": {
-        "content": "<em>file</em>",
-        "example": "file"
-      }
-    }
-  },
-  "opt_guide_standard_query_text": {
-    "message": "The entire query string if it exists (e.g. $EXAMPLE$)",
-    "description": "Description of the query variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example": {
-        "content": "<em>item=value&amp;item2=value2</em>",
-        "example": "item=value&item2=value2"
-      }
-    }
-  },
   "opt_guide_standard_referrer_text": {
     "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ of the referring page",
     "description": "Description of the referrer variable on the Guide tab of the Options page under the Standard section.",
@@ -3132,16 +2519,6 @@
       "o_abbr_2": {
         "content": "\">",
         "example": "\">"
-      }
-    }
-  },
-  "opt_guide_standard_relative_text": {
-    "message": "The relative path to the file including the query string (e.g. $EXAMPLE$)",
-    "description": "Description of the relative variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example": {
-        "content": "<em>/folder/dir/index.html?item=value</em>",
-        "example": "/folder/dir/index.html?item=value"
       }
     }
   },
@@ -3206,52 +2583,6 @@
   "opt_guide_standard_text_text": {
     "message": "The entire text of the page",
     "description": "Description of the text variable on the Guide tab of the Options page under the Standard section."
-  },
-  "opt_guide_standard_title_text": {
-    "message": "The title of the page or $URL_LABEL$ if the title could not be detected (e.g. page had not finished loading)",
-    "description": "Description of the title variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "url_label": {
-        "content": "<span class=\"label\">url</span>",
-        "example": "url"
-      }
-    }
-  },
-  "opt_guide_standard_url_text": {
-    "message": "The whole $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ being parsed",
-    "description": "Description of the url variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      }
-    }
-  },
-  "opt_guide_standard_version_text": {
-    "message": "The installed version of $O_BOLD$Template$C_BOLD$ (i.e. $VERSION$)",
-    "description": "Description of the version variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_bold": {
-        "content": "</strong>",
-        "example": "</strong>"
-      },
-      "o_bold": {
-        "content": "<strong>",
-        "example": "<strong>"
-      },
-      "version": {
-        "content": "<em>$1</em>",
-        "example": "1.0.0"
-      }
-    }
   },
   "opt_guide_type_header": {
     "message": "Type",
@@ -4051,26 +3382,6 @@
     "message": "Options",
     "description": "Text for the Options popup/menu item."
   },
-  "result_bad_description": {
-    "message": "$TEMPLATE$ could not be copied",
-    "description": "Notification for when something unknown went wrong while processing a template.",
-    "placeholders": {
-      "template": {
-        "content": "$1",
-        "example": "Anchor"
-      }
-    }
-  },
-  "result_bad_empty_description": {
-    "message": "$TEMPLATE$ output was empty",
-    "description": "Notification for when the outcome of processing a template is an empty string.",
-    "placeholders": {
-      "template": {
-        "content": "$1",
-        "example": "Short"
-      }
-    }
-  },
   "result_bad_error_description": {
     "message": "An error occurred while collecting information",
     "description": "Notification for when something went wrong while collecting contextual data before processing a template."
@@ -4087,27 +3398,9 @@
     "message": "An error occurred while requesting information",
     "description": "Notification for when an invalid type was used by the requesting message."
   },
-  "result_bad_title": {
-    "message": "Sorry!",
-    "description": "Notification header for when something bad happened while processing a template."
-  },
   "result_bad_uri_description": {
     "message": "The URL is not properly encoded",
     "description": "Notification for when collecting data for an invalid URL before processing a template."
-  },
-  "result_good_description": {
-    "message": "$TEMPLATE$ has been copied",
-    "description": "Notification for when a template is processed successfully.",
-    "placeholders": {
-      "template": {
-        "content": "$1",
-        "example": "Markdown"
-      }
-    }
-  },
-  "result_good_title": {
-    "message": "Success!",
-    "description": "Notification header for when a template is processed successfully."
   },
   "shortener_bitly": {
     "message": "bit.ly",
@@ -4146,10 +3439,6 @@
         "example": "bit.ly"
       }
     }
-  },
-  "shortener_googl": {
-    "message": "goo.gl",
-    "description": "Name of the goo.gl URL shortener used throughout the extension."
   },
   "shortener_yourls": {
     "message": "YOURLS",

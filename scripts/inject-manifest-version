@@ -1,0 +1,26 @@
+#!/usr/bin/env node
+
+const chalk = require('chalk');
+const fs = require('fs');
+const glob = require('glob');
+
+const { version } = require('../package.json');
+
+const pattern = process.argv[2];
+const files = glob.sync(pattern);
+
+files.forEach((file) => {
+    const input = fs.readFileSync(file, 'utf8');
+    const output = injectManifestVersion(input);
+
+    fs.writeFileSync(file, output, 'utf8');
+
+    console.log(`Injected version '${version}' into ${chalk.green(file)}`);
+});
+
+function injectManifestVersion(content) {
+    const json = JSON.parse(content);
+    json.version = version;
+
+    return JSON.stringify(json, null, '  ');
+}

@@ -1,0 +1,74 @@
+// TODO: Support dark mode?
+
+body {
+  padding: 0;
+}
+
+#loading {
+  display: none;
+  margin: 8px;
+
+  .bar {
+    width: 100%;
+  }
+}
+
+#templates {
+  display: block;
+  min-width: 160px;
+  padding: 4px 0;
+  margin: 1px 0 0;
+  list-style: none;
+
+  .divider {
+    *width: 100%;
+    height: 1px;
+    margin: 8px 1px;
+    *margin: -5px 0 5px;
+    overflow: hidden;
+    background-color: #e5e5e5;
+    border-bottom: 1px solid #fff;
+  }
+
+  a {
+    cursor: pointer;
+    display: block;
+    padding: 3px 15px;
+    clear: both;
+    font-weight: normal;
+    line-height: 18px;
+    color: #333;
+    white-space: nowrap;
+  }
+
+  .empty {
+    font-style: italic;
+    padding: 3px 15px;
+  }
+
+  li > a .shortcut {
+    font-family: Consolas, 'Liberation Mono', Courier, monospace;
+    font-size: 12px;
+  }
+
+  li > a:hover,
+  .active > a,
+  .active > a:hover {
+    color: #fff;
+    text-decoration: none;
+    background-color: #08c;
+  }
+
+  li > a:hover .shortcut,
+  .active > a .shortcut,
+  .active > a:hover .shortcut {
+    color: #fff;
+  }
+
+  li:hover [class^='icon-'],
+  li:hover [class*=' icon-'],
+  .active [class^='icon-'],
+  .active [class*=' icon-'] {
+    background-image: url('../images/glyphicons-halflings-white.png');
+  }
+}

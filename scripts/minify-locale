@@ -1,0 +1,66 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const glob = require('glob');
+const numeral = require("numeral");
+const chalk = require("chalk");
+
+const pattern = process.argv[2];
+const files = glob.sync(pattern);
+
+files.forEach((file) => {
+    const input = fs.readFileSync(file, 'utf8');
+    const { messageCount, output } = minifyLocale(input);
+
+    fs.writeFileSync(file, output, 'utf8');
+
+    console.log(`Minified ${chalk.green(file)} containing ${formatMessageCount(messageCount)} from ${formatSize(input)} to ${formatSize(output)}`);
+});
+
+function compressMessage(message) {
+    if (!message.message) {
+        return;
+    }
+
+    return {
+        message: message.message,
+        placeholders: compressPlaceholders(message.placeholders),
+    };
+}
+
+function compressPlaceholders(placeholders) {
+    if (!placeholders) {
+        return;
+    }
+
+    return Object.entries(placeholders).reduce((acc, [name, placeholder]) => {
+        if (placeholder.content) {
+            acc[name] = { content: placeholder.content };
+        }
+        return acc;
+    }, {});
+}
+
+function formatMessageCount(count) {
+    const message = `${numeral(count).format('0,0')} message`;
+    return count === 1 ? message : `${message}s`;
+}
+
+function formatSize(content) {
+    return numeral(Buffer.from(content).length).format('0.00 ib');
+}
+
+function minifyLocale(content) {
+    let messageCount = 0;
+    const original = JSON.parse(content);
+    const minified = Object.entries(original).reduce((acc, [name, message]) => {
+        messageCount++;
+        acc[name] = compressMessage(message);
+        return acc;
+    }, {});
+
+    return {
+        messageCount,
+        output: JSON.stringify(minified, null, ''),
+    };
+}

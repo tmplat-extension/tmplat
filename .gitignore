@@ -5,6 +5,7 @@ node_modules/
 npm-debug.log
 
 .DS_Store
+.idea/
 ehthumbs.db
 Icon?
 Thumbs.db
