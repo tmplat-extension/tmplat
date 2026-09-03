@@ -1,0 +1,33 @@
+// This file is generated during the build from the i18n messages within "src/_locales".
+// Do not edit it manually as any changes will be overwritten.
+
+export type ExtensionErrorCode =
+  | 'ANA500000'
+  | 'CHA422000'
+  | 'CHA500000'
+  | 'CLI500000'
+  | 'DAT400000'
+  | 'DAT404000'
+  | 'DAT404010'
+  | 'DAT405000'
+  | 'ERR422000'
+  | 'ERR500000'
+  | 'MIG404000'
+  | 'MIG409000'
+  | 'MIG500000'
+  | 'MIG500100'
+  | 'MSG400000'
+  | 'MSG400100'
+  | 'MSG400101'
+  | 'MSG400200'
+  | 'MSG400201'
+  | 'MSG404100'
+  | 'MSG422000'
+  | 'SHO401000'
+  | 'SHO404000'
+  | 'SHO404100'
+  | 'SHO422000'
+  | 'SHO422100'
+  | 'SHO500000'
+  | 'TEE400000'
+  | 'TEE403000';

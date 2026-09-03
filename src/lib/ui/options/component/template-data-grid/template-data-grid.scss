@@ -1,0 +1,7 @@
+// Selection is row-based (checkboxSelection), so suppress the default per-cell focus outline.
+// !important is needed because MUI injects its own focus outline styles via emotion after this stylesheet is
+// added to the document, so equal-specificity rules would otherwise be overridden by load order.
+.MuiDataGrid-cell:focus,
+.MuiDataGrid-cell:focus-within {
+  outline: none !important;
+}

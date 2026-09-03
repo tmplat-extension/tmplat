@@ -1,0 +1,16 @@
+# pnpm blocks dependency lifecycle scripts by default, which is a deliberate supply-chain guard: a compromised
+# transitive package cannot run arbitrary code at install time. Only the packages listed here may build, and each
+# one is a native binary that genuinely needs compiling/downloading on install.
+allowBuilds:
+  # Native file watcher used by rolldown/vitest watch modes (`pnpm dev`, `pnpm test:unit:watch`).
+  '@parcel/watcher': true
+  # Native resolver behind `eslint-plugin-import-x`. Without its build, the `import-x-js/*` rules (import ordering
+  # and `no-extraneous-dependencies`) cannot resolve modules and linting fails.
+  unrs-resolver: true
+
+# Fail fast when the active Node does not satisfy `engines.node` in package.json, rather than letting an
+# unsupported runtime silently change behaviour — dependency resolution is engine-aware, so an older Node quietly
+# resolves older majors (this is how jsdom got pinned to v29 while v30 required >=24.15). This gates `pnpm run` as
+# well as `pnpm install`. Note pnpm 10+ reads settings from here, NOT `.npmrc`, where `engine-strict=true` is a
+# silent no-op.
+engineStrict: true

@@ -1,52 +1,111 @@
 {
-    "name": "template-chrome"
-  , "description": "Google Chrome extension that quickly and easily copies info on the current page using a simple and unique template system"
-  , "version": "1.2.9"
-  , "homepage": "http://template-extension.org"
-  , "bugs": {
-      "url": "https://github.com/template-extension/template-chrome/issues"
-    }
-  , "author": {
-        "name": "Alasdair Mercer"
-      , "email": "mercer.alasdair@gmail.com"
-      , "url": "http://neocotic.com"
-    }
-  , "licenses": [
-      {
-          "type": "MIT"
-        , "url": "http://template-extension.org/license"
-      }
-    ]
-  , "private": true
-  , "keywords": [
-        "template"
-      , "browser"
-      , "chrome"
-      , "extension"
-      , "clipboard"
-      , "shortener"
-      , "clipboard"
-      , "shortener"
-      , "markdown"
-      , "bbcode"
-      , "html"
-      , "social"
-    ]
-  , "repository": {
-        "type": "git"
-      , "url": "git://github.com/template-extension/template-chrome.git"
-    }
-  , "devDependencies": {
-        "grunt": "~0.4.1"
-      , "grunt-contrib-clean": "~0.5.0"
-      , "grunt-contrib-compress": "~0.7.0"
-      , "grunt-contrib-copy": "~0.5.0"
-      , "grunt-contrib-coffee": "~0.10.1"
-      , "grunt-contrib-uglify": "~0.3.2"
-      , "grunt-docco": "~0.3.3"
-      , "grunt-json-minify": "~0.4.0"
-    }
-  , "engines": {
-      "node": "~0.10.0"
-    }
+  "name": "tmplat",
+  "version": "2.0.0",
+  "description": "Google Chrome extension that quickly and easily copies info on the current page using a simple and unique template system",
+  "private": true,
+  "keywords": [
+    "template",
+    "browser",
+    "chrome",
+    "extension",
+    "clipboard",
+    "shortener",
+    "clipboard",
+    "shortener",
+    "markdown",
+    "bbcode",
+    "html",
+    "social"
+  ],
+  "homepage": "https://tmplat.com",
+  "bugs": {
+    "url": "https://github.com/tmplat-extension/tmplat/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "airmrcr",
+    "url": "https://github.com/airmrcr"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tmplat-extension/tmplat.git"
+  },
+  "scripts": {
+    "preinstall": "npx only-allow pnpm",
+    "build": "pnpm build:prod",
+    "build:dev": "pnpm clean && pnpm type:check && rolldown -c rolldown.config.mjs",
+    "build:dev:nocheck": "pnpm clean && rolldown -c rolldown.config.mjs",
+    "build:dev:watch": "rolldown -c rolldown.config.mjs --watch",
+    "build:prod": "pnpm clean && pnpm type:check && rolldown -c rolldown.config.mjs --minify && pnpm compress",
+    "check": "pnpm type:check && pnpm type:check:e2e && pnpm lint:check && pnpm format:check && pnpm test:unit",
+    "clean": "rimraf dist",
+    "compress": "bestzip dist/tmplat.zip \"dist/temp/*\"",
+    "dev": "concurrently -n build:dev,type:check -c blue,magenta \"pnpm:build:dev:watch\" \"pnpm:type:check:watch\"",
+    "fix": "pnpm lint && pnpm format",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint --fix",
+    "lint:check": "oxlint",
+    "test": "pnpm lint:check && pnpm format:check && pnpm test:unit",
+    "test:e2e": "playwright test",
+    "test:e2e:report": "playwright show-report dist/playwright-report",
+    "test:e2e:ui": "playwright test --ui",
+    "test:unit": "vitest run",
+    "test:unit:coverage": "vitest run --coverage",
+    "test:unit:watch": "vitest",
+    "type:check": "tsc",
+    "type:check:e2e": "tsc -p e2e/tsconfig.json",
+    "type:check:watch": "tsc --watch --preserveWatchOutput"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^9.4.0",
+    "@mui/material": "^9.4.0",
+    "@mui/x-data-grid": "^9.12.0",
+    "allfulfilled": "^0.2.0",
+    "chalk": "^6.0.0",
+    "es-toolkit": "^1.52.0",
+    "europa": "^6.0.0",
+    "inversify": "^8.2.3",
+    "luxon": "^3.7.2",
+    "react": "^19.2.8",
+    "react-async": "^10.0.1",
+    "react-dom": "^19.2.8",
+    "react-error-boundary": "^6.1.4",
+    "react-markdown": "^10.1.0",
+    "reflect-metadata": "^0.2.2",
+    "tmplat-mustache": "^2.5.0",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/chrome": "^0.2.8",
+    "@types/luxon": "^3.7.5",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "@vitest/coverage-v8": "^5.0.0",
+    "bestzip": "^4.0.0",
+    "concurrently": "^10.0.5",
+    "eslint-plugin-import-x": "^4.17.1",
+    "http-server": "^14.1.1",
+    "jsdom": "^30.0.1",
+    "oxfmt": "^0.67.0",
+    "oxlint": "^1.81.0",
+    "rimraf": "^6.1.3",
+    "rolldown": "^1.2.6",
+    "sass": "^1.103.1",
+    "typescript": "^7.0.2",
+    "user-agent-data-types": "^0.4.3",
+    "vitest": "^5.0.0"
+  },
+  "packageManager": "pnpm@11.8.0",
+  "engines": {
+    "node": ">=24.15"
+  }
 }
