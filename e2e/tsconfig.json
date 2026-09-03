@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    // Playwright transpiles specs without type checking them, so this project exists purely so that `type:check:e2e`
+    // can validate them. `node` is needed for `global-setup.ts`, `chrome` for the extension APIs used inside
+    // `evaluate()` callbacks.
+    "types": ["chrome", "node"],
+    "noEmit": true,
+    "tsBuildInfoFile": "../dist/.tsbuildinfo.e2e"
+  },
+  "include": ["**/*.ts", "../playwright.config.ts"]
+}

@@ -1,54 +1,54 @@
-This document is only relevant for those that want to contribute to the [Template][] open source
-project (we love you guys!). If you are only interested in installing the extension you can do so
-from our homepage:
+# Install
 
-http://template-extension.org
+This document is for people who want to build tmplat from source. **To just use the extension**, install it from
+<https://tmplat.com>.
 
-## Build Requirements
+## Requirements
 
-In order to build [Template][], you need to have the following install [git][] 1.7+ and [node.js][]
-0.8+ (which includes [npm][]).
+- [git](https://git-scm.com)
+- [Node.js](https://nodejs.org) 24.15 or later (`.node-version` is read by most version managers and by CI)
+- [pnpm](https://pnpm.io) — pinned by the `packageManager` field; `npm` and `yarn` are blocked by a preinstall guard.
+  The simplest way to get the right version is `corepack enable` (bundled with Node.js).
 
-## Building
+## Build
 
-Follow these steps to build [Template][];
+```sh
+git clone https://github.com/tmplat-extension/tmplat.git
+cd tmplat
+pnpm install
+pnpm build:dev   # unminified build in dist/temp
+```
 
-1. Clone a copy of the main [Template git repository](https://github.com/template-extension/template-chrome)
-   by running `git clone git://github.com/template-extension/template-chrome.git`
-2. `cd` to the repository directory
-3. Ensure that you have all of the dependencies by entering `npm install`
-4. Ensure that you can run [Grunt][] by using `npm install -g grunt-cli`
-5. To update the compiled and runnable version enter `grunt build` (**Pro Tip:** Entering just `grunt` does exactly the same thing in this case)
-   * Outputs to the `bin` directory
-6. To update the optimized distributable file enter `grunt dist`
-   * Requires the previous step to have been run previously (i.e. the `bin` directory must exist)
-   * Outputs to the `dist` directory
-7. To update the documentation enter `grunt docs`
-   * Outputs to the `docs` directory
+Other useful builds:
 
-### Important
+| Command          | Result                                                                     |
+| ---------------- | -------------------------------------------------------------------------- |
+| `pnpm dev`       | `dist/temp`, rebuilt on change, with type checking running alongside       |
+| `pnpm build:dev` | `dist/temp`, unminified, type checked once                                 |
+| `pnpm build`     | `dist/temp` minified, plus `dist/tmplat.zip` — the artifact stores receive |
 
-If you're planning on contributing to [Template][] please do **NOT** update the distributable file
-or documentation (steps 6 and 7 respectively) when submitting a pull request. We will not accept
-pull requests when these files have been changed as we run these ourselves when creating a new
-release.
+`dist/` is gitignored, so build output is never committed; releases are built by CI (see
+[RELEASING.md](RELEASING.md)). Before opening a pull request, run `pnpm check` and `pnpm test` — see
+[CONTRIBUTING.md](CONTRIBUTING.md).
 
-Read the `CONTRIBUTING.md` file for more information about submitting pull requests.
+## Run it locally
 
-## Debugging
+Load `dist/temp` as an unpacked extension. **Disable any other installed copy of tmplat first**, or keyboard shortcuts
+will conflict.
 
-To run a locally built extension in [Google Chrome][] you can follow these steps;
+**[Google Chrome](https://google.com/chrome)**
 
-1. Launch [Google Chrome][]
-2. Bring up the extensions management page by choosing **Tools > Extensions** from its main menu
-3. Ensure **Developer mode** is checked in the top right of the page
-4. **Disable** all other versions of [Template][] which are installed to avoid any conflicts (e.g. with keyboard shortcuts)
-5. Click the **Load unpacked extension...** button (a file dialog should appear)
-6. In the file dialog, navigate to this directory and select the `bin` folder before clicking **OK**
+1. Open **More Tools > Extensions** from the main menu.
+2. Enable **Developer mode** (top right).
+3. Click **Load unpacked** and select the `dist/temp` folder.
 
-[git]: http://git-scm.com
-[google chrome]: https://www.google.com/chrome
-[grunt]: http://gruntjs.com
-[node.js]: http://nodejs.org
-[npm]: http://npmjs.org
-[template]: http://template-extension.org
+**[Microsoft Edge](https://microsoft.com/edge)**
+
+Edge runs the very same build — there is no separate Edge package — so only the menus differ:
+
+1. Open **Extensions > Manage extensions** from the main menu.
+2. Enable **Developer mode** (left-hand sidebar).
+3. Click **Load unpacked** and select the `dist/temp` folder.
+
+After a rebuild, click the extension's **reload** button on that page. Changes to the service worker or the manifest
+always need a reload; changes to a page's UI only need the page reopening.

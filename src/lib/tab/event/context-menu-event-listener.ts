@@ -1,0 +1,31 @@
+import { inject, injectable } from 'extension/common/di';
+import { type EventListener } from 'extension/common/event/event-listener';
+import {
+  type ContextMenuTargetHolder,
+  ContextMenuTargetHolderToken,
+} from 'extension/common/state/context-menu-target-holder';
+
+@injectable()
+export class ContextMenuEventListener implements EventListener {
+  constructor(
+    @inject(ContextMenuTargetHolderToken) private readonly contextMenuTargetHolder: ContextMenuTargetHolder,
+  ) {}
+
+  listen() {
+    addEventListener('contextmenu', this.storeTarget.bind(this));
+    addEventListener('blur', this.clearTarget.bind(this));
+    document.addEventListener('click', this.clearTarget.bind(this));
+  }
+
+  private clearTarget() {
+    this.contextMenuTargetHolder.clear();
+  }
+
+  private storeTarget({ target }: { target: EventTarget | null }) {
+    if (target) {
+      this.contextMenuTargetHolder.set(target as Element);
+    } else {
+      this.contextMenuTargetHolder.clear();
+    }
+  }
+}

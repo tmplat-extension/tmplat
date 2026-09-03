@@ -1,56 +1,39 @@
 # Contributing
 
-Here are some guidelines that we'd like contributors to follow so that we can have a chance of
-keeping things right.
+## Questions and bugs
 
-## Getting Starting
+[Search the existing issues](https://github.com/tmplat-extension/tmplat/issues) first — commenting on an open issue is
+more useful than opening a duplicate. Otherwise,
+[raise a new one](https://github.com/tmplat-extension/tmplat/issues/new).
 
-* Make sure you have a [GitHub account](https://github.com/signup/free)
-* Submit a ticket for your issue if one does not already exist
-  * Clearly describe the issue including steps to reproduce when it is a bug
-  * Include the earliest version that you know has the issue
-* Fork the repository on GitHub
-* Read the `INSTALL.md` file
+## Making a change
 
-## Making Changes
+Set up your environment as described in [INSTALL.md](INSTALL.md) (git, Node 24.15+, pnpm), then:
 
-* Create a topic branch from where you want to base your work
-  * This is usually the master branch
-  * Only target release branches if you are certain your fix must be on that branch
-  * To quickly create a topic branch based on master;
-    `git branch fix/master/my_contribution master` then checkout the new branch with
-    `git checkout fix/master/my_contribution`
-  * Avoid working directly on the `master` branch
-* Make commits of logical units
-* Check for unnecessary whitespace with `git diff --check` before committing
-* Make sure your commit messages are in the proper format
-* Avoid updating the distributable file or annotated source code documentation
-
-```
-(#99999) Make the example in CONTRIBUTING imperative and concrete
-
-Without this patch applied the example commit message in the CONTRIBUTING document is not a
-concrete example. This is a problem because the contributor is left to imagine what the commit
-message should look like based on a description rather than an example. This patch fixes the
-problem by making the example concrete and imperative.
-
-The first line is a real life imperative statement with a ticket number from our issue tracker. The
-body describes the behavior without the patch, why this is a problem, and how the patch fixes the
-problem when applied.
+```sh
+pnpm install
+pnpm dev       # watch build + type checking, loaded from dist/temp
 ```
 
-## Submitting Changes
+Match the style of the surrounding code, and add or update tests for anything you change —
+[TESTING.md](TESTING.md) explains how the suites are organised and what is expected of a new test.
 
-* Ensure you added your details to `AUTHORS.md` in the correct format
-  `Joe Bloggs <joe.bloggs@example.com>`
-* Push your changes to a topic branch in your fork of the repository
-* Submit a pull request to Template's repository
-* Update your issue to mark that you have submitted code and are ready for it to be reviewed
-  * Include a link to the pull request in the issue
+Before opening a pull request:
 
-# Additional Resources
+```sh
+pnpm fix       # apply lint and formatting fixes
+pnpm check     # type checks (including e2e), lint and format — no tests
+pnpm test      # unit tests
+pnpm test:e2e  # only if you touched the manifest, worker, content scripts or a user flow
+```
 
-* [Template repository](https://github.com/template-extension/template-chrome)
-* [Issue tracker](https://github.com/template-extension/template-chrome/issues)
-* [General GitHub documentation](http://help.github.com)
-* [GitHub pull request documentation](http://help.github.com/send-pull-requests)
+CI runs the same commands, plus a production build, on every pull request.
+
+## Pull requests
+
+- Target the `main` branch.
+- Keep the change focused; unrelated fixes are easier to review separately.
+- Don't commit build output — `dist/` is gitignored and releases are built by CI (see
+  [RELEASING.md](RELEASING.md)). User-visible changes belong in `src/changelog.json`, from which `CHANGELOG.md` is
+  generated.
+- Add yourself to [AUTHORS.md](AUTHORS.md) if you'd like the credit.
