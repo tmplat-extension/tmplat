@@ -1,0 +1,22 @@
+import { TemplateContextCategory } from 'extension/template/context/template-context-category.enum';
+import { TemplateContextDataType } from 'extension/template/context/template-context-data-type.enum';
+import { TemplateContextName } from 'extension/template/context/template-context-name.enum';
+import { type TemplateContextEntryDefinition } from 'extension/template/context/template-context.model';
+import { createTrimmedContentRenderer } from 'extension/template/context/template-context.utils';
+
+export const tidy: TemplateContextEntryDefinition = {
+  name: TemplateContextName.Tidy,
+  added: '1.0.9',
+  categories: {
+    [TemplateContextCategory.Operation]: {
+      descriptionKey: 'context_tidy_operation_description',
+      inputDataType: TemplateContextDataType.String,
+      outputDataType: TemplateContextDataType.String,
+    },
+  },
+  render: createTrimmedContentRenderer((content, manager) => {
+    const cacheKey = manager.cacheKeyBuilder(TemplateContextName.Tidy, content);
+
+    return manager.computeCacheIfAbsent(cacheKey, () => content.replace(/([ \t]+)/g, ' '));
+  }),
+};

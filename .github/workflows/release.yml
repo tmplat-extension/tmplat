@@ -1,0 +1,289 @@
+name: Release
+
+# Everything that only ever happens for a published version, triggered by pushing a semantic version tag.
+#
+# The flow is deliberately linear so that each stage can only fail in a cheap way before the expensive, and
+# irreversible, one:
+#
+#   verify  -> the tag, package version and changelog agree (seconds, no build)
+#   ci      -> the full check/build/e2e suite re-run against the *tagged* commit
+#   publish -> download translations, build, upload to the Chrome Web Store, publish a GitHub release
+#
+# `publish` is the only job holding credentials, and it is gated behind the `release` GitHub environment so the
+# store upload requires a human approval.
+#
+# Running it manually ("Run workflow") performs a *dry run*: everything above happens for real, against the real
+# Crowdin project and real Chrome Web Store credentials, except the two irreversible steps - nothing is uploaded
+# to the store and no GitHub release is created. That makes the whole pipeline rehearsable before the first real
+# tag. A genuine release can therefore only ever be started by pushing a tag, which is deliberate: there is no
+# checkbox anywhere that turns a rehearsal into a publish by accident.
+
+on:
+  push:
+    # Only plain semantic versions. `ExtensionVersionSchema` and `manifest.json` cannot express a pre-release
+    # suffix, so a tag such as `v2.0.0-beta.1` must not start a release.
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Version to rehearse (defaults to the version in package.json)'
+        required: false
+        type: string
+
+# Never cancel a release in flight: a half-finished store upload is far worse than a queued run
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions: {}
+
+env:
+  # Every irreversible step is guarded by this. A tag push is the only thing that clears it.
+  DRY_RUN: ${{ github.event_name == 'workflow_dispatch' }}
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.release-notes.outputs.version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # No pnpm install: "release-notes.mjs" deliberately depends on nothing but Node's standard library, so this
+      # gate stays fast and cannot be broken by a dependency problem
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+
+      # Fails unless the tag matches `package.json`, and "src/changelog.json" has an entry for it which is no
+      # longer marked `unreleased`, carries a release date and records at least one change.
+      #
+      # A dry run passes `--allow-unreleased` so the pipeline can be rehearsed against a version that is still in
+      # progress - which is the normal state of the version you would want to rehearse. Every other check still
+      # applies, and the downgrade is reported in the log.
+      - name: Verify the tag is releasable
+        id: release-notes
+        env:
+          # On `workflow_dispatch` `GITHUB_REF_NAME` is the branch, not a tag, so fall back to the package version
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          if [ "$DRY_RUN" = 'true' ]; then
+            tag="${INPUT_TAG:-v$(node -p "require('./package.json').version")}"
+            node scripts/release-notes.mjs "$tag" --allow-unreleased
+          else
+            node scripts/release-notes.mjs "$GITHUB_REF_NAME"
+          fi
+
+  ci:
+    name: CI
+    needs: verify
+    permissions:
+      contents: read
+    # Re-runs type checks, linting, formatting, unit tests, the production build and the e2e suite against the
+    # exact commit being released. `main` being green is not evidence that *this* commit is.
+    uses: ./.github/workflows/ci.yml
+
+  publish:
+    name: Publish
+    needs:
+      - verify
+      - ci
+    runs-on: ubuntu-latest
+    # Holds every credential used below, and should require a manual review before the job starts. The URL is
+    # rendered on the deployment itself, so the store draft is one click away from the approval prompt.
+    environment:
+      name: release
+      url: https://chrome.google.com/webstore/devconsole/${{ vars.CWS_PUBLISHER_ID }}/${{ vars.CWS_EXTENSION_ID }}/edit/package
+    permissions:
+      # Only for creating the GitHub release
+      contents: write
+    steps:
+      - name: Note that this is a dry run
+        if: env.DRY_RUN == 'true'
+        run: |
+          {
+            echo "> [!NOTE]"
+            echo "> **Dry run.** Translations, the build and the credential checks are all real, but nothing will"
+            echo "> be uploaded to the Chrome Web Store and no GitHub release will be created. Push a \`v*\` tag to"
+            echo "> release for real."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # Must come before `setup-node` so that its `cache: pnpm` can locate the pnpm store. The pnpm version is
+      # taken from the `packageManager` field in package.json.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Pulls the current translations into "src/_locales/<locale>/messages.json" - the same place the English
+      # source lives - so they go through the normal build and are minified and packaged like everything else.
+      # Nothing is committed or pushed: the download is scoped to this runner and this release only, which keeps
+      # the repository's translations from drifting between releases.
+      #
+      # `export_only_approved` + `skip_untranslated_strings` are what make this safe while the existing
+      # translations are still incomplete and based on the legacy extension: only strings a proofreader has
+      # actually approved for the *current* source text are written out, and everything else is simply absent.
+      # Chrome falls back to `default_locale` per message, so a partially translated locale renders the approved
+      # strings and English for the rest, never an empty or stale string.
+      #
+      # If a mostly-English UI is considered worse than an English one, switch `skip_untranslated_files` on as
+      # well and incomplete locales will be dropped entirely.
+      - name: Download translations from Crowdin
+        uses: crowdin/github-action@9af557de76d70c480f88065d336f445a362f402b # v3.1.0
+        with:
+          config: crowdin.yml
+          download_translations: true
+          export_only_approved: true
+          skip_untranslated_strings: true
+          skip_untranslated_files: false
+          # The downloaded files are consumed by the build in this run only - never committed back
+          push_translations: false
+          create_pull_request: false
+          upload_sources: false
+          upload_translations: false
+          download_sources: false
+          # Without this the action checks out `GITHUB_REF` again inside its container, discarding the workspace
+          # prepared above
+          skip_ref_checkout: true
+          # Runs the container as the workspace owner so the downloaded files are not left owned by root
+          user: auto
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Summarise translations
+        run: |
+          {
+            echo "### Bundled translations"
+            echo
+            echo "| Locale | Messages | Coverage |"
+            echo "| --- | ---: | ---: |"
+            total=$(node -p "Object.keys(require('./src/_locales/en/messages.json')).length")
+            for file in src/_locales/*/messages.json; do
+              locale=$(basename "$(dirname "$file")")
+              count=$(node -p "Object.keys(require('./$file')).length")
+              echo "| \`$locale\` | $count | $((count * 100 / total))% |"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # The full production pipeline: type check, minified bundle (including the translations downloaded above),
+      # then zipped into dist/tmplat.zip
+      - name: Build
+        run: pnpm build
+
+      # A release build must not alter tracked files. If it does, the generated sources (CHANGELOG.md,
+      # extension-version.ts, intl-message-key.ts) were committed stale and the tag would ship something other
+      # than what was reviewed. Downloaded translations are excluded because they are intentionally transient.
+      - name: Verify the build did not modify the repository
+        run: |
+          changes=$(git status --porcelain -- . ':(exclude)src/_locales')
+          if [ -n "$changes" ]; then
+            echo "::error::The release build changed files tracked by git. Run 'pnpm build' locally and commit the result."
+            echo "$changes"
+            exit 1
+          fi
+          echo "Working tree is clean after a release build."
+
+      - name: Generate release notes
+        env:
+          VERSION: ${{ needs.verify.outputs.version }}
+        run: |
+          node scripts/release-notes.mjs "v$VERSION" --allow-unreleased --out dist/release-notes.md
+          {
+            echo
+            echo "### Release notes"
+            echo
+            cat dist/release-notes.md
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Exercises all four Chrome Web Store credentials without changing anything: exchanges the refresh token for
+      # an access token, then reads the item back. This is what makes a dry run worth running - a bad refresh
+      # token, a wrong item ID or a consent screen left in "Testing" (which expires refresh tokens after 7 days)
+      # fails here, loudly and harmlessly, instead of part-way through a real release.
+      - name: Check the Chrome Web Store credentials
+        env:
+          CWS_CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+          CWS_EXTENSION_ID: ${{ vars.CWS_EXTENSION_ID }}
+        run: node scripts/check-chrome-web-store.mjs
+
+      # `publish: false` is intentional and permanent: the package is uploaded as a draft so the listing, the
+      # screenshots and the review status can be checked by hand before it reaches any user. Submitting for review
+      # is a click in the dashboard, using the link written to the summary below.
+      - name: Upload to the Chrome Web Store
+        if: env.DRY_RUN != 'true'
+        uses: mnao305/chrome-extension-upload@f549d5d654694a7722d6abfa64c97409ad5e64c1 # v7.0.0
+        with:
+          file-path: dist/tmplat.zip
+          extension-id: ${{ vars.CWS_EXTENSION_ID }}
+          publisher-id: ${{ vars.CWS_PUBLISHER_ID }}
+          client-id: ${{ secrets.CWS_CLIENT_ID }}
+          client-secret: ${{ secrets.CWS_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CWS_REFRESH_TOKEN }}
+          publish: false
+
+      # The extension and publisher IDs are held as environment *variables*, not secrets, precisely so this link
+      # can be printed - GitHub masks secrets in logs and summaries, which would render it as `***`
+      - name: Link to the Chrome Web Store draft
+        env:
+          EXTENSION_ID: ${{ vars.CWS_EXTENSION_ID }}
+          PUBLISHER_ID: ${{ vars.CWS_PUBLISHER_ID }}
+        run: |
+          url="https://chrome.google.com/webstore/devconsole/$PUBLISHER_ID/$EXTENSION_ID/edit/package"
+          {
+            echo
+            echo "### Chrome Web Store"
+            echo
+            if [ "$DRY_RUN" = 'true' ]; then
+              echo "Dry run - **nothing was uploaded**. The credentials were verified against the"
+              echo "[live item]($url)."
+            else
+              echo "Draft uploaded and **not** published. [Review and submit it]($url)."
+              echo
+              echo "If that link 404s (the console occasionally changes shape), use the"
+              echo "[item list](https://chrome.google.com/webstore/devconsole) instead."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Notes come from "src/changelog.json" via the same renderer that generates CHANGELOG.md, so the release,
+      # the file and the extension's own changelog page can never disagree
+      - name: Create the GitHub release
+        if: env.DRY_RUN != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ needs.verify.outputs.version }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "Version $VERSION" \
+            --notes-file dist/release-notes.md \
+            --verify-tag \
+            dist/tmplat.zip
+
+      # Retained far longer than the CI artifacts: this is the only copy of the exact unpacked build, including
+      # source maps, that corresponds to a version users are running
+      - name: Upload build artifacts
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: tmplat-${{ needs.verify.outputs.version }}
+          path: |
+            dist/tmplat.zip
+            dist/temp
+          retention-days: 90
