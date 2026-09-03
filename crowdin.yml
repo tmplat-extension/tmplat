@@ -1,0 +1,35 @@
+# Crowdin CLI configuration, used by the "Crowdin" and "Release" GitHub workflows.
+#
+# Credentials are never stored here - they are read from the environment so that the only place they exist is as
+# GitHub environment secrets.
+project_id_env: CROWDIN_PROJECT_ID
+api_token_env: CROWDIN_PERSONAL_TOKEN
+
+# Keep the Crowdin-side file tree identical to the repository tree, so the single source file appears as
+# "src/_locales/en/messages.json" in the project rather than a flattened "messages.json"
+preserve_hierarchy: true
+
+files:
+  # `chrome` is Crowdin's built-in parser for the Chrome extension i18n format, so the `description` fields are
+  # surfaced to translators as context and the `placeholders` are protected from being translated.
+  - source: /src/_locales/en/messages.json
+    translation: /src/_locales/%locale_with_underscore%/messages.json
+    type: chrome
+    # Chrome only accepts message keys matching /^[A-Za-z0-9_]+$/ and falls back to `default_locale` for any key a
+    # locale is missing, so partially translated files are safe to ship as-is.
+    #
+    # `%locale_with_underscore%` produces Crowdin's *full* locale for every language - `de_DE`, `fr_FR`, `sr_SP` -
+    # and only a handful of those (`en_US`, `pt_BR`, `pt_PT`, `zh_CN`, `zh_TW`) are directory names the Chrome Web
+    # Store accepts. A package containing any other one is rejected outright as invalid, so `localesPlugin` in
+    # "rolldown.config.mjs" normalises each locale to the nearest supported code when it packages "dist/temp"
+    # (`de_DE` becomes `de`) and drops any language the store supports in neither form. Keeping the raw locale here
+    # means that mapping is a build concern rather than something that has to be kept in step with Crowdin's
+    # language IDs.
+    #
+    # The build fails if two locales normalise to the same code (`de_AT` and `de_DE` both becoming `de`). Resolve
+    # that by giving each a distinct supported code with `languages_mapping` below (or with Language Mapping in the
+    # Crowdin project settings).
+    #
+    # languages_mapping:
+    #   locale_with_underscore:
+    #     de-AT: de_AT

@@ -1,0 +1,59 @@
+name: Crowdin
+
+# Pushes the English source messages to Crowdin so translators are always working against the strings on `main`.
+#
+# Deliberately a separate workflow from "CI" rather than an extra job within it: "CI" also runs on `pull_request`,
+# including from forks, and keeping the Crowdin credentials out of that workflow entirely is a stronger guarantee
+# than relying on a job-level `if` to skip them.
+#
+# Translations are never downloaded here - that happens once, at release time, in "release.yml".
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - src/_locales/en/messages.json
+      - crowdin.yml
+      - .github/workflows/crowdin.yml
+  workflow_dispatch:
+
+# Crowdin uploads are not idempotent under concurrency: two runs racing on the same project can interleave string
+# additions and deletions, so let an in-flight upload finish rather than cancelling it
+concurrency:
+  group: crowdin
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  upload-sources:
+    name: Upload sources
+    runs-on: ubuntu-latest
+    # Scopes the Crowdin credentials to this job alone. The environment's deployment branch rule should restrict it
+    # to `main`.
+    environment: crowdin
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # Pinned to a commit rather than a tag: this action runs third-party code with access to the Crowdin token,
+      # and a tag can be moved. Update it deliberately, keeping the version comment accurate.
+      - name: Upload sources to Crowdin
+        uses: crowdin/github-action@9af557de76d70c480f88065d336f445a362f402b # v3.1.0
+        with:
+          config: crowdin.yml
+          upload_sources: true
+          # Everything else is explicitly off. Translations only ever flow *out* of Crowdin (during a release), so
+          # the repository can never overwrite a translator's work.
+          upload_translations: false
+          download_sources: false
+          download_translations: false
+          create_pull_request: false
+          push_sources: false
+          push_translations: false
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
