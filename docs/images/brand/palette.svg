@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 280" width="1160" height="280">
+<rect width="1160" height="280" fill="#FFFFFF"/>
+<text x="30" y="60" font-family="Inter, Arial, sans-serif" font-size="34" fill="#151A24">tmplat brand palette</text>
+<rect x="30" y="100" width="200" height="100" rx="18" fill="#FF8A3D"/>
+<text x="30" y="224" font-family="Inter, Arial, sans-serif" font-size="18" fill="#151A24">Stack gradient from</text>
+<text x="30" y="244" font-family="ui-monospace, Menlo, monospace" font-size="16" fill="#4A5468">#FF8A3D</text>
+<rect x="250" y="100" width="200" height="100" rx="18" fill="#F5544E"/>
+<text x="250" y="224" font-family="Inter, Arial, sans-serif" font-size="18" fill="#151A24">Stack gradient to</text>
+<text x="250" y="244" font-family="ui-monospace, Menlo, monospace" font-size="16" fill="#4A5468">#F5544E</text>
+<rect x="470" y="100" width="200" height="100" rx="18" fill="#151A24"/>
+<text x="470" y="224" font-family="Inter, Arial, sans-serif" font-size="18" fill="#151A24">Ink</text>
+<text x="470" y="244" font-family="ui-monospace, Menlo, monospace" font-size="16" fill="#4A5468">#151A24</text>
+<rect x="690" y="100" width="200" height="100" rx="18" fill="#4A5468"/>
+<text x="690" y="224" font-family="Inter, Arial, sans-serif" font-size="18" fill="#151A24">Ink soft</text>
+<text x="690" y="244" font-family="ui-monospace, Menlo, monospace" font-size="16" fill="#4A5468">#4A5468</text>
+</svg>

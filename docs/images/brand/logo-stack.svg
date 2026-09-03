@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 641 200" width="641" height="200" role="img" aria-label="tmplat">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF8A3D"/><stop offset="1" stop-color="#F5544E"/></linearGradient></defs>
+<g transform="translate(0 12) scale(0.34375)">
+        <rect width="512" height="512" rx="116" fill="url(#bg)"/>
+        <g stroke="#FFFFFF" fill="none" stroke-width="30" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M148 344h-16a36 36 0 0 1-36-36V132a36 36 0 0 1 36-36h176a36 36 0 0 1 36 36v16"/>
+      <rect x="168" y="168" width="248" height="248" rx="44"/>
+    </g>
+    <g stroke="#FFFFFF"><g transform="translate(252.4 195.64) scale(1.32)" fill="none" stroke-width="22.727272727272727" stroke-linecap="round" stroke-linejoin="round"><path d="M28,6 L28,110 C28,131 40,140 58,140 M2,54 L58,54"/></g></g>
+      </g>
+<g transform="translate(220 33.66) scale(0.62) translate(12 6)"><g fill="none" stroke="#151A24" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"><path transform="translate(0 0)" d="M28,6 L28,110 C28,131 40,140 58,140 M2,54 L58,54"/><path transform="translate(100 0)" d="M0,140 L0,54 M0,84 C0,63 13,54 30,54 C47,54 60,66 60,84 L60,140 M60,84 C60,63 73,54 90,54 C107,54 120,66 120,84 L120,140"/><path transform="translate(264 0)" d="M0,196 L0,54 M0,97 a43,43 0 1 0 86,0 a43,43 0 1 0 -86,0"/><path transform="translate(388 0)" d="M0,6 L0,110 C0,131 12,140 30,140"/><path transform="translate(456 0)" d="M0,97 a43,43 0 1 0 86,0 a43,43 0 1 0 -86,0 M86,54 L86,140"/><path transform="translate(582 0)" d="M28,6 L28,110 C28,131 40,140 58,140 M2,54 L58,54"/></g></g>
+</svg>

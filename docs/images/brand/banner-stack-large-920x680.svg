@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 680" width="920" height="680" role="img" aria-label="tmplat">
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF8A3D"/><stop offset="1" stop-color="#F5544E"/></linearGradient>
+  <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#FFFFFF"/></linearGradient>
+  <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
+    <path d="M64 0H0v64" fill="none" stroke="#FFFFFF" stroke-opacity="0.09" stroke-width="2"/>
+  </pattern>
+</defs>
+<rect width="920" height="680" fill="url(#bg)"/>
+<rect width="920" height="680" fill="url(#grid)"/>
+<circle cx="828" cy="68" r="285.59999999999997" fill="#FFFFFF" fill-opacity="0.06"/>
+<circle cx="73.60000000000001" cy="646" r="204" fill="#000000" fill-opacity="0.06"/>
+<g transform="translate(358.0 88.4) scale(0.3984)"><g stroke="#FFFFFF" fill="none" stroke-width="30" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M148 344h-16a36 36 0 0 1-36-36V132a36 36 0 0 1 36-36h176a36 36 0 0 1 36 36v16"/>
+      <rect x="168" y="168" width="248" height="248" rx="44"/>
+    </g>
+    <g stroke="#FFFFFF"><g transform="translate(252.4 195.64) scale(1.32)" fill="none" stroke-width="22.727272727272727" stroke-linecap="round" stroke-linejoin="round"><path d="M28,6 L28,110 C28,131 40,140 58,140 M2,54 L58,54"/></g></g></g>
+<g transform="translate(259.0 340.0) scale(0.6037) translate(12 6)"><g fill="none" stroke="#FFFFFF" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"><path transform="translate(0 0)" d="M28,6 L28,110 C28,131 40,140 58,140 M2,54 L58,54"/><path transform="translate(100 0)" d="M0,140 L0,54 M0,84 C0,63 13,54 30,54 C47,54 60,66 60,84 L60,140 M60,84 C60,63 73,54 90,54 C107,54 120,66 120,84 L120,140"/><path transform="translate(264 0)" d="M0,196 L0,54 M0,97 a43,43 0 1 0 86,0 a43,43 0 1 0 -86,0"/><path transform="translate(388 0)" d="M0,6 L0,110 C0,131 12,140 30,140"/><path transform="translate(456 0)" d="M0,97 a43,43 0 1 0 86,0 a43,43 0 1 0 -86,0 M86,54 L86,140"/><path transform="translate(582 0)" d="M28,6 L28,110 C28,131 40,140 58,140 M2,54 L58,54"/></g></g>
+<text x="460" y="557.6" text-anchor="middle" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="34" letter-spacing="1.36" fill="#FFFFFF" fill-opacity="0.86">Quickly and easily copies info on the current page</text>
+<text x="460" y="606.9" text-anchor="middle" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-size="34" letter-spacing="1.36" fill="#FFFFFF" fill-opacity="0.86">using a simple and unique template system</text>
+</svg>

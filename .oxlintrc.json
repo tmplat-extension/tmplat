@@ -1,0 +1,40 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "import", "react"],
+  "jsPlugins": [{ "name": "import-x-js", "specifier": "eslint-plugin-import-x" }],
+  "ignorePatterns": ["dist/**", "src/vendor/**"],
+  "settings": {
+    "import-x/internal-regex": "^extension/"
+  },
+  "rules": {
+    "no-unused-vars": [
+      "error",
+      {
+        "args": "all",
+        "argsIgnorePattern": "^_",
+        "caughtErrors": "all",
+        "caughtErrorsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.ts", "**/*.tsx"],
+      "rules": {
+        "import/first": "error",
+        "import/no-duplicates": "error",
+        "import-x-js/order": [
+          "error",
+          {
+            "alphabetize": { "order": "asc", "caseInsensitive": true },
+            "named": true,
+            "newlines-between": "never"
+          }
+        ]
+      }
+    }
+  ]
+}

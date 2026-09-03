@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./node_modules/.cache/tsc/tsbuildinfo",
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "sourceMap": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "target": "es2022",
+    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "es2022"],
+    "types": ["chrome"],
+    "paths": {
+      "extension/*": ["./src/lib/*"]
+    }
+  },
+  "include": ["src/lib/**/*.ts", "src/lib/**/*.tsx"]
+}

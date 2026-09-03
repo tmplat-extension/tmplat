@@ -1,39 +1,1147 @@
 {
-  "default_template_anchor": {
-    "message": "Anchor",
-    "description": "Title of the Anchor template."
+  "changelog_category_features": {
+    "message": "Features",
+    "description": "Heading for the list of new features added in a version, on the changelog page."
   },
-  "default_template_bbcode": {
-    "message": "BBCode",
-    "description": "Title of the BBCode template."
+  "changelog_category_fixes": {
+    "message": "Fixes",
+    "description": "Heading for the list of bug fixes made in a version, on the changelog page."
   },
-  "default_template_encoded": {
-    "message": "Encoded",
-    "description": "Title of the Encoded template."
+  "changelog_category_improvements": {
+    "message": "Improvements",
+    "description": "Heading for the list of improvements made in a version, on the changelog page."
   },
-  "default_template_markdown": {
-    "message": "Markdown",
-    "description": "Title of the Markdown template."
+  "changelog_category_known_issues": {
+    "message": "Known Issues",
+    "description": "Heading for the list of known issues in a version, on the changelog page."
   },
-  "default_template_markdown_selection": {
-    "message": "Selection in Markdown",
-    "description": "Title of the Selection in Markdown template."
+  "changelog_empty": {
+    "message": "There is nothing to show here yet.",
+    "description": "Message shown on the changelog page when no versions have been documented."
   },
-  "default_template_short": {
-    "message": "Short",
-    "description": "Title of the Short template."
+  "changelog_error": {
+    "message": "The changelog could not be loaded.",
+    "description": "Message shown on the changelog page when the changelog fails to load."
   },
-  "default_template_url": {
-    "message": "URL",
-    "description": "Title of the URL template."
+  "changelog_loading": {
+    "message": "Loading changelog...",
+    "description": "Message shown on the changelog page while the changelog is being loaded."
+  },
+  "changelog_title": {
+    "message": "Changelog",
+    "description": "Title shown in the changelog page's app bar."
+  },
+  "changelog_version_heading": {
+    "message": "Version $VERSION$",
+    "description": "Heading for a single version on the changelog page.",
+    "placeholders": {
+      "version": {
+        "content": "$1",
+        "example": "1.2.9"
+      }
+    }
+  },
+  "confirm_dialog_cancel_button": {
+    "message": "Cancel",
+    "description": "Default label for the button that dismisses the shared confirmation prompt without confirming."
+  },
+  "confirm_dialog_confirm_button": {
+    "message": "OK",
+    "description": "Default label for the button that confirms the shared confirmation prompt."
+  },
+  "context_author_standard_description": {
+    "message": "The author from the page's meta information",
+    "description": "Description of the 'author' standard template context entry"
+  },
+  "context_authority_standard_description": {
+    "message": "The URL authority (username, password and host)",
+    "description": "Description of the 'authority' standard template context entry"
+  },
+  "context_browser_full_version_standard_description": {
+    "message": "The full version of the browser (e.g. $EXAMPLE$)",
+    "description": "Description of the 'browserFullVersion' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "100.0.1234.567",
+        "example": "100.0.1234.567"
+      }
+    }
+  },
+  "context_browser_major_version_standard_description": {
+    "message": "The major version of the browser (e.g. $EXAMPLE$)",
+    "description": "Description of the 'browserMajorVersion' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "100",
+        "example": "100"
+      }
+    }
+  },
+  "context_browser_name_standard_description": {
+    "message": "The name of the browser (i.e. $EXAMPLE$)",
+    "description": "Description of the 'browserName' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "Google Chrome",
+        "example": "Google Chrome"
+      }
+    }
+  },
+  "context_camel_case_operation_description": {
+    "message": "Transform the text provided, as space separated words, into camel case",
+    "description": "Description of the 'camelCase' operation template context entry"
+  },
+  "context_capitalize_operation_description": {
+    "message": "Transform the first character of the text provided into upper case and the remaining to lower case",
+    "description": "Description of the 'capitalize' operation template context entry"
+  },
+  "context_category_link_iana_character_sets_text": {
+    "message": "IANA Character Sets",
+    "description": "Text of the IANA Character Sets link"
+  },
+  "context_category_link_luxon_formatting_tokens_text": {
+    "message": "Luxon Formatting Tokens",
+    "description": "Text of the Luxon Formatting Tokens link"
+  },
+  "context_category_link_wikipedia_camel_case_text": {
+    "message": "Camel Case",
+    "description": "Text of the Camel Case link"
+  },
+  "context_category_link_wikipedia_kebab_case_text": {
+    "message": "Kebab Case",
+    "description": "Text of the Kebab Case link"
+  },
+  "context_category_link_wikipedia_latin_1_supplement_text": {
+    "message": "Latin-1 Supplement",
+    "description": "Text of the Latin-1 Supplement link"
+  },
+  "context_category_link_wikipedia_latin_extended_a_text": {
+    "message": "Latin Extended-A",
+    "description": "Text of the Latin Extended-A link"
+  },
+  "context_category_link_wikipedia_snake_case_text": {
+    "message": "Snake Case",
+    "description": "Text of the Snake Case link"
+  },
+  "context_category_link_wikipedia_start_case_text": {
+    "message": "Start Case",
+    "description": "Text of the Start Case link"
+  },
+  "context_character_set_standard_description": {
+    "message": "The character set used by the page (e.g. $EXAMPLE$)",
+    "description": "Description of the 'characterSet' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "UTF-8",
+        "example": "UTF-8"
+      }
+    }
+  },
+  "context_cookie_names_collection_description": {
+    "message": "The names of all cookies associated with the URL",
+    "description": "Description of the 'cookieNames' collection template context entry"
+  },
+  "context_cookie_operation_description": {
+    "message": "Get the value for the cookie with the name provided",
+    "description": "Description of the 'cookie' operation template context entry"
+  },
+  "context_cookies_collection_description": {
+    "message": "The key/value pairs of all cookies associated with the URL",
+    "description": "Description of the 'cookies' collection template context entry"
+  },
+  "context_cookies_enabled_standard_description": {
+    "message": "Whether or not cookies are enabled",
+    "description": "Description of the 'cookiesEnabled' standard template context entry"
+  },
+  "context_coords_collection_description": {
+    "message": "The geolocation coordinates of the client (e.g. latitude, longitude, accuracy), if a location could be determined",
+    "description": "Description of the 'coords' collection template context entry"
+  },
+  "context_date_time_operation_description": {
+    "message": "Format the current date & time of the page using the pattern provided",
+    "description": "Description of the 'dateTime' operation template context entry"
+  },
+  "context_date_time_standard_description": {
+    "message": "The current date & time in ISO 8601 format",
+    "description": "Description of the 'dateTime' standard template context entry"
+  },
+  "context_deburr_operation_description": {
+    "message": "Deburrs the text provided by transforming all Latin-1 Supplement and Latin Extended-A characters to basic Latin characters",
+    "description": "Description of the 'deburr' operation template context entry"
+  },
+  "context_decode_base64_operation_description": {
+    "message": "Decode the previously Base64-encoded text provided",
+    "description": "Description of the 'decodeBase64' operation template context entry"
+  },
+  "context_decode_uri_component_operation_description": {
+    "message": "Decode the previously encoded text provided",
+    "description": "Description of the 'decodeUriComponent' operation template context entry"
+  },
+  "context_deprecated_bitly_account_standard_description": {
+    "message": "Whether or not you are currently logged in to your Bitly account",
+    "description": "Description of the deprecated 'bitlyAccount' standard template context entry"
+  },
+  "context_deprecated_bitly_standard_description": {
+    "message": "Whether or not Bitly is the enabled URL shortener",
+    "description": "Description of the deprecated 'bitly' standard template context entry"
+  },
+  "context_deprecated_encoded_standard_description": {
+    "message": "The encoded URL so that it can be safely used in a query string",
+    "description": "Description of the deprecated 'encoded' standard template context entry"
+  },
+  "context_deprecated_googl_account_standard_description": {
+    "message": "Whether or not you are currently logged in to your Google account",
+    "description": "Description of the deprecated 'googlAccount' standard template context entry"
+  },
+  "context_deprecated_googl_standard_description": {
+    "message": "Whether or not Google is the enabled URL shortener",
+    "description": "Description of the deprecated 'googl' standard template context entry"
+  },
+  "context_deprecated_java_standard_description": {
+    "message": "Whether or not Java is enabled",
+    "description": "Description of the deprecated 'java' standard template context entry"
+  },
+  "context_deprecated_links_target_standard_description": {
+    "message": "Whether or not the option to render links with instructions to open them in a new tab/window is enabled",
+    "description": "Description of the deprecated 'linksTarget' standard template context entry"
+  },
+  "context_deprecated_links_title_standard_description": {
+    "message": "Whether or not the option to render links with hover text is enabled",
+    "description": "Description of the deprecated 'linksTitle' standard template context entry"
+  },
+  "context_deprecated_markdown_inline_standard_description": {
+    "message": "Whether or not Markdown output should be rendered inline (no block-level elements)",
+    "description": "Description of the deprecated 'markdownInline' standard template context entry"
+  },
+  "context_deprecated_menu_options_standard_description": {
+    "message": "Whether or not the option to show a link to the extension's options is enabled in the context (right-click) menu",
+    "description": "Description of the deprecated 'menuOptions' standard template context entry"
+  },
+  "context_deprecated_menu_paste_standard_description": {
+    "message": "Whether or not copied content should be automatically pasted after use of the context (right-click) menu",
+    "description": "Description of the deprecated 'menuPaste' standard template context entry"
+  },
+  "context_deprecated_menu_standard_description": {
+    "message": "Whether or not the option to show the context (right-click) menu is enabled",
+    "description": "Description of the deprecated 'menu' standard template context entry"
+  },
+  "context_deprecated_notification_duration_standard_description": {
+    "message": "Always zero as the duration of desktop notifications is no longer configurable",
+    "description": "Description of the deprecated 'notificationDuration' standard template context entry"
+  },
+  "context_deprecated_notifications_standard_description": {
+    "message": "Whether or not desktop notifications are enabled",
+    "description": "Description of the deprecated 'notifications' standard template context entry"
+  },
+  "context_deprecated_popular_collection_description": {
+    "message": "Always empty as the most frequently used template is no longer tracked",
+    "description": "Description of the deprecated 'popular' collection template context entry"
+  },
+  "context_deprecated_shortcuts_paste_standard_description": {
+    "message": "Whether or not copied content should be automatically pasted after use of a keyboard shortcut",
+    "description": "Description of the deprecated 'shortcutsPaste' standard template context entry"
+  },
+  "context_deprecated_shortcuts_standard_description": {
+    "message": "Whether or not keyboard shortcuts are enabled",
+    "description": "Description of the deprecated 'shortcuts' standard template context entry"
+  },
+  "context_deprecated_toolbar_close_standard_description": {
+    "message": "Whether or not the toolbar button's popup automatically closes after use",
+    "description": "Description of the deprecated 'toolbarClose' standard template context entry"
+  },
+  "context_deprecated_toolbar_feature_standard_description": {
+    "message": "Whether or not the toolbar button runs a template directly, as opposed to opening a popup",
+    "description": "Description of the deprecated 'toolbarFeature' standard template context entry"
+  },
+  "context_deprecated_toolbar_key_standard_description": {
+    "message": "The key of the template used by the toolbar button",
+    "description": "Description of the deprecated 'toolbarKey' standard template context entry"
+  },
+  "context_deprecated_toolbar_options_standard_description": {
+    "message": "Whether or not the link to the options page is shown in the toolbar button's popup",
+    "description": "Description of the deprecated 'toolbarOptions' standard template context entry"
+  },
+  "context_deprecated_toolbar_popup_standard_description": {
+    "message": "Whether or not the toolbar button opens a popup, as opposed to running a template directly",
+    "description": "Description of the deprecated 'toolbarPopup' standard template context entry"
+  },
+  "context_deprecated_toolbar_style_standard_description": {
+    "message": "Always false as the toolbar button style is no longer supported",
+    "description": "Description of the deprecated 'toolbarStyle' standard template context entry"
+  },
+  "context_deprecated_yourls_authentication_standard_description": {
+    "message": "The authentication mode used for the YOURLS URL shortener",
+    "description": "Description of the deprecated 'yourlsAuthentication' standard template context entry"
+  },
+  "context_deprecated_yourls_password_standard_description": {
+    "message": "The password used to authenticate with the YOURLS URL shortener",
+    "description": "Description of the deprecated 'yourlsPassword' standard template context entry"
+  },
+  "context_deprecated_yourls_signature_standard_description": {
+    "message": "The signature used to authenticate with the YOURLS URL shortener",
+    "description": "Description of the deprecated 'yourlsSignature' standard template context entry"
+  },
+  "context_deprecated_yourls_standard_description": {
+    "message": "Whether or not YOURLS is the enabled URL shortener",
+    "description": "Description of the deprecated 'yourls' standard template context entry"
+  },
+  "context_deprecated_yourls_url_standard_description": {
+    "message": "The URL of the YOURLS instance used for the YOURLS URL shortener",
+    "description": "Description of the deprecated 'yourlsUrl' standard template context entry"
+  },
+  "context_deprecated_yourls_username_standard_description": {
+    "message": "The username used to authenticate with the YOURLS URL shortener",
+    "description": "Description of the deprecated 'yourlsUsername' standard template context entry"
+  },
+  "context_description_standard_description": {
+    "message": "The description from the page's meta information",
+    "description": "Description of the 'description' standard template context entry"
+  },
+  "context_directory_standard_description": {
+    "message": "The directory part of the path (e.g. $EXAMPLE$)",
+    "description": "Description of the 'directory' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "/folder/dir/",
+        "example": "/folder/dir/"
+      }
+    }
+  },
+  "context_encode_base64_operation_description": {
+    "message": "Encode the text provided to Base64",
+    "description": "Description of the 'encodeBase64' operation template context entry"
+  },
+  "context_encode_uri_component_operation_description": {
+    "message": "Encode the text provided so that it can be safely used in a query string",
+    "description": "Description of the 'encodeUriComponent' operation template context entry"
+  },
+  "context_escape_html_operation_description": {
+    "message": "Converts certain characters within the text provided into their corresponding HTML entities",
+    "description": "Description of the 'escapeHtml' operation template context entry"
+  },
+  "context_favicon_url_standard_description": {
+    "message": "The URL of the page's favicon",
+    "description": "Description of the 'faviconUrl' standard template context entry"
+  },
+  "context_file_standard_description": {
+    "message": "The basename of the file (e.g. $EXAMPLE$)",
+    "description": "Description of the 'file' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "index.html",
+        "example": "index.html"
+      }
+    }
+  },
+  "context_hash_search_param_operation_description": {
+    "message": "Get the value of the parameter provided from within the hash",
+    "description": "Description of the 'hashSearchParam' operation template context entry"
+  },
+  "context_hash_search_params_collection_description": {
+    "message": "Get the value of the parameter provided from within the hash (e.g. hash $EXAMPLE_1$ contains $EXAMPLE_2$ and $EXAMPLE_3$)",
+    "description": "Description of the 'hashSearchParams' collection template context entry",
+    "placeholders": {
+      "example_1": {
+        "content": "#foo=bar&fu=baz",
+        "example": "#foo=bar&fu=baz"
+      },
+      "example_2": {
+        "content": "foo",
+        "example": "foo"
+      },
+      "example_3": {
+        "content": "fu",
+        "example": "fu"
+      }
+    }
+  },
+  "context_hash_segment_operation_description": {
+    "message": "Get the path segment at the index provided from within the hash",
+    "description": "Description of the 'hashSegment' operation template context entry"
+  },
+  "context_hash_segments_collection_description": {
+    "message": "The segments from the hash's path",
+    "description": "Description of the 'hashSegments' collection template context entry"
+  },
+  "context_hash_standard_description": {
+    "message": "The entire string after the hash (#) symbol in the URL",
+    "description": "Description of the 'hash' standard template context entry"
+  },
+  "context_height_standard_description": {
+    "message": "The height of the page",
+    "description": "Description of the 'height' standard template context entry"
+  },
+  "context_host_standard_description": {
+    "message": "For example; $EXAMPLE_1$, $EXAMPLE_2$",
+    "description": "Description of the 'host' standard template context entry",
+    "placeholders": {
+      "example_1": {
+        "content": "www.example.com",
+        "example": "www.example.com"
+      },
+      "example_2": {
+        "content": "localhost",
+        "example": "localhost"
+      }
+    }
+  },
+  "context_html_standard_description": {
+    "message": "The entire HTML contents of the page",
+    "description": "Description of the 'html' standard template context entry"
+  },
+  "context_image_operation_description": {
+    "message": "Get the URL of the image on the page at the index provided",
+    "description": "Description of the 'images' collection template context entry"
+  },
+  "context_images_collection_description": {
+    "message": "The URLs of all images on the page",
+    "description": "Description of the 'images' collection template context entry"
+  },
+  "context_kebab_case_operation_description": {
+    "message": "Transform the text provided, as space separated words, into kebab case",
+    "description": "Description of the 'kebabCase' operation template context entry"
+  },
+  "context_keyword_operation_description": {
+    "message": "Get the keyword from the page's meta information at the index provided",
+    "description": "Description of the 'keyword' operation template context entry"
+  },
+  "context_keywords_collection_description": {
+    "message": "The keywords from the page's meta information",
+    "description": "Description of the 'keywords' collection template context entry"
+  },
+  "context_last_modified_operation_description": {
+    "message": "Format the last modified date & time of the page using the pattern provided",
+    "description": "Description of the 'lastModified' operation template context entry"
+  },
+  "context_last_modified_standard_description": {
+    "message": "The last modified date & time of the page in ISO 8601 format",
+    "description": "Description of the 'lastModified' standard template context entry"
+  },
+  "context_length_operation_description": {
+    "message": "Get the character length of the text provided",
+    "description": "Description of the 'length' operation template context entry"
+  },
+  "context_link_html_standard_description": {
+    "message": "The HTML of the link that was last right-clicked to open the context menu, if any",
+    "description": "Description of the 'linkHtml' standard template context entry"
+  },
+  "context_link_markdown_standard_description": {
+    "message": "The Markdown conversion of the HTML of the link that was last right-clicked to open the context menu, if any",
+    "description": "Description of the 'linkMarkdown' standard template context entry"
+  },
+  "context_link_text_standard_description": {
+    "message": "The text of the link that was last right-clicked to open the context menu, if any",
+    "description": "Description of the 'linkText' standard template context entry"
+  },
+  "context_links_collection_description": {
+    "message": "The URLs of all links on the page",
+    "description": "Description of the 'links' collection template context entry"
+  },
+  "context_local_storage_operation_description": {
+    "message": "Get the value for the local storage item with the name provided",
+    "description": "Description of the 'localStorage' operation template context entry"
+  },
+  "context_locale_standard_description": {
+    "message": "The locale currently used by the extension",
+    "description": "Description of the 'locale' standard template context entry"
+  },
+  "context_lower_case_operation_description": {
+    "message": "Transform the text provided, as space separated words, into lower case",
+    "description": "Description of the 'lowerCase' operation template context entry"
+  },
+  "context_lower_operation_description": {
+    "message": "Transform the text provided into lower case",
+    "description": "Description of the 'lower' operation template context entry"
+  },
+  "context_markdown_standard_description": {
+    "message": "The Markdown conversion of the whole page's HTML",
+    "description": "Description of the 'markdown' standard template context entry"
+  },
+  "context_meta_operation_description": {
+    "message": "Get the value for the meta tag with the name provided",
+    "description": "Description of the 'meta' operation template context entry"
+  },
+  "context_offline_standard_description": {
+    "message": "Whether or not the browser currently believes itself to be offline",
+    "description": "Description of the 'offline' standard template context entry"
+  },
+  "context_options_collection_description": {
+    "message": "The options available within tmplat",
+    "description": "Description of the 'options' collection template context entry"
+  },
+  "context_options_notifications_description": {
+    "message": "Options for desktop notifications",
+    "description": "Description of the 'options.notifications' template context option"
+  },
+  "context_options_notifications_enabled_description": {
+    "message": "Whether desktop notifications are enabled",
+    "description": "Description of the 'options.notifications.enabled' template context option"
+  },
+  "context_options_templates_action_description": {
+    "message": "Options for the toolbar button",
+    "description": "Description of the 'options.templates.action' template context option"
+  },
+  "context_options_templates_action_mode_description": {
+    "message": "What clicking the toolbar button does; either shows the popup or runs a single template",
+    "description": "Description of the 'options.templates.action.mode' template context option"
+  },
+  "context_options_templates_action_popup_auto_close_enabled_description": {
+    "message": "Whether the popup closes automatically after a template is run",
+    "description": "Description of the 'options.templates.action.popup.autoCloseEnabled' template context option"
+  },
+  "context_options_templates_action_popup_description": {
+    "message": "Options for the toolbar popup",
+    "description": "Description of the 'options.templates.action.popup' template context option"
+  },
+  "context_options_templates_action_popup_option_link_enabled_description": {
+    "message": "Whether the popup shows a link to the options page",
+    "description": "Description of the 'options.templates.action.popup.optionLinkEnabled' template context option"
+  },
+  "context_options_templates_action_template_id_description": {
+    "message": "The identifier of the template run by the toolbar button when its mode is 'template'",
+    "description": "Description of the 'options.templates.action.templateId' template context option"
+  },
+  "context_options_templates_context_menu_auto_paste_enabled_description": {
+    "message": "Whether output is pasted automatically when a template is run from the context menu",
+    "description": "Description of the 'options.templates.contextMenu.autoPasteEnabled' template context option"
+  },
+  "context_options_templates_context_menu_description": {
+    "message": "Options for the context menu",
+    "description": "Description of the 'options.templates.contextMenu' template context option"
+  },
+  "context_options_templates_context_menu_enabled_description": {
+    "message": "Whether the context menu is shown",
+    "description": "Description of the 'options.templates.contextMenu.enabled' template context option"
+  },
+  "context_options_templates_context_menu_mode_description": {
+    "message": "Whether the context menu lists every template or runs a single template",
+    "description": "Description of the 'options.templates.contextMenu.mode' template context option"
+  },
+  "context_options_templates_context_menu_option_link_enabled_description": {
+    "message": "Whether the context menu includes a link to the options page",
+    "description": "Description of the 'options.templates.contextMenu.optionLinkEnabled' template context option"
+  },
+  "context_options_templates_description": {
+    "message": "Options that control how templates are run",
+    "description": "Description of the 'options.templates' template context option"
+  },
+  "context_options_templates_links_description": {
+    "message": "Options applied to HTML links produced by templates",
+    "description": "Description of the 'options.templates.links' template context option"
+  },
+  "context_options_templates_links_target_description": {
+    "message": "Whether generated links include a target attribute",
+    "description": "Description of the 'options.templates.links.target' template context option"
+  },
+  "context_options_templates_links_title_description": {
+    "message": "Whether generated links include a title attribute",
+    "description": "Description of the 'options.templates.links.title' template context option"
+  },
+  "context_options_templates_markdown_description": {
+    "message": "Options applied to Markdown produced by templates",
+    "description": "Description of the 'options.templates.markdown' template context option"
+  },
+  "context_options_templates_markdown_inline_description": {
+    "message": "Whether Markdown links are written inline rather than as references",
+    "description": "Description of the 'options.templates.markdown.inline' template context option"
+  },
+  "context_options_templates_shortcuts_auto_paste_enabled_description": {
+    "message": "Whether output is pasted automatically when a template is run via a keyboard shortcut",
+    "description": "Description of the 'options.templates.shortcuts.autoPasteEnabled' template context option"
+  },
+  "context_options_templates_shortcuts_description": {
+    "message": "Options for keyboard shortcuts",
+    "description": "Description of the 'options.templates.shortcuts' template context option"
+  },
+  "context_options_templates_shortcuts_enabled_description": {
+    "message": "Whether keyboard shortcuts are enabled",
+    "description": "Description of the 'options.templates.shortcuts.enabled' template context option"
+  },
+  "context_options_url_shorteners_bitly_auth_authenticated_description": {
+    "message": "Whether a Bitly account is currently connected",
+    "description": "Description of the 'options.urlShorteners.bitly.auth.authenticated' template context option"
+  },
+  "context_options_url_shorteners_bitly_auth_description": {
+    "message": "The connected Bitly account",
+    "description": "Description of the 'options.urlShorteners.bitly.auth' template context option"
+  },
+  "context_options_url_shorteners_bitly_auth_principal_description": {
+    "message": "The name of the connected Bitly account, if any",
+    "description": "Description of the 'options.urlShorteners.bitly.auth.principal' template context option"
+  },
+  "context_options_url_shorteners_bitly_description": {
+    "message": "Options for the Bitly URL shortener",
+    "description": "Description of the 'options.urlShorteners.bitly' template context option"
+  },
+  "context_options_url_shorteners_dagd_description": {
+    "message": "Options for the da.gd URL shortener",
+    "description": "Description of the 'options.urlShorteners.dagd' template context option"
+  },
+  "context_options_url_shorteners_description": {
+    "message": "Options for the URL shorteners",
+    "description": "Description of the 'options.urlShorteners' template context option"
+  },
+  "context_options_url_shorteners_provider_description": {
+    "message": "The single provider currently used to shorten URLs",
+    "description": "Description of the 'options.urlShorteners.provider' template context option"
+  },
+  "context_options_url_shorteners_spoome_description": {
+    "message": "Options for the spoo.me URL shortener",
+    "description": "Description of the 'options.urlShorteners.spoome' template context option"
+  },
+  "context_options_url_shorteners_yourls_auth_description": {
+    "message": "The credentials used to authenticate with YOURLS",
+    "description": "Description of the 'options.urlShorteners.yourls.auth' template context option"
+  },
+  "context_options_url_shorteners_yourls_auth_mode_description": {
+    "message": "How requests to YOURLS are authenticated; using a signature token or a username and password",
+    "description": "Description of the 'options.urlShorteners.yourls.auth.mode' template context option"
+  },
+  "context_options_url_shorteners_yourls_auth_password_description": {
+    "message": "The password used to authenticate with YOURLS",
+    "description": "Description of the 'options.urlShorteners.yourls.auth.password' template context option"
+  },
+  "context_options_url_shorteners_yourls_auth_signature_description": {
+    "message": "The signature token used to authenticate with YOURLS",
+    "description": "Description of the 'options.urlShorteners.yourls.auth.signature' template context option"
+  },
+  "context_options_url_shorteners_yourls_auth_username_description": {
+    "message": "The username used to authenticate with YOURLS",
+    "description": "Description of the 'options.urlShorteners.yourls.auth.username' template context option"
+  },
+  "context_options_url_shorteners_yourls_description": {
+    "message": "Options for the YOURLS URL shortener",
+    "description": "Description of the 'options.urlShorteners.yourls' template context option"
+  },
+  "context_options_url_shorteners_yourls_url_description": {
+    "message": "The URL of the YOURLS instance",
+    "description": "Description of the 'options.urlShorteners.yourls.url' template context option"
+  },
+  "context_origin_standard_description": {
+    "message": "The origin of the URL (e.g. $EXAMPLE$)",
+    "description": "Description of the 'origin' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "https://www.example.com:443",
+        "example": "https://www.example.com:443"
+      }
+    }
+  },
+  "context_os_standard_description": {
+    "message": "The operating system platform the browser is running on",
+    "description": "Description of the 'os' standard template context entry"
+  },
+  "context_password_standard_description": {
+    "message": "The password portion of the URL, if any",
+    "description": "Description of the 'password' standard template context entry"
+  },
+  "context_path_standard_description": {
+    "message": "The path to the file (e.g. $EXAMPLE$)",
+    "description": "Description of the 'path' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "/folder/dir/index.html",
+        "example": "/folder/dir/index.html"
+      }
+    }
+  },
+  "context_plugins_collection_description": {
+    "message": "The names of the plugins installed in the browser",
+    "description": "Description of the 'plugins' collection template context entry"
+  },
+  "context_pop_url_operation_description": {
+    "message": "Removes the URL from the top of the URL stack",
+    "description": "Description of the 'popUrl' operation template context entry"
+  },
+  "context_port_standard_description": {
+    "message": "For example; $EXAMPLE_1$, $EXAMPLE_2$",
+    "description": "Description of the 'port' standard template context entry",
+    "placeholders": {
+      "example_1": {
+        "content": "80",
+        "example": "80"
+      },
+      "example_2": {
+        "content": "443",
+        "example": "443"
+      }
+    }
+  },
+  "context_protocol_standard_description": {
+    "message": "For example; $EXAMPLE_1$, $EXAMPLE_2$",
+    "description": "Description of the 'protocol' standard template context entry",
+    "placeholders": {
+      "example_1": {
+        "content": "http",
+        "example": "http"
+      },
+      "example_2": {
+        "content": "https",
+        "example": "https"
+      }
+    }
+  },
+  "context_push_url_operation_description": {
+    "message": "Pushes a URL built from the text provided to the top of the URL stack",
+    "description": "Description of the 'pushUrl' operation template context entry"
+  },
+  "context_referrer_standard_description": {
+    "message": "The referrer for the page, if any",
+    "description": "Description of the 'referrer' standard template context entry"
+  },
+  "context_relative_standard_description": {
+    "message": "The relative path to the file including the query string (e.g. $EXAMPLE$)",
+    "description": "Description of the 'relative' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "/folder/dir/index.html?item=value",
+        "example": "/folder/dir/index.html?item=value"
+      }
+    }
+  },
+  "context_screen_color_depth_standard_description": {
+    "message": "The colour depth in bits (e.g. $EXAMPLE$)",
+    "description": "Description of the 'screenColorDepth' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "24",
+        "example": "24"
+      }
+    }
+  },
+  "context_screen_height_standard_description": {
+    "message": "The height, in pixels, of the screen",
+    "description": "Description of the 'screenHeight' standard template context entry"
+  },
+  "context_screen_width_standard_description": {
+    "message": "The width, in pixels, of the screen",
+    "description": "Description of the 'screenWidth' standard template context entry"
+  },
+  "context_scripts_collection_description": {
+    "message": "The URLs of all scripts on the page",
+    "description": "Description of the 'scripts' collection template context entry"
+  },
+  "context_search_param_operation_description": {
+    "message": "Get the value of the query string parameter provided",
+    "description": "Description of the 'searchParam' operation template context entry"
+  },
+  "context_search_params_collection_description": {
+    "message": "The key/value pairs of all query string parameters (e.g. query string $EXAMPLE_1$ contains $EXAMPLE_2$ and $EXAMPLE_3$)",
+    "description": "Description of the 'searchParams' collection template context entry",
+    "placeholders": {
+      "example_1": {
+        "content": "foo=bar&fu=baz",
+        "example": "foo=bar&fu=baz"
+      },
+      "example_2": {
+        "content": "foo",
+        "example": "foo"
+      },
+      "example_3": {
+        "content": "fu",
+        "example": "fu"
+      }
+    }
+  },
+  "context_search_standard_description": {
+    "message": "The entire query string if it exists (e.g. $EXAMPLE$)",
+    "description": "Description of the 'search' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "item=value&item2=value2",
+        "example": "item=value&item2=value2"
+      }
+    }
+  },
+  "context_segment_operation_description": {
+    "message": "Get the path segment at the index provided",
+    "description": "Description of the 'segment' operation template context entry"
+  },
+  "context_segments_collection_description": {
+    "message": "The segments from the path of the URL",
+    "description": "Description of the 'segments' collection template context entry"
+  },
+  "context_select_all_collection_description": {
+    "message": "The text content of every element matching the CSS selector provided",
+    "description": "Description of the 'selectAll' collection template context entry"
+  },
+  "context_select_all_html_collection_description": {
+    "message": "The HTML content of every element matching the CSS selector provided",
+    "description": "Description of the 'selectAllHtml' collection template context entry"
+  },
+  "context_select_all_markdown_collection_description": {
+    "message": "The Markdown conversion of the HTML content of every element matching the CSS selector provided",
+    "description": "Description of the 'selectAllMarkdown' collection template context entry"
+  },
+  "context_select_html_operation_description": {
+    "message": "Get the HTML content of the first element matching the CSS selector provided",
+    "description": "Description of the 'selectHtml' operation template context entry"
+  },
+  "context_select_markdown_operation_description": {
+    "message": "Get the Markdown conversion of the HTML content of the first element matching the CSS selector provided",
+    "description": "Description of the 'selectMarkdown' operation template context entry"
+  },
+  "context_select_operation_description": {
+    "message": "Get the text content of the first element matching the CSS selector provided",
+    "description": "Description of the 'select' operation template context entry"
+  },
+  "context_selected_images_collection_description": {
+    "message": "The URLs of any images within the current selection",
+    "description": "Description of the 'selectedImages' collection template context entry"
+  },
+  "context_selected_links_collection_description": {
+    "message": "The URLs of any links within the current selection",
+    "description": "Description of the 'selectedLinks' collection template context entry"
+  },
+  "context_selection_html_standard_description": {
+    "message": "The HTML of the current selection",
+    "description": "Description of the 'selectionHtml' standard template context entry"
+  },
+  "context_selection_markdown_standard_description": {
+    "message": "The Markdown conversion of the HTML of the current selection",
+    "description": "Description of the 'selectionMarkdown' standard template context entry"
+  },
+  "context_selection_standard_description": {
+    "message": "The text of the current selection",
+    "description": "Description of the 'selection' standard template context entry"
+  },
+  "context_session_storage_operation_description": {
+    "message": "Get the value for the session storage item with the name provided",
+    "description": "Description of the 'sessionStorage' operation template context entry"
+  },
+  "context_shorten_operation_description": {
+    "message": "Shorten the URL provided using the active URL shortener",
+    "description": "Description of the 'shorten' operation template context entry"
+  },
+  "context_shorten_standard_description": {
+    "message": "Shorten the URL using the active URL shortener",
+    "description": "Description of the 'shorten' standard template context entry"
+  },
+  "context_snake_case_operation_description": {
+    "message": "Transform the text provided, as space separated words, into snake case",
+    "description": "Description of the 'snakeCase' operation template context entry"
+  },
+  "context_source_standard_description": {
+    "message": "The full, original URL of the page",
+    "description": "Description of the 'source' standard template context entry"
+  },
+  "context_start_case_operation_description": {
+    "message": "Transform the text provided, as space separated words, into start case",
+    "description": "Description of the 'startCase' operation template context entry"
+  },
+  "context_style_sheets_collection_description": {
+    "message": "The URLs of all style sheets on the page",
+    "description": "Description of the 'styleSheets' collection template context entry"
+  },
+  "context_tabs_collection_description": {
+    "message": "The URLs of all tabs in the current window",
+    "description": "Description of the 'tabs' collection template context entry"
+  },
+  "context_template_collection_content_description": {
+    "message": "The content of the template",
+    "description": "Description of the 'content' property of the 'template' collection template context entry"
+  },
+  "context_template_collection_description": {
+    "message": "The template that is currently being executed",
+    "description": "Description of the 'template' collection template context entry"
+  },
+  "context_template_collection_description_description": {
+    "message": "The description of the template, localized where the template is predefined",
+    "description": "Description of the 'description' property of the 'template' collection template context entry"
+  },
+  "context_template_collection_enabled_description": {
+    "message": "Whether or not the template is enabled",
+    "description": "Description of the 'enabled' property of the 'template' collection template context entry"
+  },
+  "context_template_collection_id_description": {
+    "message": "The unique identifier of the template",
+    "description": "Description of the 'id' property of the 'template' collection template context entry"
+  },
+  "context_template_collection_predefined_description": {
+    "message": "Whether or not the template is predefined, as opposed to user-defined",
+    "description": "Description of the 'predefined' property of the 'template' collection template context entry"
+  },
+  "context_template_collection_shortcut_description": {
+    "message": "The keyboard shortcut assigned to the template, if any",
+    "description": "Description of the 'shortcut' property of the 'template' collection template context entry"
+  },
+  "context_template_collection_title_description": {
+    "message": "The title of the template, localized where the template is predefined",
+    "description": "Description of the 'title' property of the 'template' collection template context entry"
+  },
+  "context_template_count_standard_description": {
+    "message": "The total number of templates",
+    "description": "Description of the 'templateCount' standard template context entry"
+  },
+  "context_template_custom_count_standard_description": {
+    "message": "The total number of user-defined templates",
+    "description": "Description of the 'templateCustomCount' standard template context entry"
+  },
+  "context_text_standard_description": {
+    "message": "The text content of the whole page",
+    "description": "Description of the 'text' standard template context entry"
+  },
+  "context_tidy_operation_description": {
+    "message": "Reduce all of the joined spaces and tabs into single spaces within the text provided before removing all leading and trailing whitespace",
+    "description": "Description of the 'tidy' operation template context entry"
+  },
+  "context_title_standard_description": {
+    "message": "The title of the page or it's URL if the title could not be detected (e.g. page had not finished loading)",
+    "description": "Description of the 'title' standard template context entry"
+  },
+  "context_trim_end_operation_description": {
+    "message": "Remove all trailing whitespace from the text provided",
+    "description": "Description of the 'trimEnd' operation template context entry"
+  },
+  "context_trim_operation_description": {
+    "message": "Remove all leading and trailing whitespace from the text provided",
+    "description": "Description of the 'trim' operation template context entry"
+  },
+  "context_trim_start_operation_description": {
+    "message": "Remove all leading whitespace from the text provided",
+    "description": "Description of the 'trimStart' operation template context entry"
+  },
+  "context_unescape_html_operation_description": {
+    "message": "Converts certain HTML entities within the text provided into their corresponding characters",
+    "description": "Description of the 'unescapeHtml' operation template context entry"
+  },
+  "context_upper_case_operation_description": {
+    "message": "Transform the text provided, as space separated words, into upper case",
+    "description": "Description of the 'upperCase' operation template context entry"
+  },
+  "context_upper_operation_description": {
+    "message": "Transform the text provided into upper case",
+    "description": "Description of the 'upper' operation template context entry"
+  },
+  "context_url_standard_description": {
+    "message": "The whole URL being parsed",
+    "description": "Description of the 'url' standard template context entry"
+  },
+  "context_user_info_standard_description": {
+    "message": "The user info portion of the URL (username and password), if any",
+    "description": "Description of the 'userInfo' standard template context entry"
+  },
+  "context_user_standard_description": {
+    "message": "The username portion of the URL, if any",
+    "description": "Description of the 'user' standard template context entry"
+  },
+  "context_uuid_standard_description": {
+    "message": "A universally unique identifier (UUID)",
+    "description": "Description of the 'uuid' standard template context entry"
+  },
+  "context_version_standard_description": {
+    "message": "The current version of this extension (e.g. $EXAMPLE$)",
+    "description": "Description of the 'version' standard template context entry",
+    "placeholders": {
+      "example": {
+        "content": "1.2.3",
+        "example": "1.2.3"
+      }
+    }
+  },
+  "context_width_standard_description": {
+    "message": "The width of the page",
+    "description": "Description of the 'width' standard template context entry"
+  },
+  "context_word_count_operation_description": {
+    "message": "Get the number of words in the text provided",
+    "description": "Description of the 'wordCount' operation template context entry"
+  },
+  "context_xpath_all_collection_description": {
+    "message": "The text content of every result of the XPath expression provided",
+    "description": "Description of the 'xpathAll' collection template context entry"
+  },
+  "context_xpath_all_html_collection_description": {
+    "message": "The HTML content of every result of the XPath expression provided",
+    "description": "Description of the 'xpathAllHtml' collection template context entry"
+  },
+  "context_xpath_all_markdown_collection_description": {
+    "message": "The Markdown conversion of the HTML content of every result of the XPath expression provided",
+    "description": "Description of the 'xpathAllMarkdown' collection template context entry"
+  },
+  "context_xpath_html_operation_description": {
+    "message": "Get the HTML content of the first result of the XPath expression provided",
+    "description": "Description of the 'xpathHtml' operation template context entry"
+  },
+  "context_xpath_markdown_operation_description": {
+    "message": "Get the Markdown conversion of the HTML content of the first result of the XPath expression provided",
+    "description": "Description of the 'xpathMarkdown' operation template context entry"
+  },
+  "context_xpath_operation_description": {
+    "message": "Get the text content of the first result of the XPath expression provided",
+    "description": "Description of the 'xpath' operation template context entry"
+  },
+  "data_namespace_analytics": {
+    "message": "Analytics",
+    "description": "User-friendly name for the 'analytics' data namespace"
+  },
+  "data_namespace_analytics_migration_step_1": {
+    "message": "Transferring analytics options to $STORAGE$ data storage",
+    "description": "Description of migration step 1 for the 'analytics' data namespace; Migrating analytics options from v1.2.9 data storage",
+    "placeholders": {
+      "storage": {
+        "content": "chrome.storage.sync",
+        "example": "chrome.storage.sync"
+      }
+    }
+  },
+  "data_namespace_legacy": {
+    "message": "Legacy",
+    "description": "User-friendly name for the 'legacy' data namespace"
+  },
+  "data_namespace_legacy_migration_step_1": {
+    "message": "Deleting obsolete legacy data from legacy data storage",
+    "description": "Description of migration step 1 for the 'legacy' data namespace; Deleting obsolete legacy data from v1.2.9 data storage"
+  },
+  "data_namespace_logging": {
+    "message": "Logging",
+    "description": "User-friendly name for the 'logging' data namespace"
+  },
+  "data_namespace_logging_migration_step_1": {
+    "message": "Transferring logging options to $STORAGE$ data storage",
+    "description": "Description of migration step 1 for the 'logging' data namespace; Migrating logging options from v1.2.9 data storage",
+    "placeholders": {
+      "storage": {
+        "content": "chrome.storage.sync",
+        "example": "chrome.storage.sync"
+      }
+    }
+  },
+  "data_namespace_migration": {
+    "message": "Migrations",
+    "description": "User-friendly name for the 'migration' data namespace"
+  },
+  "data_namespace_notification": {
+    "message": "Notifications",
+    "description": "User-friendly name for the 'notification' data namespace"
+  },
+  "data_namespace_notification_migration_step_1": {
+    "message": "Transferring notification options to $STORAGE$ data storage",
+    "description": "Description of migration step 1 for the 'notification' data namespace; Migrating notification options from v1.2.9 data storage",
+    "placeholders": {
+      "storage": {
+        "content": "chrome.storage.sync",
+        "example": "chrome.storage.sync"
+      }
+    }
+  },
+  "data_namespace_oauth": {
+    "message": "OAuth",
+    "description": "User-friendly name for the 'oauth' data namespace"
+  },
+  "data_namespace_oauth_migration_step_1": {
+    "message": "Transferring Bitly OAuth options to $STORAGE$ data storage",
+    "description": "Description of migration step 1 for the 'oauth' data namespace; Migrating Bitly OAuth options from v1.2.9 data storage",
+    "placeholders": {
+      "storage": {
+        "content": "chrome.storage.sync",
+        "example": "chrome.storage.sync"
+      }
+    }
+  },
+  "data_namespace_oauth_migration_step_2": {
+    "message": "Deleting obsolete OAuth options from legacy data storage",
+    "description": "Description of migration step 2 for the 'oauth' data namespace; Deleting obsolete OAuth options from v1.2.9 data storage"
+  },
+  "data_namespace_template": {
+    "message": "Templates",
+    "description": "User-friendly name for the 'template' data namespace"
+  },
+  "data_namespace_template_migration_step_1": {
+    "message": "Transferring link options to $STORAGE$ data storage",
+    "description": "Description of migration step 1 for the 'template' data namespace; Migrating link options from v1.2.9 data storage",
+    "placeholders": {
+      "storage": {
+        "content": "chrome.storage.sync",
+        "example": "chrome.storage.sync"
+      }
+    }
+  },
+  "data_namespace_template_migration_step_2": {
+    "message": "Transferring markdown options to $STORAGE$ data storage",
+    "description": "Description of migration step 2 for the 'template' data namespace; Migrating markdown options from v1.2.9 data storage",
+    "placeholders": {
+      "storage": {
+        "content": "chrome.storage.sync",
+        "example": "chrome.storage.sync"
+      }
+    }
+  },
+  "data_namespace_template_migration_step_3": {
+    "message": "Transferring context menu options to $STORAGE$ data storage",
+    "description": "Description of migration step 3 for the 'template' data namespace; Migrating context menu options from v1.2.9 data storage",
+    "placeholders": {
+      "storage": {
+        "content": "chrome.storage.sync",
+        "example": "chrome.storage.sync"
+      }
+    }
+  },
+  "data_namespace_template_migration_step_4": {
+    "message": "Transferring keyboard shortcut options to $STORAGE$ data storage",
+    "description": "Description of migration step 4 for the 'template' data namespace; Migrating keyboard shortcut options from v1.2.9 data storage",
+    "placeholders": {
+      "storage": {
+        "content": "chrome.storage.sync",
+        "example": "chrome.storage.sync"
+      }
+    }
+  },
+  "data_namespace_template_migration_step_5": {
+    "message": "Transferring templates to $STORAGE$ data storage",
+    "description": "Description of migration step 5 for the 'template' data namespace; Migrating templates from v1.2.9 data storage",
+    "placeholders": {
+      "storage": {
+        "content": "chrome.storage.sync",
+        "example": "chrome.storage.sync"
+      }
+    }
+  },
+  "data_namespace_template_migration_step_6": {
+    "message": "Transferring toolbar behaviour options to $STORAGE$ data storage",
+    "description": "Description of migration step 6 for the 'template' data namespace; Migrating toolbar behaviour options from v1.2.9 data storage",
+    "placeholders": {
+      "storage": {
+        "content": "chrome.storage.sync",
+        "example": "chrome.storage.sync"
+      }
+    }
+  },
+  "data_namespace_url_shortener": {
+    "message": "URL Shorteners",
+    "description": "User-friendly name for the 'url_shortener' data namespace"
+  },
+  "data_namespace_url_shortener_migration_step_1": {
+    "message": "Transferring Bitly URL shortener options to $STORAGE$ data storage",
+    "description": "Description of migration step 1 for the 'url_shortener' data namespace; Migrating Bitly URL shortener options from v1.2.9 data storage",
+    "placeholders": {
+      "storage": {
+        "content": "chrome.storage.sync",
+        "example": "chrome.storage.sync"
+      }
+    }
+  },
+  "data_namespace_url_shortener_migration_step_2": {
+    "message": "Transferring YOURLS URL shortener options to $STORAGE$ data storage",
+    "description": "Description of migration step 2 for the 'url_shortener' data namespace; Migrating YOURLS URL shortener options from v1.2.9 data storage",
+    "placeholders": {
+      "storage": {
+        "content": "chrome.storage.sync",
+        "example": "chrome.storage.sync"
+      }
+    }
+  },
+  "data_namespace_url_shortener_migration_step_3": {
+    "message": "Deleting obsolete URL shortener options from legacy data storage",
+    "description": "Description of migration step 3 for the 'url_shortener' data namespace; Deleting obsolete URL shortener options from v1.2.9 data storage"
   },
   "description": {
     "message": "Quickly and easily copies info on the current page using a simple and unique template system",
-    "description": "Brief description of the extension."
+    "description": "Brief description of the extension"
   },
-  "empty": {
-    "message": "Empty",
-    "description": "Popup/menu text where no Templates are active."
+  "error": {
+    "message": "Error",
+    "description": "Title for an error alert"
   },
   "error_file_aborted": {
     "message": "Aborted!",
@@ -55,573 +1163,367 @@
     "message": "Some values are missing or corrupt!",
     "description": "Error message for when imported data isn't structured correctly."
   },
-  "icon_adjust": {
-    "message": "Adjust",
-    "description": "Adjust icon caption."
-  },
-  "icon_align_center": {
-    "message": "Align Centre",
-    "description": "Align Centre icon caption."
-  },
-  "icon_align_justify": {
-    "message": "Align Justify",
-    "description": "Align Justify icon caption."
-  },
-  "icon_align_left": {
-    "message": "Align Left",
-    "description": "Align Left icon caption."
-  },
-  "icon_align_right": {
-    "message": "Align Right",
-    "description": "Align Right icon caption."
-  },
-  "icon_arrow_down": {
-    "message": "Arrow Down",
-    "description": "Arrow Down icon caption."
-  },
-  "icon_arrow_left": {
-    "message": "Arrow Left",
-    "description": "Arrow Left icon caption."
-  },
-  "icon_arrow_right": {
-    "message": "Arrow Right",
-    "description": "Arrow Right icon caption."
-  },
-  "icon_arrow_up": {
-    "message": "Arrow Up",
-    "description": "Arrow Up icon caption."
-  },
-  "icon_asterisk": {
-    "message": "Asterisk",
-    "description": "Asterisk icon caption."
-  },
-  "icon_backward": {
-    "message": "Backward",
-    "description": "Backward icon caption."
-  },
-  "icon_ban_circle": {
-    "message": "Ban Circle",
-    "description": "Ban Circle icon caption."
-  },
-  "icon_barcode": {
-    "message": "Barcode",
-    "description": "Barcode icon caption."
-  },
-  "icon_bell": {
-    "message": "Bell",
-    "description": "Bell icon caption."
-  },
-  "icon_bold": {
-    "message": "Bold",
-    "description": "Bold icon caption."
-  },
-  "icon_book": {
-    "message": "Book",
-    "description": "Book icon caption."
-  },
-  "icon_bookmark": {
-    "message": "Bookmark",
-    "description": "Bookmark icon caption."
-  },
-  "icon_briefcase": {
-    "message": "Briefcase",
-    "description": "Briefcase icon caption."
-  },
-  "icon_bullhorn": {
-    "message": "Bullhorn",
-    "description": "Bullhorn icon caption."
-  },
-  "icon_calendar": {
-    "message": "Calendar",
-    "description": "Calendar icon caption."
-  },
-  "icon_camera": {
-    "message": "Camera",
-    "description": "Camera icon caption."
-  },
-  "icon_certificate": {
-    "message": "Certificate",
-    "description": "Certificate icon caption."
-  },
-  "icon_check": {
-    "message": "Check",
-    "description": "Check icon caption."
-  },
-  "icon_chevron_down": {
-    "message": "Chevron Down",
-    "description": "Chevron Down icon caption."
-  },
-  "icon_chevron_left": {
-    "message": "Chevron Left",
-    "description": "Chevron Left icon caption."
-  },
-  "icon_chevron_right": {
-    "message": "Chevron Right",
-    "description": "Chevron Right icon caption."
-  },
-  "icon_chevron_up": {
-    "message": "Chevron Up",
-    "description": "Chevron Up icon caption."
-  },
-  "icon_circle_arrow_down": {
-    "message": "Circle Arrow Down",
-    "description": "Circle Arrow Down icon caption."
-  },
-  "icon_circle_arrow_left": {
-    "message": "Circle Arrow Left",
-    "description": "Circle Arrow Left icon caption."
-  },
-  "icon_circle_arrow_right": {
-    "message": "Circle Arrow Right",
-    "description": "Circle Arrow Right icon caption."
-  },
-  "icon_circle_arrow_up": {
-    "message": "Circle Arrow Up",
-    "description": "Circle Arrow Up icon caption."
-  },
-  "icon_cog": {
-    "message": "Cog",
-    "description": "Cog icon caption."
-  },
-  "icon_comment": {
-    "message": "Comment",
-    "description": "Comment icon caption."
-  },
-  "icon_download": {
-    "message": "Download",
-    "description": "Download icon caption."
-  },
-  "icon_download_alt": {
-    "message": "Download (alt)",
-    "description": "Download (alt) icon caption."
-  },
-  "icon_edit": {
-    "message": "Edit",
-    "description": "Edit icon caption."
-  },
-  "icon_eject": {
-    "message": "Eject",
-    "description": "Eject icon caption."
-  },
-  "icon_envelope": {
-    "message": "Envelope",
-    "description": "Envelope icon caption."
-  },
-  "icon_exclamation_sign": {
-    "message": "Exclamation Sign",
-    "description": "Exclamation Sign icon caption."
-  },
-  "icon_eye_close": {
-    "message": "Eye Closed",
-    "description": "Eye Closed icon caption."
-  },
-  "icon_eye_open": {
-    "message": "Eye Open",
-    "description": "Eye Open icon caption."
-  },
-  "icon_facetime_video": {
-    "message": "Facetime Video",
-    "description": "Facetime Video icon caption."
-  },
-  "icon_fast_backward": {
-    "message": "Fast Backward",
-    "description": "Fast Backward icon caption."
-  },
-  "icon_fast_forward": {
-    "message": "Fast Forward",
-    "description": "Fast Forward icon caption."
-  },
-  "icon_file": {
-    "message": "File",
-    "description": "File icon caption."
-  },
-  "icon_film": {
-    "message": "Film",
-    "description": "Film icon caption."
-  },
-  "icon_filter": {
-    "message": "Filter",
-    "description": "Filter icon caption."
-  },
-  "icon_fire": {
-    "message": "Fire",
-    "description": "Fire icon caption."
-  },
-  "icon_flag": {
-    "message": "Flag",
-    "description": "Flag icon caption."
-  },
-  "icon_folder_close": {
-    "message": "Folder Closed",
-    "description": "Folder Closed icon caption."
-  },
-  "icon_folder_open": {
-    "message": "Folder Open",
-    "description": "Folder Open icon caption."
-  },
-  "icon_font": {
-    "message": "Font",
-    "description": "Font icon caption."
-  },
-  "icon_forward": {
-    "message": "Forward",
-    "description": "Forward icon caption."
-  },
-  "icon_fullscreen": {
-    "message": "Fullscreen",
-    "description": "Fullscreen icon caption."
-  },
-  "icon_gift": {
-    "message": "Gift",
-    "description": "Gift icon caption."
-  },
-  "icon_glass": {
-    "message": "Glass",
-    "description": "Glass icon caption."
-  },
-  "icon_globe": {
-    "message": "Globe",
-    "description": "Globe icon caption."
-  },
-  "icon_hand_down": {
-    "message": "Hand Down",
-    "description": "Hand Down icon caption."
-  },
-  "icon_hand_left": {
-    "message": "Hand Left",
-    "description": "Hand Left icon caption."
-  },
-  "icon_hand_right": {
-    "message": "Hand Right",
-    "description": "Hand Right icon caption."
-  },
-  "icon_hand_up": {
-    "message": "Hand Up",
-    "description": "Hand Up icon caption."
-  },
-  "icon_hdd": {
-    "message": "HDD",
-    "description": "HDD icon caption."
-  },
-  "icon_headphones": {
-    "message": "Headphones",
-    "description": "Headphones icon caption."
-  },
-  "icon_heart": {
-    "message": "Heart",
-    "description": "Heart icon caption."
-  },
-  "icon_home": {
-    "message": "Home",
-    "description": "Home icon caption."
-  },
-  "icon_inbox": {
-    "message": "Inbox",
-    "description": "Inbox icon caption."
-  },
-  "icon_indent_left": {
-    "message": "Indent Left",
-    "description": "Indent Left icon caption."
-  },
-  "icon_indent_right": {
-    "message": "Indent Right",
-    "description": "Indent Right icon caption."
-  },
-  "icon_info_sign": {
-    "message": "Info Sign",
-    "description": "Info Sign icon caption."
-  },
-  "icon_italic": {
-    "message": "Italic",
-    "description": "Italic icon caption."
-  },
-  "icon_leaf": {
-    "message": "Leaf",
-    "description": "Leaf icon caption."
-  },
-  "icon_list": {
-    "message": "List",
-    "description": "List icon caption."
-  },
-  "icon_list_alt": {
-    "message": "List (alt)",
-    "description": "List (alt) icon caption."
-  },
-  "icon_lock": {
-    "message": "Lock",
-    "description": "Lock icon caption."
-  },
-  "icon_magnet": {
-    "message": "Magnet",
-    "description": "Magnet icon caption."
-  },
-  "icon_map_marker": {
-    "message": "Map Marker",
-    "description": "Map Marker icon caption."
-  },
-  "icon_minus": {
-    "message": "Minus",
-    "description": "Minus icon caption."
-  },
-  "icon_minus_sign": {
-    "message": "Minus Sign",
-    "description": "Minus Sign icon caption."
-  },
-  "icon_move": {
-    "message": "Move",
-    "description": "Move icon caption."
-  },
-  "icon_music": {
-    "message": "Music",
-    "description": "Music icon caption."
-  },
-  "icon_none": {
+  "error_snackbar_unknown_message": {
+    "message": "Unknown",
+    "description": "Fallback message shown by the error snackbar when the underlying error has no message or stack of its own."
+  },
+  "guide_close_button_label": {
+    "message": "close guide",
+    "description": "Accessible label for the button that closes the guide dialog on small screens."
+  },
+  "guide_data_type_array": {
+    "message": "Array",
+    "description": "Label for the array data type shown in the guide."
+  },
+  "guide_data_type_boolean": {
+    "message": "Boolean",
+    "description": "Label for the boolean data type shown in the guide."
+  },
+  "guide_data_type_none": {
     "message": "None",
-    "description": "None icon caption."
+    "description": "Label for an operation's output when it produces no output, shown in the guide."
   },
-  "icon_off": {
-    "message": "Off",
-    "description": "Off icon caption."
+  "guide_data_type_number": {
+    "message": "Number",
+    "description": "Label for the number data type shown in the guide."
   },
-  "icon_ok": {
-    "message": "OK",
-    "description": "OK icon caption."
+  "guide_data_type_object": {
+    "message": "Object",
+    "description": "Label for the object data type shown in the guide."
   },
-  "icon_ok_circle": {
-    "message": "OK Circle",
-    "description": "OK Circle icon caption."
+  "guide_data_type_string": {
+    "message": "String",
+    "description": "Label for the string data type shown in the guide."
   },
-  "icon_ok_sign": {
-    "message": "OK Sign",
-    "description": "OK Sign icon caption."
+  "guide_entry_table_aliases_message": {
+    "message": "Also: $ALIASES$",
+    "description": "Lists the alternative names that also resolve to a guide entry.",
+    "placeholders": {
+      "aliases": {
+        "content": "$1",
+        "example": "fragment, anchor"
+      }
+    }
   },
-  "icon_pause": {
-    "message": "Pause",
-    "description": "Pause icon caption."
+  "guide_entry_table_deprecated_chip_label": {
+    "message": "Deprecated in $VERSION$",
+    "description": "Chip shown next to a guide entry that has been deprecated.",
+    "placeholders": {
+      "version": {
+        "content": "$1",
+        "example": "2.0.0"
+      }
+    }
   },
-  "icon_pencil": {
-    "message": "Pencil",
-    "description": "Pencil icon caption."
+  "guide_entry_table_description_header": {
+    "message": "Description",
+    "description": "Header for a guide entry table's description column."
   },
-  "icon_picture": {
-    "message": "Picture",
-    "description": "Picture icon caption."
+  "guide_entry_table_name_header": {
+    "message": "Name",
+    "description": "Header for a guide entry table's name column."
   },
-  "icon_plane": {
-    "message": "Plane",
-    "description": "Plane icon caption."
+  "guide_entry_table_no_entries_message": {
+    "message": "No entries match your search.",
+    "description": "Shown in place of the entry table when a guide search has no results."
   },
-  "icon_play": {
-    "message": "Play",
-    "description": "Play icon caption."
+  "guide_entry_table_sensitive_chip_label": {
+    "message": "Sensitive",
+    "description": "Chip shown next to a guide entry whose value is a credential."
   },
-  "icon_play_circle": {
-    "message": "Play Circle",
-    "description": "Play Circle icon caption."
+  "guide_entry_table_sensitive_warning_message": {
+    "message": "Treat as a secret — any template that references this can expose it wherever its output is pasted.",
+    "description": "Warning shown below a guide entry whose value is a credential."
   },
-  "icon_plus": {
-    "message": "Plus",
-    "description": "Plus icon caption."
+  "guide_entry_table_values_message": {
+    "message": "One of: $VALUES$",
+    "description": "Lists the complete set of values a constrained guide entry can hold.",
+    "placeholders": {
+      "values": {
+        "content": "$1",
+        "example": "true, false"
+      }
+    }
   },
-  "icon_plus_sign": {
-    "message": "Plus Sign",
-    "description": "Plus Sign icon caption."
+  "guide_examples_collection_description_1": {
+    "message": "Referencing a list directly renders its items as a comma-separated list.",
+    "description": "1st collection-category guide example's description."
   },
-  "icon_print": {
-    "message": "Print",
-    "description": "Print icon caption."
+  "guide_examples_collection_description_2": {
+    "message": "Use a section to iterate over a list, referring to the current item with a dot.",
+    "description": "2nd collection-category guide example's description."
   },
-  "icon_qrcode": {
-    "message": "QR Code",
-    "description": "QR Code icon caption."
+  "guide_examples_collection_description_3": {
+    "message": "Use dot notation to read a single property from an object.",
+    "description": "3rd collection-category guide example's description."
   },
-  "icon_question_sign": {
-    "message": "Question Sign",
-    "description": "Question Sign icon caption."
+  "guide_examples_collection_description_4": {
+    "message": "Dot notation can descend through nested objects.",
+    "description": "4th collection-category guide example's description."
   },
-  "icon_random": {
-    "message": "Random",
-    "description": "Random icon caption."
+  "guide_examples_collection_description_5": {
+    "message": "A section enters an object so that its properties can be referenced relative to it.",
+    "description": "5th collection-category guide example's description."
   },
-  "icon_refresh": {
-    "message": "Refresh",
-    "description": "Refresh icon caption."
+  "guide_examples_collection_description_6": {
+    "message": "An inverted section renders only when the list is empty, which is useful as a fallback.",
+    "description": "6th collection-category guide example's description."
   },
-  "icon_remove": {
-    "message": "Remove",
-    "description": "Remove icon caption."
+  "guide_examples_operation_description_1": {
+    "message": "Wrap content in a section to pass it through an operation.",
+    "description": "1st operation-category guide example's description."
   },
-  "icon_remove_circle": {
-    "message": "Remove Circle",
-    "description": "Remove Circle icon caption."
+  "guide_examples_operation_description_2": {
+    "message": "The content of an operation is itself rendered first, so operations can be nested.",
+    "description": "2nd operation-category guide example's description."
   },
-  "icon_remove_sign": {
-    "message": "Remove Sign",
-    "description": "Remove Sign icon caption."
+  "guide_examples_operation_description_3": {
+    "message": "Some operations take a literal argument rather than an entry.",
+    "description": "3rd operation-category guide example's description."
   },
-  "icon_repeat": {
-    "message": "Repeat",
-    "description": "Repeat icon caption."
+  "guide_examples_operation_description_4": {
+    "message": "Operations that accept no input still require a closing tag.",
+    "description": "4th operation-category guide example's description."
   },
-  "icon_resize_full": {
-    "message": "Resize Full",
-    "description": "Resize Full icon caption."
+  "guide_examples_option_description_1": {
+    "message": "Read a single option using its full path.",
+    "description": "1st option-category guide example's description."
   },
-  "icon_resize_horizontal": {
-    "message": "Resize Horizontal",
-    "description": "Resize Horizontal icon caption."
+  "guide_examples_option_description_2": {
+    "message": "Wrap a boolean option in a section to render content only when it is enabled.",
+    "description": "2nd option-category guide example's description."
   },
-  "icon_resize_small": {
-    "message": "Resize Small",
-    "description": "Resize Small icon caption."
+  "guide_examples_option_description_3": {
+    "message": "An inverted section covers the opposite case.",
+    "description": "3rd option-category guide example's description."
   },
-  "icon_resize_vertical": {
-    "message": "Resize Vertical",
-    "description": "Resize Vertical icon caption."
+  "guide_examples_option_description_4": {
+    "message": "A section can enter a group so that its options can be read relative to it.",
+    "description": "4th option-category guide example's description."
   },
-  "icon_retweet": {
-    "message": "Retweet",
-    "description": "Retweet icon caption."
+  "guide_examples_standard_description_1": {
+    "message": "Reference an entry by name to insert its value.",
+    "description": "1st standard-category guide example's description."
   },
-  "icon_road": {
-    "message": "Road",
-    "description": "Road icon caption."
+  "guide_examples_standard_description_2": {
+    "message": "Single braces insert the value as-is, whereas double braces HTML-escape it.",
+    "description": "2nd standard-category guide example's description."
   },
-  "icon_screenshot": {
-    "message": "Screenshot",
-    "description": "Screenshot icon caption."
+  "guide_examples_standard_description_3": {
+    "message": "Entries can be freely combined with any surrounding text.",
+    "description": "3rd standard-category guide example's description."
   },
-  "icon_search": {
-    "message": "Search",
-    "description": "Search icon caption."
+  "guide_examples_standard_description_4": {
+    "message": "Wrap a boolean entry in a section to render its contents only when it is true.",
+    "description": "4th standard-category guide example's description."
   },
-  "icon_share": {
-    "message": "Share",
-    "description": "Share icon caption."
+  "guide_introduction_case_sensitivity_text": {
+    "message": "Entry names are matched case-insensitively, so `{browserName}`, `{browsername}` and `{BrowserName}` are all equivalent. This guide shows each name in camel case purely for readability, so you are free to write them however you find clearest.",
+    "description": "Paragraph of the \"Case sensitivity\" section of the introduction guide page."
   },
-  "icon_share_alt": {
-    "message": "Share (alt)",
-    "description": "Share (alt) icon caption."
+  "guide_introduction_case_sensitivity_title": {
+    "message": "Case sensitivity",
+    "description": "Title of the \"Case sensitivity\" section of the introduction guide page."
   },
-  "icon_shopping_cart": {
-    "message": "Shopping Cart",
-    "description": "Shopping Cart icon caption."
+  "guide_introduction_comments_text": {
+    "message": "Anything inside `{!...}` is omitted from the output, which is handy for annotating a long template.",
+    "description": "Paragraph of the \"Comments\" section of the introduction guide page."
   },
-  "icon_signal": {
-    "message": "Signal",
-    "description": "Signal icon caption."
+  "guide_introduction_comments_title": {
+    "message": "Comments",
+    "description": "Title of the \"Comments\" section of the introduction guide page."
   },
-  "icon_star": {
-    "message": "Star",
-    "description": "Star icon caption."
+  "guide_introduction_dot_notation_text": {
+    "message": "Properties of an object entry can be reached directly without opening a section, so `{cookies.session_id}` is equivalent to `{#cookies}{session_id}{/cookies}`.",
+    "description": "Paragraph of the \"Dot notation\" section of the introduction guide page."
   },
-  "icon_star_empty": {
-    "message": "Star Empty",
-    "description": "Star Empty icon caption."
+  "guide_introduction_dot_notation_title": {
+    "message": "Dot notation",
+    "description": "Title of the \"Dot notation\" section of the introduction guide page."
   },
-  "icon_step_backward": {
-    "message": "Step Backward",
-    "description": "Step Backward icon caption."
+  "guide_introduction_escaping_text_1": {
+    "message": "Values are inserted exactly as they are by default, which is usually what you want when producing Markdown, plain text or a URL.",
+    "description": "1st paragraph of the \"Escaping\" section of the introduction guide page."
   },
-  "icon_step_forward": {
-    "message": "Step Forward",
-    "description": "Step Forward icon caption."
+  "guide_introduction_escaping_text_2": {
+    "message": "To HTML-escape a value instead, double the braces or prefix the name with an ampersand, so both `{{title}}` and `{&title}` turn a title of `Example & Domain` into `Example &amp; Domain`. This is the opposite of standard Mustache, which escapes by default.",
+    "description": "2nd paragraph of the \"Escaping\" section of the introduction guide page."
   },
-  "icon_stop": {
-    "message": "Stop",
-    "description": "Stop icon caption."
+  "guide_introduction_escaping_title": {
+    "message": "Escaping",
+    "description": "Title of the \"Escaping\" section of the introduction guide page."
   },
-  "icon_tag": {
-    "message": "Tag",
-    "description": "Tag icon caption."
+  "guide_introduction_inverted_sections_text": {
+    "message": "An inverted section opens with `{^name}` and renders its contents only when the entry is absent, false, or an empty list, which makes it ideal for providing a fallback.",
+    "description": "Paragraph of the \"Inverted sections\" section of the introduction guide page."
   },
-  "icon_tags": {
+  "guide_introduction_inverted_sections_title": {
+    "message": "Inverted sections",
+    "description": "Title of the \"Inverted sections\" section of the introduction guide page."
+  },
+  "guide_introduction_lead_message": {
+    "message": "Templates are written using a logic-less syntax based on Mustache, where anything inside curly braces is replaced with a value taken from the current page. The pages that follow list every value available to you.",
+    "description": "Lead paragraph of the introduction guide page."
+  },
+  "guide_introduction_lists_objects_values_text": {
+    "message": "Referencing a list or object without a section renders it as a comma-separated list — of its items for a list, or of its property values for an object. Use a section whenever you need to control the separator or the layout.",
+    "description": "Paragraph of the \"Lists and objects as values\" section of the introduction guide page."
+  },
+  "guide_introduction_lists_objects_values_title": {
+    "message": "Lists and objects as values",
+    "description": "Title of the \"Lists and objects as values\" section of the introduction guide page."
+  },
+  "guide_introduction_notes_text_1": {
+    "message": "Some entries need to read the contents of the page and will be empty on pages the extension cannot access, such as the browser's own settings pages or the extension gallery.",
+    "description": "1st paragraph of the notes alert on the introduction guide page."
+  },
+  "guide_introduction_notes_text_2": {
+    "message": "Entries marked as deprecated continue to work so that existing templates keep rendering, but they may be removed in a future release and should be replaced where possible.",
+    "description": "2nd paragraph of the notes alert on the introduction guide page."
+  },
+  "guide_introduction_notes_text_3": {
+    "message": "Values are only computed when a template actually references them, so listing many entries has no cost unless they are used.",
+    "description": "3rd paragraph of the notes alert on the introduction guide page."
+  },
+  "guide_introduction_notes_title": {
+    "message": "Notes",
+    "description": "Title of the notes alert on the introduction guide page."
+  },
+  "guide_introduction_sections_access_text": {
+    "message": "**Access** — for an object entry, the contents are rendered once with that object's properties available as tags.",
+    "description": "List item describing object-access sections in the \"Sections\" section of the introduction guide page."
+  },
+  "guide_introduction_sections_conditions_text": {
+    "message": "**Conditions** — for a boolean entry, the contents are rendered only when it is true.",
+    "description": "List item describing conditional sections in the \"Sections\" section of the introduction guide page."
+  },
+  "guide_introduction_sections_iterating_text": {
+    "message": "**Iterating** — for a list entry, the contents are rendered once per item, with `{.}` referring to the current item.",
+    "description": "List item describing iterating sections in the \"Sections\" section of the introduction guide page."
+  },
+  "guide_introduction_sections_operations_text": {
+    "message": "**Operations** — for an operation entry, the contents are rendered first and then transformed.",
+    "description": "List item describing operation sections in the \"Sections\" section of the introduction guide page."
+  },
+  "guide_introduction_sections_text_1": {
+    "message": "A section opens with `{#name}` and closes with `{/name}`. What it does depends on the entry it names:",
+    "description": "1st paragraph of the \"Sections\" section of the introduction guide page."
+  },
+  "guide_introduction_sections_title": {
+    "message": "Sections",
+    "description": "Title of the \"Sections\" section of the introduction guide page."
+  },
+  "guide_introduction_tags_text_1": {
+    "message": "A tag such as `{title}` is replaced by the value of that entry. If the entry has no value, the tag is replaced with nothing at all rather than being left in place.",
+    "description": "1st paragraph of the \"Tags\" section of the introduction guide page."
+  },
+  "guide_introduction_tags_text_2": {
+    "message": "Note that tags use **single** curly braces, unlike the double braces used by standard Mustache.",
+    "description": "2nd paragraph of the \"Tags\" section of the introduction guide page."
+  },
+  "guide_introduction_tags_title": {
     "message": "Tags",
-    "description": "Tags icon caption."
+    "description": "Title of the \"Tags\" section of the introduction guide page."
   },
-  "icon_tasks": {
-    "message": "Tasks",
-    "description": "Tasks icon caption."
+  "guide_introduction_title": {
+    "message": "Introduction",
+    "description": "Title of the introduction guide page."
   },
-  "icon_text_height": {
-    "message": "Text Height",
-    "description": "Text Height icon caption."
+  "guide_lists_objects_description": {
+    "message": "Values containing multiple items, which are read using a section or dot notation.",
+    "description": "Description shown at the top of the lists & objects guide page."
   },
-  "icon_text_width": {
-    "message": "Text Width",
-    "description": "Text Width icon caption."
+  "guide_menu_label": {
+    "message": "guide menu",
+    "description": "Accessible label for the navigation landmark containing the guide menu."
   },
-  "icon_th": {
-    "message": "Thumbnails",
-    "description": "Thumbnails icon caption."
+  "guide_open_in_new_tab_label": {
+    "message": "Open in new tab",
+    "description": "Tooltip/accessible label for the button that opens the guide in its own browser tab."
   },
-  "icon_th_large": {
-    "message": "Thumbnails Large",
-    "description": "Thumbnails Large icon caption."
+  "guide_open_menu_button_label": {
+    "message": "open drawer",
+    "description": "Accessible label for the button that opens the guide navigation drawer on small screens."
   },
-  "icon_th_list": {
-    "message": "Thumbnails List",
-    "description": "Thumbnails List icon caption."
+  "guide_operations_description": {
+    "message": "Transformations applied to the content of the section that they wrap.",
+    "description": "Description shown at the top of the operations guide page."
   },
-  "icon_thumbs_down": {
-    "message": "Thumbs Down",
-    "description": "Thumbs Down icon caption."
+  "guide_options_description": {
+    "message": "Your current settings, readable from a template using their full path.",
+    "description": "Description shown at the top of the options guide page."
   },
-  "icon_thumbs_up": {
-    "message": "Thumbs Up",
-    "description": "Thumbs Up icon caption."
+  "guide_page_introduction": {
+    "message": "Introduction",
+    "description": "Name of the guide page introducing the template syntax."
   },
-  "icon_time": {
-    "message": "Time",
-    "description": "Time icon caption."
+  "guide_page_lists_objects": {
+    "message": "Lists & objects",
+    "description": "Name of the guide page listing list/object template context entries."
   },
-  "icon_tint": {
-    "message": "Tint",
-    "description": "Tint icon caption."
+  "guide_page_operations": {
+    "message": "Operations",
+    "description": "Name of the guide page listing template context operations."
   },
-  "icon_trash": {
-    "message": "Trash",
-    "description": "Trash icon caption."
+  "guide_page_options": {
+    "message": "Options",
+    "description": "Name of the guide page listing the extension's options."
   },
-  "icon_upload": {
-    "message": "Upload",
-    "description": "Upload icon caption."
+  "guide_page_standard": {
+    "message": "Standard",
+    "description": "Name of the guide page listing standard template context entries."
   },
-  "icon_user": {
-    "message": "User",
-    "description": "User icon caption."
+  "guide_search_label": {
+    "message": "Search entries",
+    "description": "Accessible label for the field used to search guide entries."
   },
-  "icon_volume_down": {
-    "message": "Volume Down",
-    "description": "Volume Down icon caption."
+  "guide_search_placeholder": {
+    "message": "Search entries…",
+    "description": "Placeholder for the field used to search guide entries."
   },
-  "icon_volume_off": {
-    "message": "Volume Off",
-    "description": "Volume Off icon caption."
+  "guide_signature_header": {
+    "message": "Signature",
+    "description": "Header for a guide entry table's type column, used for operation entries."
   },
-  "icon_volume_up": {
-    "message": "Volume Up",
-    "description": "Volume Up icon caption."
+  "guide_standard_description": {
+    "message": "Single values that can be inserted directly into a template using a simple tag.",
+    "description": "Description shown at the top of the standard entries guide page."
   },
-  "icon_warning_sign": {
-    "message": "Warning Sign",
-    "description": "Warning Sign icon caption."
+  "guide_title": {
+    "message": "Guide",
+    "description": "Header title shown in the guide's app bar."
   },
-  "icon_wrench": {
-    "message": "Wrench",
-    "description": "Wrench icon caption."
+  "guide_type_header": {
+    "message": "Type",
+    "description": "Header for a guide entry table's type column, used for standard/collection entries."
   },
-  "icon_zoom_in": {
-    "message": "Zoom In",
-    "description": "Zoom In icon caption."
-  },
-  "icon_zoom_out": {
-    "message": "Zoom Out",
-    "description": "Zoom Out icon caption."
+  "menu_empty": {
+    "message": "No templates enabled",
+    "description": "Context menu and popup text when no templates are enabled"
   },
   "name": {
-    "message": "Template",
-    "description": "Name of the extension."
+    "message": "tmplat",
+    "description": "Name of the extension"
+  },
+  "notification_change_log_message": {
+    "message": "Updated to version $VERSION$. Click to see what has changed.",
+    "description": "Message of the desktop notification shown after the extension has been updated.",
+    "placeholders": {
+      "version": {
+        "content": "$1",
+        "example": "1.2.9"
+      }
+    }
+  },
+  "notification_change_log_title": {
+    "message": "$NAME$ has been updated",
+    "description": "Title of the desktop notification shown after the extension has been updated.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "tmplat"
+      }
+    }
   },
   "opt_add_button_text": {
     "message": "$ICON$ Add",
@@ -1147,10 +2049,6 @@
       }
     }
   },
-  "opt_guide_lists_objects_cookies_text": {
-    "message": "The names of all cookies associated with the page",
-    "description": "Description of the cookies variable on the Guide tab of the Options page under the Lists & Objects section."
-  },
   "opt_guide_lists_objects_coords_text": {
     "message": "The properties of your current physical location (e.g. $EXAMPLE_1$, $EXAMPLE_2$ and many more)",
     "description": "Description of the coords variable on the Guide tab of the Options page under the Lists & Objects section.",
@@ -1172,6 +2070,20 @@
       "url": {
         "content": "http://example.com/test/index.html?foo=bar&amp;fu=baz",
         "example": "http://example.com/test/index.html?foo=bar&fu=baz"
+      }
+    }
+  },
+  "opt_guide_lists_objects_examples_code_10": {
+    "message": "$SYNTAX_1$View Larger Map$SYNTAX_2$",
+    "description": "Text for the 10th code block in the Examples area on the Guide tab of the Options page under the Lists & Objects section.",
+    "placeholders": {
+      "syntax_1": {
+        "content": "{#coords}\n&lt;iframe width=&quot;425&quot; height=&quot;350&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot; marginheight=&quot;0&quot; marginwidth=&quot;0&quot; src=&quot;http://maps.google.com/maps?ll={latitude},{longitude}&amp;output=embed&quot;&gt;&lt;/iframe&gt;\n&lt;br&gt;\n&lt;small&gt;&lt;a href=&quot;http://maps.google.com/maps?ll={latitude},{longitude}&amp;source=embed&quot;&gt;",
+        "example": "{#coords}\n<iframe width=\"425\" height=\"350\" frameborder=\"0\" scrolling=\"no\" marginheight=\"0\" marginwidth=\"0\" src=\"http://maps.google.com/maps?ll={latitude},{longitude}&output=embed\"></iframe>\n<br>\n<small><a href=\"http://maps.google.com/maps?ll={latitude},{longitude}&source=embed\">"
+      },
+      "syntax_2": {
+        "content": "&lt;/a&gt;&lt;/small&gt;\n{/coords}",
+        "example": "</a></small>\n{/coords}"
       }
     }
   },
@@ -1285,20 +2197,6 @@
       }
     }
   },
-  "opt_guide_lists_objects_examples_code_10": {
-    "message": "$SYNTAX_1$View Larger Map$SYNTAX_2$",
-    "description": "Text for the 10th code block in the Examples area on the Guide tab of the Options page under the Lists & Objects section.",
-    "placeholders": {
-      "syntax_1": {
-        "content": "{#coords}\n&lt;iframe width=&quot;425&quot; height=&quot;350&quot; frameborder=&quot;0&quot; scrolling=&quot;no&quot; marginheight=&quot;0&quot; marginwidth=&quot;0&quot; src=&quot;http://maps.google.com/maps?ll={latitude},{longitude}&amp;output=embed&quot;&gt;&lt;/iframe&gt;\n&lt;br&gt;\n&lt;small&gt;&lt;a href=&quot;http://maps.google.com/maps?ll={latitude},{longitude}&amp;source=embed&quot;&gt;",
-        "example": "{#coords}\n<iframe width=\"425\" height=\"350\" frameborder=\"0\" scrolling=\"no\" marginheight=\"0\" marginwidth=\"0\" src=\"http://maps.google.com/maps?ll={latitude},{longitude}&output=embed\"></iframe>\n<br>\n<small><a href=\"http://maps.google.com/maps?ll={latitude},{longitude}&source=embed\">"
-      },
-      "syntax_2": {
-        "content": "&lt;/a&gt;&lt;/small&gt;\n{/coords}",
-        "example": "</a></small>\n{/coords}"
-      }
-    }
-  },
   "opt_guide_lists_objects_examples_text_1": {
     "message": "These examples will be using the following $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$;",
     "description": "Text for the 1st paragraph in the Examples area on the Guide tab of the Options page under the Lists & Objects section.",
@@ -1316,6 +2214,10 @@
         "example": "\">"
       }
     }
+  },
+  "opt_guide_lists_objects_examples_text_10": {
+    "message": "If you would like to embed a map of your current location (e.g. in a blog post) try the following snippet;",
+    "description": "Text for the 10th paragraph in the Examples area on the Guide tab of the Options page under the Lists & Objects section."
   },
   "opt_guide_lists_objects_examples_text_2": {
     "message": "As it's a list, you can do the following to iterate over all the $SEGMENTS_LABEL$;",
@@ -1355,57 +2257,9 @@
     "message": "This will output in something like the following;",
     "description": "Text for the 9th paragraph in the Examples area on the Guide tab of the Options page under the Lists & Objects section."
   },
-  "opt_guide_lists_objects_examples_text_10": {
-    "message": "If you would like to embed a map of your current location (e.g. in a blog post) try the following snippet;",
-    "description": "Text for the 10th paragraph in the Examples area on the Guide tab of the Options page under the Lists & Objects section."
-  },
-  "opt_guide_lists_objects_fparams_text": {
-    "message": "The key/value pairs of all parameters within the hash fragment (e.g. fragment $EXAMPLE_1$ contains $EXAMPLE_2$ and $EXAMPLE_3$)",
-    "description": "Description of the fparams variable on the Guide tab of the Options page under the Lists & Objects section.",
-    "placeholders": {
-      "example_1": {
-        "content": "<code>foo=bar&amp;fu=baz</code>",
-        "example": "foo=bar&fu=baz"
-      },
-      "example_2": {
-        "content": "<em>foo</em>",
-        "example": "foo"
-      },
-      "example_3": {
-        "content": "<em>fu</em>",
-        "example": "fu"
-      }
-    }
-  },
-  "opt_guide_lists_objects_fsegments_text": {
-    "message": "The segments from the hash fragment's path",
-    "description": "Description of the fsegments variable on the Guide tab of the Options page under the Lists & Objects section."
-  },
   "opt_guide_lists_objects_header": {
     "message": "Lists &amp; Objects",
     "description": "Header for the Lists & Objects section on the Guide tab of the Options page."
-  },
-  "opt_guide_lists_objects_images_text": {
-    "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all images on the page",
-    "description": "Description of the images variable on the Guide tab of the Options page under the Lists & Objects section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      }
-    }
-  },
-  "opt_guide_lists_objects_keywords_text": {
-    "message": "The keywords from the page's meta information",
-    "description": "Description of the keywords variable on the Guide tab of the Options page under the Lists & Objects section."
   },
   "opt_guide_lists_objects_links_text": {
     "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$s of all links on the page",
@@ -1432,24 +2286,6 @@
       "local_storage": {
         "content": "<code>localStorage</code>",
         "example": "localStorage"
-      }
-    }
-  },
-  "opt_guide_lists_objects_params_text": {
-    "message": "The key/value pairs of all parameters (e.g. query $EXAMPLE_1$ contains $EXAMPLE_2$ and $EXAMPLE_3$)",
-    "description": "Description of the params variable on the Guide tab of the Options page under the Lists & Objects section.",
-    "placeholders": {
-      "example_1": {
-        "content": "<code>foo=bar&amp;fu=baz</code>",
-        "example": "foo=bar&fu=baz"
-      },
-      "example_2": {
-        "content": "<em>foo</em>",
-        "example": "foo"
-      },
-      "example_3": {
-        "content": "<em>fu</em>",
-        "example": "fu"
       }
     }
   },
@@ -1655,74 +2491,6 @@
     "message": "Notes",
     "description": "Header for the Notes area on the Guide tab of the Options page under some sections."
   },
-  "opt_guide_operations_capitalise_name": {
-    "message": "capitalise",
-    "description": "Name of the capitalise variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_capitalise_text": {
-    "message": "Transform the text provided into title case",
-    "description": "Description of the capitalise variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_cookie_text": {
-    "message": "Get the value for the cookie with the name provided",
-    "description": "Description of the cookie variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_date_time_text_1": {
-    "message": "Format the current date &amp; time using the pattern provided",
-    "description": "1st line of the description of the dateTime variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_date_time_text_2": {
-    "message": "(see $O_LINK_PHP_DATE$$O_ABBR_1$Hypertext Preprocessor$O_ABBR_2$PHP$C_ABBR$s date$C_LINK$ for more details)",
-    "description": "2nd line of the description of the dateTime variable on the Guide tab of the Options page under the Operations section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      },
-      "o_link_php_date": {
-        "content": "<a href=\"http://php.net/manual/en/function.date.php#refsect1-function.date-parameters\" target=\"_blank\">",
-        "example": "<a href=\"http://php.net/manual/en/function.date.php#refsect1-function.date-parameters\">"
-      }
-    }
-  },
-  "opt_guide_operations_decode_text": {
-    "message": "Decode the previously encoded text provided",
-    "description": "Description of the decode variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_encode_text": {
-    "message": "Encode the text provided so that it can be safely used in a query string",
-    "description": "Description of the encode variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_escape_text": {
-    "message": "Escape the text provided so that it can be safely inserted into $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$",
-    "description": "Description of the escape variable on the Guide tab of the Options page under the Operations section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      }
-    }
-  },
   "opt_guide_operations_examples_code_1": {
     "message": "$URL$",
     "description": "Text for the 1st code block in the Examples area on the Guide tab of the Options page under the Operations section.",
@@ -1927,55 +2695,9 @@
     "message": "This would cause the following output to be rendered;",
     "description": "Text for the 8th paragraph in the Examples area on the Guide tab of the Options page under the Operations section."
   },
-  "opt_guide_operations_fparam_text": {
-    "message": "Get the value of the parameter provided from within the hash fragment",
-    "description": "Description of the fparam variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_fsegment_text": {
-    "message": "Get the segment at the index provided from within the hash fragment",
-    "description": "Description of the fsegment variable on the Guide tab of the Options page under the Operations section."
-  },
   "opt_guide_operations_header": {
     "message": "Operations",
     "description": "Header for the Operations section on the Guide tab of the Options page."
-  },
-  "opt_guide_operations_last_modified_text_1": {
-    "message": "Format the last modified date &amp; time of the page using the pattern provided",
-    "description": "1st line of the description of the lastModified variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_last_modified_text_2": {
-    "message": "(see $O_LINK_PHP_DATE$$O_ABBR_1$Hypertext Preprocessor$O_ABBR_2$PHP$C_ABBR$s date$C_LINK$ for more details)",
-    "description": "2nd line of the description of the lastModified variable on the Guide tab of the Options page under the Operations section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      },
-      "o_link_php_date": {
-        "content": "<a href=\"http://php.net/manual/en/function.date.php#refsect1-function.date-parameters\" target=\"_blank\">",
-        "example": "<a href=\"http://php.net/manual/en/function.date.php#refsect1-function.date-parameters\">"
-      }
-    }
-  },
-  "opt_guide_operations_length_text": {
-    "message": "Get the character length of the text provided",
-    "description": "Description of the length variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_lower_case_text": {
-    "message": "Transform the text provided into lower case",
-    "description": "Description of the lowerCase variable on the Guide tab of the Options page under the Operations section."
   },
   "opt_guide_operations_meta_text": {
     "message": "Get the content of the page's meta information with the text provided",
@@ -2008,14 +2730,6 @@
   "opt_guide_operations_notes_text_3": {
     "message": "The argument can be negative values, in which case it will count back from the end of the path rather than forwards from the start",
     "description": "Text for the 2nd list item in the Notes area on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_param_text": {
-    "message": "Get the value of the parameter provided",
-    "description": "Description of the param variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_segment_text": {
-    "message": "Get the segment at the index provided",
-    "description": "Description of the segment variable on the Guide tab of the Options page under the Operations section."
   },
   "opt_guide_operations_select_all_html_text": {
     "message": "Concatenate the $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of all matching elements",
@@ -2089,24 +2803,6 @@
     "message": "Get the text of first matching element",
     "description": "Description of the select variable on the Guide tab of the Options page under the Operations section."
   },
-  "opt_guide_operations_shorten_text": {
-    "message": "Shorten the $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ provided using the active $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ shortener",
-    "description": "Description of the shorten variable on the Guide tab of the Options page under the Operations section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      }
-    }
-  },
   "opt_guide_operations_text": {
     "message": "$O_BOLD$Operations$C_BOLD$ are performed using sections, accepting its rendered contents as an argument.",
     "description": "Text for the Operations section on the Guide tab of the Options page.",
@@ -2120,40 +2816,6 @@
         "example": "<strong>"
       }
     }
-  },
-  "opt_guide_operations_tidy_text": {
-    "message": "Reduce all of the joined spaces and tabs into single spaces within the text provided before removing all leading and trailing whitespace",
-    "description": "Description of the tidy variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_trim_text": {
-    "message": "Remove all leading and trailing whitespace from the text provided",
-    "description": "Description of the trim variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_trim_left_text": {
-    "message": "Remove all leading whitespace from the text provided",
-    "description": "Description of the trimLeft variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_trim_right_text": {
-    "message": "Remove all trailing whitespace from the text provided",
-    "description": "Description of the trimRight variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_unescape_text": {
-    "message": "The opposite of $ESCAPE_LABEL$; Replace escaped characters in text provided with their unescaped counterparts",
-    "description": "Description of the unescape variable on the Guide tab of the Options page under the Operations section.",
-    "placeholders": {
-      "escape_label": {
-        "content": "<span class=\"label\">escape</span>",
-        "example": "escape"
-      }
-    }
-  },
-  "opt_guide_operations_upper_case_text": {
-    "message": "Transform the text provided into upper case",
-    "description": "Description of the upperCase variable on the Guide tab of the Options page under the Operations section."
-  },
-  "opt_guide_operations_word_count_text": {
-    "message": "Get the number of words in the text provided",
-    "description": "Description of the wordCount variable on the Guide tab of the Options page under the Operations section."
   },
   "opt_guide_operations_xpath_all_html_text": {
     "message": "Concatenate the $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of all results for the $O_LINK_XPATH$XPath$C_LINK$ expression",
@@ -2271,50 +2933,6 @@
       }
     }
   },
-  "opt_guide_options_header": {
-    "message": "Options",
-    "description": "Header for the Options section on the Guide tab of the Options page."
-  },
-  "opt_guide_options_bitly_account_text": {
-    "message": "Whether or not you are currently logged in to your $O_LINK_BITLY$bit.ly$C_LINK$ account",
-    "description": "Description of the bitlyAccount variable on the Guide tab of the Options page under the Options section.",
-    "placeholders": {
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_link_bitly": {
-        "content": "<a href=\"http://bit.ly\" target=\"_blank\">",
-        "example": "<a href=\"http://bit.ly\">"
-      }
-    }
-  },
-  "opt_guide_options_bitly_text": {
-    "message": "Whether or not $O_LINK_BITLY$bit.ly$C_LINK$ is the enabled $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ shortener",
-    "description": "Description of the bitly variable on the Guide tab of the Options page under the Options section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      },
-      "o_link_bitly": {
-        "content": "<a href=\"http://bit.ly\" target=\"_blank\">",
-        "example": "<a href=\"http://bit.ly\">"
-      }
-    }
-  },
   "opt_guide_options_examples_code_1": {
     "message": "$URL$",
     "description": "Text for the 1st code block in the Examples area on the Guide tab of the Options page under the Options section.",
@@ -2407,53 +3025,9 @@
     "message": "However, if you have disabled the option it will output this;",
     "description": "Text for the 4th paragraph in the Examples area on the Guide tab of the Options page under the Options section."
   },
-  "opt_guide_options_googl_account_text": {
-    "message": "Whether or not you are currently logged in to your $O_LINK_GOOGL$goo.gl$C_LINK$ account",
-    "description": "Description of the googlAccount variable on the Guide tab of the Options page under the Options section.",
-    "placeholders": {
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_link_googl": {
-        "content": "<a href=\"http://goo.gl\" target=\"_blank\">",
-        "example": "<a href=\"http://goo.gl\">"
-      }
-    }
-  },
-  "opt_guide_options_googl_text": {
-    "message": "Whether or not $O_LINK_GOOGL$goo.gl$C_LINK$ is the enabled $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ shortener",
-    "description": "Description of the googl variable on the Guide tab of the Options page under the Options section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      },
-      "o_link_googl": {
-        "content": "<a href=\"http://goo.gl\" target=\"_blank\">",
-        "example": "<a href=\"http://goo.gl\">"
-      }
-    }
-  },
-  "opt_guide_options_links_target_text": {
-    "message": "Whether or not the option to render links with instructions to open them in a new tab/window is enabled",
-    "description": "Description of the linksTarget variable on the Guide tab of the Options page under the Options section."
-  },
-  "opt_guide_options_links_title_text": {
-    "message": "Whether or not the option to render links with hover text is enabled",
-    "description": "Description of the linksTitle variable on the Guide tab of the Options page under the Options section."
+  "opt_guide_options_header": {
+    "message": "Options",
+    "description": "Header for the Options section on the Guide tab of the Options page."
   },
   "opt_guide_options_markdown_inline_text": {
     "message": "Whether or not the option to render $O_LINK_MARKDOWN$Markdown$C_LINK$ links using the inline style is enabled",
@@ -2468,10 +3042,6 @@
         "example": "<a href=\"http://en.wikipedia.org/wiki/Markdown\">"
       }
     }
-  },
-  "opt_guide_options_menu_text": {
-    "message": "Whether or not the option to show the context (right-click) menu is enabled",
-    "description": "Description of the menu variable on the Guide tab of the Options page under the Options section."
   },
   "opt_guide_options_menu_options_text": {
     "message": "Whether or not the $O_EMPH$Options$C_EMPH$ item is displayed at the bottom of the context (right-click) menu",
@@ -2490,6 +3060,10 @@
   "opt_guide_options_menu_paste_text": {
     "message": "Whether or not the Template output is automatically pasted into the field where the context (right-click) menu was activated",
     "description": "Description of the menuPaste variable on the Guide tab of the Options page under the Options section."
+  },
+  "opt_guide_options_menu_text": {
+    "message": "Whether or not the option to show the context (right-click) menu is enabled",
+    "description": "Description of the menu variable on the Guide tab of the Options page under the Options section."
   },
   "opt_guide_options_notifications_text": {
     "message": "Whether or not the option to show desktop notifications is enabled",
@@ -2671,112 +3245,6 @@
       }
     }
   },
-  "opt_guide_standard_author_text": {
-    "message": "The author from the page's meta information",
-    "description": "Description of the author variable on the Guide tab of the Options page under the Standard section."
-  },
-  "opt_guide_standard_base_text": {
-    "message": "The base domain (e.g. $EXAMPLE$)",
-    "description": "Description of the base variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example": {
-        "content": "<em>https://www.example.com:443</em>",
-        "example": "https://www.example.com:443"
-      }
-    }
-  },
-  "opt_guide_standard_browser_text": {
-    "message": "The name of the browser (i.e. $O_EMPH$Chrome$C_EMPH$)",
-    "description": "Description of the browser variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_emph": {
-        "content": "</em>",
-        "example": "</em>"
-      },
-      "o_emph": {
-        "content": "<em>",
-        "example": "<em>"
-      }
-    }
-  },
-  "opt_guide_standard_browser_version_text": {
-    "message": "The current version of the browser (e.g. $EXAMPLE$)",
-    "description": "Description of the browserVersion variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example": {
-        "content": "<em>16.0.912.77</em>",
-        "example": "16.0.912.77"
-      }
-    }
-  },
-  "opt_guide_standard_character_set_text": {
-    "message": "The $O_LINK_CHAR_SET$character set$C_LINK$ used by the page (e.g. $EXAMPLE$)",
-    "description": "Description of the characterSet variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "example": {
-        "content": "<em>UTF-8</em>",
-        "example": "UTF-8"
-      },
-      "o_link_char_set": {
-        "content": "<a href=\"http://www.iana.org/assignments/character-sets\" target=\"_blank\">",
-        "example": "<a href=\"http://www.iana.org/assignments/character-sets\">"
-      }
-    }
-  },
-  "opt_guide_standard_cookies_enabled_text": {
-    "message": "Whether or not cookies are enabled",
-    "description": "Description of the cookiesEnabled variable on the Guide tab of the Options page under the Standard section."
-  },
-  "opt_guide_standard_count_text": {
-    "message": "The total number of templates",
-    "description": "Description of the count variable on the Guide tab of the Options page under the Standard section."
-  },
-  "opt_guide_standard_custom_count_text": {
-    "message": "The total number of user-defined templates",
-    "description": "Description of the customCount variable on the Guide tab of the Options page under the Standard section."
-  },
-  "opt_guide_standard_date_time_text": {
-    "message": "The current date &amp; time in $O_LINK_RFC_2822$RFC 2822$C_LINK$ format",
-    "description": "Description of the dateTime variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_link_rfc_2822": {
-        "content": "<a href=\"http://www.faqs.org/rfcs/rfc2822.html\" target=\"_blank\">",
-        "example": "<a href=\"http://www.faqs.org/rfcs/rfc2822.html\">"
-      }
-    }
-  },
-  "opt_guide_standard_depth_text": {
-    "message": "The colour depth in bits (e.g. $EXAMPLE$)",
-    "description": "Description of the depth variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example": {
-        "content": "<em>24</em>",
-        "example": "24"
-      }
-    }
-  },
-  "opt_guide_standard_description_text": {
-    "message": "The description from the page's meta information",
-    "description": "Description of the description variable on the Guide tab of the Options page under the Standard section."
-  },
-  "opt_guide_standard_directory_text": {
-    "message": "The directory part of the path (e.g. $EXAMPLE$)",
-    "description": "Description of the directory variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example": {
-        "content": "<em>/folder/dir/</em>",
-        "example": "/folder/dir/"
-      }
-    }
-  },
   "opt_guide_standard_examples_code_1": {
     "message": "$URL$",
     "description": "Text for the 1st code block in the Examples area on the Guide tab of the Options page under the Standard section.",
@@ -2847,101 +3315,9 @@
     "message": "Otherwise, you can expect to the see the following;",
     "description": "Text for the 4th paragraph in the Examples area on the Guide tab of the Options page under the Standard section."
   },
-  "opt_guide_standard_favicon_text": {
-    "message": "The whole $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ of the page's favicon",
-    "description": "Description of the favicon variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      }
-    }
-  },
-  "opt_guide_standard_file_text": {
-    "message": "The basename of the file (e.g. $EXAMPLE$)",
-    "description": "Description of the file variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example": {
-        "content": "<em>index.html</em>",
-        "example": "index.html"
-      }
-    }
-  },
-  "opt_guide_standard_fragment_anchor_text": {
-    "message": "The entire string after the hash (#) symbol",
-    "description": "Description of the fragment and anchor variables on the Guide tab of the Options page under the Standard section."
-  },
   "opt_guide_standard_header": {
     "message": "Standard",
     "description": "Header for the Standard section on the Guide tab of the Options page."
-  },
-  "opt_guide_standard_host_text": {
-    "message": "For example; $EXAMPLE_1$, $EXAMPLE_2$",
-    "description": "Description of the host variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example_1": {
-        "content": "<em>www.example.com</em>",
-        "example": "www.example.com"
-      },
-      "example_2": {
-        "content": "<em>localhost</em>",
-        "example": "localhost"
-      }
-    }
-  },
-  "opt_guide_standard_html_text": {
-    "message": "The entire $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$ contents of the page",
-    "description": "Description of the html variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      }
-    }
-  },
-  "opt_guide_standard_java_text": {
-    "message": "Whether or not $O_LINK_JAVA$Java$C_LINK$ is enabled",
-    "description": "Description of the java variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_link_java": {
-        "content": "<a href=\"http://www.java.com\" target=\"_blank\">",
-        "example": "<a href=\"http://www.java.com\">"
-      }
-    }
-  },
-  "opt_guide_standard_last_modified_text": {
-    "message": "The last modified date &amp; time of the page in $O_LINK_RFC_2822$RFC 2822$C_LINK$ format",
-    "description": "Description of the lastModified variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_link": {
-        "content": "</a>",
-        "example": "</a>"
-      },
-      "o_link_rfc_2822": {
-        "content": "<a href=\"http://www.faqs.org/rfcs/rfc2822.html\" target=\"_blank\">",
-        "example": "<a href=\"http://www.faqs.org/rfcs/rfc2822.html\">"
-      }
-    }
   },
   "opt_guide_standard_link_html_text": {
     "message": "The $O_ABBR_1$Hypertext Markup Language$O_ABBR_2$HTML$C_ABBR$ behind the contextual (right-clicked) link",
@@ -3057,66 +3433,6 @@
       }
     }
   },
-  "opt_guide_standard_page_height_text": {
-    "message": "The height of the page",
-    "description": "Description of the pageHeight variable on the Guide tab of the Options page under the Standard section."
-  },
-  "opt_guide_standard_page_width_text": {
-    "message": "The width of the page",
-    "description": "Description of the pageWidth variable on the Guide tab of the Options page under the Standard section."
-  },
-  "opt_guide_standard_path_text": {
-    "message": "The path to the file (e.g. $EXAMPLE$)",
-    "description": "Description of the path variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example": {
-        "content": "<em>/folder/dir/index.html</em>",
-        "example": "/folder/dir/index.html"
-      }
-    }
-  },
-  "opt_guide_standard_port_text": {
-    "message": "For example; $EXAMPLE_1$, $EXAMPLE_2$",
-    "description": "Description of the port variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example_1": {
-        "content": "<em>80</em>",
-        "example": "80"
-      },
-      "example_2": {
-        "content": "<em>443</em>",
-        "example": "443"
-      }
-    }
-  },
-  "opt_guide_standard_protocol_text": {
-    "message": "For example; $EXAMPLE_1$, $EXAMPLE_2$, $EXAMPLE_3$",
-    "description": "Description of the protocol variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example_1": {
-        "content": "<em>http</em>",
-        "example": "http"
-      },
-      "example_2": {
-        "content": "<em>https</em>",
-        "example": "https"
-      },
-      "example_3": {
-        "content": "<em>file</em>",
-        "example": "file"
-      }
-    }
-  },
-  "opt_guide_standard_query_text": {
-    "message": "The entire query string if it exists (e.g. $EXAMPLE$)",
-    "description": "Description of the query variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example": {
-        "content": "<em>item=value&amp;item2=value2</em>",
-        "example": "item=value&item2=value2"
-      }
-    }
-  },
   "opt_guide_standard_referrer_text": {
     "message": "The $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ of the referring page",
     "description": "Description of the referrer variable on the Guide tab of the Options page under the Standard section.",
@@ -3132,16 +3448,6 @@
       "o_abbr_2": {
         "content": "\">",
         "example": "\">"
-      }
-    }
-  },
-  "opt_guide_standard_relative_text": {
-    "message": "The relative path to the file including the query string (e.g. $EXAMPLE$)",
-    "description": "Description of the relative variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "example": {
-        "content": "<em>/folder/dir/index.html?item=value</em>",
-        "example": "/folder/dir/index.html?item=value"
       }
     }
   },
@@ -3206,52 +3512,6 @@
   "opt_guide_standard_text_text": {
     "message": "The entire text of the page",
     "description": "Description of the text variable on the Guide tab of the Options page under the Standard section."
-  },
-  "opt_guide_standard_title_text": {
-    "message": "The title of the page or $URL_LABEL$ if the title could not be detected (e.g. page had not finished loading)",
-    "description": "Description of the title variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "url_label": {
-        "content": "<span class=\"label\">url</span>",
-        "example": "url"
-      }
-    }
-  },
-  "opt_guide_standard_url_text": {
-    "message": "The whole $O_ABBR_1$Uniform Resource Locator$O_ABBR_2$URL$C_ABBR$ being parsed",
-    "description": "Description of the url variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_abbr": {
-        "content": "</abbr>",
-        "example": "</abbr>"
-      },
-      "o_abbr_1": {
-        "content": "<abbr title=\"",
-        "example": "<abbr title=\""
-      },
-      "o_abbr_2": {
-        "content": "\">",
-        "example": "\">"
-      }
-    }
-  },
-  "opt_guide_standard_version_text": {
-    "message": "The installed version of $O_BOLD$Template$C_BOLD$ (i.e. $VERSION$)",
-    "description": "Description of the version variable on the Guide tab of the Options page under the Standard section.",
-    "placeholders": {
-      "c_bold": {
-        "content": "</strong>",
-        "example": "</strong>"
-      },
-      "o_bold": {
-        "content": "<strong>",
-        "example": "<strong>"
-      },
-      "version": {
-        "content": "<em>$1</em>",
-        "example": "1.0.0"
-      }
-    }
   },
   "opt_guide_type_header": {
     "message": "Type",
@@ -3435,6 +3695,24 @@
     "message": "Markdown",
     "description": "Header for the Markdown section."
   },
+  "opt_markdown_inline_label": {
+    "message": "Inline Links",
+    "description": "Label for the Inline Links field."
+  },
+  "opt_markdown_inline_sub_text": {
+    "message": "Markdown links are rendered using the inline style $CODE$",
+    "description": "Help text for the Inline Links field.",
+    "placeholders": {
+      "code": {
+        "content": "<code>[text](url)</code>",
+        "example": "[title](url)"
+      }
+    }
+  },
+  "opt_markdown_inline_text": {
+    "message": "Link references no longer listed at the end of the output",
+    "description": "Text for the Inline Links field."
+  },
   "opt_markdown_text": {
     "message": "This section refers to content that is converted to $O_LINK_MARKDOWN$Markdown$C_LINK$ from $O_ABBR_1$HyperText Markup Language$O_ABBR_2$HTML$C_ABBR$.",
     "description": "Text for the Markdown section.",
@@ -3461,28 +3739,6 @@
       }
     }
   },
-  "opt_markdown_inline_label": {
-    "message": "Inline Links",
-    "description": "Label for the Inline Links field."
-  },
-  "opt_markdown_inline_sub_text": {
-    "message": "Markdown links are rendered using the inline style $CODE$",
-    "description": "Help text for the Inline Links field.",
-    "placeholders": {
-      "code": {
-        "content": "<code>[text](url)</code>",
-        "example": "[title](url)"
-      }
-    }
-  },
-  "opt_markdown_inline_text": {
-    "message": "Link references no longer listed at the end of the output",
-    "description": "Text for the Inline Links field."
-  },
-  "opt_menu_header": {
-    "message": "Context Menu",
-    "description": "Header for the Context Menu section on the General tab of the Options page."
-  },
   "opt_menu_enabled_label": {
     "message": "Right-Click",
     "description": "Label for the Right-Click field on the General tab of the Options page under the Context Menu section."
@@ -3490,6 +3746,10 @@
   "opt_menu_enabled_text": {
     "message": "Templates are accessible from the context menu",
     "description": "Text for the Right-Click field on the General tab of the Options page under the Context Menu section."
+  },
+  "opt_menu_header": {
+    "message": "Context Menu",
+    "description": "Header for the Context Menu section on the General tab of the Options page."
   },
   "opt_menu_options_label": {
     "message": "Options Link",
@@ -3585,10 +3845,6 @@
     "message": "Deselect",
     "description": "Title for the Select checkbox when checked."
   },
-  "opt_shortcuts_header": {
-    "message": "Keyboard Shortcuts",
-    "description": "Header for the Keyboard Shortcuts section on the General tab of the Options page."
-  },
   "opt_shortcuts_enabled_label": {
     "message": "Hotkeys",
     "description": "Label for the Hotkeys field on the General tab of the Options page under the Keyboard Shortcuts section."
@@ -3596,6 +3852,10 @@
   "opt_shortcuts_enabled_text": {
     "message": "Templates are accessible using keyboard shortcuts",
     "description": "Text for the Hotkeys field on the General tab of the Options page under the Keyboard Shortcuts section."
+  },
+  "opt_shortcuts_header": {
+    "message": "Keyboard Shortcuts",
+    "description": "Header for the Keyboard Shortcuts section on the General tab of the Options page."
   },
   "opt_shortcuts_paste_label": {
     "message": "Automatically Paste",
@@ -3647,9 +3907,17 @@
     "message": "Deselect this template and try again.",
     "description": "Second paragraph of the error message displayed when a user attempts to delete a single predefined template."
   },
+  "opt_template_disabled_selected_title": {
+    "message": "Selected templates are already disabled",
+    "description": "Hover text for dynamic buttons when only disabled templates are selected."
+  },
   "opt_template_enabled_label": {
     "message": "Enabled",
     "description": "Label for the Enabled field on the Templates tab of the Options page."
+  },
+  "opt_template_enabled_selected_title": {
+    "message": "Selected templates are already enabled",
+    "description": "Hover text for dynamic buttons when only enabled templates are selected."
   },
   "opt_template_enabled_text": {
     "message": "Allow access to this template",
@@ -3686,14 +3954,6 @@
   "opt_template_new_header": {
     "message": "New Template",
     "description": "Header for the template wizard when creating a new template."
-  },
-  "opt_template_disabled_selected_title": {
-    "message": "Selected templates are already disabled",
-    "description": "Hover text for dynamic buttons when only disabled templates are selected."
-  },
-  "opt_template_enabled_selected_title": {
-    "message": "Selected templates are already enabled",
-    "description": "Hover text for dynamic buttons when only enabled templates are selected."
   },
   "opt_template_no_predefined_delete_title": {
     "message": "Predefined templates cannot be deleted",
@@ -3857,7 +4117,17 @@
     "placeholders": {
       "service": {
         "content": "$1",
-        "example": "bit.ly"
+        "example": "Bitly"
+      }
+    }
+  },
+  "opt_url_shortener_authentication_advanced_button": {
+    "message": "$ICON$ Advanced",
+    "description": "Text for the Advanced button within the Authentication field in the Configuration column on the URL Shorteners tab of the Options page.",
+    "placeholders": {
+      "icon": {
+        "content": "<i class=\"icon-lock\"></i>",
+        "example": "<i class=\"icon-lock\"></i>"
       }
     }
   },
@@ -3882,16 +4152,6 @@
       "icon": {
         "content": "<i class=\"icon-ban-circle\"></i>",
         "example": "<i class=\"icon-ban-circle\"></i>"
-      }
-    }
-  },
-  "opt_url_shortener_authentication_advanced_button": {
-    "message": "$ICON$ Advanced",
-    "description": "Text for the Advanced button within the Authentication field in the Configuration column on the URL Shorteners tab of the Options page.",
-    "placeholders": {
-      "icon": {
-        "content": "<i class=\"icon-lock\"></i>",
-        "example": "<i class=\"icon-lock\"></i>"
       }
     }
   },
@@ -4051,25 +4311,123 @@
     "message": "Options",
     "description": "Text for the Options popup/menu item."
   },
-  "result_bad_description": {
-    "message": "$TEMPLATE$ could not be copied",
-    "description": "Notification for when something unknown went wrong while processing a template.",
+  "options_app_bar_guide_label": {
+    "message": "Guide",
+    "description": "Tooltip/accessible label for the button that opens the guide dialog."
+  },
+  "options_app_bar_issue_label": {
+    "message": "Raise an issue",
+    "description": "Tooltip/accessible label for the button that opens the project's issue tracker."
+  },
+  "options_app_bar_search_label": {
+    "message": "Search",
+    "description": "Accessible label for the template search field in the options page's app bar."
+  },
+  "options_app_bar_search_placeholder": {
+    "message": "Search…",
+    "description": "Placeholder for the template search field in the options page's app bar."
+  },
+  "options_app_bar_settings_label": {
+    "message": "Settings",
+    "description": "Tooltip/accessible label for the button that opens the settings dialog."
+  },
+  "options_app_bar_sponsor_label": {
+    "message": "Sponsor",
+    "description": "Tooltip/accessible label for the button that opens the project's sponsorship page."
+  },
+  "options_error_unexpected_message": {
+    "message": "An unexpected error occurred",
+    "description": "Fallback message shown when an error thrown within the options page has no message of its own."
+  },
+  "page_title_changelog": {
+    "message": "Changelog - $NAME$",
+    "description": "Browser tab title for the changelog page.",
     "placeholders": {
-      "template": {
+      "name": {
         "content": "$1",
-        "example": "Anchor"
+        "example": "tmplat"
       }
     }
   },
-  "result_bad_empty_description": {
-    "message": "$TEMPLATE$ output was empty",
-    "description": "Notification for when the outcome of processing a template is an empty string.",
+  "page_title_guide": {
+    "message": "Guide - $NAME$",
+    "description": "Browser tab title for the standalone guide page.",
     "placeholders": {
-      "template": {
+      "name": {
         "content": "$1",
-        "example": "Short"
+        "example": "tmplat"
       }
     }
+  },
+  "page_title_options": {
+    "message": "Options - $NAME$",
+    "description": "Browser tab title for the options page.",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "tmplat"
+      }
+    }
+  },
+  "popup_error": {
+    "message": "Templates could not be loaded.",
+    "description": "Popup text when templates fail to load"
+  },
+  "predefined_template_anchor_description": {
+    "message": "An HTML anchor tag for the current URL and title",
+    "description": "Description of the Anchor predefined template"
+  },
+  "predefined_template_anchor_title": {
+    "message": "Anchor",
+    "description": "Title of the Anchor predefined template"
+  },
+  "predefined_template_bbcode_description": {
+    "message": "A BBCode URL tag for the current URL and title",
+    "description": "Description of the BBCode predefined template"
+  },
+  "predefined_template_bbcode_title": {
+    "message": "BBCode",
+    "description": "Title of the BBCode predefined template"
+  },
+  "predefined_template_encoded_description": {
+    "message": "The current URL encoded for safe use within another URL (e.g. query string)",
+    "description": "Description of the Encoded predefined template"
+  },
+  "predefined_template_encoded_title": {
+    "message": "Encoded",
+    "description": "Title of the Encoded predefined template"
+  },
+  "predefined_template_markdown_description": {
+    "message": "A Markdown link tag for the current URL and title",
+    "description": "Description of the Markdown predefined template"
+  },
+  "predefined_template_markdown_selection_description": {
+    "message": "The current selection formatted in Markdown",
+    "description": "Description of the Selection in Markdown predefined template"
+  },
+  "predefined_template_markdown_selection_title": {
+    "message": "Selection in Markdown",
+    "description": "Title of the Selection in Markdown predefined template"
+  },
+  "predefined_template_markdown_title": {
+    "message": "Markdown",
+    "description": "Title of the Markdown predefined template"
+  },
+  "predefined_template_short_url_description": {
+    "message": "The current URL shortened",
+    "description": "Description of the Short URL predefined template"
+  },
+  "predefined_template_short_url_title": {
+    "message": "Short URL",
+    "description": "Title of the Short URL predefined template"
+  },
+  "predefined_template_url_description": {
+    "message": "The current URL",
+    "description": "Description of the URL predefined template"
+  },
+  "predefined_template_url_title": {
+    "message": "URL",
+    "description": "Title of the URL predefined template"
   },
   "result_bad_error_description": {
     "message": "An error occurred while collecting information",
@@ -4087,31 +4445,447 @@
     "message": "An error occurred while requesting information",
     "description": "Notification for when an invalid type was used by the requesting message."
   },
-  "result_bad_title": {
-    "message": "Sorry!",
-    "description": "Notification header for when something bad happened while processing a template."
-  },
   "result_bad_uri_description": {
     "message": "The URL is not properly encoded",
     "description": "Notification for when collecting data for an invalid URL before processing a template."
   },
-  "result_good_description": {
-    "message": "$TEMPLATE$ has been copied",
-    "description": "Notification for when a template is processed successfully.",
+  "settings_analytics_description": {
+    "message": "Anonymous usage data helps to understand which features are actually used so that tmplat can be improved. No personal information, page content, or template output is ever collected.",
+    "description": "Description of the Analytics settings section on the Analytics tab of the Settings dialog."
+  },
+  "settings_analytics_enabled_helper_text": {
+    "message": "This can be turned off again at any time.",
+    "description": "Helper text for the enabled switch on the Analytics tab of the Settings dialog."
+  },
+  "settings_analytics_enabled_label": {
+    "message": "Send anonymous usage data",
+    "description": "Label for the switch that enables/disables analytics on the Analytics tab of the Settings dialog."
+  },
+  "settings_analytics_title": {
+    "message": "Analytics",
+    "description": "Title of the Analytics settings section on the Analytics tab of the Settings dialog."
+  },
+  "settings_appearance_theme_dark_label": {
+    "message": "Dark",
+    "description": "Label for the option that always uses the dark theme, on the Appearance tab of the Settings dialog."
+  },
+  "settings_appearance_theme_description": {
+    "message": "Choose how tmplat should look, or have it follow your browser/operating system setting.",
+    "description": "Description of the Theme settings section on the Appearance tab of the Settings dialog."
+  },
+  "settings_appearance_theme_light_label": {
+    "message": "Light",
+    "description": "Label for the option that always uses the light theme, on the Appearance tab of the Settings dialog."
+  },
+  "settings_appearance_theme_system_label": {
+    "message": "Match system setting",
+    "description": "Label for the option that follows the browser/operating system theme, on the Appearance tab of the Settings dialog."
+  },
+  "settings_appearance_theme_title": {
+    "message": "Theme",
+    "description": "Title of the Theme settings section on the Appearance tab of the Settings dialog."
+  },
+  "settings_developer_description": {
+    "message": "Messages are written to the developer console of each tmplat page (including the background service worker). This is only really useful when diagnosing a problem.",
+    "description": "Description of the Logging settings section on the Developer tab of the Settings dialog."
+  },
+  "settings_developer_enabled_label": {
+    "message": "Enable logging",
+    "description": "Label for the switch that enables/disables logging on the Developer tab of the Settings dialog."
+  },
+  "settings_developer_level_helper_text": {
+    "message": "Only messages at or above the selected level are logged.",
+    "description": "Helper text for the log level field on the Developer tab of the Settings dialog."
+  },
+  "settings_developer_level_label": {
+    "message": "Level",
+    "description": "Label for the log level field on the Developer tab of the Settings dialog."
+  },
+  "settings_developer_title": {
+    "message": "Logging",
+    "description": "Title of the Logging settings section on the Developer tab of the Settings dialog."
+  },
+  "settings_dialog_apply_button": {
+    "message": "Apply",
+    "description": "Button that saves the settings dialog's changes without closing it."
+  },
+  "settings_dialog_close_button_label": {
+    "message": "close settings",
+    "description": "Accessible label for the button that closes the settings dialog."
+  },
+  "settings_dialog_menu_label": {
+    "message": "settings menu",
+    "description": "Accessible label for the navigation landmark containing the settings dialog's page list."
+  },
+  "settings_dialog_open_menu_button_label": {
+    "message": "open drawer",
+    "description": "Accessible label for the button that opens the settings dialog's page list on small screens."
+  },
+  "settings_dialog_page_analytics": {
+    "message": "Analytics",
+    "description": "Label for the Analytics page in the settings dialog's page list."
+  },
+  "settings_dialog_page_appearance": {
+    "message": "Appearance",
+    "description": "Label for the Appearance page in the settings dialog's page list."
+  },
+  "settings_dialog_page_developer": {
+    "message": "Developer",
+    "description": "Label for the Developer page in the settings dialog's page list."
+  },
+  "settings_dialog_page_general": {
+    "message": "General",
+    "description": "Label for the General page in the settings dialog's page list."
+  },
+  "settings_dialog_page_notifications": {
+    "message": "Notifications",
+    "description": "Label for the Notifications page in the settings dialog's page list."
+  },
+  "settings_dialog_page_url_shorteners": {
+    "message": "URL Shorteners",
+    "description": "Label for the URL Shorteners page in the settings dialog's page list."
+  },
+  "settings_dialog_reset_button": {
+    "message": "Reset",
+    "description": "Button that discards any unsaved changes made within the settings dialog."
+  },
+  "settings_dialog_save_button": {
+    "message": "Save",
+    "description": "Button that saves the settings dialog's changes and closes it."
+  },
+  "settings_dialog_title": {
+    "message": "Settings",
+    "description": "Title of the settings dialog."
+  },
+  "settings_dialog_unsaved_changes_cancel_button": {
+    "message": "Cancel",
+    "description": "Button that dismisses the unsaved changes prompt shown when closing the settings dialog, leaving it open."
+  },
+  "settings_dialog_unsaved_changes_content": {
+    "message": "You have unsaved changes. Do you want to save them before closing, or discard them?",
+    "description": "Content of the prompt shown when attempting to close the settings dialog with unsaved changes."
+  },
+  "settings_dialog_unsaved_changes_discard_button": {
+    "message": "Discard and close",
+    "description": "Button that discards unsaved changes and closes the settings dialog."
+  },
+  "settings_dialog_unsaved_changes_save_button": {
+    "message": "Save and close",
+    "description": "Button that saves unsaved changes and closes the settings dialog."
+  },
+  "settings_dialog_unsaved_changes_title": {
+    "message": "Unsaved changes",
+    "description": "Title of the prompt shown when attempting to close the settings dialog with unsaved changes."
+  },
+  "settings_general_auto_paste_helper_text": {
+    "message": "This has no effect on pages that the browser protects from extensions.",
+    "description": "Helper text for the auto-paste switch shown on the General tab of the Settings dialog (used for both the context menu and keyboard shortcuts sections)."
+  },
+  "settings_general_auto_paste_label": {
+    "message": "Paste the result into the page automatically",
+    "description": "Label for the auto-paste switch shown on the General tab of the Settings dialog (used for both the context menu and keyboard shortcuts sections)."
+  },
+  "settings_general_context_menu_behaviour_label": {
+    "message": "Behaviour",
+    "description": "Label for the group of radio options controlling the context menu's behaviour, on the General tab of the Settings dialog."
+  },
+  "settings_general_context_menu_description": {
+    "message": "Control how templates are made available within the browser's right-click menu.",
+    "description": "Description of the Context menu settings section on the General tab of the Settings dialog."
+  },
+  "settings_general_context_menu_enabled_label": {
+    "message": "Show tmplat in the context menu",
+    "description": "Label for the switch that enables/disables the context menu, on the General tab of the Settings dialog."
+  },
+  "settings_general_context_menu_mode_menu_label": {
+    "message": "Show a sub-menu listing all enabled templates",
+    "description": "Label for the context menu mode option that shows every enabled template, on the General tab of the Settings dialog."
+  },
+  "settings_general_context_menu_mode_template_label": {
+    "message": "Show a single item that runs the toolbar button template",
+    "description": "Label for the context menu mode option that runs a single template, on the General tab of the Settings dialog."
+  },
+  "settings_general_context_menu_option_link_label": {
+    "message": "Show a link to these settings within the context menu",
+    "description": "Label for the switch that shows a settings link in the context menu, on the General tab of the Settings dialog."
+  },
+  "settings_general_context_menu_title": {
+    "message": "Context menu",
+    "description": "Title of the Context menu settings section on the General tab of the Settings dialog."
+  },
+  "settings_general_links_description": {
+    "message": "Attributes included in any HTML links generated by templates.",
+    "description": "Description of the Links settings section on the General tab of the Settings dialog."
+  },
+  "settings_general_links_target_attribute_helper_text": {
+    "message": "Links will be opened in a new tab or window.",
+    "description": "Helper text for the target attribute switch on the General tab of the Settings dialog."
+  },
+  "settings_general_links_target_attribute_label": {
+    "message": "Include the target attribute",
+    "description": "Label for the switch that includes the target attribute on generated links, on the General tab of the Settings dialog."
+  },
+  "settings_general_links_title": {
+    "message": "Links",
+    "description": "Title of the Links settings section on the General tab of the Settings dialog."
+  },
+  "settings_general_links_title_attribute_label": {
+    "message": "Include the title attribute",
+    "description": "Label for the switch that includes the title attribute on generated links, on the General tab of the Settings dialog."
+  },
+  "settings_general_markdown_description": {
+    "message": "How links are rendered by templates that output Markdown.",
+    "description": "Description of the Markdown settings section on the General tab of the Settings dialog."
+  },
+  "settings_general_markdown_inline_helper_text": {
+    "message": "Inline links appear where they are used instead of being referenced at the end of the output.",
+    "description": "Helper text for the inline links switch on the General tab of the Settings dialog."
+  },
+  "settings_general_markdown_inline_label": {
+    "message": "Use inline links",
+    "description": "Label for the switch that uses inline Markdown links, on the General tab of the Settings dialog."
+  },
+  "settings_general_markdown_title": {
+    "message": "Markdown",
+    "description": "Title of the Markdown settings section on the General tab of the Settings dialog."
+  },
+  "settings_general_shortcuts_description": {
+    "message": "Run a template directly from the page using the shortcut key assigned to it.",
+    "description": "Description of the Keyboard shortcuts settings section on the General tab of the Settings dialog."
+  },
+  "settings_general_shortcuts_enabled_label": {
+    "message": "Enable keyboard shortcuts",
+    "description": "Label for the switch that enables/disables keyboard shortcuts, on the General tab of the Settings dialog."
+  },
+  "settings_general_shortcuts_title": {
+    "message": "Keyboard shortcuts",
+    "description": "Title of the Keyboard shortcuts settings section on the General tab of the Settings dialog."
+  },
+  "settings_general_toolbar_button_auto_close_label": {
+    "message": "Close the popup once a template has been run",
+    "description": "Label for the switch that auto-closes the toolbar popup, on the General tab of the Settings dialog."
+  },
+  "settings_general_toolbar_button_description": {
+    "message": "Choose what happens when the tmplat button is clicked in the browser toolbar.",
+    "description": "Description of the Toolbar button settings section on the General tab of the Settings dialog."
+  },
+  "settings_general_toolbar_button_option_link_label": {
+    "message": "Show a link to these settings within the popup",
+    "description": "Label for the switch that shows a settings link in the toolbar popup, on the General tab of the Settings dialog."
+  },
+  "settings_general_toolbar_button_popup_label": {
+    "message": "Show a popup listing all enabled templates",
+    "description": "Label for the toolbar button mode option that shows a popup, on the General tab of the Settings dialog."
+  },
+  "settings_general_toolbar_button_template_field_helper_text": {
+    "message": "Only enabled templates can be run from the toolbar button.",
+    "description": "Helper text for the template field shown when the toolbar button runs a single template, on the General tab of the Settings dialog."
+  },
+  "settings_general_toolbar_button_template_field_label": {
+    "message": "Template",
+    "description": "Label for the template field shown when the toolbar button runs a single template, on the General tab of the Settings dialog."
+  },
+  "settings_general_toolbar_button_template_label": {
+    "message": "Immediately run a single template",
+    "description": "Label for the toolbar button mode option that runs a single template, on the General tab of the Settings dialog."
+  },
+  "settings_general_toolbar_button_template_option_disabled_label": {
+    "message": "disabled",
+    "description": "Suffix appended in parentheses to a disabled template's title within the toolbar button's template field options, on the General tab of the Settings dialog."
+  },
+  "settings_general_toolbar_button_title": {
+    "message": "Toolbar button",
+    "description": "Title of the Toolbar button settings section on the General tab of the Settings dialog."
+  },
+  "settings_notification_change_log_description": {
+    "message": "Find out what has changed whenever tmplat is updated.",
+    "description": "Description of the Change log settings section on the Notifications tab of the Settings dialog."
+  },
+  "settings_notification_change_log_enabled_label": {
+    "message": "Show the change log after an update",
+    "description": "Label for the switch that shows the change log after an update, on the Notifications tab of the Settings dialog."
+  },
+  "settings_notification_change_log_scope_label": {
+    "message": "Show for",
+    "description": "Label for the field controlling which releases show the change log, on the Notifications tab of the Settings dialog."
+  },
+  "settings_notification_change_log_title": {
+    "message": "Change log",
+    "description": "Title of the Change log settings section on the Notifications tab of the Settings dialog."
+  },
+  "settings_notification_description": {
+    "message": "Desktop notifications are shown when a template has been run, or when something goes wrong.",
+    "description": "Description of the Notifications settings section on the Notifications tab of the Settings dialog."
+  },
+  "settings_notification_enabled_helper_text": {
+    "message": "Errors are always reported, even when notifications are disabled.",
+    "description": "Helper text for the enabled switch on the Notifications tab of the Settings dialog."
+  },
+  "settings_notification_enabled_label": {
+    "message": "Show desktop notifications",
+    "description": "Label for the switch that enables/disables desktop notifications, on the Notifications tab of the Settings dialog."
+  },
+  "settings_notification_title": {
+    "message": "Notifications",
+    "description": "Title of the Notifications settings section on the Notifications tab of the Settings dialog."
+  },
+  "settings_notification_version_segment_major_label": {
+    "message": "Major releases only (e.g. 2.0.0)",
+    "description": "Label for the change log scope option that only shows major releases, on the Notifications tab of the Settings dialog."
+  },
+  "settings_notification_version_segment_minor_label": {
+    "message": "Major and minor releases (e.g. 2.1.0)",
+    "description": "Label for the change log scope option that shows major and minor releases, on the Notifications tab of the Settings dialog."
+  },
+  "settings_notification_version_segment_patch_label": {
+    "message": "Every release, including patches (e.g. 2.1.1)",
+    "description": "Label for the change log scope option that shows every release, on the Notifications tab of the Settings dialog."
+  },
+  "settings_url_shortener_bitly_connect_button": {
+    "message": "Connect",
+    "description": "Button to connect a Bitly account, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_bitly_connected_label": {
+    "message": "Connected as $ACCOUNT$",
+    "description": "Shown once a Bitly account has been connected, on the URL Shorteners tab of the Settings dialog. `$ACCOUNT$` is replaced with the connected account, or the `settings_url_shortener_bitly_connected_unknown_account` message if it isn't known.",
     "placeholders": {
-      "template": {
+      "account": {
         "content": "$1",
-        "example": "Markdown"
+        "example": "user@example.com"
       }
     }
   },
-  "result_good_title": {
-    "message": "Success!",
-    "description": "Notification header for when a template is processed successfully."
+  "settings_url_shortener_bitly_connected_unknown_account": {
+    "message": "an unknown account",
+    "description": "Substituted into `settings_url_shortener_bitly_connected_label` when the connected Bitly account is not known."
+  },
+  "settings_url_shortener_bitly_description": {
+    "message": "Requires a connected Bitly account — links are created against and attributed to that account. Select an anonymous provider below instead if you don't want to connect one.",
+    "description": "Description of the Bitly settings section on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_bitly_disconnect_button": {
+    "message": "Disconnect",
+    "description": "Button to disconnect a Bitly account, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_bitly_not_connected_label": {
+    "message": "Not connected",
+    "description": "Shown when no Bitly account has been connected, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_bitly_radio_label": {
+    "message": "Use Bitly",
+    "description": "Accessible label for the radio button that selects Bitly as the URL shortener, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_bitly_title": {
+    "message": "Bitly",
+    "description": "Title of the Bitly settings section on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_dagd_description": {
+    "message": "Shorten URLs anonymously using da.gd, without any account or configuration. Note that da.gd does not currently publish a Terms of Service or Privacy Policy.",
+    "description": "Description of the da.gd settings section on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_dagd_radio_label": {
+    "message": "Use da.gd",
+    "description": "Accessible label for the radio button that selects da.gd as the URL shortener, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_dagd_title": {
+    "message": "da.gd",
+    "description": "Title of the da.gd settings section on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_error_password_required": {
+    "message": "A password is required for basic authentication",
+    "description": "Validation error shown on the URL Shorteners tab of the Settings dialog when a YOURLS password is required but missing."
+  },
+  "settings_url_shortener_error_signature_required": {
+    "message": "A signature is required for advanced authentication",
+    "description": "Validation error shown on the URL Shorteners tab of the Settings dialog when a YOURLS signature is required but missing."
+  },
+  "settings_url_shortener_error_url_invalid": {
+    "message": "Must be a valid HTTP or HTTPS URL",
+    "description": "Validation error shown on the URL Shorteners tab of the Settings dialog when the YOURLS URL is not a valid HTTP(S) URL."
+  },
+  "settings_url_shortener_error_url_required": {
+    "message": "The URL of your YOURLS installation is required",
+    "description": "Validation error shown on the URL Shorteners tab of the Settings dialog when the YOURLS URL is required but missing."
+  },
+  "settings_url_shortener_error_username_required": {
+    "message": "A username is required for basic authentication",
+    "description": "Validation error shown on the URL Shorteners tab of the Settings dialog when a YOURLS username is required but missing."
+  },
+  "settings_url_shortener_group_label": {
+    "message": "Only one service can be used at a time to shorten URLs within templates",
+    "description": "Accessible label for the group of URL shortener provider options, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_spoome_description": {
+    "message": "Shorten URLs anonymously using spoo.me, without any account or configuration. The default choice, as it requires no authentication and has generous rate limits.",
+    "description": "Description of the spoo.me settings section on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_spoome_radio_label": {
+    "message": "Use spoo.me",
+    "description": "Accessible label for the radio button that selects spoo.me as the URL shortener, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_spoome_title": {
+    "message": "spoo.me",
+    "description": "Title of the spoo.me settings section on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_yourls_auth_advanced_option": {
+    "message": "Advanced (signature)",
+    "description": "Option for advanced (signature) YOURLS authentication, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_yourls_auth_basic_option": {
+    "message": "Basic (username and password)",
+    "description": "Option for basic (username and password) YOURLS authentication, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_yourls_auth_field_label": {
+    "message": "Authentication",
+    "description": "Label for the YOURLS authentication mode field, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_yourls_auth_none_option": {
+    "message": "None",
+    "description": "Option for no YOURLS authentication, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_yourls_description": {
+    "message": "Details of your own YOURLS installation, which can be configured even when it is not the selected service.",
+    "description": "Description of the YOURLS settings section on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_yourls_password_field_helper_text": {
+    "message": "Stored only on this device, but this is your YOURLS admin password — prefer a signature above where possible.",
+    "description": "Helper text for the YOURLS password field, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_yourls_password_field_label": {
+    "message": "Password",
+    "description": "Label for the YOURLS password field, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_yourls_radio_label": {
+    "message": "Use YOURLS",
+    "description": "Accessible label for the radio button that selects YOURLS as the URL shortener, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_yourls_signature_field_helper_text": {
+    "message": "Found on the \"Tools\" page of your YOURLS admin interface.",
+    "description": "Helper text for the YOURLS signature field, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_yourls_signature_field_label": {
+    "message": "Signature",
+    "description": "Label for the YOURLS signature field, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_yourls_title": {
+    "message": "YOURLS",
+    "description": "Title of the YOURLS settings section on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_yourls_url_field_helper_text": {
+    "message": "The URL of the YOURLS API to be called.",
+    "description": "Helper text for the YOURLS URL field, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_yourls_url_field_label": {
+    "message": "URL",
+    "description": "Label for the YOURLS URL field, on the URL Shorteners tab of the Settings dialog."
+  },
+  "settings_url_shortener_yourls_username_field_label": {
+    "message": "Username",
+    "description": "Label for the YOURLS username field, on the URL Shorteners tab of the Settings dialog."
   },
   "shortener_bitly": {
-    "message": "bit.ly",
-    "description": "Name of the bit.ly URL shortener used throughout the extension."
+    "message": "Bitly",
+    "description": "Name of the Bitly URL shortener used throughout the extension."
   },
   "shortener_config_error": {
     "message": "$SERVICE$ has not been configured correctly",
@@ -4143,16 +4917,430 @@
     "placeholders": {
       "service": {
         "content": "$1",
-        "example": "bit.ly"
+        "example": "Bitly"
       }
     }
-  },
-  "shortener_googl": {
-    "message": "goo.gl",
-    "description": "Name of the goo.gl URL shortener used throughout the extension."
   },
   "shortener_yourls": {
     "message": "YOURLS",
     "description": "Name of the YOURLS URL shortener used throughout the extension."
+  },
+  "template_editor_cancel_button": {
+    "message": "Cancel",
+    "description": "Button to discard changes and close the template editor dialog on the Templates tab of the Options page."
+  },
+  "template_editor_clone_title_suffix": {
+    "message": " [Clone]",
+    "description": "Suffix appended to the title pre-populated in the template editor dialog when cloning a template."
+  },
+  "template_editor_content_field_guide_tooltip": {
+    "message": "Open guide",
+    "description": "Tooltip and accessible label for the button next to the Content field's helper text in the template editor dialog that opens the usage guide in a new tab."
+  },
+  "template_editor_content_field_helper_text": {
+    "message": "Refer to the guide for everything that can be used within a template.",
+    "description": "Helper text for the Content field in the template editor dialog on the Templates tab of the Options page."
+  },
+  "template_editor_content_field_label": {
+    "message": "Content",
+    "description": "Label for the Content field in the template editor dialog on the Templates tab of the Options page."
+  },
+  "template_editor_delete_button": {
+    "message": "Delete",
+    "description": "Button that opens a confirmation prompt to delete the template being edited, shown only for custom (non-predefined) templates in the template editor dialog."
+  },
+  "template_editor_delete_confirm_button": {
+    "message": "Delete",
+    "description": "Confirm button on the prompt shown when deleting a template from within the template editor dialog."
+  },
+  "template_editor_delete_confirm_content": {
+    "message": "This template will be deleted permanently. Are you sure?",
+    "description": "Content of the confirmation prompt shown when deleting a template from within the template editor dialog."
+  },
+  "template_editor_delete_confirm_title": {
+    "message": "Delete template",
+    "description": "Title of the confirmation prompt shown when deleting a template from within the template editor dialog."
+  },
+  "template_editor_description_field_helper_text": {
+    "message": "An optional summary of what this template does.",
+    "description": "Helper text for the Description field in the template editor dialog on the Templates tab of the Options page."
+  },
+  "template_editor_description_field_label": {
+    "message": "Description",
+    "description": "Label for the Description field in the template editor dialog on the Templates tab of the Options page."
+  },
+  "template_editor_disabled_label": {
+    "message": "Disabled",
+    "description": "Tooltip/label for the enabled switch in the template editor dialog when the template is disabled."
+  },
+  "template_editor_enabled_label": {
+    "message": "Enabled",
+    "description": "Tooltip/label for the enabled switch in the template editor dialog when the template is enabled."
+  },
+  "template_editor_error_content_required": {
+    "message": "Some content is required",
+    "description": "Validation error shown in the template editor dialog when the Content field is empty."
+  },
+  "template_editor_error_shortcut_conflict": {
+    "message": "This shortcut is already assigned to another template",
+    "description": "Validation error shown in the template editor dialog when the Shortcut field conflicts with another template."
+  },
+  "template_editor_error_shortcut_too_long": {
+    "message": "A shortcut must be a single character",
+    "description": "Validation error shown in the template editor dialog when the Shortcut field has more than one character."
+  },
+  "template_editor_error_title_required": {
+    "message": "A title is required",
+    "description": "Validation error shown in the template editor dialog when the Title field is empty."
+  },
+  "template_editor_error_title_too_long": {
+    "message": "A title cannot be longer than $MAX$ characters",
+    "description": "Validation error shown in the template editor dialog when the Title field exceeds the maximum length.",
+    "placeholders": {
+      "max": {
+        "content": "$1",
+        "example": "50"
+      }
+    }
+  },
+  "template_editor_predefined_description": {
+    "message": "This is a predefined template, so its title, description and content cannot be changed. You can still assign a shortcut, enable or disable it, or export it as the basis for a template of your own.",
+    "description": "Info message shown in the template editor dialog when editing a predefined template."
+  },
+  "template_editor_save_button": {
+    "message": "Save",
+    "description": "Button to persist changes made in the template editor dialog on the Templates tab of the Options page."
+  },
+  "template_editor_shortcut_clear_label": {
+    "message": "Clear shortcut",
+    "description": "Tooltip/label for the button that clears the Shortcut field in the template editor dialog."
+  },
+  "template_editor_shortcut_field_helper_text": {
+    "message": "A single character used to run this template directly from a page.",
+    "description": "Helper text for the Shortcut field in the template editor dialog on the Templates tab of the Options page."
+  },
+  "template_editor_shortcut_field_label": {
+    "message": "Shortcut",
+    "description": "Label for the Shortcut field in the template editor dialog on the Templates tab of the Options page."
+  },
+  "template_editor_title_add": {
+    "message": "Add template",
+    "description": "Title of the template editor dialog when creating a new template."
+  },
+  "template_editor_title_edit": {
+    "message": "Edit template",
+    "description": "Title of the template editor dialog when editing an existing template."
+  },
+  "template_editor_title_field_count": {
+    "message": "$CURRENT$/$MAX$",
+    "description": "Character count adornment for the Title field in the template editor dialog, e.g. 12/50.",
+    "placeholders": {
+      "current": {
+        "content": "$1",
+        "example": "12"
+      },
+      "max": {
+        "content": "$2",
+        "example": "50"
+      }
+    }
+  },
+  "template_editor_title_field_helper_text": {
+    "message": "A short, descriptive name shown in the popup and context menu.",
+    "description": "Helper text for the Title field in the template editor dialog on the Templates tab of the Options page."
+  },
+  "template_editor_title_field_label": {
+    "message": "Title",
+    "description": "Label for the Title field in the template editor dialog on the Templates tab of the Options page."
+  },
+  "template_execution_fail_empty_description": {
+    "message": "$TEMPLATE$ output was empty",
+    "description": "Notification message for when the outcome of executing a template is an empty string",
+    "placeholders": {
+      "template": {
+        "content": "$1",
+        "example": "URL"
+      }
+    }
+  },
+  "template_execution_fail_general_description": {
+    "message": "$TEMPLATE$ could not be copied",
+    "description": "Notification message for when something unknown went wrong while executing a template",
+    "placeholders": {
+      "template": {
+        "content": "$1",
+        "example": "URL"
+      }
+    }
+  },
+  "template_execution_fail_protected_description": {
+    "message": "$TEMPLATE$ could not be executed on protected tab",
+    "description": "Notification message for when the executing a template from a protected tab",
+    "placeholders": {
+      "template": {
+        "content": "$1",
+        "example": "URL"
+      }
+    }
+  },
+  "template_execution_fail_title": {
+    "message": "Sorry!",
+    "description": "Notification title for when something bad happened while executing a template"
+  },
+  "template_execution_success_description": {
+    "message": "$TEMPLATE$ has been copied",
+    "description": "Notification message for when a template is executed successfully",
+    "placeholders": {
+      "template": {
+        "content": "$1",
+        "example": "URL"
+      }
+    }
+  },
+  "template_execution_success_title": {
+    "message": "Success!",
+    "description": "Notification title for when a template is executed successfully"
+  },
+  "template_export_close_button": {
+    "message": "Close",
+    "description": "Button to close the template export dialog on the Templates tab of the Options page."
+  },
+  "template_export_copied_message": {
+    "message": "Templates copied to the clipboard",
+    "description": "Snackbar message shown after copying the exported templates document to the clipboard."
+  },
+  "template_export_copy_button": {
+    "message": "Copy",
+    "description": "Button to copy the exported templates document to the clipboard in the template export dialog."
+  },
+  "template_export_description": {
+    "message": "The selected templates will be exported. Predefined templates are exported using their current title and description and will be imported as templates of your own.",
+    "description": "Description shown in the template export dialog on the Templates tab of the Options page."
+  },
+  "template_export_field_helper_text": {
+    "message": "This document is base64-encoded and can be pasted straight into the import dialog.",
+    "description": "Helper text for the Templates field in the template export dialog."
+  },
+  "template_export_field_label": {
+    "message": "Templates",
+    "description": "Label for the field containing the exported templates document in the template export dialog."
+  },
+  "template_export_save_file_button": {
+    "message": "Save file",
+    "description": "Button to download the exported templates document as a file in the template export dialog."
+  },
+  "template_export_title": {
+    "message": "Export templates",
+    "description": "Title of the template export dialog on the Templates tab of the Options page."
+  },
+  "template_grid_add_button": {
+    "message": "Add",
+    "description": "Button to create a new template on the Templates tab of the Options page."
+  },
+  "template_grid_clear_all_tooltip": {
+    "message": "Clear all",
+    "description": "Tooltip for the button that deselects all templates in the floating action bar of the Templates tab."
+  },
+  "template_grid_clone_option": {
+    "message": "Clone",
+    "description": "Menu option to clone a template from its per-row actions menu on the Templates tab of the Options page."
+  },
+  "template_grid_content_column_header": {
+    "message": "Content",
+    "description": "Header for the Content column of the template data grid on the Templates tab of the Options page."
+  },
+  "template_grid_delete_button": {
+    "message": "Delete",
+    "description": "Button/menu option/confirmation label to delete the selected template(s) on the Templates tab of the Options page."
+  },
+  "template_grid_delete_confirm_content_plural": {
+    "message": "These $COUNT$ templates will be deleted permanently. Are you sure?",
+    "description": "Content of the confirmation prompt shown when deleting more than one template from the Templates tab.",
+    "placeholders": {
+      "count": {
+        "content": "$1",
+        "example": "3"
+      }
+    }
+  },
+  "template_grid_delete_confirm_content_singular": {
+    "message": "This template will be deleted permanently. Are you sure?",
+    "description": "Content of the confirmation prompt shown when deleting a single template from the Templates tab."
+  },
+  "template_grid_delete_confirm_title": {
+    "message": "Delete templates",
+    "description": "Title of the confirmation prompt shown when deleting template(s) from the Templates tab of the Options page."
+  },
+  "template_grid_delete_disabled_tooltip": {
+    "message": "Predefined templates cannot be deleted",
+    "description": "Tooltip explaining why the bulk Delete action is disabled when the selection includes a predefined template."
+  },
+  "template_grid_description_column_header": {
+    "message": "Description",
+    "description": "Header for the Description column of the template data grid on the Templates tab of the Options page."
+  },
+  "template_grid_disable_option": {
+    "message": "Disable",
+    "description": "Button/menu option to disable the selected template(s) on the Templates tab of the Options page."
+  },
+  "template_grid_edit_option": {
+    "message": "Edit",
+    "description": "Menu option to edit a template from its per-row actions menu on the Templates tab of the Options page."
+  },
+  "template_grid_enable_option": {
+    "message": "Enable",
+    "description": "Button/menu option to enable the selected template(s) on the Templates tab of the Options page."
+  },
+  "template_grid_export_button": {
+    "message": "Export",
+    "description": "Button to export the selected template(s) on the Templates tab of the Options page."
+  },
+  "template_grid_import_button": {
+    "message": "Import",
+    "description": "Button to open the template import dialog on the Templates tab of the Options page."
+  },
+  "template_grid_move_bottom_option": {
+    "message": "Bottom",
+    "description": "Menu option to move the selected template(s) to the bottom of the list, from the bulk Move action."
+  },
+  "template_grid_move_button": {
+    "message": "Move",
+    "description": "Button that opens the bulk Move menu (Top/Bottom) for the selected template(s) on the Templates tab."
+  },
+  "template_grid_move_down_option": {
+    "message": "Move down",
+    "description": "Menu option to move a template one position down, from its per-row actions menu."
+  },
+  "template_grid_move_to_bottom_option": {
+    "message": "Move to bottom",
+    "description": "Menu option to move a template to the bottom of the list, from its per-row actions menu."
+  },
+  "template_grid_move_to_top_option": {
+    "message": "Move to top",
+    "description": "Menu option to move a template to the top of the list, from its per-row actions menu."
+  },
+  "template_grid_move_top_option": {
+    "message": "Top",
+    "description": "Menu option to move the selected template(s) to the top of the list, from the bulk Move action."
+  },
+  "template_grid_move_up_option": {
+    "message": "Move up",
+    "description": "Menu option to move a template one position up, from its per-row actions menu."
+  },
+  "template_grid_predefined_tooltip": {
+    "message": "Predefined",
+    "description": "Tooltip shown over the title of a predefined template in the template data grid."
+  },
+  "template_grid_row_actions_label": {
+    "message": "More actions",
+    "description": "Accessible label for the button that opens a template's per-row actions menu on the Templates tab."
+  },
+  "template_grid_select_all_button": {
+    "message": "Select all",
+    "description": "Button to select every template in the data grid, shown in the floating action bar of the Templates tab."
+  },
+  "template_grid_selected_label": {
+    "message": "selected",
+    "description": "Label following the selected template count in the floating action bar of the Templates tab."
+  },
+  "template_grid_shortcut_column_header": {
+    "message": "Shortcut",
+    "description": "Header for the Shortcut column of the template data grid on the Templates tab of the Options page."
+  },
+  "template_grid_title_column_header": {
+    "message": "Title",
+    "description": "Header for the Title column of the template data grid on the Templates tab of the Options page."
+  },
+  "template_grid_toggle_button": {
+    "message": "Toggle",
+    "description": "Button that opens the bulk Toggle menu (Enable/Disable) for the selected template(s) on the Templates tab."
+  },
+  "template_import_back_button": {
+    "message": "Back",
+    "description": "Button to return from the review view to the source view in the template import dialog."
+  },
+  "template_import_cancel_button": {
+    "message": "Cancel",
+    "description": "Button to discard and close the template import dialog on the Templates tab of the Options page."
+  },
+  "template_import_choose_file_button": {
+    "message": "Choose file",
+    "description": "Button to select a file to read templates from in the template import dialog."
+  },
+  "template_import_field_label": {
+    "message": "Templates",
+    "description": "Label for the field where a templates document can be pasted in the template import dialog."
+  },
+  "template_import_read_button": {
+    "message": "Read",
+    "description": "Button to parse the pasted or loaded templates document in the template import dialog."
+  },
+  "template_import_review_description": {
+    "message": "Select the templates to be imported.",
+    "description": "Description shown in the review view of the template import dialog."
+  },
+  "template_import_source_description": {
+    "message": "Paste a base64-encoded document that was exported from tmplat, or load one from a file. Imported templates are always added; nothing you already have is overwritten.",
+    "description": "Description shown in the source view of the template import dialog."
+  },
+  "template_import_submit_button": {
+    "message": "Import",
+    "description": "Button to import the selected templates and close the template import dialog."
+  },
+  "template_import_title": {
+    "message": "Import templates",
+    "description": "Title of the template import dialog on the Templates tab of the Options page."
+  },
+  "url_shortener_error_bitly_not_connected_description": {
+    "message": "Shortening with Bitly requires a connected Bitly account",
+    "description": "Error message for when shortening a URL with Bitly is attempted without a connected account"
+  },
+  "url_shortener_error_bitly_reconnect_required_description": {
+    "message": "Bitly is no longer authenticated; please reconnect your account",
+    "description": "Error message for when Bitly rejects the connected account's access token and it has been revoked"
+  },
+  "url_shortener_error_invalid_url_description": {
+    "message": "Cannot shorten an invalid URL",
+    "description": "Error message for when the value to be shortened is not a valid URL"
+  },
+  "url_shortener_error_not_configured_description": {
+    "message": "$PROVIDER$ is not configured correctly",
+    "description": "Error message for when the selected URL shortener provider is missing required settings",
+    "placeholders": {
+      "provider": {
+        "content": "$1",
+        "example": "yourls"
+      }
+    }
+  },
+  "url_shortener_error_provider_not_found_description": {
+    "message": "$PROVIDER$ is not a supported URL shortener",
+    "description": "Error message for when the selected URL shortener provider does not exist",
+    "placeholders": {
+      "provider": {
+        "content": "$1",
+        "example": "yourls"
+      }
+    }
+  },
+  "url_shortener_error_request_failed_description": {
+    "message": "$PROVIDER$ could not shorten the URL",
+    "description": "Error message for when a URL shortener provider's request fails",
+    "placeholders": {
+      "provider": {
+        "content": "$1",
+        "example": "yourls"
+      }
+    }
+  },
+  "url_shortener_error_unexpected_response_description": {
+    "message": "$PROVIDER$ returned an unexpected response",
+    "description": "Error message for when a URL shortener provider's response is missing or has an invalid shortened URL",
+    "placeholders": {
+      "provider": {
+        "content": "$1",
+        "example": "yourls"
+      }
+    }
   }
 }

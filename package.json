@@ -1,52 +1,124 @@
 {
-    "name": "template-chrome"
-  , "description": "Google Chrome extension that quickly and easily copies info on the current page using a simple and unique template system"
-  , "version": "1.2.9"
-  , "homepage": "http://template-extension.org"
-  , "bugs": {
-      "url": "https://github.com/template-extension/template-chrome/issues"
-    }
-  , "author": {
-        "name": "Alasdair Mercer"
-      , "email": "mercer.alasdair@gmail.com"
-      , "url": "http://neocotic.com"
-    }
-  , "licenses": [
-      {
-          "type": "MIT"
-        , "url": "http://template-extension.org/license"
-      }
-    ]
-  , "private": true
-  , "keywords": [
-        "template"
-      , "browser"
-      , "chrome"
-      , "extension"
-      , "clipboard"
-      , "shortener"
-      , "clipboard"
-      , "shortener"
-      , "markdown"
-      , "bbcode"
-      , "html"
-      , "social"
-    ]
-  , "repository": {
-        "type": "git"
-      , "url": "git://github.com/template-extension/template-chrome.git"
-    }
-  , "devDependencies": {
-        "grunt": "~0.4.1"
-      , "grunt-contrib-clean": "~0.5.0"
-      , "grunt-contrib-compress": "~0.7.0"
-      , "grunt-contrib-copy": "~0.5.0"
-      , "grunt-contrib-coffee": "~0.10.1"
-      , "grunt-contrib-uglify": "~0.3.2"
-      , "grunt-docco": "~0.3.3"
-      , "grunt-json-minify": "~0.4.0"
-    }
-  , "engines": {
-      "node": "~0.10.0"
-    }
+  "name": "tmplat",
+  "version": "2.0.0",
+  "description": "Google Chrome extension that quickly and easily copies info on the current page using a simple and unique template system",
+  "private": true,
+  "keywords": [
+    "template",
+    "browser",
+    "chrome",
+    "extension",
+    "clipboard",
+    "shortener",
+    "clipboard",
+    "shortener",
+    "markdown",
+    "bbcode",
+    "html",
+    "social"
+  ],
+  "homepage": "https://tmplat.com",
+  "bugs": {
+    "url": "https://github.com/tmplat-extension/tmplat/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "airmrcr",
+    "url": "https://github.com/airmrcr"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tmplat-extension/tmplat.git"
+  },
+  "scripts": {
+    "analyze": "npm run analyze:prod",
+    "analyze:dev": "npm run clean && ANALYZE=true rolldown -c rolldown.config.mjs",
+    "analyze:prod": "npm run clean && ANALYZE=true rolldown -c rolldown.config.mjs --minify",
+    "build": "npm run build:prod",
+    "build:dev": "npm run clean && npm run type:check && rolldown -c rolldown.config.mjs",
+    "build:prod": "npm run clean && npm run type:check && rolldown -c rolldown.config.mjs --minify && npm run compress",
+    "build:watch": "rolldown -c rolldown.config.mjs --watch",
+    "check": "npm run type:check && npm run lint:check && npm run format:check",
+    "clean": "rimraf dist",
+    "compress": "bestzip dist/tmplat.zip \"dist/temp/*\"",
+    "dev": "concurrently -n build:dev,type:check -c blue,magenta \"npm:build:watch\" \"npm:type:check:watch\"",
+    "fix": "npm run lint && npm run format",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint --fix",
+    "lint:check": "oxlint",
+    "test": "npm run lint:check && npm run format:check",
+    "type:check": "tsc",
+    "type:check:watch": "tsc --watch --preserveWatchOutput"
+  },
+  "devDependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^9.4.0",
+    "@mui/material": "^9.4.0",
+    "@mui/x-data-grid": "^9.12.0",
+    "@types/chrome": "^0.2.8",
+    "@types/lodash.camelcase": "^4.3.9",
+    "@types/lodash.capitalize": "^4.2.9",
+    "@types/lodash.clonedeep": "^4.5.9",
+    "@types/lodash.deburr": "^4.1.9",
+    "@types/lodash.escape": "^4.0.9",
+    "@types/lodash.isequal": "^4.5.8",
+    "@types/lodash.isplainobject": "^4.0.9",
+    "@types/lodash.kebabcase": "^4.1.9",
+    "@types/lodash.lowercase": "^4.3.9",
+    "@types/lodash.snakecase": "^4.1.9",
+    "@types/lodash.startcase": "^4.4.9",
+    "@types/lodash.unescape": "^4.0.9",
+    "@types/lodash.uppercase": "^4.3.9",
+    "@types/lodash.words": "^4.2.9",
+    "@types/luxon": "^3.7.5",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.5",
+    "acorn": "^8.18.0",
+    "allfulfilled": "^0.2.0",
+    "bestzip": "^3.0.3",
+    "chalk": "^6.0.0",
+    "concurrently": "^10.0.5",
+    "cpy-cli": "^7.0.0",
+    "eslint-plugin-import-x": "^4.17.1",
+    "europa": "^6.0.0",
+    "glob": "^13.0.6",
+    "globals": "^17.12.0",
+    "inversify": "^8.2.3",
+    "joi": "^18.2.6",
+    "lodash.camelcase": "^4.3.0",
+    "lodash.capitalize": "^4.2.1",
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.deburr": "^4.1.0",
+    "lodash.escape": "^4.0.1",
+    "lodash.get": "^4.4.2",
+    "lodash.isequal": "^4.5.0",
+    "lodash.isplainobject": "^4.0.6",
+    "lodash.kebabcase": "^4.1.1",
+    "lodash.lowercase": "^4.3.0",
+    "lodash.snakecase": "^4.1.1",
+    "lodash.startcase": "^4.4.0",
+    "lodash.unescape": "^4.0.1",
+    "lodash.uppercase": "^4.3.0",
+    "lodash.words": "^4.2.0",
+    "luxon": "^3.7.2",
+    "oxfmt": "^0.66.0",
+    "oxlint": "^1.81.0",
+    "react": "^19.2.8",
+    "react-async": "^10.0.1",
+    "react-dom": "^19.2.8",
+    "react-error-boundary": "^6.1.4",
+    "react-markdown": "^10.1.0",
+    "reflect-metadata": "^0.2.2",
+    "rimraf": "^6.1.3",
+    "rolldown": "^1.2.6",
+    "rollup-plugin-visualizer": "^7.1.1",
+    "sass": "^1.103.1",
+    "tmplat-mustache": "^2.5.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^7.0.2",
+    "user-agent-data-types": "^0.4.3"
+  }
 }

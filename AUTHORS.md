@@ -1,4 +1,4 @@
 # Authors ordered by first contribution
 
-* Alasdair Mercer <mercer.alasdair@gmail.com>
-* Jethro Yu <comet.jc@gmail.com>
+- airmrcr <https://github.com/airmrcr>
+- Jethro Yu <mailto:comet.jc@gmail.com>
