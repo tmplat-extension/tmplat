@@ -1,0 +1,137 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # Must come before `setup-node` so that its `cache: pnpm` can locate the pnpm store. The pnpm version is
+      # taken from the `packageManager` field in package.json.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Check types
+        run: pnpm type:check
+
+      - name: Check e2e types
+        run: pnpm type:check:e2e
+
+      - name: Check linting
+        run: pnpm lint:check
+
+      - name: Check formatting
+        run: pnpm format:check
+
+      - name: Run unit tests
+        run: pnpm test:unit
+
+      # `always()` so the report is still uploaded when the suite fails, which is when it is most useful
+      - name: Upload unit test report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: vitest-report
+          path: dist/test-results/vitest-junit.xml
+          retention-days: 7
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # Must come before `setup-node` so that its `cache: pnpm` can locate the pnpm store. The pnpm version is
+      # taken from the `packageManager` field in package.json.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # The full production pipeline: type check, minified bundle, then zipped into dist/tmplat.zip. rolldown logs
+      # the size of every chunk it emits, so bundle sizes are recorded on each run.
+      - name: Build
+        run: pnpm build
+
+      # A production build must never modify anything that is committed. If it does, either generated output was
+      # committed stale, or the build is writing into the source tree - both are bugs worth failing on. `dist/` is
+      # gitignored, so only tracked (or newly created, untracked) files can trip this.
+      - name: Verify the build did not modify the repository
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::The production build changed files tracked by git. Run 'pnpm build' locally and commit the result."
+            git status --porcelain
+            git diff --
+            exit 1
+          fi
+          echo "Working tree is clean after a production build."
+
+      # Only publish the packaged extension for pushes to main; PR builds don't need the artifact
+      - name: Upload extension
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v7
+        with:
+          name: tmplat-extension
+          path: dist/tmplat.zip
+          retention-days: 7
+
+  e2e:
+    name: E2E
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      # Must come before `setup-node` so that its `cache: pnpm` can locate the pnpm store. The pnpm version is
+      # taken from the `packageManager` field in package.json.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # The full Chromium build is required: the headless shell cannot load extensions
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      # `test:e2e` builds the extension into dist/temp itself, via the Playwright global setup
+      - name: Run e2e tests
+        run: pnpm test:e2e
+
+      - name: Upload report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: dist/playwright-report/
+          retention-days: 7
