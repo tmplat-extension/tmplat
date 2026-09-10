@@ -16,7 +16,7 @@ jobs:
       # Must come before `setup-node` so that its `cache: pnpm` can locate the pnpm store. The pnpm version is
       # taken from the `packageManager` field in package.json.
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v7
@@ -61,7 +61,7 @@ jobs:
       # Must come before `setup-node` so that its `cache: pnpm` can locate the pnpm store. The pnpm version is
       # taken from the `packageManager` field in package.json.
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v7
@@ -109,7 +109,7 @@ jobs:
       # Must come before `setup-node` so that its `cache: pnpm` can locate the pnpm store. The pnpm version is
       # taken from the `packageManager` field in package.json.
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v7
