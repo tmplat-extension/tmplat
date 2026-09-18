@@ -72,10 +72,10 @@
     "@testing-library/user-event": "^14.6.7",
     "@types/chrome": "^0.2.9",
     "@types/luxon": "^3.7.5",
-    "@types/node": "^24.13.4",
+    "@types/node": "^26.6.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@vitest/coverage-v8": "^5.0.0",
+    "@vitest/coverage-v8": "^5.0.1",
     "bestzip": "^4.0.0",
     "concurrently": "^10.0.5",
     "eslint-plugin-import-x": "^4.17.1",
@@ -88,7 +88,7 @@
     "sass": "^1.104.1",
     "typescript": "^7.0.2",
     "user-agent-data-types": "^0.4.3",
-    "vitest": "^5.0.0"
+    "vitest": "^5.0.1"
   },
   "packageManager": "pnpm@12.4.2",
   "engines": {
